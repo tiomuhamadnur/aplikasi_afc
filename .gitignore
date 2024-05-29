@@ -3,7 +3,7 @@
 /public/build
 /public/hot
 /public/storage
-/resources/view/master-template
+/resources/views/master-template
 /storage/*.key
 /vendor
 .env
