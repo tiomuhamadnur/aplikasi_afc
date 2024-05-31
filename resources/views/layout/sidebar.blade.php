@@ -29,6 +29,7 @@
             </a>
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('user.index') }}">User</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('lokasi.index') }}">Lokasi</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('sub-lokasi.index') }}">Sub Lokasi</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('detail-lokasi.index') }}">Detail
@@ -56,13 +57,20 @@
                     <li class="nav-item"> <a class="nav-link" href="{{ route('tipe-equipment.index') }}">Tipe
                             Equipment</a>
                     </li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('tipe-employee.index') }}">Tipe
+                            Employee</a>
+                    </li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('satuan.index') }}">Satuan</a>
+                    </li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('gender.index') }}">Gender</a>
                     </li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('jabatan.index') }}">Jabatan</a>
                     </li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('role.index') }}">Role</a>
                     </li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('arah.index') }}">Arah</a>
+                    </li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('perusahaan.index') }}">Perusahaan</a>
                     </li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('barang.index') }}">Barang</a>
                     </li>
@@ -82,8 +90,9 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="#">Transaksi Barang</a>
                     </li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('monitoring-permit.index') }}">Monitoring
-                            JSA & HIRADC</a>
+                    <li class="nav-item"> <a class="nav-link"
+                            href="{{ route('monitoring-permit.index') }}">Monitoring
+                            Permit</a>
                     </li>
                     <li class="nav-item"> <a class="nav-link" href="#">Rekap Gangguan</a></li>
                 </ul>

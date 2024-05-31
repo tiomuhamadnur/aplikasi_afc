@@ -8,8 +8,10 @@ use App\Http\Controllers\admin\DetailLokasiController;
 use App\Http\Controllers\admin\DirektoratController;
 use App\Http\Controllers\admin\DivisiController;
 use App\Http\Controllers\admin\EquipmentController;
+use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
+use App\Http\Controllers\admin\PerusahaanController;
 use App\Http\Controllers\admin\RelasiAreaController;
 use App\Http\Controllers\admin\RelasiStrukturController;
 use App\Http\Controllers\admin\RoleController;
@@ -17,9 +19,11 @@ use App\Http\Controllers\admin\SatuanController;
 use App\Http\Controllers\admin\SeksiController;
 use App\Http\Controllers\admin\SubLokasiController;
 use App\Http\Controllers\admin\TipeBarangController;
+use App\Http\Controllers\admin\TipeEmployeeController;
 use App\Http\Controllers\admin\TipeEquipmentController;
 use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\user\MonitoringPermitController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +61,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/lokasi', 'store')->name('lokasi.store');
         Route::put('/lokasi', 'update')->name('lokasi.update');
         Route::delete('/lokasi', 'destroy')->name('lokasi.delete');
+    });
+
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/user', 'index')->name('user.index');
+        Route::post('/user', 'store')->name('user.store');
+        Route::put('/user', 'update')->name('user.update');
+        Route::delete('/user', 'destroy')->name('user.delete');
     });
 
     Route::controller(SubLokasiController::class)->group(function () {
@@ -146,6 +157,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/tipe-equipment', 'destroy')->name('tipe-equipment.delete');
     });
 
+    Route::controller(TipeEmployeeController::class)->group(function () {
+        Route::get('/tipe-employee', 'index')->name('tipe-employee.index');
+        Route::post('/tipe-employee', 'store')->name('tipe-employee.store');
+        Route::put('/tipe-employee', 'update')->name('tipe-employee.update');
+        Route::delete('/tipe-employee', 'destroy')->name('tipe-employee.delete');
+    });
+
     Route::controller(SatuanController::class)->group(function () {
         Route::get('/satuan', 'index')->name('satuan.index');
         Route::post('/satuan', 'store')->name('satuan.store');
@@ -160,6 +178,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/jabatan', 'destroy')->name('jabatan.delete');
     });
 
+    Route::controller(GenderController::class)->group(function () {
+        Route::get('/gender', 'index')->name('gender.index');
+        Route::post('/gender', 'store')->name('gender.store');
+        Route::put('/gender', 'update')->name('gender.update');
+        Route::delete('/gender', 'destroy')->name('gender.delete');
+    });
+
     Route::controller(RoleController::class)->group(function () {
         Route::get('/role', 'index')->name('role.index');
         Route::post('/role', 'store')->name('role.store');
@@ -172,6 +197,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/arah', 'store')->name('arah.store');
         Route::put('/arah', 'update')->name('arah.update');
         Route::delete('/arah', 'destroy')->name('arah.delete');
+    });
+
+    Route::controller(PerusahaanController::class)->group(function () {
+        Route::get('/perusahaan', 'index')->name('perusahaan.index');
+        Route::post('/perusahaan', 'store')->name('perusahaan.store');
+        Route::put('/perusahaan', 'update')->name('perusahaan.update');
+        Route::delete('/perusahaan', 'destroy')->name('perusahaan.delete');
     });
 
     Route::controller(BarangController::class)->group(function () {
