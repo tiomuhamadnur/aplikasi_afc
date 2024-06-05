@@ -48,22 +48,21 @@
                                             <td>{{ $item->no_hp ?? '-' }}</td>
                                             <td>{{ $item->jabatan->name ?? '-' }}</td>
                                             <td class="text-wrap">
-                                                {{ $item->relasi_struktur->seksi->name ?? '-' }} <br>
-                                                {{ $item->relasi_struktur->departemen->name ?? '-' }} <br>
-                                                {{ $item->relasi_struktur->divisi->name ?? '-' }} <br>
-                                                {{ $item->relasi_struktur->direktorat->name ?? '-' }} <br>
+                                                Seksi {{ $item->relasi_struktur->seksi->code ?? '-' }} <br>
+                                                Departemen {{ $item->relasi_struktur->departemen->code ?? '-' }} <br>
+                                                Divisi {{ $item->relasi_struktur->divisi->code ?? '-' }} <br>
+                                                Direktorat {{ $item->relasi_struktur->direktorat->code ?? '-' }} <br>
                                             </td>
                                             <td>{{ $item->role->name ?? '-' }}</td>
                                             <td>{{ $item->tipe_employee->name ?? '-' }}</td>
                                             <td>{{ $item->perusahaan->name ?? '-' }}</td>
                                             <td>
-                                                <button type="button" title="Edit"
-                                                    class="btn btn-gradient-warning btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-email="{{ $item->email }}">
-                                                    <i class="mdi mdi-lead-pencil"></i>
-                                                </button>
+                                                <a href="{{ route('user.edit', $item->uuid) }}">
+                                                    <button type="button" title="Edit"
+                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
+                                                        <i class="mdi mdi-lead-pencil"></i>
+                                                    </button>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -132,8 +131,7 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_struktur_id">Struktur</label>
-                            <select class="form-control form-control-lg" name="relasi_struktur_id"
-                                id="relasi_struktur_id">
+                            <select class="form-control form-control-lg" name="relasi_struktur_id" id="relasi_struktur_id">
                                 <option value="" selected disabled>- pilih struktur -</option>
                                 @foreach ($relasi_struktur as $item)
                                     <option value="{{ $item->id }}">{{ $item->seksi->name }} -

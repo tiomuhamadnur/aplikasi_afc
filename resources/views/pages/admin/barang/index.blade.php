@@ -67,10 +67,12 @@
                                                 </button>
                                             </td>
                                             <td>
-                                                <button type="button" title="Edit"
-                                                    class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                    <i class="mdi mdi-lead-pencil"></i>
-                                                </button>
+                                                <a href="{{ route('barang.edit', $item->uuid) }}">
+                                                    <button type="button" title="Edit"
+                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
+                                                        <i class="mdi mdi-lead-pencil"></i>
+                                                    </button>
+                                                </a>
                                                 <button type="button" title="Delete"
                                                     class="btn btn-gradient-danger btn-rounded btn-icon">
                                                     <i class="mdi mdi-delete"></i>
@@ -162,7 +164,7 @@
                                     style="max-width: 250px; max-height: 250px; display: none;">
                             </div>
                             <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
-                                accept="image/*" required>
+                                accept="image/*">
                         </div>
                     </form>
                 </div>
@@ -282,7 +284,6 @@
             document.getElementById("name_modal").innerText = name;
             document.getElementById("spesifikasi_modal").innerText = spesifikasi;
             document.getElementById("material_number_modal").innerText = material_number;
-            document.getElementById("serial_number_modal").innerText = serial_number;
             document.getElementById("serial_number_modal").innerText = serial_number;
             document.getElementById("tipe_barang_modal").innerText = tipe_barang;
             document.getElementById("lokasi_modal").innerText = lokasi;

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->uuid('uuid')->unique()->nullable();
             $table->string('no_hp')->nullable();
             $table->string('photo')->nullable();
+            $table->string('ttd')->nullable();
             $table->bigInteger('gender_id')->unsigned()->nullable();
             $table->bigInteger('perusahaan_id')->unsigned()->nullable();
             $table->bigInteger('role_id')->unsigned()->nullable();
@@ -40,6 +41,8 @@ return new class extends Migration
         $table->dropForeign(['relasi_struktur_id']);
 
         // Then drop the columns
+        $table->dropColumn('photo');
+        $table->dropColumn('ttd');
         $table->dropColumn('uuid');
         $table->dropColumn('no_hp');
         $table->dropColumn('gender_id');

@@ -8,6 +8,7 @@ use App\Models\RelasiArea;
 use App\Models\Satuan;
 use App\Models\TipeBarang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class BarangController extends Controller
@@ -38,13 +39,24 @@ class BarangController extends Controller
         $request->validate([
             'name' => 'required',
             'spesifikasi' => 'required',
-            'material_number' => 'nullable',
-            'serial_number' => 'nullable',
+            'material_number' => 'nullable|numeric',
+            'serial_number' => 'nullable|numeric',
             'deskripsi' => 'nullable',
-            'relasi_area_id' => 'required',
-            'tipe_barang_id' => 'required',
-            'satuan_id' => 'required',
-            'photo' => 'required|image',
+            'relasi_area_id' => 'required|numeric',
+            'tipe_barang_id' => 'required|numeric',
+            'satuan_id' => 'required|numeric',
+            'photo' => 'image',
+        ]);
+
+        $barang = Barang::create([
+            "name" => $request->name,
+            "spesifikasi" => $request->spesifikasi,
+            "material_number" => $request->material_number,
+            "serial_number" => $request->serial_number,
+            "tipe_barang_id" => $request->tipe_barang_id,
+            "satuan_id" => $request->satuan_id,
+            "relasi_area_id" => $request->relasi_area_id,
+            "deskripsi" => $request->deskripsi,
         ]);
 
         if ($request->hasFile('photo') && $request->photo != '') {
@@ -62,15 +74,7 @@ class BarangController extends Controller
 
             $photo = $detailPath.$imageName;
 
-            Barang::create([
-                "name" => $request->name,
-                "spesifikasi" => $request->spesifikasi,
-                "material_number" => $request->material_number,
-                "serial_number" => $request->serial_number,
-                "tipe_barang_id" => $request->tipe_barang_id,
-                "satuan_id" => $request->satuan_id,
-                "relasi_area_id" => $request->relasi_area_id,
-                "deskripsi" => $request->deskripsi,
+            $barang->update([
                 "photo" => $photo,
             ]);
         }
@@ -83,14 +87,75 @@ class BarangController extends Controller
         //
     }
 
-    public function edit(string $id)
+    public function edit(string $uuid)
     {
-        //
+        $barang = Barang::where('uuid', $uuid)->firstOrFail();
+
+        $area = RelasiArea::orderBy('lokasi_id', 'ASC')->orderBy('sub_lokasi_id', 'ASC')->orderBy('detail_lokasi_id', 'ASC')->get();
+        $tipe_barang = TipeBarang::orderBy('name', 'ASC')->get();
+        $satuan = Satuan::orderBy('name', 'ASC')->get();
+
+        return view('pages.admin.barang.edit', compact([
+            'barang',
+            'area',
+            'tipe_barang',
+            'satuan',
+        ]));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'id' => 'required|numeric',
+            'name' => 'required',
+            'spesifikasi' => 'required',
+            'material_number' => 'nullable|numeric',
+            'serial_number' => 'nullable|numeric',
+            'deskripsi' => 'nullable',
+            'relasi_area_id' => 'required|numeric',
+            'tipe_barang_id' => 'required|numeric',
+            'satuan_id' => 'required|numeric',
+            'photo' => 'image',
+        ]);
+
+        $barang = Barang::findOrFail($request->id);
+        $barang->update([
+            "name" => $request->name,
+            "spesifikasi" => $request->spesifikasi,
+            "material_number" => $request->material_number,
+            "serial_number" => $request->serial_number,
+            "tipe_barang_id" => $request->tipe_barang_id,
+            "satuan_id" => $request->satuan_id,
+            "relasi_area_id" => $request->relasi_area_id,
+            "deskripsi" => $request->deskripsi,
+        ]);
+
+        if ($request->hasFile('photo') && $request->photo != '') {
+            $dataPhoto = $barang->photo;
+            if ($dataPhoto != null) {
+                Storage::delete($dataPhoto);
+            }
+
+            $image = Image::make($request->file('photo'));
+
+            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
+            $detailPath = 'photo/barang/';
+            $destinationPath = public_path('storage/'. $detailPath);
+
+            $image->resize(null, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            $image->save($destinationPath.$imageName);
+
+            $photo = $detailPath.$imageName;
+
+            $barang->update([
+                'photo' => $photo
+            ]);
+        }
+
+        return redirect()->route('barang.index');
     }
 
     public function destroy(string $id)

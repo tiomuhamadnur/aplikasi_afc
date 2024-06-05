@@ -25,11 +25,13 @@ class DivisiController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'email' => 'required',
             'code' => 'required',
         ]);
 
         Divisi::create(([
             'name' => $request->name,
+            'email' => $request->email,
             'code' => $request->code,
         ]));
 
@@ -51,6 +53,7 @@ class DivisiController extends Controller
         $request->validate([
             'id' => 'required',
             'name' => 'required',
+            'email' => 'required',
             'code' => 'required',
         ]);
 
@@ -58,6 +61,7 @@ class DivisiController extends Controller
 
         $data->update([
             'name' => $request->name,
+            'email' => $request->email,
             'code' => $request->code,
         ]);
 

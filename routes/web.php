@@ -66,6 +66,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/user', 'index')->name('user.index');
         Route::post('/user', 'store')->name('user.store');
+        Route::get('/user/{uuid}/edit', 'edit')->name('user.edit');
         Route::put('/user', 'update')->name('user.update');
         Route::delete('/user', 'destroy')->name('user.delete');
     });
@@ -216,6 +217,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::controller(EquipmentController::class)->group(function () {
         Route::get('/equipment', 'index')->name('equipment.index');
+        Route::post('/equipment', 'store')->name('equipment.store');
+        Route::get('/equipment/{uuid}/edit', 'edit')->name('equipment.edit');
+        Route::put('/equipment', 'update')->name('equipment.update');
+        Route::delete('/equipment', 'destroy')->name('equipment.delete');
     });
 
 

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('divisi', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('email')->nullable();
             $table->uuid('uuid')->unique();
             $table->string('code')->nullable();
             $table->softDeletes();

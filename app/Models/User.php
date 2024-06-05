@@ -18,6 +18,7 @@ class User extends Authenticatable
         'email',
         'no_hp',
         'photo',
+        'ttd',
         'password',
         'perusahaan_id',
         'gender_id',

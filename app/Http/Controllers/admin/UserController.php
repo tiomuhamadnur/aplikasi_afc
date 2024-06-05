@@ -78,17 +78,58 @@ class UserController extends Controller
         //
     }
 
-    public function edit(string $id)
+    public function edit(string $uuid)
     {
-        //
+        $user = User::where('uuid', $uuid)->firstOrFail();
+
+        $gender = Gender::all();
+        $perusahaan = Perusahaan::all();
+        $role = Role::all();
+        $jabatan = Jabatan::all();
+        $tipe_employee = TipeEmployee::all();
+        $relasi_struktur = RelasiStruktur::all();
+
+        return view('pages.admin.user.edit', compact([
+            'user',
+            'perusahaan',
+            'role',
+            'gender',
+            'jabatan',
+            'tipe_employee',
+            'relasi_struktur',
+        ]));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'id' => 'required|numeric',
+            'name' => 'required',
+            'no_hp' => 'required|numeric',
+            'gender_id' => 'required|numeric',
+            'perusahaan_id' => 'required|numeric',
+            'role_id' => 'required|numeric',
+            'jabatan_id' => 'required|numeric',
+            'tipe_employee_id' => 'required|numeric',
+            'relasi_struktur_id' => 'required|numeric',
+        ]);
+
+        $data = User::findOrFail($request->id);
+        $data->update([
+            'name' => $request->name,
+            'no_hp' => $request->no_hp,
+            'gender_id' => $request->gender_id,
+            'perusahaan_id' => $request->perusahaan_id,
+            'role_id' => $request->role_id,
+            'jabatan_id' => $request->jabatan_id,
+            'tipe_employee_id' => $request->tipe_employee_id,
+            'relasi_struktur_id' => $request->relasi_struktur_id,
+        ]);
+
+        return redirect()->route('user.index');
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
         //
     }

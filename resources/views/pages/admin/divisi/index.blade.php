@@ -30,6 +30,7 @@
                                         <th> # </th>
                                         <th> Nama </th>
                                         <th> Code </th>
+                                        <th> Email </th>
                                         <th> Aksi </th>
                                     </tr>
                                 </thead>
@@ -39,12 +40,13 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->name }}</td>
                                             <td>{{ $item->code }}</td>
+                                            <td>{{ $item->email }}</td>
                                             <td>
                                                 <button type="button" title="Edit"
                                                     class="btn btn-gradient-warning btn-rounded btn-icon"
                                                     data-bs-toggle="modal" data-bs-target="#editModal"
                                                     data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-code="{{ $item->code }}">
+                                                    data-email="{{ $item->email }}" data-code="{{ $item->code }}">
                                                     <i class="mdi mdi-lead-pencil"></i>
                                                 </button>
                                                 <button type="button" title="Delete"
@@ -88,6 +90,11 @@
                             <input type="text" class="form-control" id="code" name="code" placeholder="Code"
                                 autocomplete="off" required>
                         </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                                autocomplete="off" required>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -121,6 +128,11 @@
                             <label for="code">Code</label>
                             <input type="text" class="form-control" id="code_edit" name="code" placeholder="Code"
                                 autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_edit">Email</label>
+                            <input type="email" class="form-control" id="email_edit" name="email"
+                                placeholder="Email" autocomplete="off" required>
                         </div>
                     </form>
                 </div>
@@ -164,10 +176,12 @@
             $('#editModal').on('show.bs.modal', function(e) {
                 var id = $(e.relatedTarget).data('id');
                 var name = $(e.relatedTarget).data('name');
+                var email = $(e.relatedTarget).data('email');
                 var code = $(e.relatedTarget).data('code');
 
                 $('#id_edit').val(id);
                 $('#name_edit').val(name);
+                $('#email_edit').val(email);
                 $('#code_edit').val(code);
             });
 
