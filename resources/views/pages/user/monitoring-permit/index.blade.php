@@ -34,6 +34,7 @@
                                         <th> Nama Pekerjaan </th>
                                         <th> Area </th>
                                         <th> Tanggal Expired </th>
+                                        <th> Sisa Hari </th>
                                         <th> Status </th>
                                         <th> Aksi </th>
                                     </tr>
@@ -57,6 +58,9 @@
                                             </td>
                                             <td class="font-weight-bold">
                                                 {{ date('j F Y', strtotime($item->tanggal_expired)) }}
+                                            </td>
+                                            <td class="font-weight-bold">
+                                                {{ $item->remaining_days ?? '-' }} hari
                                             </td>
                                             <td>
                                                 <label

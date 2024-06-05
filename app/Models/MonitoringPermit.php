@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,6 +23,14 @@ class MonitoringPermit extends Model
         self::creating(function ($model) {
             $model->uuid = Str::uuid();
         });
+    }
+
+    protected $dates = ['tanggal_expired'];
+
+    public function getRemainingDaysAttribute()
+    {
+        $tanggalExpired = Carbon::parse($this->tanggal_expired);
+        return $tanggalExpired->diffInDays(Carbon::now());
     }
 
     public function user()
