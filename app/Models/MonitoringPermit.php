@@ -29,8 +29,9 @@ class MonitoringPermit extends Model
 
     public function getRemainingDaysAttribute()
     {
-        $tanggalExpired = Carbon::parse($this->tanggal_expired);
-        return $tanggalExpired->diffInDays(Carbon::now());
+        $tanggalExpired = Carbon::parse($this->tanggal_expired)->startOfDay();;
+        $now = Carbon::now()->startOfDay();
+        return $tanggalExpired->diffInDays($now);
     }
 
     public function user()

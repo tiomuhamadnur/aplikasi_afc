@@ -60,7 +60,7 @@
                                                 {{ date('j F Y', strtotime($item->tanggal_expired)) }}
                                             </td>
                                             <td class="font-weight-bold">
-                                                {{ $item->remaining_days ?? '-' }} hari
+                                                {{ $item->remaining_days ?? '-' }}
                                             </td>
                                             <td>
                                                 <label
