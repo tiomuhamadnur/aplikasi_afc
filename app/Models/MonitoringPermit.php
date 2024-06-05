@@ -31,7 +31,7 @@ class MonitoringPermit extends Model
     {
         $tanggalExpired = Carbon::parse($this->tanggal_expired)->startOfDay();;
         $now = Carbon::now()->startOfDay();
-        return $tanggalExpired->diffInDays($now);
+        return $tanggalExpired->diffInDays($now) * ($now->greaterThan($tanggalExpired) ? -1 : 1);
     }
 
     public function user()
