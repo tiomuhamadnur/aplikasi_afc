@@ -16,7 +16,8 @@
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
                             <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
@@ -32,6 +33,7 @@
                                         <th> Tipe <br> Pekerjaan </th>
                                         <th> Nomor </th>
                                         <th> Nama Pekerjaan </th>
+                                        <th> Departemen </th>
                                         <th> Area </th>
                                         <th> Tanggal Expired </th>
                                         <th> Sisa Hari </th>
@@ -47,6 +49,7 @@
                                             <td>{{ $item->tipe_pekerjaan->code ?? '-' }}</td>
                                             <td class="font-weight-bold">{{ $item->nomor }}</td>
                                             <td>{{ $item->name }}</td>
+                                            <td>{{ $item->departemen->code ?? '-' }}</td>
                                             <td>
                                                 @if ($item->relasi_area_id != null)
                                                     {{ $item->relasi_area->lokasi->name }} <br>
@@ -94,6 +97,73 @@
         </div>
     </div>
 
+    <!-- Add Filter -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('monitoring-permit.filter') }}" method="GET"
+                        class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="">Nomor</label>
+                            <input type="text" class="form-control" name="nomor" placeholder="Nomor"
+                                autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Tipe Permit</label>
+                            <select class="form-control form-control-lg" name="tipe_permit_id">
+                                <option value="" selected disabled>- pilih tipe permit -</option>
+                                @foreach ($tipe_permit as $item)
+                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Tipe Pekerjaan</label>
+                            <select class="form-control form-control-lg" name="tipe_pekerjaan_id">
+                                <option value="" selected disabled>- pilih tipe pekerjaan -</option>
+                                @foreach ($tipe_pekerjaan as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->code }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Area</label>
+                            <select class="form-control form-control-lg" name="relasi_area_id">
+                                <option value="" selected disabled>- pilih area -</option>
+                                @foreach ($area as $item)
+                                    <option value="{{ $item->id }}">{{ $item->lokasi->name }} -
+                                        {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Status</label>
+                            <select class="form-control form-control-lg" name="status">
+                                <option value="" selected disabled>- pilih status -</option>
+                                <option value="active">Active</option>
+                                <option value="expired">Expired</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ route('monitoring-permit.index') }}" class="btn btn-gradient-warning me-2">Reset</a>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary me-2">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Filter -->
+
     <!-- Add Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -108,8 +178,15 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
+                            <label for="departemen">Departemen</label>
+                            <input type="text" class="form-control" id="departemen" placeholder="Departemen"
+                                autocomplete="off" value="{{ auth()->user()->relasi_struktur->departemen->name }}"
+                                disabled>
+                        </div>
+                        <div class="form-group">
                             <label for="tipe_permit_id">Tipe Permit</label>
-                            <select class="form-control form-control-lg" id="tipe_permit_id" name="tipe_permit_id" required>
+                            <select class="form-control form-control-lg" id="tipe_permit_id" name="tipe_permit_id"
+                                required>
                                 <option value="" selected disabled>- pilih tipe permit -</option>
                                 @foreach ($tipe_permit as $item)
                                     <option value="{{ $item->id }}">{{ $item->code }}</option>
@@ -129,8 +206,8 @@
                         </div>
                         <div class="form-group">
                             <label for="nomor">Nomor</label>
-                            <input type="text" class="form-control" id="nomor" name="nomor" placeholder="Nomor"
-                                autocomplete="off" required>
+                            <input type="text" class="form-control" id="nomor" name="nomor"
+                                placeholder="Nomor" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Nama Pekerjaan</label>

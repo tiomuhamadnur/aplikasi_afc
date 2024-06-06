@@ -53,4 +53,9 @@ class MonitoringPermit extends Model
     {
         return $this->belongsTo(TipePermit::class);
     }
+
+    public function departemen()
+    {
+        return $this->belongsTo(Departemen::class);
+    }
 }

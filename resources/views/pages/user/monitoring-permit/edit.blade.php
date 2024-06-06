@@ -16,6 +16,11 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $monitoring_permit->id }}" hidden>
                             <div class="form-group">
+                                <label for="departemen">Departemen</label>
+                                <input type="text" class="form-control" id="departemen" placeholder="Departemen"
+                                    value="{{ $monitoring_permit->departemen->name }}" autocomplete="off" disabled>
+                            </div>
+                            <div class="form-group">
                                 <label for="tipe_permit_id">Tipe Permit</label>
                                 <select class="form-control form-control-lg" id="tipe_permit_id" name="tipe_permit_id"
                                     required>

@@ -229,6 +229,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/monitoring-permit', 'store')->name('monitoring-permit.store');
         Route::get('/monitoring-permit/{uuid}/edit', 'edit')->name('monitoring-permit.edit');
         Route::put('/monitoring-permit', 'update')->name('monitoring-permit.update');
+        Route::get('/monitoring-permit/filter', 'filter')->name('monitoring-permit.filter');
         Route::delete('/monitoring-permit', 'destroy')->name('monitoring-permit.delete');
     });
 

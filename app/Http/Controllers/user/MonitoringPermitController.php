@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
+use App\Models\Departemen;
 use App\Models\MonitoringPermit;
 use App\Models\RelasiArea;
 use App\Models\TipePekerjaan;
@@ -14,7 +15,7 @@ class MonitoringPermitController extends Controller
 {
     public function index()
     {
-        $monitoring_permit = MonitoringPermit::all();
+        $monitoring_permit = MonitoringPermit::where('departemen_id', auth()->user()->relasi_struktur->departemen->id)->get();
         $area = RelasiArea::all();
         $tipe_permit = TipePermit::all();
         $tipe_pekerjaan = TipePekerjaan::all();
@@ -27,9 +28,56 @@ class MonitoringPermitController extends Controller
         ]));
     }
 
-    public function create()
+    public function filter(Request $request)
     {
-        //
+        $departemen_id = auth()->user()->relasi_struktur->departemen->id;
+        $nomor = $request->nomor;
+        $tipe_permit_id = $request->tipe_permit_id;
+        $tipe_pekerjaan_id = $request->tipe_pekerjaan_id;
+        $relasi_area_id = $request->relasi_area_id;
+        $status = $request->status;
+
+        $data = MonitoringPermit::query();
+
+        $data->where('departemen_id', $departemen_id);
+
+        // Filter by nomor
+        $data->when($nomor, function ($query) use ($request) {
+            return $query->where('nomor', $request->nomor);
+        });
+
+        // Filter by tipe_permit_id
+        $data->when($tipe_permit_id, function ($query) use ($request) {
+            return $query->where('tipe_permit_id', $request->tipe_permit_id);
+        });
+
+        // Filter by tipe_pekerjaan_id
+        $data->when($tipe_pekerjaan_id, function ($query) use ($request) {
+            return $query->where('tipe_pekerjaan_id', $request->tipe_pekerjaan_id);
+        });
+
+        // Filter by relasi_area_id
+        $data->when($relasi_area_id, function ($query) use ($request) {
+            return $query->where('relasi_area_id', $request->relasi_area_id);
+        });
+
+        // Filter by status
+        $data->when($status, function ($query) use ($request) {
+            return $query->where('status', $request->status);
+        });
+
+        $monitoring_permit = $data->get();
+
+        $area = RelasiArea::all();
+        $tipe_permit = TipePermit::all();
+        $tipe_pekerjaan = TipePekerjaan::all();
+
+        return view('pages.user.monitoring-permit.index', compact([
+            'monitoring_permit',
+            'area',
+            'tipe_permit',
+            'tipe_pekerjaan',
+        ]));
     }
 
     public function store(Request $request)
@@ -43,6 +91,8 @@ class MonitoringPermitController extends Controller
             'relasi_area_id' => 'nullable|numeric',
         ]);
 
+        $departemen_id = auth()->user()->relasi_struktur->departemen->id;
+
         $tanggal_sekarang = Carbon::now();
         $status = 'active';
 
@@ -53,6 +103,7 @@ class MonitoringPermitController extends Controller
         MonitoringPermit::create(([
             'tipe_permit_id' => $request->tipe_permit_id,
             'tipe_pekerjaan_id' => $request->tipe_pekerjaan_id,
+            'departemen_id'=> $departemen_id,
             'nomor' => $request->nomor,
             'name' => $request->name,
             'tanggal_expired' => $request->tanggal_expired,
