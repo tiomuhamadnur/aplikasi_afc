@@ -61,7 +61,7 @@ class MonitoringPermit extends Model
         foreach ($departemen_ids as $departemen_id)
         {
             $jumlah = self::query()
-                ->where('departement_id', $departemen_id)
+                ->where('departemen_id', $departemen_id)
                 ->whereBetween('tanggal_expired', [$startDate, $endDate])
                 ->where('status', 'active')
                 ->count();
