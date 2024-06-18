@@ -11,16 +11,19 @@ class WhatsAppHelper
 
         $gender = $data[0];
         $name = $data[1];
-        $departemen = strtoupper($data[2]);
-        $jumlah = $data[3];
-        $url = $data[4];
+        $departemen = $data[2];
+        $seksi = $data[3];
+        $jumlah = $data[4];
+        $url = $data[5];
 
         $message = '🔴 *AFC APP NOTIFICATION:* ' . $enter . $enter . $enter .
             'Dear ' . $gender .' *' . $name . '*,' . $enter . $enter.
-            'Sebagai informasi, terdapat *Data Permit* yang akan *Expired* dan perlu ditindak lanjuti dengan detail informasi sebagai berikut:' . $enter . $enter .
+            'Sebagai informasi, terdapat *Data Permit* yang akan *Expired* dan perlu ditindak lanjuti dengan detail sebagai berikut:' . $enter . $enter .
             $div . $enter . $enter .
             '*Departemen :*' . $enter .
             $departemen . $enter . $enter .
+            '*Seksi :*' . $enter .
+            $seksi . $enter . $enter .
             '*Jumlah :*' . $enter .
             $jumlah . ' permit' .  $enter . $enter .
             '*URL :*' . $enter .
