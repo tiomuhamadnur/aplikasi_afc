@@ -66,32 +66,34 @@ class MonitoringPermit extends Model
                 ->where('status', 'active')
                 ->count();
 
-            $departemen = Departemen::findOrFail($departemen_id)->name;
-            $url = route('monitoring-permit.index');
+            if ($jumlah > 0) {
+                $departemen = Departemen::findOrFail($departemen_id)->name;
+                $url = route('monitoring-permit.index');
 
-            $user_ids = User::whereRelation('relasi_struktur.departemen.id', '=', $departemen_id)
-                                ->whereRelation('jabatan.id', '=', 6)
-                                ->distinct()
-                                ->pluck('id')
-                                ->toArray();
+                $user_ids = User::whereRelation('relasi_struktur.departemen.id', '=', $departemen_id)
+                                    ->whereRelation('jabatan.id', '=', 6)
+                                    ->distinct()
+                                    ->pluck('id')
+                                    ->toArray();
 
-            foreach ($user_ids as $user_id)
-            {
-                $user = User::findOrFail($user_id);
-                $gender = ($user->gender->id == 1) ? "Bapak" : "Ibu";
-                $name = $user->name;
-                $no_hp = $user->no_hp;
+                foreach ($user_ids as $user_id)
+                {
+                    $user = User::findOrFail($user_id);
+                    $gender = ($user->gender->id == 1) ? "Bapak" : "Ibu";
+                    $name = $user->name;
+                    $no_hp = $user->no_hp;
 
-                $data = [
-                    $gender,
-                    $name,
-                    $departemen,
-                    $jumlah,
-                    $url,
-                ];
+                    $data = [
+                        $gender,
+                        $name,
+                        $departemen,
+                        $jumlah,
+                        $url,
+                    ];
 
-                $message = WhatsAppHelper::formatMessage($data);
-                WhatsAppHelper::sendNotification($no_hp, $message);
+                    $message = WhatsAppHelper::formatMessage($data);
+                    WhatsAppHelper::sendNotification($no_hp, $message);
+                }
             }
 
         }
