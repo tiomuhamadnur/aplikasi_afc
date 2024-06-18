@@ -70,7 +70,7 @@ class MonitoringPermit extends Model
                 $departemen = Departemen::findOrFail($departemen_id)->name;
                 $url = route('monitoring-permit.index');
 
-                $user_ids = User::whereRelation('relasi_struktur.departemen.id', '=', $departemen_id)
+                $user_ids = User::whereRelation('relasi_struktur.departemen_id', '=', $departemen_id)
                                     ->whereRelation('jabatan.id', '=', 6)
                                     ->distinct()
                                     ->pluck('id')
