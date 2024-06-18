@@ -81,7 +81,7 @@ class MonitoringPermit extends Model
                     $user = User::findOrFail($user_id);
                     $gender = ($user->gender->id == 1) ? "Bapak" : "Ibu";
                     $name = $user->name;
-                    $seksi = $user->seksi->name;
+                    $seksi = $user->relasi_struktur->seksi->name;
                     $no_hp = $user->no_hp;
 
                     $data = [
