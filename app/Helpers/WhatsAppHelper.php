@@ -4,6 +4,35 @@ namespace App\Helpers;
 
 class WhatsAppHelper
 {
+    public static function formatMessage(array $data)
+    {
+        $enter = "\n";
+        $div = '=============================';
+
+        $gender = $data[0];
+        $name = $data[1];
+        $departemen = strtoupper($data[2]);
+        $jumlah = $data[3];
+        $url = $data[4];
+
+        $message = '🔴 *AFC APP NOTIFICATION:* ' . $enter . $enter . $enter .
+            'Dear ' . $gender .' *' . $name . '*,' . $enter . $enter.
+            'Sebagai informasi, terdapat *Data Permit* yang akan *Expired* dan perlu ditindak lanjuti dengan detail informasi sebagai berikut:' . $enter . $enter .
+            $div . $enter . $enter .
+            '*Departemen :*' . $enter .
+            $departemen . $enter . $enter .
+            '*Jumlah :*' . $enter .
+            $jumlah . ' permit' .  $enter . $enter .
+            '*URL :*' . $enter .
+            $url . $enter . $enter .
+            $div . $enter . $enter .
+            '_Regards,_' . $enter . $enter .
+            '*ExoBOT*' .
+            $enter . $enter . $enter . $enter;
+
+        return $message;
+    }
+
     public static function sendNotification($phoneNumber, $message)
     {
         $apiUrl = env('WHATSAPP_API_URL');

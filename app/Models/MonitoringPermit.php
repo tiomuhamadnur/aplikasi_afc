@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\WhatsAppHelper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,71 @@ class MonitoringPermit extends Model
         $now = Carbon::now()->startOfDay();
         return $tanggalExpired->diffInDays($now) * ($now->greaterThan($tanggalExpired) ? -1 : 1);
     }
+
+    public static function updateStatus()
+    {
+        $today = Carbon::today()->toDateString();
+
+        self::query()
+            ->where('tanggal_expired', '<', $today)
+            ->where('status', '!=', 'expired')
+            ->update(['status' => 'expired']);
+
+        self::query()
+            ->where('tanggal_expired', '>=', $today)
+            ->where('status', '!=', 'active')
+            ->update(['status' => 'active']);
+    }
+
+    public static function notifyExpiringPermits()
+    {
+        $today = Carbon::today();
+        $startDate = $today->copy()->addDays(1);
+        $endDate = $today->copy()->addDays(7);
+
+        $departemen_ids = Departemen::distinct()->pluck('id')->toArray();
+
+        foreach ($departemen_ids as $departemen_id)
+        {
+            $jumlah = self::query()
+                ->where('departement_id', $departemen_id)
+                ->whereBetween('tanggal_expired', [$startDate, $endDate])
+                ->where('status', 'active')
+                ->count();
+
+            $departemen = Departemen::findOrFail($departemen_id)->name;
+            $url = route('monitoring-permit.index');
+
+            $user_ids = User::whereRelation('relasi_struktur.departemen.id', '=', $departemen_id)
+                                ->whereRelation('jabatan.id', '=', 6)
+                                ->distinct()
+                                ->pluck('id')
+                                ->toArray();
+
+            foreach ($user_ids as $user_id)
+            {
+                $user = User::findOrFail($user_id);
+                $gender = ($user->gender->id == 1) ? "Bapak" : "Ibu";
+                $name = $user->name;
+                $no_hp = $user->no_hp;
+
+                $data = [
+                    $gender,
+                    $name,
+                    $departemen,
+                    $jumlah,
+                    $url,
+                ];
+
+                $message = WhatsAppHelper::formatMessage($data);
+                WhatsAppHelper::sendNotification($no_hp, $message);
+            }
+
+        }
+    }
+
+
+
 
     public function user()
     {
