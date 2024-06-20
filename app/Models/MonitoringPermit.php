@@ -69,8 +69,8 @@ class MonitoringPermit extends Model
             if ($jumlah > 0) {
                 $departemen = Departemen::findOrFail($departemen_id)->name;
                 $url = route('monitoring-permit.filter', [
-                    'start_date' => $startDate,
-                    'end_date' => $endDate
+                    'start_date' => $startDate->toDateString(),
+                    'end_date' => $endDate->toDateString()
                 ]);
 
                 $user_ids = User::whereRelation('relasi_struktur.departemen', 'id', '=', $departemen_id)
