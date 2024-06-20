@@ -36,6 +36,8 @@ class MonitoringPermitController extends Controller
         $tipe_pekerjaan_id = $request->tipe_pekerjaan_id;
         $relasi_area_id = $request->relasi_area_id;
         $status = $request->status;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date ?? $start_date;
 
         $data = MonitoringPermit::query();
 
@@ -64,6 +66,11 @@ class MonitoringPermitController extends Controller
         // Filter by status
         $data->when($status, function ($query) use ($request) {
             return $query->where('status', $request->status);
+        });
+
+        // Filter by tanggal_expired
+        $data->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+            return $query->whereBetween('tanggal_expired', [$start_date, $end_date]);
         });
 
         $monitoring_permit = $data->get();
