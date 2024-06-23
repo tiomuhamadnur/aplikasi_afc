@@ -25,11 +25,12 @@
                 <div class="card bg-gradient-danger card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Weekly Sales <i
-                                class="mdi mdi-chart-line mdi-24px float-right"></i>
+                        <h4 class="font-weight-normal mb-3">Jumlah Permit
+                            <i class="mdi mdi-key-variant mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">$ 15,0000</h2>
-                        <h6 class="card-text">Increased by 60%</h6>
+                        <h2 class="mb-5">{{ $permit ?? 'N/A' }}</h2>
+                        <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
+                        </h6>
                     </div>
                 </div>
             </div>
@@ -37,11 +38,12 @@
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Weekly Orders <i
-                                class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                        <h4 class="font-weight-normal mb-3">Jumlah Gangguan
+                            <i class="mdi mdi-receipt mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">45,6334</h2>
-                        <h6 class="card-text">Decreased by 10%</h6>
+                        <h2 class="mb-5">14</h2>
+                        <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
+                        </h6>
                     </div>
                 </div>
             </div>
@@ -49,11 +51,12 @@
                 <div class="card bg-gradient-success card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Visitors Online <i
-                                class="mdi mdi-diamond mdi-24px float-right"></i>
+                        <h4 class="font-weight-normal mb-3">Jumlah Transaksi Barang <i
+                                class="mdi mdi-repeat mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">95,5741</h2>
-                        <h6 class="card-text">Increased by 5%</h6>
+                        <h2 class="mb-5">56</h2>
+                        <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
+                        </h6>
                     </div>
                 </div>
             </div>
@@ -63,7 +66,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="clearfix">
-                            <h4 class="card-title float-left">Visit And Sales Statistics</h4>
+                            <h4 class="card-title float-left">Tren Gangguan Tahun 2024</h4>
                             <div id="visit-sale-chart-legend"
                                 class="rounded-legend legend-horizontal legend-top-right float-right">
                             </div>
@@ -75,7 +78,7 @@
             <div class="col-md-5 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Traffic Sources</h4>
+                        <h4 class="card-title">Klasifikasi Gangguan Tahun 2024</h4>
                         <canvas id="traffic-chart"></canvas>
                         <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div>
                     </div>
