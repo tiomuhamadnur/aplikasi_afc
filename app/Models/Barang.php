@@ -34,6 +34,11 @@ class Barang extends Model
         return $this->belongsTo(RelasiArea::class);
     }
 
+    public function relasi_struktur()
+    {
+        return $this->belongsTo(RelasiStruktur::class);
+    }
+
     public function tipe_barang()
     {
         return $this->belongsTo(TipeBarang::class);

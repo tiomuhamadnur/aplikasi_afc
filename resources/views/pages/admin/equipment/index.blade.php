@@ -19,8 +19,9 @@
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
-                                <i class="mdi mdi-file-export"></i>
+                            <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
+                                data-bs-toggle="modal" data-bs-target="#importModal">
+                                <i class="mdi mdi-file-import"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
@@ -187,6 +188,56 @@
         </div>
     </div>
     <!-- End Add Modal -->
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Import</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importForm" action="{{ route('equipment.import') }}" method="POST" class="forms-sample"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group">
+                            <label for="relasi_struktur_id">Owner</label>
+                            <select class="form-control form-control-lg" id="relasi_struktur_id"
+                                name="relasi_struktur_id" required>
+                                <option value="" selected disabled>- pilih owner -</option>
+                                @foreach ($struktur as $item)
+                                    <option value="{{ $item->id }}">Divisi {{ $item->divisi->code }} -
+                                        Departemen {{ $item->departemen->code }} - Seksi {{ $item->seksi->code }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">
+                                File Import
+                                <span>
+                                    <a href="{{ asset('assets/format/Template Format Import Equipment.xlsx') }}">
+                                        <button type="button" class="btn btn-icon btn-sm btn-success btn-rounded p-0"
+                                            title="Download Template File Import"><i class="mdi mdi-cloud-download"></i>
+                                        </button>
+                                    </a>
+                                </span>
+                            </label>
+                            <input type="file" class="form-control form-control-lg" id="file"
+                                accept=".xls,.xlsx" name="file" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="importForm" class="btn btn-gradient-primary me-2">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Import Modal -->
 
     <!-- Photo Modal -->
     <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

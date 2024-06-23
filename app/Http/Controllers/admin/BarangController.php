@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\BarangImport;
 use App\Models\Barang;
 use App\Models\RelasiArea;
+use App\Models\RelasiStruktur;
 use App\Models\Satuan;
 use App\Models\TipeBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BarangController extends Controller
 {
@@ -20,12 +23,14 @@ class BarangController extends Controller
         $area = RelasiArea::orderBy('lokasi_id', 'ASC')->orderBy('sub_lokasi_id', 'ASC')->orderBy('detail_lokasi_id', 'ASC')->get();
         $tipe_barang = TipeBarang::orderBy('name', 'ASC')->get();
         $satuan = Satuan::orderBy('name', 'ASC')->get();
+        $struktur = RelasiStruktur::all();
 
         return view('pages.admin.barang.index', compact([
             'barang',
             'area',
             'tipe_barang',
             'satuan',
+            'struktur',
         ]));
     }
 
@@ -43,6 +48,7 @@ class BarangController extends Controller
             'serial_number' => 'nullable|numeric',
             'deskripsi' => 'nullable',
             'relasi_area_id' => 'required|numeric',
+            'relasi_struktur_id' => 'required|numeric',
             'tipe_barang_id' => 'required|numeric',
             'satuan_id' => 'required|numeric',
             'photo' => 'image',
@@ -56,6 +62,7 @@ class BarangController extends Controller
             "tipe_barang_id" => $request->tipe_barang_id,
             "satuan_id" => $request->satuan_id,
             "relasi_area_id" => $request->relasi_area_id,
+            "relasi_struktur_id" => $request->relasi_struktur_id,
             "deskripsi" => $request->deskripsi,
         ]);
 
@@ -82,9 +89,23 @@ class BarangController extends Controller
         return redirect()->route('barang.index');
     }
 
-    public function show(string $id)
+    public function import(Request $request)
     {
-        //
+        // dd($request);
+        $request->validate([
+            'relasi_struktur_id' => 'required|numeric',
+            'file' => 'required|file|mimes:xls,xlsx',
+        ]);
+
+        $relasi_struktur_id = $request->relasi_struktur_id;
+
+        if($request->hasFile('file'))
+        {
+            $file = $request->file('file');
+            Excel::import(new BarangImport($relasi_struktur_id), $file);
+        }
+
+        return redirect()->route('barang.index');
     }
 
     public function edit(string $uuid)
@@ -94,12 +115,14 @@ class BarangController extends Controller
         $area = RelasiArea::orderBy('lokasi_id', 'ASC')->orderBy('sub_lokasi_id', 'ASC')->orderBy('detail_lokasi_id', 'ASC')->get();
         $tipe_barang = TipeBarang::orderBy('name', 'ASC')->get();
         $satuan = Satuan::orderBy('name', 'ASC')->get();
+        $struktur = RelasiStruktur::all();
 
         return view('pages.admin.barang.edit', compact([
             'barang',
             'area',
             'tipe_barang',
             'satuan',
+            'struktur',
         ]));
     }
 
@@ -113,6 +136,7 @@ class BarangController extends Controller
             'serial_number' => 'nullable|numeric',
             'deskripsi' => 'nullable',
             'relasi_area_id' => 'required|numeric',
+            'relasi_struktur_id' => 'required|numeric',
             'tipe_barang_id' => 'required|numeric',
             'satuan_id' => 'required|numeric',
             'photo' => 'image',
@@ -127,6 +151,7 @@ class BarangController extends Controller
             "tipe_barang_id" => $request->tipe_barang_id,
             "satuan_id" => $request->satuan_id,
             "relasi_area_id" => $request->relasi_area_id,
+            "relasi_struktur_id" => $request->relasi_struktur_id,
             "deskripsi" => $request->deskripsi,
         ]);
 

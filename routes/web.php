@@ -210,6 +210,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(BarangController::class)->group(function () {
         Route::get('/barang', 'index')->name('barang.index');
         Route::post('/barang', 'store')->name('barang.store');
+        Route::post('/barang/import', 'import')->name('barang.import');
         Route::get('/barang/{uuid}/edit', 'edit')->name('barang.edit');
         Route::put('/barang', 'update')->name('barang.update');
         Route::delete('/barang', 'destroy')->name('barang.delete');
@@ -218,6 +219,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(EquipmentController::class)->group(function () {
         Route::get('/equipment', 'index')->name('equipment.index');
         Route::post('/equipment', 'store')->name('equipment.store');
+        Route::post('/equipment/import', 'import')->name('equipment.import');
         Route::get('/equipment/{uuid}/edit', 'edit')->name('equipment.edit');
         Route::put('/equipment', 'update')->name('equipment.update');
         Route::delete('/equipment', 'destroy')->name('equipment.delete');

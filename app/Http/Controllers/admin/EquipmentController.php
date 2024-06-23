@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\EquipmentImport;
 use App\Models\Arah;
 use App\Models\Equipment;
 use App\Models\RelasiArea;
@@ -11,6 +12,7 @@ use App\Models\TipeEquipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EquipmentController extends Controller
 {
@@ -85,9 +87,23 @@ class EquipmentController extends Controller
         return redirect()->route('equipment.index');
     }
 
-    public function show(string $id)
+    public function import(Request $request)
     {
-        //
+        // dd($request);
+        $request->validate([
+            'relasi_struktur_id' => 'required|numeric',
+            'file' => 'required|file|mimes:xls,xlsx',
+        ]);
+
+        $relasi_struktur_id = $request->relasi_struktur_id;
+
+        if($request->hasFile('file'))
+        {
+            $file = $request->file('file');
+            Excel::import(new EquipmentImport($relasi_struktur_id), $file);
+        }
+
+        return redirect()->route('equipment.index');
     }
 
     public function edit(string $uuid)

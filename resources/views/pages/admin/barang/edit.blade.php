@@ -43,24 +43,63 @@
                                 <select class="form-control form-control-lg" id="tipe_barang_id" name="tipe_barang_id"
                                     required>
                                     <option value="" selected disabled>- pilih tipe barang -</option>
-                                    @foreach ($tipe_barang as $item)
-                                        <option value="{{ $item->id }}"
-                                            @if ($item->id == $barang->tipe_barang->id) selected @endif>
-                                            {{ $item->name }}
-                                        </option>
-                                    @endforeach
+                                    @if ($barang->tipe_barang_id != null)
+                                        @foreach ($tipe_barang as $item)
+                                            <option value="{{ $item->id }}"
+                                                @if ($item->id == $barang->tipe_barang->id) selected @endif>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        @foreach ($tipe_barang as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="relasi_struktur_id">Owner</label>
+                                <select class="form-control form-control-lg" id="relasi_struktur_id"
+                                    name="relasi_struktur_id" required>
+                                    <option value="" selected disabled>- pilih owner -</option>
+                                    @if ($barang->relasi_struktur_id != null)
+                                        @foreach ($struktur as $item)
+                                            <option value="{{ $item->id }}"
+                                                @if ($item->id == $barang->relasi_struktur_id) selected @endif>Divisi
+                                                {{ $item->divisi->code }} -
+                                                Departemen {{ $item->departemen->code }} - Seksi {{ $item->seksi->code }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        @foreach ($struktur as $item)
+                                            <option value="{{ $item->id }}">Divisi
+                                                {{ $item->divisi->code }} -
+                                                Departemen {{ $item->departemen->code }} - Seksi {{ $item->seksi->code }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="satuan_id">Satuan</label>
                                 <select class="form-control form-control-lg" id="satuan_id" name="satuan_id" required>
                                     <option value="" selected disabled>- pilih satuan -</option>
-                                    @foreach ($satuan as $item)
-                                        <option value="{{ $item->id }}"
-                                            @if ($item->id == $barang->satuan->id) selected @endif>
-                                            {{ $item->code }}
-                                        </option>
-                                    @endforeach
+                                    @if ($barang->satuan_id != null)
+                                        @foreach ($satuan as $item)
+                                            <option value="{{ $item->id }}"
+                                                @if ($item->id == $barang->satuan->id) selected @endif>
+                                                {{ $item->code }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        @foreach ($satuan as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->code }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="form-group">
@@ -68,13 +107,22 @@
                                 <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id"
                                     required>
                                     <option value="" selected disabled>- pilih area spesifik -</option>
-                                    @foreach ($area as $item)
-                                        <option value="{{ $item->id }}"
-                                            @if ($item->id == $barang->relasi_area->id) selected @endif>
-                                            {{ $item->lokasi->name }} -
-                                            {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}
-                                        </option>
-                                    @endforeach
+                                    @if ($barang->relasi_area_id != null)
+                                        @foreach ($area as $item)
+                                            <option value="{{ $item->id }}"
+                                                @if ($item->id == $barang->relasi_area_id) selected @endif>
+                                                {{ $item->lokasi->name }} -
+                                                {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        @foreach ($area as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->lokasi->name }} -
+                                                {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="form-group">
@@ -89,11 +137,12 @@
                                         src="{{ asset('storage/' . $barang->photo) }}" alt="Tidak ada photo"
                                         style="max-width: 250px; max-height: 250px;">
                                 </div>
-                                <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
-                                    accept="image/*" required>
+                                <input type="file" class="form-control" id="photo" name="photo"
+                                    autocomplete="off" accept="image/*" required>
                             </div>
                             <div class="form-group d-flex justify-content-end">
-                                <a href="{{ route('barang.index') }}" type="button" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('barang.index') }}" type="button"
+                                    class="btn btn-secondary">Cancel</a>
                                 <button type="submit" form="editForm" class="btn btn-primary">Update</button>
                             </div>
                         </form>
