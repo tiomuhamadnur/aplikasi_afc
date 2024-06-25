@@ -24,6 +24,7 @@ use App\Http\Controllers\admin\TipeEquipmentController;
 use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringPermitController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -233,6 +234,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/monitoring-permit', 'update')->name('monitoring-permit.update');
         Route::get('/monitoring-permit/filter', 'filter')->name('monitoring-permit.filter');
         Route::delete('/monitoring-permit', 'destroy')->name('monitoring-permit.delete');
+    });
+
+    Route::controller(LogAfcController::class)->group(function () {
+        Route::post('/log-afc/import', 'import')->name('log.import');
+        Route::get('/log-afc/export', 'export')->name('log.export');
     });
 
 });

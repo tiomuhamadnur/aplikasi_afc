@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Imports\BarangImport;
 use App\Models\Barang;
+use App\Models\LogAFC;
 use App\Models\RelasiArea;
 use App\Models\RelasiStruktur;
 use App\Models\Satuan;
@@ -91,7 +92,6 @@ class BarangController extends Controller
 
     public function import(Request $request)
     {
-        // dd($request);
         $request->validate([
             'relasi_struktur_id' => 'required|numeric',
             'file' => 'required|file|mimes:xls,xlsx',
