@@ -10,9 +10,11 @@ return new class extends Migration
     {
         Schema::create('log_afc', function (Blueprint $table) {
             $table->id();
-            $table->string('pan');
-            $table->string('elapsed_time');
-            $table->string('transaction_speed');
+            $table->dateTime('time_stamp')->nullable();
+            $table->string('bank')->nullable();
+            $table->string('pan')->nullable();
+            $table->string('elapsed_time')->nullable();
+            $table->string('transaction_speed')->nullable();
             $table->timestamps();
         });
     }

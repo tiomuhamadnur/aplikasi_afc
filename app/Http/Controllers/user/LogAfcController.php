@@ -13,7 +13,7 @@ class LogAfcController extends Controller
 {
     public function index()
     {
-        //
+        return view('pages.user.log-afc.index');
     }
 
     public function import(Request $request)
@@ -28,8 +28,8 @@ class LogAfcController extends Controller
 
         $this->destroy();
 
-        $filePath = $request->file('logfile')->getRealPath();
-        $logs = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        // $filePath = $request->file('logfile')->getRealPath();
+        // $logs = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 
 
@@ -60,15 +60,23 @@ class LogAfcController extends Controller
         $elapsedTime = null;
         $PAN = null;
         $transactionSpeed = null;
+        $timeStamp = null;
+        $bank = null;
+
+        $filePath = $request->file('logfile')->getRealPath();
+        $logs = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         foreach ($logs as $line) {
             if (strpos($line, 'elapsed time :') !== false) {
                 $elapsedTime = $this->extractValue($line, 'elapsed time :');
+                $timeStamp = $this->extractTimeStamp($line);
                 $PAN = null;
                 $transactionSpeed = null;
+                $bank = null;
             } elseif (strpos($line, 'PAN :') !== false) {
                 if ($elapsedTime !== null) {
                     $PAN = $this->extractValue($line, 'PAN :');
+                    $bank = $this->getBankByPAN($PAN);
                 }
             } elseif (strpos($line, 'TRANSACTION SPEED :') !== false) {
                 if ($elapsedTime !== null && $PAN !== null) {
@@ -78,18 +86,26 @@ class LogAfcController extends Controller
 
             if ($elapsedTime !== null && $PAN !== null && $transactionSpeed !== null) {
                 LogAFC::create([
+                    'time_stamp' => $timeStamp,
                     'elapsed_time' => $elapsedTime,
                     'PAN' => $PAN,
-                    'transaction_speed' => $transactionSpeed
+                    'transaction_speed' => $transactionSpeed,
+                    'bank' => $bank
                 ]);
 
                 $elapsedTime = null;
                 $PAN = null;
                 $transactionSpeed = null;
+                $timeStamp = null;
+                $bank = null;
             }
         }
 
-        return redirect()->route('log.export');
+        return redirect()->route('log.export', [
+            'tanggal' => $request->tanggal,
+            'stasiun' => $request->stasiun,
+            'nomor' => $request->nomor,
+        ]);
     }
 
     private function extractValue($line, $prefix)
@@ -99,12 +115,39 @@ class LogAfcController extends Controller
         return str_replace(' s', '', $value);
     }
 
-    public function export()
-    {
-        $waktu = Carbon::now()->format('Ymd');
-        $name = '_Generated log file.xlsx';
+    private function extractTimeStamp($line) {
+        // Extract the timestamp from the start of the line
+        preg_match('/\[(.*?)\] (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/', $line, $matches);
+        if (isset($matches[2])) {
+            // Parse the matched timestamp using Carbon and format it
+            return Carbon::parse($matches[2])->format('Y-m-d H:i:s');
+        }
+        return null;
+    }
 
-        return Excel::download(new LogAfcExport(), $waktu . $name, \Maatwebsite\Excel\Excel::XLSX);
+    private function getBankByPAN($PAN)
+    {
+        $bankCodes = [
+            '7546' => 'BNI',
+            '0145' => 'BCA',
+            '6032' => 'MDR',
+            '6013' => 'BRI',
+            '9360' => 'BDKI'
+        ];
+
+        $prefix = substr($PAN, 0, 4);
+
+        return $bankCodes[$prefix] ?? 'Unknown';
+    }
+
+    public function export(Request $request)
+    {
+        $waktu = Carbon::parse($request->tanggal)->format('Ymd');
+        $stasiun = $request->stasiun;
+        $nomor = $request->nomor;
+        $name = $waktu . '_' . $stasiun . '_' . $nomor . '_Generated log file.xlsx';
+
+        return Excel::download(new LogAfcExport(), $name, \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(Request $request)

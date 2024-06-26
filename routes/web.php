@@ -237,6 +237,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::controller(LogAfcController::class)->group(function () {
+        Route::get('/log-afc', 'index')->name('log.index');
         Route::post('/log-afc/import', 'import')->name('log.import');
         Route::get('/log-afc/export', 'export')->name('log.export');
     });
