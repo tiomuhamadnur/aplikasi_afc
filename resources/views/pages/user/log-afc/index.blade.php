@@ -32,14 +32,15 @@
                                         <th> Tanggal </th>
                                         <th> Waktu </th>
                                         <th> Bank </th>
-                                        <th> PAN </th>
                                         <th> Elapsed Time </th>
+                                        <th> Debit Amount </th>
+                                        <th> PAN </th>
                                         <th> Transaction Speed </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="text-center" colspan="7">
+                                        <td class="text-center" colspan="8">
                                             Silahkan upload data log file!
                                         </td>
                                     </tr>

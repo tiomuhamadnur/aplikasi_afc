@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('pan')->nullable();
             $table->string('elapsed_time')->nullable();
             $table->string('transaction_speed')->nullable();
+            $table->string('debit_amount')->nullable();
             $table->timestamps();
         });
     }

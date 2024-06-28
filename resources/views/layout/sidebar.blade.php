@@ -33,6 +33,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
+                <span class="menu-title">Transaksi Tiket</span>
+                <i class="mdi mdi-cards-outline menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="#">
                 <span class="menu-title">Transaksi Barang</span>
                 <i class="mdi mdi-repeat menu-icon"></i>

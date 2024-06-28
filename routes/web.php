@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\ArahController;
+use App\Http\Controllers\admin\BankController;
 use App\Http\Controllers\admin\BarangController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DepartemenController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringPermitController;
+use App\Http\Controllers\user\TransaksiTiketController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -208,6 +210,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/perusahaan', 'destroy')->name('perusahaan.delete');
     });
 
+    // Route::controller(BankController::class)->group(function () {
+    //     Route::get('/bank', 'store')->name('bank.store');
+    // });
+
     Route::controller(BarangController::class)->group(function () {
         Route::get('/barang', 'index')->name('barang.index');
         Route::post('/barang', 'store')->name('barang.store');
@@ -239,7 +245,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(LogAfcController::class)->group(function () {
         Route::get('/log-afc', 'index')->name('log.index');
         Route::post('/log-afc/import', 'import')->name('log.import');
+        // Route::post('/log-afc/import-convert', 'import_convert')->name('convert.import');
         Route::get('/log-afc/export', 'export')->name('log.export');
+    });
+
+    Route::controller(TransaksiTiketController::class)->group(function () {
+        Route::get('/transaksi-tiket', 'index')->name('transaksi.tiket.index');
+        Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
     });
 
 });
