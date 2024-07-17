@@ -25,7 +25,7 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
+                            <table class="table table-hover text-center">
                                 <thead>
                                     <tr>
                                         <th> # </th>

@@ -2,6 +2,7 @@
 
 @section('title-head')
     <title>Transaksi Tiket</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
 @section('content')
@@ -24,8 +25,12 @@
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
+                        <a href="{{ route('transaksi.tiket.ftp') }}" title="Sync">
+                            <span><i class="mdi mdi-refresh"></i></span>
+                        </a>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
+                            {{ $dataTable->table() }}
+                            {{-- <table class="table table-hover text-center data-table">
                                 <thead>
                                     <tr>
                                         <th> # </th>
@@ -66,7 +71,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -110,4 +115,27 @@
         </div>
     </div>
     <!-- End Convert Log Modal -->
+@endsection
+
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
+
+@section('javascript')
+    {{-- <script type="text/javascript">
+        $(function() {
+            var table = $('#transaksitiket-table').DataTable({
+                // processing: true,
+                serverSide: true,
+                ajax: "",
+                pageLength: 100, // Menampilkan 100 baris secara default
+                lengthMenu: [1, 100, 200, 500, 1000],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Cari..."
+                },
+            });
+
+        });
+    </script> --}}
 @endsection

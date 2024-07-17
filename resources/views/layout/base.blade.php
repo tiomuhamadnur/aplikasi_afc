@@ -9,6 +9,7 @@
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-C3sVekwB.css') }}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <!-- End plugin css for this page -->
@@ -67,6 +68,7 @@
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
+    <script src="{{ asset('build/assets/app-CuY4mDe9.js') }}"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <script src="{{ asset('assets/vendors/chart.js/Chart.min.js') }}"></script>
@@ -80,9 +82,23 @@
     <!-- Custom js for this page -->
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/todolist.js') }}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- End custom js for this page -->
 
+    @stack('scripts')
     @yield('javascript')
+    <script>
+        @if (session('notify'))
+            swal("Yeheeey!", "{{ session('notify') ?? '-' }}", "success");
+        @elseif (session('notifyerror'))
+            swal("Ooopss!", "{{ session('notifyerror') ?? '-' }}", "error");
+        @elseif ($errors->any())
+            @php
+                $messageError = implode('<br>', $errors->all());
+            @endphp
+            swal("Ooopss!", "{{ $messageError }}", "error");
+        @endif
+    </script>
 </body>
 
 </html>

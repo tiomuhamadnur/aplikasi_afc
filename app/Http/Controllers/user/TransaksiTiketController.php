@@ -2,20 +2,61 @@
 
 namespace App\Http\Controllers\user;
 
+use App\DataTables\TransaksiTiketDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\LogAFC;
 use App\Models\TransaksiTiket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class TransaksiTiketController extends Controller
 {
-    public function index()
+    public function index(TransaksiTiketDataTable $dataTable)
     {
-        $transaksi = TransaksiTiket::orderByDesc('tap_out_time')->get();
-        return view('pages.user.transaksi-tiket.index', compact([
-            'transaksi'
-        ]));
+        return $dataTable->render('pages.user.transaksi-tiket.index');
     }
+    public function ftp()
+    {
+        // dd('ok');
+        // Ambil semua file dari direktori tertentu
+        set_time_limit(300);
+        $allFiles = Storage::disk('ftp')->allFiles('/contoh_ftp');
+        // dd($allFiles);
+
+        // Iterasi setiap file dan ambil kontennya
+        foreach ($allFiles as $file) {
+            $fileContent = Storage::disk('ftp')->get($file);
+
+            // Buat file sementara
+            $tempPath = tempnam(sys_get_temp_dir(), 'ftp');
+            file_put_contents($tempPath, $fileContent);
+
+            // Buat instance UploadedFile dari file sementara
+            $uploadedFile = new UploadedFile(
+                $tempPath,
+                basename($file),
+                mime_content_type($tempPath),
+                null,
+                true
+            );
+
+            // Buat request dan tambahkan file ke dalamnya
+            $request = new Request();
+            $request->files->set('logfile', $uploadedFile);
+
+            // Panggil metode import dengan request yang baru dibuat
+            $this->import($request);
+
+            // Hapus file sementara setelah digunakan
+            unlink($tempPath);
+        }
+
+        return redirect()->route('transaksi.tiket.index');
+    }
+
 
     public function create()
     {
@@ -92,21 +133,18 @@ class TransaksiTiketController extends Controller
                 'tap_out_station' => $data2[3],
             ];
 
-            TransaksiTiket::create($item);
+            $existingEntry = TransaksiTiket::where('transaction_id', $item['transaction_id'])->first();
 
-            // Tambahkan data ke dalam array hasil
+            if (!$existingEntry) {
+                TransaksiTiket::create($item);
+            } else {
+                // Jika entry sudah ada, skip atau lakukan tindakan lainnya
+            }
+
             $result[] = $item;
         }
 
         return redirect()->route('transaksi.tiket.index');
-
-        // Ubah array ke dalam format JSON
-        // $jsonResult = json_encode($result, JSON_PRETTY_PRINT);
-
-        // Kembalikan hasil konversi dalam format JSON
-        // return response()->json($jsonResult);
-
-        // echo '<pre>' . htmlspecialchars($jsonResult) . '</pre>';
     }
 
     public function show(string $id)

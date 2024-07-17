@@ -93,9 +93,11 @@ class MonitoringPermitController extends Controller
             'tipe_permit_id' => 'required|numeric',
             'tipe_pekerjaan_id' => 'required|numeric',
             'name' => 'required',
-            'nomor' => 'required',
+            'nomor' => 'required|unique:monitoring_permit,nomor',
             'tanggal_expired' => 'required|date',
             'relasi_area_id' => 'nullable|numeric',
+        ], [
+            'nomor.unique' => 'Data nomor permit yang dimasukkan sudah tersedia.'
         ]);
 
         $departemen_id = auth()->user()->relasi_struktur->departemen->id;

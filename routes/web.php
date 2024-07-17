@@ -27,6 +27,8 @@ use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringPermitController;
+use App\Http\Controllers\user\SamCardController;
+use App\Http\Controllers\user\SamCardHistoryController;
 use App\Http\Controllers\user\TransaksiTiketController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -250,8 +252,25 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::controller(TransaksiTiketController::class)->group(function () {
+        Route::get('/transaksi-tiket/ftp', 'ftp')->name('transaksi.tiket.ftp');
         Route::get('/transaksi-tiket', 'index')->name('transaksi.tiket.index');
         Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
+    });
+
+    Route::controller(SamCardController::class)->group(function () {
+        Route::get('/sam-card', 'index')->name('sam-card.index');
+        Route::post('/sam-card', 'store')->name('sam-card.store');
+        Route::post('/sam-card/merry-code', 'merry_code')->name('sam-card.merry-code.store');
+        Route::get('/sam-card/{uuid}/edit', 'edit')->name('sam-card.edit');
+        Route::post('/sam-card/import', 'import')->name('sam-card.import');
+        Route::put('/sam-card', 'update')->name('sam-card.update');
+        Route::delete('/sam-card', 'destroy')->name('sam-card.delete');
+    });
+
+    Route::controller(SamCardHistoryController::class)->group(function () {
+        Route::get('/sam-history', 'index')->name('sam-history.index');
+        Route::post('/sam-history', 'store')->name('sam-history.store');
+        Route::get('/sam-history/{uuid}/create', 'create')->name('sam-history.create');
     });
 
 });

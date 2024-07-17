@@ -39,6 +39,28 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
+                aria-controls="sam-card">
+                <span class="menu-title">SAM Card</span>
+                <i class="menu-arrow"></i>
+                <i class="mdi mdi mdi-credit-card-scan menu-icon"></i>
+            </a>
+            <div class="collapse" id="sam-card">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('sam-card.index') }}">
+                            <span class="menu-title">Data SAM Card</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('sam-history.index') }}">
+                            <span class="menu-title">History SAM Card</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="#">
                 <span class="menu-title">Transaksi Barang</span>
                 <i class="mdi mdi-repeat menu-icon"></i>
