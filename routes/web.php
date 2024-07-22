@@ -26,6 +26,7 @@ use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\user\LogAfcController;
+use App\Http\Controllers\user\MonitoringEquipmentController;
 use App\Http\Controllers\user\MonitoringPermitController;
 use App\Http\Controllers\user\SamCardController;
 use App\Http\Controllers\user\SamCardHistoryController;
@@ -273,4 +274,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/sam-history/{uuid}/create', 'create')->name('sam-history.create');
     });
 
+    Route::controller(MonitoringEquipmentController::class)->group(function () {
+        Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
+        Route::delete('/monitoring-equipment', 'destroy')->name('monitoring-equipment.delete');
+    });
+});
+
+Route::controller(MonitoringEquipmentController::class)->group(function () {
+    Route::get('/monitoring-equipment/store', 'store')->name('monitoring-equipment.store');
+    Route::get('/client-monitoring-equipment', 'client_index')->name('client.monitoring-equipment.index');
 });

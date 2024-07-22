@@ -72,7 +72,7 @@ class SamCardDataTable extends DataTable
                     ->setTableId('samcard-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(20)
+                    ->pageLength(50)
                     ->lengthMenu([10, 20, 50, 100, 250, 500])
                     //->dom('Bfrtip')
                     ->orderBy(1)

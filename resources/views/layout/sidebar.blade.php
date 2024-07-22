@@ -27,6 +27,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('monitoring-equipment.index') }}">
+                <span class="menu-title">Monitoring Equipment</span>
+                <i class="mdi mdi-monitor-multiple menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('log.index') }}">
                 <span class="menu-title">Log AFC</span>
                 <i class="mdi mdi-file-find menu-icon"></i>
@@ -94,7 +100,8 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('divisi.index') }}">Divisi</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('departemen.index') }}">Departemen</a>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('departemen.index') }}">Departemen</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('seksi.index') }}">Seksi</a>
                         </li>

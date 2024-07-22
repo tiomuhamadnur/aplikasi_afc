@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'pusher' => [
+        'key' => env('VITE_PUSHER_APP_KEY'),
+        'cluster' => env('VITE_PUSHER_APP_CLUSTER'),
+    ],
+
 ];
