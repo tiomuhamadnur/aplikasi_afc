@@ -114,6 +114,7 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         $(document).ready(function() {
+            Pusher.logToConsole = true;
             var pusher = new Pusher('{{ config('services.pusher.key') }}', {
                 cluster: '{{ config('services.pusher.cluster') }}'
             });
