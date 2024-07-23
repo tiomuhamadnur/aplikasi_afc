@@ -13,7 +13,8 @@ return new class extends Migration
             $table->bigInteger('equipment_id')->unsigned()->nullable();
             $table->uuid('uuid')->unique();
             $table->string('status')->nullable();
-            $table->timestamp('waktu');
+            $table->timestamp('waktu')->nullable();
+            $table->timestamp('last_checked_at')->nullable();
             $table->timestamps();
 
             $table->foreign('equipment_id')->on('equipment')->references('id');

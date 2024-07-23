@@ -73,14 +73,11 @@ class MonitoringEquipmentController extends Controller
 
     protected function checkDisconnectedDevices()
     {
-        // $threshold = Carbon::now()->subMinutes(5);
-        $connectedEquipment = MonitoringEquipment::
-                            // where('created_at', '>=', $threshold)
-                            pluck('equipment_id')
-                            ->toArray();
+        $connectedEquipment  = MonitoringEquipment::whereNotNull('last_checked_at')->pluck('equipment_id')->toArray();
 
-        $allDevices = Equipment::pluck('id')->toArray();
-        $disconnectedEquipment = array_diff($allDevices, $connectedEquipment);
+        $allEquipment = Equipment::pluck('id')->toArray();
+
+        $disconnectedEquipment = array_diff($allEquipment, $connectedEquipment);
 
         foreach ($disconnectedEquipment as $equipmentId) {
             MonitoringEquipment::updateOrCreate([
