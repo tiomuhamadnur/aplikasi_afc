@@ -56,7 +56,7 @@ class MonitoringEquipmentController extends Controller
 
         $equipment = Equipment::where('uuid', $request->uuid)->firstOrFail();
 
-        $this->disconnectAllDevices();
+        // $this->disconnectAllDevices();
 
         MonitoringEquipment::updateOrCreate([
             'equipment_id' => $equipment->id,
@@ -96,7 +96,6 @@ class MonitoringEquipmentController extends Controller
     {
         MonitoringEquipment::query()->update([
             'status' => 'disconnected',
-            'waktu' => Carbon::now(),
         ]);
     }
 

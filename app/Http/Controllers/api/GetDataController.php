@@ -10,6 +10,7 @@ class GetDataController extends Controller
 {
     public function data_monitoring_equipment()
     {
+        $this->disconnectAllDevices();
         $subQuery = MonitoringEquipment::selectRaw('MAX(id) as id')->groupBy('equipment_id');
 
         $monitoring_equipment = MonitoringEquipment::whereIn('id', $subQuery)
@@ -18,6 +19,13 @@ class GetDataController extends Controller
             ->get();
 
         return response()->json($monitoring_equipment);
+    }
+
+    protected function disconnectAllDevices()
+    {
+        MonitoringEquipment::query()->update([
+            'status' => 'disconnected',
+        ]);
     }
 
     public function create()
