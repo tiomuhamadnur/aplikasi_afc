@@ -15,46 +15,96 @@
     <div class="content-wrapper d-flex align-items-center auth">
         <div class="row flex-grow">
             <div class="col-lg-4 mx-auto">
-                <div class="auth-form-light text-left p-5">
+                <div class="auth-form-light text-left p-4">
                     <div class="brand-logo text-center">
                         <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
                     </div>
-                    <h4>Ini adalah aplikasi monitoring milik AFC, jangan ditutup!</h4>
-                    <div class="form-group mt-4">
-                        <label for="name">Name</label>
-                        <input id="name" type="text" class="form-control" value="{{ $device->name ?? '' }}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="code">ID</label>
-                        <input id="code" type="text" class="form-control" value="{{ $device->code ?? '' }}"
-                            disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="stasiun">Stasiun</label>
-                        <input id="stasiun" type="text" class="form-control"
-                            value="{{ $device->relasi_area->sub_lokasi->name ?? '' }}" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="corner">Corner</label>
-                        <input id="corner" type="text" class="form-control" value="{{ $device->arah->name ?? '' }}"
-                            disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <input id="status" type="text" class="form-control" value="disconnected" disabled>
+                    <h4>Aplikasi monitoring ini milik AFC, jangan ditutup!</h4>
+                    <div class="table-responsive mt-4">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bolder">
+                                        Name
+                                    </td>
+                                    <td>:</td>
+                                    <td id="nameTable">
+                                        -
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bolder">
+                                        Code
+                                    </td>
+                                    <td>:</td>
+                                    <td id="codeTable">
+                                        -
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bolder">
+                                        Stasiun
+                                    </td>
+                                    <td>:</td>
+                                    <td id="stasiunTable">
+                                        -
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bolder">
+                                        Corner
+                                    </td>
+                                    <td>:</td>
+                                    <td id="cornerTable">
+                                        -
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bolder">
+                                        Status
+                                    </td>
+                                    <td>:</td>
+                                    <td id="statusTable">
+                                        -
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="mt-3 text-end">
-                        <button onclick="connect()"
-                            class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn"
-                            id="connect" style="display: block">
-                            Connect
-                        </button>
+                    <div style="display: none">
+                        <div class="form-group mt-4">
+                            <label for="name">Name</label>
+                            <input id="name" type="text" class="form-control" value="{{ $device->name ?? '' }}"
+                                disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="code">ID</label>
+                            <input id="code" type="text" class="form-control" value="{{ $device->code ?? '' }}"
+                                disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="stasiun">Stasiun</label>
+                            <input id="stasiun" type="text" class="form-control"
+                                value="{{ $device->relasi_area->sub_lokasi->name ?? '' }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="corner">Corner</label>
+                            <input id="corner" type="text" class="form-control"
+                                value="{{ $device->arah->name ?? '' }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <input id="status" type="text" class="form-control" value="disconnected" disabled>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="float">
+            <button type="button" title="Connect" onclick="connect()" class="btn btn-outline-primary btn-rounded btn-icon">
+                <i class="mdi mdi-lan-connect"></i>
+            </button>
             <button type="button" title="Settings" class="btn btn-outline-primary btn-rounded btn-icon"
                 data-bs-toggle="modal" data-bs-target="#settingModal">
                 <i class="mdi mdi-settings"></i>
@@ -142,9 +192,11 @@
                     url: url,
                     success: (response) => {
                         console.log(response.message);
+                        localStorage.setItem('status', 'connected');
                     },
                     error: function(response) {
                         console.log(response);
+                        localStorage.setItem('status', 'disconnected');
                     }
                 });
             });
@@ -160,6 +212,11 @@
                 document.getElementById('stasiun').value = localStorage.getItem('stasiun');
                 document.getElementById('corner').value = localStorage.getItem('corner');
                 document.getElementById('status').value = localStorage.getItem('status');
+                document.getElementById('nameTable').innerHTML = localStorage.getItem('name');
+                document.getElementById('codeTable').innerHTML = localStorage.getItem('code');
+                document.getElementById('stasiunTable').innerHTML = localStorage.getItem('stasiun');
+                document.getElementById('cornerTable').innerHTML = localStorage.getItem('corner');
+                document.getElementById('statusTable').innerHTML = localStorage.getItem('status');
             @endif
 
             if (localStorage.getItem('uuid')) {

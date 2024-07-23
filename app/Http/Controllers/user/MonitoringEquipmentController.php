@@ -56,16 +56,37 @@ class MonitoringEquipmentController extends Controller
 
         $equipment = Equipment::where('uuid', $request->uuid)->firstOrFail();
 
-        MonitoringEquipment::create([
+        MonitoringEquipment::updateOrCreate([
             'equipment_id' => $equipment->id,
+        ], [
             'status' => $request->status,
             'waktu' => Carbon::now(),
         ]);
+
+        $this->checkDisconnectedDevices();
 
         return response()->json([
             'status' => 'ok',
             'message' => 'Data status '. $equipment->name . ' berhasil disimpan',
         ]);
+    }
+
+    protected function checkDisconnectedDevices()
+    {
+        $threshold = Carbon::now()->subMinutes(3);
+        $connectedEquipment = MonitoringEquipment::where('created_at', '>=', $threshold)->pluck('equipment_id')->toArray();
+
+        $allDevices = Equipment::pluck('id')->toArray();
+        $disconnectedEquipment = array_diff($allDevices, $connectedEquipment);
+
+        foreach ($disconnectedEquipment as $equipmentId) {
+            MonitoringEquipment::updateOrCreate([
+                'equipment_id' => $equipmentId,
+            ], [
+                'status' => 'disconnected',
+                'waktu' => Carbon::now(),
+            ]);
+        }
     }
 
     public function show(string $id)
