@@ -132,8 +132,6 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            reload();
-
             $('#deleteModal').on('show.bs.modal', function(e) {
                 var id = $(e.relatedTarget).data('id');
 
