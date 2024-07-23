@@ -56,6 +56,8 @@ class MonitoringEquipmentController extends Controller
 
         $equipment = Equipment::where('uuid', $request->uuid)->firstOrFail();
 
+        $this->disconnectAllDevices();
+
         MonitoringEquipment::updateOrCreate([
             'equipment_id' => $equipment->id,
         ], [
@@ -64,7 +66,7 @@ class MonitoringEquipmentController extends Controller
             'waktu' => Carbon::now(),
         ]);
 
-        $this->checkDisconnectedDevices();
+        // $this->checkDisconnectedDevices();
 
         return response()->json([
             'status' => 'ok',
@@ -81,6 +83,20 @@ class MonitoringEquipmentController extends Controller
         $disconnectedEquipment = array_diff($allEquipment, $connectedEquipment);
 
         foreach ($disconnectedEquipment as $equipmentId) {
+            MonitoringEquipment::updateOrCreate([
+                'equipment_id' => $equipmentId,
+            ], [
+                'status' => 'disconnected',
+                'waktu' => Carbon::now(),
+            ]);
+        }
+    }
+
+    protected function disconnectAllDevices()
+    {
+        $allEquipment = Equipment::where('tipe_equipment', 18)->pluck('id')->toArray();
+
+        foreach ($allEquipment as $equipmentId) {
             MonitoringEquipment::updateOrCreate([
                 'equipment_id' => $equipmentId,
             ], [
