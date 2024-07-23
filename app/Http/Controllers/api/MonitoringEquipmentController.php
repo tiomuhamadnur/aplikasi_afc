@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Events\MonitoringEquipmentEvent;
 use App\Http\Controllers\Controller;
 use App\Models\MonitoringEquipment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 
@@ -31,6 +32,7 @@ class MonitoringEquipmentController extends Controller
     {
         MonitoringEquipment::whereRelation('equipment.tipe_equipment', 'id', '=', 18)->update([
             'status' => 'disconnected',
+            'waktu' => Carbon::now(),
         ]);
     }
 
