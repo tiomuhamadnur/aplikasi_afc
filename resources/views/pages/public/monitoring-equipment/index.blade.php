@@ -161,23 +161,15 @@
 @endsection
 
 @section('javascript')
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         $(document).ready(function() {
-            Pusher.logToConsole = true;
-            var pusher = new Pusher('{{ config('services.pusher.key') }}', {
-                cluster: '{{ config('services.pusher.cluster') }}'
-            });
-
-            var channel = pusher.subscribe('monitoring-equipment-channel');
-            channel.bind('MonitoringEquipmentEvent', function(dataRaw) {
-                var dataString = JSON.stringify(dataRaw)
-                var data = JSON.parse(dataString);
-
-                if (data.command === 'check-status') {
-                    $('#trigger').click();
-                }
-            });
+            window.Echo.channel('monitoring-equipment-channel')
+                .listen('.MonitoringEquipmentEvent', (e) => {
+                    console.log('Data Event:', e);
+                    if (e.command === 'check-status') {
+                        $('#trigger').click();
+                    }
+                });
 
             $('#trigger').click(function(e) {
                 e.preventDefault();

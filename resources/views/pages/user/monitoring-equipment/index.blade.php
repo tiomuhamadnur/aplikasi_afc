@@ -3,6 +3,49 @@
 @section('title-head')
     <title>Monitoring Equipment</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card-device {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            background-color: white;
+        }
+
+        .card-header-device {
+            background-color: #e100ff;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+
+        .card-body-device {
+            padding: 10px 15px;
+        }
+
+        .status-online {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-offline {
+            color: red;
+            font-weight: bold;
+        }
+
+        .table-borderless td,
+        .table-borderless th {
+            border: 0;
+            padding: 2px 5px;
+            /* Mengurangi padding antar baris */
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -31,70 +74,29 @@
                             <i class="mdi mdi-eye"></i>
                         </button>
                         <div class="mt-3">
-                            {{-- <div class="row">
+                            <div class="row">
                                 @foreach ($monitoring_equipment as $item)
-                                    <div class="col-md-4 grid-margin">
-                                        <div class="card bg-gradient-success card-img-holder text-white">
-                                            <div class="card-body">
-                                                <img src="assets/images/dashboard/circle.svg" class="card-img-absolute"
-                                                    alt="circle-image" />
-                                                <h4 class="font-weight-normal mb-3">
-                                                    {{ $item->equipment->code ?? '-' }}
-                                                </h4>
-                                                <h3 class="card-text mb-3">{{ $item->status }}</h3>
-                                                <h6 class="card-text">
-                                                    {{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}</h6>
-                                                <h6 class="card-text">{{ $item->waktu }}</h6>
+                                    <div class="col-lg-3 col-md-4 col-sm-6">
+                                        <div class="card-device">
+                                            <div class="card-header-device bg-gradient-primary text-center">
+                                                <h4>{{ $item->equipment->name ?? '-' }}</h4>
+                                            </div>
+                                            <div class="card-body-device">
+                                                <div class="table">
+                                                    {{-- <p><strong>Code :</strong> {{ $item->equipment->code ?? '-' }}</p> --}}
+                                                    <p><strong>Stasiun :</strong>
+                                                        {{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}</p>
+                                                    <p><strong>Corner :</strong> {{ $item->equipment->arah->name ?? '-' }}
+                                                    </p>
+                                                    <p><strong>Status :</strong> <span
+                                                            class="@if ($item->status == 'connected') status-online @else status-offline @endif">{{ $item->status }}</span>
+                                                    </p>
+                                                    <p><strong>Waktu :</strong> {{ $item->waktu }}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
-                            </div> --}}
-                            <div class="table-responsive">
-                                <table class="table .table-hover text-center">
-                                    <thead>
-                                        <tr>
-                                            <th> # </th>
-                                            <th> Lokasi </th>
-                                            <th> Equiment ID</th>
-                                            <th> Status </th>
-                                            <th> Tanggal </th>
-                                            <th> Aksi </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="equipmentTableBody">
-                                        @foreach ($monitoring_equipment as $item)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    @if ($item->equipment->relasi_area_id != null)
-                                                        {{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </td>
-                                                <td>{{ $item->equipment->code ?? '-' }}</td>
-                                                <td>
-                                                    <label
-                                                        class="badge @if ($item->status == 'connected') badge-gradient-success @else badge-gradient-danger @endif text-uppercase">
-                                                        {{ $item->status }}
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    {{ $item->waktu }}
-                                                </td>
-                                                <td>
-                                                    <button type="button" title="Delete"
-                                                        class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="{{ $item->id }}">
-                                                        <i class="mdi mdi-delete"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
@@ -132,6 +134,11 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
+            window.Echo.channel('monitoring-equipment-channel')
+                .listen('.MonitoringEquipmentEvent', (e) => {
+                    console.log('Command:', e.command);
+                });
+
             $('#deleteModal').on('show.bs.modal', function(e) {
                 var id = $(e.relatedTarget).data('id');
 
@@ -146,7 +153,10 @@
                 url: url,
                 success: (response) => {
                     console.log(response.message);
-                    reload();
+                    // reload();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
                 },
                 error: function(response) {
                     console.log(response);
@@ -184,7 +194,9 @@
                 //         </tr>
                 //     `);
                     // });
-                    location.reload();
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 5000);
                 },
                 error: function(response) {
                     console.log(response);

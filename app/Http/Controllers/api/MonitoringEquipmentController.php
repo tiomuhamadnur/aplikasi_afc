@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Events\MonitoringEquipmentEvent;
 use App\Http\Controllers\Controller;
+use App\Models\MonitoringEquipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 
@@ -11,6 +12,8 @@ class MonitoringEquipmentController extends Controller
 {
     public function check_status()
     {
+        $this->disconnectAllDevices();
+
         $data = [
             'secret' => 'tiomuhamadnur',
             'command' => 'check-status'
@@ -21,6 +24,13 @@ class MonitoringEquipmentController extends Controller
         return response()->json([
             'status' => 'ok',
             'message' => 'The data event was successfully triggered',
+        ]);
+    }
+
+    protected function disconnectAllDevices()
+    {
+        MonitoringEquipment::whereRelation('equipment.tipe_equipment', 'id', '=', 18)->update([
+            'status' => 'disconnected',
         ]);
     }
 

@@ -94,7 +94,7 @@ class MonitoringEquipmentController extends Controller
 
     protected function disconnectAllDevices()
     {
-        MonitoringEquipment::query()->update([
+        MonitoringEquipment::whereRelation('equipment.tipe_equipment', 'id', '=', 18)->update([
             'status' => 'disconnected',
         ]);
     }
