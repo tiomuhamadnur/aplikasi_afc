@@ -88,8 +88,13 @@
                                                         {{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}</p>
                                                     <p><strong>Corner :</strong> {{ $item->equipment->arah->name ?? '-' }}
                                                     </p>
-                                                    <p><strong>Status :</strong> <span
+                                                    {{-- <p><strong>Status :</strong> <span
                                                             class="@if ($item->status == 'connected') status-online @else status-offline @endif">{{ $item->status }}</span>
+                                                    </p> --}}
+                                                    <p><strong>Status :</strong> <span
+                                                            class="badge @if ($item->status == 'connected') badge-gradient-success @else badge-gradient-danger @endif text-uppercase">
+                                                            {{ $item->status }}
+                                                        </span>
                                                     </p>
                                                     <p><strong>Waktu :</strong> {{ $item->waktu }}</p>
                                                 </div>
