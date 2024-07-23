@@ -94,16 +94,10 @@ class MonitoringEquipmentController extends Controller
 
     protected function disconnectAllDevices()
     {
-        $allEquipment = Equipment::where('tipe_equipment_id', 18)->pluck('id')->toArray();
-
-        foreach ($allEquipment as $equipmentId) {
-            MonitoringEquipment::updateOrCreate([
-                'equipment_id' => $equipmentId,
-            ], [
-                'status' => 'disconnected',
-                'waktu' => Carbon::now(),
-            ]);
-        }
+        MonitoringEquipment::query()->update([
+            'status' => 'disconnected',
+            'waktu' => Carbon::now(),
+        ]);
     }
 
     public function show(string $id)

@@ -63,7 +63,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="equipmentTableBody">
-                                        {{-- @foreach ($monitoring_equipment as $item)
+                                        @foreach ($monitoring_equipment as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>
@@ -92,7 +92,7 @@
                                                     </button>
                                                 </td>
                                             </tr>
-                                        @endforeach --}}
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -161,31 +161,32 @@
                 type: 'GET',
                 url: "{{ route('api.data.monitoring-equipment') }}",
                 success: (data) => {
-                    let tbody = $('#equipmentTableBody');
-                    tbody.empty(); // Clear the table body
+                    // let tbody = $('#equipmentTableBody');
+                    // tbody.empty(); // Clear the table body
 
-                    $.each(data, function(index, item) {
-                        let areaName = item.equipment && item.equipment.relasi_area && item.equipment
-                            .relasi_area.sub_lokasi ? item.equipment.relasi_area.sub_lokasi.name : '-';
-                        let code = item.equipment ? item.equipment.code : '-';
-                        let statusClass = item.status === 'connected' ? 'badge-gradient-success' :
-                            'badge-gradient-danger';
+                    // $.each(data, function(index, item) {
+                    //     let areaName = item.equipment && item.equipment.relasi_area && item.equipment
+                    //         .relasi_area.sub_lokasi ? item.equipment.relasi_area.sub_lokasi.name : '-';
+                    //     let code = item.equipment ? item.equipment.code : '-';
+                    //     let statusClass = item.status === 'connected' ? 'badge-gradient-success' :
+                    //         'badge-gradient-danger';
 
-                        tbody.append(`
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${areaName}</td>
-                                <td>${code}</td>
-                                <td><label class="badge ${statusClass} text-uppercase">${item.status}</label></td>
-                                <td>${item.waktu}</td>
-                                <td>
-                                    <button type="button" title="Delete" class="btn btn-gradient-danger btn-rounded btn-icon" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="${item.id}">
-                                        <i class="mdi mdi-delete"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `);
-                    });
+                    //     tbody.append(`
+                //         <tr>
+                //             <td>${index + 1}</td>
+                //             <td>${areaName}</td>
+                //             <td>${code}</td>
+                //             <td><label class="badge ${statusClass} text-uppercase">${item.status}</label></td>
+                //             <td>${item.waktu}</td>
+                //             <td>
+                //                 <button type="button" title="Delete" class="btn btn-gradient-danger btn-rounded btn-icon" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="${item.id}">
+                //                     <i class="mdi mdi-delete"></i>
+                //                 </button>
+                //             </td>
+                //         </tr>
+                //     `);
+                    // });
+                    location.reload();
                 },
                 error: function(response) {
                     console.log(response);
