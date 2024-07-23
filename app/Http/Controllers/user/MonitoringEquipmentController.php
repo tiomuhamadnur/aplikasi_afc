@@ -60,6 +60,7 @@ class MonitoringEquipmentController extends Controller
             'equipment_id' => $equipment->id,
         ], [
             'status' => $request->status,
+            'last_checked_at' => Carbon::now(),
             'waktu' => Carbon::now(),
         ]);
 
