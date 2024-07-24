@@ -15,7 +15,7 @@
                     <div class="input-group-prepend bg-transparent">
                         <i class="input-group-text border-0 mdi mdi-magnify"></i>
                     </div>
-                    <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
+                    <input type="text" class="form-control bg-transparent border-0" placeholder="Cari data">
                 </div>
             </form>
         </div>

@@ -11,11 +11,10 @@ class GetDataController extends Controller
 {
     public function data_monitoring_equipment()
     {
-        $this->disconnectAllDevices();
         $subQuery = MonitoringEquipment::selectRaw('MAX(id) as id')->groupBy('equipment_id');
 
         $monitoring_equipment = MonitoringEquipment::whereIn('id', $subQuery)
-            ->with(['equipment.relasi_area.sub_lokasi'])
+            ->with(['equipment.relasi_area.sub_lokasi', 'equipment.arah'])
             ->orderBy('created_at', 'desc')
             ->get();
 

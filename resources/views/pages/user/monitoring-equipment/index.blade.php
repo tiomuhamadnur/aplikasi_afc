@@ -46,6 +46,7 @@
             /* Mengurangi padding antar baris */
         }
     </style>
+    @livewireStyles
 @endsection
 
 @section('content')
@@ -74,7 +75,7 @@
                             <i class="mdi mdi-eye"></i>
                         </button>
                         <div class="mt-3">
-                            <div class="row">
+                            <div class="row" id="equipmentContainer">
                                 @foreach ($monitoring_equipment as $item)
                                     <div class="col-lg-3 col-md-4 col-sm-6">
                                         <div class="card-device">
@@ -107,30 +108,7 @@
         </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="deleteForm" action="{{ route('monitoring-equipment.delete') }}" method="POST"
-                        class="forms-sample">
-                        @csrf
-                        @method('delete')
-                        <input type="text" name="id" id="id_delete" hidden>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="deleteForm" class="btn btn-gradient-danger me-2">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Delete Modal -->
+    @livewireScripts
 @endsection
 
 @section('javascript')
@@ -140,12 +118,6 @@
                 .listen('.MonitoringEquipmentEvent', (e) => {
                     console.log('Command:', e.command);
                 });
-
-            $('#deleteModal').on('show.bs.modal', function(e) {
-                var id = $(e.relatedTarget).data('id');
-
-                $('#id_delete').val(id);
-            });
         });
 
         function check() {
@@ -154,11 +126,11 @@
                 type: 'GET',
                 url: url,
                 success: (response) => {
-                    console.log(response.message);
-                    // reload();
                     setTimeout(() => {
-                        location.reload();
-                    }, 3000);
+                        reload();
+                        // this.Livewire.emit('loadData');
+                    }, 1000);
+                    console.log(response.message);
                 },
                 error: function(response) {
                     console.log(response);
@@ -171,34 +143,41 @@
                 type: 'GET',
                 url: "{{ route('api.data.monitoring-equipment') }}",
                 success: (data) => {
-                    // let tbody = $('#equipmentTableBody');
-                    // tbody.empty(); // Clear the table body
+                    let container = $('#equipmentContainer');
+                    container.empty(); // Clear the container
 
-                    // $.each(data, function(index, item) {
-                    //     let areaName = item.equipment && item.equipment.relasi_area && item.equipment
-                    //         .relasi_area.sub_lokasi ? item.equipment.relasi_area.sub_lokasi.name : '-';
-                    //     let code = item.equipment ? item.equipment.code : '-';
-                    //     let statusClass = item.status === 'connected' ? 'badge-gradient-success' :
-                    //         'badge-gradient-danger';
+                    $.each(data, function(index, item) {
+                        let areaName = item.equipment && item.equipment.relasi_area && item
+                            .equipment
+                            .relasi_area.sub_lokasi ? item.equipment.relasi_area.sub_lokasi
+                            .name : '-';
+                        let directionName = item.equipment && item.equipment.arah ? item
+                            .equipment.arah.name : '-';
+                        let statusClass = item.status === 'connected' ?
+                            'bg-gradient-success' : 'bg-gradient-danger';
+                        let badgeClass = item.status === 'connected' ?
+                            'badge-gradient-success' : 'badge-gradient-danger';
 
-                    //     tbody.append(`
-                //         <tr>
-                //             <td>${index + 1}</td>
-                //             <td>${areaName}</td>
-                //             <td>${code}</td>
-                //             <td><label class="badge ${statusClass} text-uppercase">${item.status}</label></td>
-                //             <td>${item.waktu}</td>
-                //             <td>
-                //                 <button type="button" title="Delete" class="btn btn-gradient-danger btn-rounded btn-icon" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="${item.id}">
-                //                     <i class="mdi mdi-delete"></i>
-                //                 </button>
-                //             </td>
-                //         </tr>
-                //     `);
-                    // });
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 5000);
+                        container.append(`
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="card-device">
+                                        <div class="card-header-device ${statusClass} fw-bolder text-center">
+                                            <h4>${item.equipment ? item.equipment.name : '-'}</h4>
+                                        </div>
+                                        <div class="card-body-device">
+                                            <div class="table">
+                                                <p><strong>Stasiun :</strong> ${areaName}</p>
+                                                <p><strong>Corner :</strong> ${directionName}</p>
+                                                <p><strong>Status :</strong>
+                                                    <span class="badge ${badgeClass} text-uppercase">${item.status}</span>
+                                                </p>
+                                                <p><strong>Waktu :</strong> ${item.waktu}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                `);
+                    });
                 },
                 error: function(response) {
                     console.log(response);
