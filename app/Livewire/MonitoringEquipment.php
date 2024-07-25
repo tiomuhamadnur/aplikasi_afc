@@ -3,35 +3,31 @@
 namespace App\Livewire;
 
 use App\Models\MonitoringEquipment as ModelsMonitoringEquipment;
+use App\Models\RelasiArea;
 use Livewire\Component;
 
 class MonitoringEquipment extends Component
 {
-    public $search;
-    public $monitoring_equipment;
-
-    protected $listeners = ['loadData'];
-
-    public function mount()
-    {
-        $this->loadData();
-    }
-
-    public function loadData()
-    {
-        $subQuery = ModelsMonitoringEquipment::selectRaw('MAX(id) as id')->groupBy('equipment_id');
-
-        $monitoring_equipment = ModelsMonitoringEquipment::whereIn('id', $subQuery)
-            ->where('status', 'LIKE', '%'.$this->search.'%')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $this->monitoring_equipment = $monitoring_equipment;
-    }
-
+    public $area_id = '';
+    protected $listeners = ['reload'];
 
     public function render()
     {
-        return view('livewire.monitoring-equipment');
+        $subQuery = ModelsMonitoringEquipment::selectRaw('MAX(id) as id')->groupBy('equipment_id');
+
+        $data = ModelsMonitoringEquipment::query()->whereIn('id', $subQuery);
+
+        $data->when($this->area_id, function ($query) {
+            return $query->whereRelation('equipment.relasi_area', 'id', '=', $this->area_id);
+        });
+
+        $monitoring_equipment = $data->orderBy('created_at', 'desc')->get();
+
+        $area = RelasiArea::where('lokasi_id', 2)->get();
+
+        return view('livewire.monitoring-equipment', compact([
+            'monitoring_equipment',
+            'area'
+        ]));
     }
 }

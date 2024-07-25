@@ -75,32 +75,7 @@
                             <i class="mdi mdi-eye"></i>
                         </button>
                         <div class="mt-3">
-                            <div class="row" id="equipmentContainer">
-                                @foreach ($monitoring_equipment as $item)
-                                    <div class="col-lg-3 col-md-4 col-sm-6">
-                                        <div class="card-device">
-                                            <div
-                                                class="card-header-device @if ($item->status == 'connected') bg-gradient-success @else bg-gradient-danger @endif fw-bolder text-center">
-                                                <h4>{{ $item->equipment->name ?? '-' }}</h4>
-                                            </div>
-                                            <div class="card-body-device">
-                                                <div class="table">
-                                                    <p><strong>Stasiun :</strong>
-                                                        {{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}</p>
-                                                    <p><strong>Corner :</strong> {{ $item->equipment->arah->name ?? '-' }}
-                                                    </p>
-                                                    <p><strong>Status :</strong> <span
-                                                            class="badge @if ($item->status == 'connected') badge-gradient-success @else badge-gradient-danger @endif text-uppercase">
-                                                            {{ $item->status }}
-                                                        </span>
-                                                    </p>
-                                                    <p><strong>Waktu :</strong> {{ $item->waktu }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                            @livewire('monitoring-equipment')
                         </div>
                     </div>
                 </div>
@@ -127,57 +102,9 @@
                 url: url,
                 success: (response) => {
                     setTimeout(() => {
-                        reload();
-                        // this.Livewire.emit('loadData');
+                        Livewire.dispatch('reload');
                     }, 1000);
                     console.log(response.message);
-                },
-                error: function(response) {
-                    console.log(response);
-                }
-            });
-        }
-
-        function reload() {
-            $.ajax({
-                type: 'GET',
-                url: "{{ route('api.data.monitoring-equipment') }}",
-                success: (data) => {
-                    let container = $('#equipmentContainer');
-                    container.empty(); // Clear the container
-
-                    $.each(data, function(index, item) {
-                        let areaName = item.equipment && item.equipment.relasi_area && item
-                            .equipment
-                            .relasi_area.sub_lokasi ? item.equipment.relasi_area.sub_lokasi
-                            .name : '-';
-                        let directionName = item.equipment && item.equipment.arah ? item
-                            .equipment.arah.name : '-';
-                        let statusClass = item.status === 'connected' ?
-                            'bg-gradient-success' : 'bg-gradient-danger';
-                        let badgeClass = item.status === 'connected' ?
-                            'badge-gradient-success' : 'badge-gradient-danger';
-
-                        container.append(`
-                                <div class="col-lg-3 col-md-4 col-sm-6">
-                                    <div class="card-device">
-                                        <div class="card-header-device ${statusClass} fw-bolder text-center">
-                                            <h4>${item.equipment ? item.equipment.name : '-'}</h4>
-                                        </div>
-                                        <div class="card-body-device">
-                                            <div class="table">
-                                                <p><strong>Stasiun :</strong> ${areaName}</p>
-                                                <p><strong>Corner :</strong> ${directionName}</p>
-                                                <p><strong>Status :</strong>
-                                                    <span class="badge ${badgeClass} text-uppercase">${item.status}</span>
-                                                </p>
-                                                <p><strong>Waktu :</strong> ${item.waktu}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                `);
-                    });
                 },
                 error: function(response) {
                     console.log(response);

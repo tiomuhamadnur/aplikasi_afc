@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
 </head>
 
 <body>
@@ -83,6 +84,7 @@
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
     <!-- End custom js for this page -->
 
     @stack('scripts')

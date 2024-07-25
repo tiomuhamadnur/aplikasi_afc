@@ -1,4 +1,12 @@
-<div>
+<div class="row" id="equipmentContainer">
+    <div class="mb-3">
+        <select class="form-control form-control-lg" wire:model.live='area_id'>
+            <option value="" selected disabled>- Filter Stasiun -</option>
+            @foreach ($area as $item)
+                <option value="{{ $item->id }}">{{ $item->sub_lokasi->name ?? '-' }}</option>
+            @endforeach
+        </select>
+    </div>
     @foreach ($monitoring_equipment as $item)
         <div class="col-lg-3 col-md-4 col-sm-6">
             <div class="card-device">

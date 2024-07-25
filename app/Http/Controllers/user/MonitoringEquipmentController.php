@@ -23,7 +23,7 @@ class MonitoringEquipmentController extends Controller
             ->get();
 
         return view('pages.user.monitoring-equipment.index', compact([
-            'monitoring_equipment'
+            // 'monitoring_equipment'
         ]));
     }
 
