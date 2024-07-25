@@ -138,7 +138,7 @@
                                         style="max-width: 250px; max-height: 250px;">
                                 </div>
                                 <input type="file" class="form-control" id="photo" name="photo"
-                                    autocomplete="off" accept="image/*" required>
+                                    autocomplete="off" accept="image/*">
                             </div>
                             <div class="form-group d-flex justify-content-end">
                                 <a href="{{ route('barang.index') }}" type="button"

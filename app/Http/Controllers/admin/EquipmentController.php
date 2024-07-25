@@ -194,13 +194,13 @@ class EquipmentController extends Controller
             ]);
         }
 
-        return redirect()->route('equipment.index');
+        return redirect()->route('equipment.index')->withNotify('Data berhasil diubah');
     }
 
     public function destroy(Request $request)
     {
         $request->validate([
-            'id' => 'required',
+            'id' => 'required|numeric',
         ]);
 
         $data = Equipment::findOrFail($request->id);

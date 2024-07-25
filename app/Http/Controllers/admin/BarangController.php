@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\BarangDataTable;
 use App\Http\Controllers\Controller;
 use App\Imports\BarangImport;
+use App\Models\Arah;
 use App\Models\Barang;
-use App\Models\LogAFC;
 use App\Models\RelasiArea;
 use App\Models\RelasiStruktur;
 use App\Models\Satuan;
@@ -17,21 +18,38 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class BarangController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $barang = Barang::all();
+
+    //     $area = RelasiArea::orderBy('lokasi_id', 'ASC')->orderBy('sub_lokasi_id', 'ASC')->orderBy('detail_lokasi_id', 'ASC')->get();
+    //     $tipe_barang = TipeBarang::orderBy('name', 'ASC')->get();
+    //     $satuan = Satuan::orderBy('name', 'ASC')->get();
+    //     $struktur = RelasiStruktur::all();
+
+    //     return view('pages.admin.barang.index', compact([
+    //         'barang',
+    //         'area',
+    //         'tipe_barang',
+    //         'satuan',
+    //         'struktur',
+    //     ]));
+    // }
+
+    public function index(BarangDataTable $dataTable)
     {
-        $barang = Barang::all();
-
-        $area = RelasiArea::orderBy('lokasi_id', 'ASC')->orderBy('sub_lokasi_id', 'ASC')->orderBy('detail_lokasi_id', 'ASC')->get();
-        $tipe_barang = TipeBarang::orderBy('name', 'ASC')->get();
-        $satuan = Satuan::orderBy('name', 'ASC')->get();
+        $tipe_barang = TipeBarang::all();
+        $area = RelasiArea::all();
         $struktur = RelasiStruktur::all();
+        $arah = Arah::all();
+        $satuan = Satuan::all();
 
-        return view('pages.admin.barang.index', compact([
-            'barang',
-            'area',
+        return $dataTable->render('pages.admin.barang.index', compact([
             'tipe_barang',
-            'satuan',
+            'area',
             'struktur',
+            'arah',
+            'satuan'
         ]));
     }
 
@@ -87,7 +105,7 @@ class BarangController extends Controller
             ]);
         }
 
-        return redirect()->route('barang.index');
+        return redirect()->route('barang.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function import(Request $request)
@@ -105,7 +123,7 @@ class BarangController extends Controller
             Excel::import(new BarangImport($relasi_struktur_id), $file);
         }
 
-        return redirect()->route('barang.index');
+        return redirect()->route('barang.index')->withNotify('Data berhasil diimport');
     }
 
     public function edit(string $uuid)
@@ -139,7 +157,7 @@ class BarangController extends Controller
             'relasi_struktur_id' => 'required|numeric',
             'tipe_barang_id' => 'required|numeric',
             'satuan_id' => 'required|numeric',
-            'photo' => 'image',
+            'photo' => 'file|image',
         ]);
 
         $barang = Barang::findOrFail($request->id);
@@ -180,11 +198,18 @@ class BarangController extends Controller
             ]);
         }
 
-        return redirect()->route('barang.index');
+        return redirect()->route('barang.index')->withNotify('Data berhasil diubah');
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        $request->validate([
+            'id' => 'required|numeric',
+        ]);
+
+        $data = Barang::findOrFail($request->id);
+        $data->delete();
+
+        return redirect()->route('barang.index')->withNotify('Data berhasil dihapus');
     }
 }

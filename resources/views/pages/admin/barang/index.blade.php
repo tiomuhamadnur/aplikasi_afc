@@ -25,50 +25,49 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center table-responsive">
+                            {{ $dataTable->table() }}
+                            {{-- <table class="table table-bordered table-responsive">
                                 <thead>
                                     <tr>
-                                        <th> # </th>
-                                        <th> Nama </th>
-                                        <th> Spesifikasi </th>
-                                        <th> Material <br> Number </th>
-                                        <th> Tipe Barang </th>
-                                        <th> Lokasi </th>
-                                        <th> Detail </th>
-                                        <th> Aksi </th>
+                                        <th class="text-center"> # </th>
+                                        <th class="text-center"> Material <br> Number </th>
+                                        <th class="text-center"> Nama </th>
+                                        <th class="text-center"> Tipe Barang </th>
+                                        <th class="text-center"> Lokasi </th>
+                                        <th class="text-center"> Detail </th>
+                                        <th class="text-center"> Aksi </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($barang as $item)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td class="text-wrap font-weight-bold">{{ $item->name }}</td>
-                                            <td class="text-wrap">{{ $item->spesifikasi }}</td>
-                                            <td class="font-weight-bold">{{ $item->material_number }}</td>
-                                            <td>{{ $item->tipe_barang->name ?? '-' }}</td>
-                                            <td>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td class="text-center">{{ $item->material_number ?? '-' }}</td>
+                                            <td class="text-wrap">{{ $item->name ?? '-' }}</td>
+                                            <td class="text-center">{{ $item->tipe_barang->name ?? '-' }}</td>
+                                            <td class="text-center">
                                                 {{ $item->relasi_area->lokasi->name ?? '-' }} <br>
                                                 {{ $item->relasi_area->sub_lokasi->name ?? '-' }} <br>
                                                 {{ $item->relasi_area->detail_lokasi->name ?? '-' }}
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <button type="button" title="Show"
                                                     class="btn btn-gradient-success btn-rounded btn-icon"
                                                     data-bs-toggle="modal" data-bs-target="#photoModal"
                                                     data-photo='{{ asset('storage/' . $item->photo) }}'
-                                                    data-name="{{ $item->name }}"
-                                                    data-spesifikasi="{{ $item->spesifikasi }}"
-                                                    data-material_number="{{ $item->material_number }}"
-                                                    data-serial_number="{{ $item->serial_number }}"
-                                                    data-tipe_barang="{{ $item->tipe_barang->name ?? '#' }}"
+                                                    data-name="{{ $item->name ?? '-' }}"
+                                                    data-spesifikasi="{{ $item->spesifikasi ?? '-' }}"
+                                                    data-material_number="{{ $item->material_number ?? '-' }}"
+                                                    data-serial_number="{{ $item->serial_number ?? '-' }}"
+                                                    data-tipe_barang="{{ $item->tipe_barang->name ?? '-' }}"
                                                     data-lokasi="{{ $item->relasi_area->lokasi->name ?? '#' }} - {{ $item->relasi_area->sub_lokasi->name ?? '#' }} - {{ $item->relasi_area->detail_lokasi->name ?? '#' }}"
                                                     data-owner="{{ $item->relasi_struktur->divisi->name ?? '#' }} - {{ $item->relasi_struktur->departemen->name ?? '#' }} - {{ $item->relasi_struktur->seksi->name ?? '#' }}"
-                                                    data-satuan="{{ $item->satuan->code ?? '#' }}"
-                                                    data-deskripsi="{{ $item->deskripsi }}">
+                                                    data-satuan="{{ $item->satuan->code ?? '-' }}"
+                                                    data-deskripsi="{{ $item->deskripsi ?? '-' }}">
                                                     <i class="mdi mdi-eye"></i>
                                                 </button>
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <a href="{{ route('barang.edit', $item->uuid) }}">
                                                     <button type="button" title="Edit"
                                                         class="btn btn-gradient-warning btn-rounded btn-icon">
@@ -83,7 +82,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -126,8 +125,7 @@
                         </div>
                         <div class="form-group">
                             <label for="tipe_barang_id">Tipe Barang</label>
-                            <select class="form-control form-control-lg" id="tipe_barang_id" name="tipe_barang_id"
-                                required>
+                            <select class="form-control form-control-lg" id="tipe_barang_id" name="tipe_barang_id" required>
                                 <option value="" selected disabled>- pilih tipe barang -</option>
                                 @foreach ($tipe_barang as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -136,8 +134,8 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_struktur_id">Owner</label>
-                            <select class="form-control form-control-lg" id="relasi_struktur_id"
-                                name="relasi_struktur_id" required>
+                            <select class="form-control form-control-lg" id="relasi_struktur_id" name="relasi_struktur_id"
+                                required>
                                 <option value="" selected disabled>- pilih owner -</option>
                                 @foreach ($struktur as $item)
                                     <option value="{{ $item->id }}">Divisi {{ $item->divisi->code }} -
@@ -315,7 +313,35 @@
         </div>
     </div>
     <!-- End Photo Modal -->
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deleteForm" action="{{ route('barang.delete') }}" method="POST" class="forms-sample">
+                        @csrf
+                        @method('delete')
+                        <input type="text" name="id" id="id_delete" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="deleteForm" class="btn btn-gradient-danger me-2">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Delete Modal -->
 @endsection
+
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
 
 @section('javascript')
     <script>
@@ -359,6 +385,12 @@
             document.getElementById("owner_modal").innerText = owner;
             document.getElementById("satuan_modal").innerText = satuan;
             document.getElementById("deskripsi_modal").innerText = deskripsi;
+        });
+
+        $('#deleteModal').on('show.bs.modal', function(e) {
+            var id = $(e.relatedTarget).data('id');
+
+            $('#id_delete').val(id);
         });
     </script>
 @endsection
