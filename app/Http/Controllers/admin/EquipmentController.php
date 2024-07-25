@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\EquipmentDataTable;
 use App\Http\Controllers\Controller;
 use App\Imports\EquipmentImport;
 use App\Models\Arah;
@@ -16,16 +17,31 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EquipmentController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $equipment = Equipment::all();
+    //     $tipe_equipment = TipeEquipment::all();
+    //     $area = RelasiArea::all();
+    //     $struktur = RelasiStruktur::all();
+    //     $arah = Arah::all();
+
+    //     return view('pages.admin.equipment.index', compact([
+    //         'equipment',
+    //         'tipe_equipment',
+    //         'area',
+    //         'struktur',
+    //         'arah',
+    //     ]));
+    // }
+
+    public function index(EquipmentDataTable $dataTable)
     {
-        $equipment = Equipment::all();
         $tipe_equipment = TipeEquipment::all();
         $area = RelasiArea::all();
         $struktur = RelasiStruktur::all();
         $arah = Arah::all();
 
-        return view('pages.admin.equipment.index', compact([
-            'equipment',
+        return $dataTable->render('pages.admin.equipment.index', compact([
             'tipe_equipment',
             'area',
             'struktur',

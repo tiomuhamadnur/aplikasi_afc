@@ -47,7 +47,7 @@ class SamCardHistoryDataTable extends DataTable
                     ->pageLength(50)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy(1)
+                    ->orderBy([0, 'asc'])
                     ->selectStyleSingle()
                     ->buttons([
                         // Button::make('excel'),

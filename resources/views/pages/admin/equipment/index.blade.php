@@ -25,7 +25,8 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
+                            {{ $dataTable->table() }}
+                            {{-- <table class="table table-bordered text-center">
                                 <thead>
                                     <tr>
                                         <th> # </th>
@@ -86,7 +87,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -135,8 +136,7 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_area_id">Area</label>
-                            <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id"
-                                required>
+                            <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id" required>
                                 <option value="" selected disabled>- pilih area spesifik -</option>
                                 @foreach ($area as $item)
                                     <option value="{{ $item->id }}">{{ $item->lokasi->name }} -
@@ -146,8 +146,8 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_struktur_id">Owner</label>
-                            <select class="form-control form-control-lg" id="relasi_struktur_id"
-                                name="relasi_struktur_id" required>
+                            <select class="form-control form-control-lg" id="relasi_struktur_id" name="relasi_struktur_id"
+                                required>
                                 <option value="" selected disabled>- pilih owner -</option>
                                 @foreach ($struktur as $item)
                                     <option value="{{ $item->id }}">{{ $item->divisi->name }} -
@@ -339,6 +339,10 @@
     </div>
     <!-- End Delete Modal -->
 @endsection
+
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
 
 @section('javascript')
     <script>
