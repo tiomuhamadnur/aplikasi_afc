@@ -25,9 +25,9 @@
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
-                        <a href="{{ route('transaksi.tiket.ftp') }}" title="Sync">
+                        {{-- <a href="{{ route('transaksi.tiket.ftp') }}" title="Sync">
                             <span><i class="mdi mdi-refresh"></i></span>
-                        </a>
+                        </a> --}}
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
                             {{-- <table class="table table-hover text-center data-table">

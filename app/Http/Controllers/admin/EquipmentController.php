@@ -84,7 +84,7 @@ class EquipmentController extends Controller
             ]);
         }
 
-        return redirect()->route('equipment.index');
+        return redirect()->route('equipment.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function import(Request $request)
@@ -103,7 +103,7 @@ class EquipmentController extends Controller
             Excel::import(new EquipmentImport($relasi_struktur_id), $file);
         }
 
-        return redirect()->route('equipment.index');
+        return redirect()->route('equipment.index')->withNotify('Data berhasil diimport');
     }
 
     public function edit(string $uuid)
@@ -190,6 +190,6 @@ class EquipmentController extends Controller
         $data = Equipment::findOrFail($request->id);
         $data->delete();
 
-        return redirect()->route('equipment.index');
+        return redirect()->route('equipment.index')->withNotify('Data berhasil dihapus');
     }
 }

@@ -53,15 +53,10 @@
             </a>
             <div class="collapse" id="sam-card">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('sam-card.index') }}">
-                            <span class="menu-title">Data SAM Card</span>
-                        </a>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('sam-card.index') }}">Data SAM Card</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('sam-history.index') }}">
-                            <span class="menu-title">History SAM Card</span>
-                        </a>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('sam-history.index') }}">
+                            History SAM Card</a>
                     </li>
                 </ul>
             </div>

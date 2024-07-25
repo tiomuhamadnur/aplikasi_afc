@@ -26,6 +26,7 @@ class EquipmentImport implements ToModel, WithHeadingRow
             'relasi_area_id' => $row['relasi_area_id'],
             'arah_id' => $row['arah_id'],
             'deskripsi' => $row['deskripsi'],
+            'status' => 'active',
         ]);
     }
 }

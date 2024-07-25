@@ -39,7 +39,7 @@
                                     <option value="" selected disabled>- pilih tipe equipment -</option>
                                     @foreach ($tipe_equipment as $item)
                                         <option value="{{ $item->id }}"
-                                            @if ($item->id == $equipment->tipe_equipment->id) selected @endif>{{ $item->name }}
+                                            @if ($item->id == $equipment->tipe_equipment_id) selected @endif>{{ $item->name }}
                                             ({{ $item->code }})
                                         </option>
                                     @endforeach
@@ -52,7 +52,7 @@
                                     <option value="" selected disabled>- pilih area spesifik -</option>
                                     @foreach ($area as $item)
                                         <option value="{{ $item->id }}"
-                                            @if ($item->id == $equipment->relasi_area->id) selected @endif>{{ $item->lokasi->name }} -
+                                            @if ($item->id == $equipment->relasi_area_id) selected @endif>{{ $item->lokasi->name }} -
                                             {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}</option>
                                     @endforeach
                                 </select>
@@ -64,7 +64,7 @@
                                     <option value="" selected disabled>- pilih owner -</option>
                                     @foreach ($struktur as $item)
                                         <option value="{{ $item->id }}"
-                                            @if ($item->id == $equipment->relasi_struktur->id) selected @endif>{{ $item->divisi->name }} -
+                                            @if ($item->id == $equipment->relasi_struktur_id) selected @endif>{{ $item->divisi->name }} -
                                             {{ $item->departemen->name }} - {{ $item->seksi->name }}</option>
                                     @endforeach
                                 </select>
@@ -75,7 +75,7 @@
                                     <option value="" selected disabled>- pilih corner -</option>
                                     @foreach ($arah as $item)
                                         <option value="{{ $item->id }}"
-                                            @if ($item->id == $equipment->arah->id) selected @endif>
+                                            @if ($item->id == $equipment->arah_id) selected @endif>
                                             {{ $item->name }}</option>
                                     @endforeach
                                 </select>

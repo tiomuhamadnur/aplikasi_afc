@@ -45,14 +45,13 @@
                                             <td>{{ $item->name }}</td>
                                             <td>{{ $item->code ?? '-' }}</td>
                                             <td class="text-wrap">
-                                                {{ $item->tipe_equipment->code }} <br> ({{ $item->tipe_equipment->name }})
+                                                {{ $item->tipe_equipment->code ?? '-' }}
                                             </td>
                                             <td>{{ $item->equipment_number ?? '-' }}</td>
                                             <td class="text-wrap">
-                                                {{ $item->relasi_area->lokasi->code ?? '-' }} <br>
                                                 {{ $item->relasi_area->sub_lokasi->code ?? '-' }} <br>
-                                                {{ $item->relasi_area->detail_lokasi->code ?? '-' }} <br>
-                                                {{ $item->arah->name ?? '-' }}
+                                                {{ $item->relasi_area->detail_lokasi->name ?? '-' }} <br>
+                                                {{ $item->arah->name ?? '' }}
                                             </td>
                                             <td>
                                                 <button type="button" title="Show"
@@ -60,11 +59,12 @@
                                                     data-bs-toggle="modal" data-bs-target="#photoModal"
                                                     data-photo='{{ asset('storage/' . $item->photo) }}'
                                                     data-name="{{ $item->name }}" data-code="{{ $item->code }}"
-                                                    data-equipment_number="{{ $item->equipment_number }}"
-                                                    data-tipe_equipment="{{ $item->tipe_equipment->code }} ({{ $item->tipe_equipment->name }})"
-                                                    data-lokasi="{{ $item->relasi_area->lokasi->name }} - {{ $item->relasi_area->sub_lokasi->name }} - {{ $item->relasi_area->detail_lokasi->name }}"
-                                                    data-struktur="{{ $item->relasi_struktur->divisi->code }} - {{ $item->relasi_struktur->departemen->code }} - {{ $item->relasi_struktur->seksi->code }}"
-                                                    data-arah="{{ $item->arah->name }}" data-status="{{ $item->status }}"
+                                                    data-equipment_number="{{ $item->equipment_number ?? '-' }}"
+                                                    data-tipe_equipment="{{ $item->tipe_equipment->code ?? '-' }} ({{ $item->tipe_equipment->name ?? '-' }})"
+                                                    data-lokasi="{{ $item->relasi_area->sub_lokasi->name ?? '-' }} - {{ $item->relasi_area->detail_lokasi->name ?? '-' }}"
+                                                    data-struktur="{{ $item->relasi_struktur->divisi->code ?? '-' }} - {{ $item->relasi_struktur->departemen->code ?? '-' }} - {{ $item->relasi_struktur->seksi->code ?? '-' }}"
+                                                    data-arah="{{ $item->arah->name ?? '-' }}"
+                                                    data-status="{{ $item->status ?? '-' }}"
                                                     data-deskripsi="{{ $item->deskripsi }}">
                                                     <i class="mdi mdi-eye"></i>
                                                 </button>
