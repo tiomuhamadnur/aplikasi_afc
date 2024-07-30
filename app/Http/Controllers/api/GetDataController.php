@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Barang;
 use App\Models\MonitoringEquipment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,11 +28,6 @@ class GetDataController extends Controller
             'status' => 'disconnected',
             'waktu' => Carbon::now(),
         ]);
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(Request $request)

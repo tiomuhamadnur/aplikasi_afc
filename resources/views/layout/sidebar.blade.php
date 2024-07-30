@@ -62,14 +62,14 @@
             </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
                 <span class="menu-title">Transaksi Barang</span>
                 <i class="mdi mdi-repeat menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#">
-                <span class="menu-title">Rekap Gangguan</span>
+                <span class="menu-title">Rekap Gangguan (Belum)</span>
                 <i class="mdi mdi-receipt menu-icon"></i>
             </a>
         </li>

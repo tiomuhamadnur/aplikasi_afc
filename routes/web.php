@@ -30,6 +30,7 @@ use App\Http\Controllers\user\MonitoringEquipmentController;
 use App\Http\Controllers\user\MonitoringPermitController;
 use App\Http\Controllers\user\SamCardController;
 use App\Http\Controllers\user\SamCardHistoryController;
+use App\Http\Controllers\user\TransaksiBarangController;
 use App\Http\Controllers\user\TransaksiTiketController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -277,6 +278,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(MonitoringEquipmentController::class)->group(function () {
         Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
         Route::delete('/monitoring-equipment', 'destroy')->name('monitoring-equipment.delete');
+    });
+
+    Route::controller(TransaksiBarangController::class)->group(function () {
+        Route::get('/transaksi-barang', 'index')->name('transaksi-barang.index');
+        Route::post('/transaksi-barang', 'store')->name('transaksi-barang.store');
+        Route::get('/transaksi-barang/{uuid}/edit', 'edit')->name('transaksi-barang.edit');
+        Route::post('/transaksi-barang/import', 'import')->name('transaksi-barang.import');
+        Route::put('/transaksi-barang', 'update')->name('transaksi-barang.update');
+        Route::delete('/transaksi-barang', 'destroy')->name('transaksi-barang.delete');
     });
 });
 

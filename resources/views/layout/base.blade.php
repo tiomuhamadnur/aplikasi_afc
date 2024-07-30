@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('build/assets/app-C3sVekwB.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-Cq57AiTD.css') }}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <!-- End plugin css for this page -->
@@ -68,7 +69,7 @@
     {{-- Script --}}
     <!-- container-scroller -->
     <!-- plugins:js -->
-    <script src="{{ asset('build/assets/app-CRZtVRV0.js') }}"></script>
+    <script src="{{ asset('build/assets/app-C6MCKak-.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script> --}}
     <!-- endinject -->
     <!-- Plugin js for this page -->
