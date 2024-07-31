@@ -17,14 +17,14 @@
                             <div class="form-group">
                                 <label for="sam_card_id">SAM Card</label>
                                 <input type="text" name="sam_card_id" value="{{ $sam_card->id }}" hidden>
-                                <select class="form-control form-control-lg">
+                                <select class="tom-select-class">
                                     <option selected disabled>
                                         {{ $sam_card->tid ?? 'No TID' }} - {{ $sam_card->pin ?? 'No pin' }} -
                                         {{ $sam_card->mc ?? 'No MC' }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="relasi_area_id">Stasiun</label>
                                 <select name="relasi_area_id" id="relasi_area_id" class="form-control form-control-lg"
                                     required>
@@ -38,10 +38,21 @@
                                 <label for="pg_id">PG ID</label>
                                 <input type="text" class="form-control" name="pg_id" id="pg_id"
                                     placeholder="input PG ID" required autocomplete="off">
+                            </div> --}}
+                            <div class="form-group">
+                                <label for="equipment_id">PG ID</label>
+                                <select name="equipment_id" id="equipment_id" class="tom-select-class" required>
+                                    <option value="" selected disabled>- pilih PG ID -</option>
+                                    @foreach ($pg as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name ?? '-' }}
+                                            ({{ $item->code ?? '-' }})
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="type">Type</label>
-                                <select name="type" id="type" class="form-control form-control-lg" required>
+                                <select name="type" id="type" class="tom-select-class" required>
                                     <option value="">- pilih type -</option>
                                     <option value="entry">Entry</option>
                                     <option value="exit">Exit</option>

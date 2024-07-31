@@ -22,10 +22,6 @@ class TransaksiBarang extends Model
             $model->uuid = Str::uuid();
             $model->user_id = auth()->user()->id;
         });
-
-        self::updating(function ($model) {
-            $model->user_id = auth()->user()->id;
-        });
     }
 
     public function equipment()

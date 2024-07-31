@@ -4,6 +4,7 @@ namespace App\Http\Controllers\user;
 
 use App\DataTables\SamCardHistoryDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\Equipment;
 use App\Models\RelasiArea;
 use App\Models\SamCard;
 use App\Models\SamCardHistory;
@@ -29,10 +30,12 @@ class SamCardHistoryController extends Controller
     {
         $sam_card = SamCard::where('mc', '!=', null)->orderBy('created_at', 'DESC')->get();
         $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
+        $pg = Equipment::where('tipe_equipment_id', 1)->get();
 
         return $dataTable->render('pages.user.sam-card-history.index', compact([
             'sam_card',
-            'area'
+            'area',
+            'pg'
         ]));
     }
 
@@ -40,10 +43,12 @@ class SamCardHistoryController extends Controller
     {
         $sam_card = SamCard::where('uuid', $uuid)->firstOrFail();
         $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
+        $pg = Equipment::where('tipe_equipment_id', 1)->get();
 
         return view('pages.user.sam-card-history.create', compact([
             'sam_card',
             'area',
+            'pg'
         ]));
     }
 
@@ -52,16 +57,14 @@ class SamCardHistoryController extends Controller
         // dd($request);
         $request->validate([
             "sam_card_id" => 'required|numeric',
-            "relasi_area_id" => 'required|numeric',
-            "pg_id" => 'required',
+            'equipment_id' => 'required|numeric',
             "type" => 'required',
             "tanggal" => 'required|date'
         ]);
 
         SamCardHistory::create([
             "sam_card_id" => $request->sam_card_id,
-            "relasi_area_id" => $request->relasi_area_id,
-            "pg_id" => $request->pg_id,
+            "equipment_id" => $request->equipment_id,
             "type" => $request->type,
             "tanggal" => $request->tanggal,
         ]);

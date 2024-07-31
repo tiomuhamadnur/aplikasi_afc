@@ -24,7 +24,7 @@ class SamCardHistoryDataTable extends DataTable
 
     public function query(SamCardHistory $model, Request $request): QueryBuilder
     {
-        $query = $model->with(['sam_card', 'relasi_area.sub_lokasi'])->newQuery();
+        $query = $model->with(['sam_card', 'equipment.relasi_area.sub_lokasi'])->newQuery();
 
         // // Apply filters
         // if ($request->has('transaction_type')) {
@@ -47,36 +47,23 @@ class SamCardHistoryDataTable extends DataTable
                     ->pageLength(50)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([0, 'asc'])
+                    ->orderBy([5, 'desc'])
                     ->selectStyleSingle()
-                    ->buttons([
-                        // Button::make('excel'),
-                        // Button::make('csv'),
-                        // Button::make('pdf'),
-                        // Button::make('print'),
-                        // Button::make('reset'),
-                        // Button::make('reload')
-                    ]);
+                    ->buttons([]);
     }
 
-    /**
-     * Get the dataTable columns definition.
-     */
     public function getColumns(): array
     {
         return [
             Column::make('sam_card.tid')->title('TID'),
             Column::make('sam_card.uid')->title('UID'),
-            Column::make('relasi_area.sub_lokasi.name')->title('Lokasi'),
-            Column::make('pg_id')->title('PG ID'),
+            Column::make('equipment.relasi_area.sub_lokasi.name')->title('Lokasi'),
+            Column::make('equipment.code')->title('PG ID'),
             Column::make('type')->title('Type'),
             Column::make('tanggal')->title('Tanggal'),
         ];
     }
 
-    /**
-     * Get the filename for export.
-     */
     protected function filename(): string
     {
         return 'SamCardHistory_' . date('YmdHis');

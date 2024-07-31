@@ -91,6 +91,7 @@ class TransaksiBarangController extends Controller
             'equipment_id' => $request->equipment_id,
             'tanggal' => $request->tanggal,
             'qty' => $request->qty,
+            'user_id' => auth()->user()->id,
         ]);
 
         return redirect()->route('transaksi-barang.index')->withNotify('Data berhasil diubah');
