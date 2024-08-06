@@ -19,7 +19,7 @@ class TransaksiBarangDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('ticket_number', function($item) {
-                $showRoute = route('gangguan.show', $item->gangguan->uuid);
+                $showRoute = route('gangguan.show', $item->gangguan->uuid ?? '-');
                 $ticket_number = $item->gangguan->ticket_number ?? '-';
 
                 if($item->gangguan_id == null)
