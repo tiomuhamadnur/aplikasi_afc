@@ -18,6 +18,25 @@ class TransaksiBarangDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->addColumn('ticket_number', function($item) {
+                $showRoute = route('gangguan.show', $item->gangguan->uuid);
+                $ticket_number = $item->gangguan->ticket_number ?? '-';
+
+                if($item->gangguan_id == null)
+                {
+                    return "-";
+                }
+
+                return "
+                    <td>
+                        <a href='{$showRoute}' title='Show Detail'>
+                            <button type='button' class='btn btn-gradient-primary btn-rounded'>
+                                {$ticket_number}
+                            </button>
+                        </a>
+                    </td>
+                ";
+            })
             ->addColumn('action', function($item) {
                 $editRoute = route('transaksi-barang.edit', $item->uuid);
 
@@ -35,12 +54,12 @@ class TransaksiBarangDataTable extends DataTable
                     </td>
                 ";
             })
-            ->rawColumns(['action']);
+            ->rawColumns(['ticket_number', 'action']);
     }
 
     public function query(TransaksiBarang $model, Request $request): QueryBuilder
     {
-        $query = $model->with(['equipment.relasi_area.sub_lokasi', 'barang', 'user'])->newQuery();
+        $query = $model->with(['equipment.relasi_area.sub_lokasi', 'gangguan', 'barang', 'user'])->newQuery();
 
         // // Apply filters
         // if ($request->has('transaction_type')) {
@@ -72,6 +91,12 @@ class TransaksiBarangDataTable extends DataTable
     {
         return [
             Column::make('tanggal')->title('Tanggal'),
+            Column::computed('ticket_number')
+                    ->title('Ticket Gangguan')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
             Column::make('barang.name')->title('Material Name'),
             Column::make('barang.material_number')->title('Material Number'),
             Column::make('qty')->title('Qty.'),

@@ -38,12 +38,12 @@
                 <i class="mdi mdi-file-find menu-icon"></i>
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
                 <span class="menu-title">Transaksi Tiket</span>
                 <i class="mdi mdi-cards-outline menu-icon"></i>
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
                 aria-controls="sam-card">
@@ -62,15 +62,15 @@
             </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
-                <span class="menu-title">Transaksi Barang</span>
-                <i class="mdi mdi-repeat menu-icon"></i>
+            <a class="nav-link" href="{{ route('gangguan.index') }}">
+                <span class="menu-title">Rekap Gangguan</span>
+                <i class="mdi mdi-receipt menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <span class="menu-title">Rekap Gangguan (Belum)</span>
-                <i class="mdi mdi-receipt menu-icon"></i>
+            <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
+                <span class="menu-title">Transaksi Barang</span>
+                <i class="mdi mdi-repeat menu-icon"></i>
             </a>
         </li>
         @if (auth()->user()->role->id == 1)
@@ -95,8 +95,7 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('divisi.index') }}">Divisi</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link"
-                                href="{{ route('departemen.index') }}">Departemen</a>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('departemen.index') }}">Departemen</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('seksi.index') }}">Seksi</a>
                         </li>

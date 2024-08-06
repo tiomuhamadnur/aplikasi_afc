@@ -34,6 +34,11 @@ class TransaksiBarang extends Model
         return $this->belongsTo(Barang::class);
     }
 
+    public function gangguan()
+    {
+        return $this->belongsTo(Gangguan::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

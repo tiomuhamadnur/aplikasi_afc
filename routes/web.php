@@ -25,6 +25,7 @@ use App\Http\Controllers\admin\TipeEquipmentController;
 use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\user\GangguanController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringEquipmentController;
 use App\Http\Controllers\user\MonitoringPermitController;
@@ -287,6 +288,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/transaksi-barang/import', 'import')->name('transaksi-barang.import');
         Route::put('/transaksi-barang', 'update')->name('transaksi-barang.update');
         Route::delete('/transaksi-barang', 'destroy')->name('transaksi-barang.delete');
+    });
+
+    Route::controller(GangguanController::class)->group(function () {
+        Route::get('/gangguan', 'index')->name('gangguan.index');
+        Route::post('/gangguan', 'store')->name('gangguan.store');
+        Route::get('/gangguan/{uuid}/edit', 'edit')->name('gangguan.edit');
+        Route::get('/gangguan/{uuid}/show', 'show')->name('gangguan.show');
+        Route::post('/gangguan/import', 'import')->name('gangguan.import');
+        Route::put('/gangguan', 'update')->name('gangguan.update');
+        Route::delete('/gangguan', 'destroy')->name('gangguan.delete');
     });
 });
 
