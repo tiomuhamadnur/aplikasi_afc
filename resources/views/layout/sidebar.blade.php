@@ -1,10 +1,9 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item nav-profile">
-            <a href="#" class="nav-link">
+            <a href="{{ route('profile.index') }}" class="nav-link">
                 <div class="nav-profile-image">
-                    <img src="https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg"
-                        alt="profile">
+                    <img src="{{ asset('storage/' . auth()->user()->photo ?? '#') }}" alt="image">
                     <span class="login-status online"></span>
                     <!--change to offline or busy as needed-->
                 </div>

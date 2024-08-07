@@ -29,6 +29,7 @@ use App\Http\Controllers\user\GangguanController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringEquipmentController;
 use App\Http\Controllers\user\MonitoringPermitController;
+use App\Http\Controllers\user\ProfileController;
 use App\Http\Controllers\user\SamCardController;
 use App\Http\Controllers\user\SamCardHistoryController;
 use App\Http\Controllers\user\TransaksiBarangController;
@@ -77,6 +78,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/user/{uuid}/edit', 'edit')->name('user.edit');
         Route::put('/user', 'update')->name('user.update');
         Route::delete('/user', 'destroy')->name('user.delete');
+    });
+
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'index')->name('profile.index');
+        Route::put('/profile', 'update')->name('profile.update');
     });
 
     Route::controller(SubLokasiController::class)->group(function () {
