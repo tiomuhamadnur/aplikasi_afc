@@ -162,6 +162,7 @@ class GangguanController extends Controller
 
         $request->validate([
             'photo' => 'file|image',
+            'photo_after' => 'file|image',
             'id' => 'required|numeric'
         ]);
 
@@ -191,6 +192,31 @@ class GangguanController extends Controller
 
             $data->update([
                 "photo" => $photo,
+            ]);
+        }
+
+        if ($request->hasFile('photo_after') && $request->photo != '') {
+            $image = Image::make($request->file('photo_after'));
+
+            $dataPhoto = $data->photo_after;
+            if ($dataPhoto != null) {
+                Storage::delete($dataPhoto);
+            }
+
+            $imageName = time().'-'.$request->file('photo_after')->getClientOriginalName();
+            $detailPath = 'photo/gangguan/';
+            $destinationPath = public_path('storage/'. $detailPath);
+
+            $image->resize(null, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            $image->save($destinationPath.$imageName);
+
+            $photo = $detailPath.$imageName;
+
+            $data->update([
+                "photo_after" => $photo,
             ]);
         }
 

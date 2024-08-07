@@ -30,7 +30,7 @@ class TransaksiBarangDataTable extends DataTable
                 return "
                     <td>
                         <a href='{$showRoute}' title='Show Detail'>
-                            <button type='button' class='btn btn-gradient-primary btn-rounded'>
+                            <button type='button' class='btn btn-gradient-primary btn-rounded p-2'>
                                 {$ticket_number}
                             </button>
                         </a>

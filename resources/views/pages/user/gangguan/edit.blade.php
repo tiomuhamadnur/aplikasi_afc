@@ -104,6 +104,16 @@
                                     value="{{ $gangguan->analysis }}">
                             </div>
                             <div class="form-group">
+                                <label for="photo_after">Photo After <span class="text-info">(optional)</span></label>
+                                <div class="text-left">
+                                    <img class="img-thumbnail" id="previewImageAfter"
+                                        src="{{ asset('storage/' . $gangguan->photo_after) }}" alt="Tidak ada photo"
+                                        style="max-width: 250px; max-height: 250px;">
+                                </div>
+                                <input type="file" class="form-control" id="photo_after" name="photo_after"
+                                    autocomplete="off" placeholder="input photo" accept="image/*">
+                            </div>
+                            <div class="form-group">
                                 <label for="status">Status</label>
                                 <select class="tom-select-class" name="status" id="status" required>
                                     <option value="" selected disabled>- pilih status -</option>
@@ -151,6 +161,24 @@
                     reader.onload = function(e) {
                         previewImage.src = e.target.result;
                         previewImage.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(selectedFile);
+                }
+            });
+
+            const imageInputAfter = document.getElementById('photo_after');
+            const previewImageAfter = document.getElementById('previewImageAfter');
+
+            imageInputAfter.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
+
+                if (selectedFile) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewImageAfter.src = e.target.result;
+                        previewImageAfter.style.display = 'block';
                     }
 
                     reader.readAsDataURL(selectedFile);
