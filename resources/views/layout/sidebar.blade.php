@@ -3,7 +3,8 @@
         <li class="nav-item nav-profile">
             <a href="{{ route('profile.index') }}" class="nav-link">
                 <div class="nav-profile-image">
-                    <img src="{{ asset('storage/' . auth()->user()->photo ?? '#') }}" alt="image">
+                    <img src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg' }}"
+                        alt="image">
                     <span class="login-status online"></span>
                     <!--change to offline or busy as needed-->
                 </div>
