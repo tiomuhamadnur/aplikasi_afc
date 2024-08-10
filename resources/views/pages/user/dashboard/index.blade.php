@@ -21,40 +21,60 @@
             </nav>
         </div>
         <div class="row">
-            <div class="col-md-4 stretch-card grid-margin">
-                <div class="card bg-gradient-danger card-img-holder text-white">
-                    <div class="card-body">
-                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Jumlah Permit
-                            <i class="mdi mdi-key-variant mdi-24px float-right"></i>
-                        </h4>
-                        <h2 class="mb-5">{{ $permit ?? 'N/A' }}</h2>
-                        <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 stretch-card grid-margin">
+            <div class="col-md-3 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Jumlah Gangguan
+                        <h4 class="font-weight-normal mb-3">Gangguan
                             <i class="mdi mdi-receipt mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">14</h2>
+                        <h2 class="mb-5">{{ $gangguan ?? 'N/A' }}</h2>
                         <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
                         </h6>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 stretch-card grid-margin">
+            <div class="col-md-3 stretch-card grid-margin">
                 <div class="card bg-gradient-success card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Jumlah Transaksi Barang <i
+                        <h4 class="font-weight-normal mb-3">Transaksi Barang <i
                                 class="mdi mdi-repeat mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">56</h2>
+                        <h2 class="mb-5">{{ $transaksi_barang ?? 'N/A' }}</h2>
+                        <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-warning card-img-holder text-white">
+                    <div class="card-body">
+                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <h4 class="font-weight-normal mb-3">SAM Card
+                            <i class="mdi mdi-key-variant mdi-24px float-right"></i>
+                        </h4>
+                        <div class="mb-5">
+                            <span class="badge badge-gradient-success">
+                                <h5>Ready: {{ $samcard['ready'] ?? 'N/A' }}</h5>
+                            </span>
+                            <span class="badge badge-gradient-danger">
+                                <h5>Used: {{ $samcard['used'] ?? 'N/A' }}</h5>
+                            </span>
+                        </div>
+                        <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                    <div class="card-body">
+                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <h4 class="font-weight-normal mb-3">Permit
+                            <i class="mdi mdi-alert-outline mdi-24px float-right"></i>
+                        </h4>
+                        <h2 class="mb-5">{{ $permit ?? 'N/A' }}</h2>
                         <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -369,7 +389,7 @@
             let open = 23;
             let closed = 12;
             let monitoring = 31;
-            let pending = 5;
+            let pending = 10;
             Highcharts.chart('klasifikasiGangguanGraph', {
                 chart: {
                     type: 'pie',
@@ -387,9 +407,27 @@
                     align: 'left'
                 },
                 plotOptions: {
-                    pie: {
-                        innerSize: 100,
-                        depth: 45
+                    series: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: [{
+                            enabled: true,
+                            distance: 20
+                        }, {
+                            enabled: true,
+                            distance: -40,
+                            format: '{point.percentage:.1f}%',
+                            style: {
+                                fontSize: '1.2em',
+                                textOutline: 'none',
+                                opacity: 0.7
+                            },
+                            filter: {
+                                operator: '>',
+                                property: 'percentage',
+                                value: 10
+                            }
+                        }]
                     }
                 },
                 series: [{
@@ -445,7 +483,7 @@
                 },
                 series: [{
                     name: 'Availability',
-                    color: 'blue',
+                    color: '#cb6ce6',
                     data: {!! json_encode(
                         array_map(function ($item) {
                             return ['y' => $item['availability'], 'url' => $item['url']];

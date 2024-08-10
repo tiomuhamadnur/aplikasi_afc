@@ -63,6 +63,9 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard.index');
+        Route::get('/dashboard/availability/month', 'availability_bulan')->name('dashboard.availability.bulan');
+        Route::get('/dashboard/availability/station', 'availability_station')->name('dashboard.availability.station');
+        Route::get('/dashboard/availability/equipment', 'availability_equipment')->name('dashboard.availability.equipment');
     });
 
     Route::controller(LokasiController::class)->group(function () {
