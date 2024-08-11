@@ -16,7 +16,7 @@
                                 <div class="card border">
                                     <div class="card-body">
                                         <h4 class="card-title">Form Edit Profile</h4>
-                                        <p class="card-description"> Silahkan mengubah data profil anda </p>
+                                        <p class="card-description"> Silahkan isi untuk mengubah data profil anda </p>
                                         <form action="{{ route('profile.update') }}" class="forms-sample" method="POST"
                                             enctype="multipart/form-data">
                                             @csrf
@@ -143,7 +143,6 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                                            <button class="btn btn-light">Cancel</button>
                                         </form>
                                     </div>
                                 </div>
@@ -152,7 +151,7 @@
                                 <div class="card border">
                                     <div class="card-body">
                                         <h4 class="card-title">Form Change Password (on development)</h4>
-                                        <p class="card-description"> Silahkan untuk mengubah password akun anda </p>
+                                        <p class="card-description"> Silahkan isi untuk mengubah password akun anda </p>
                                         <form class="forms-sample">
                                             <div class="form-group row">
                                                 <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Old
@@ -181,10 +180,12 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                                            <button class="btn btn-light">Cancel</button>
                                         </form>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-group d-flex justify-content-end">
+                                <a href="{{ route('dashboard.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </div>
                     </div>
