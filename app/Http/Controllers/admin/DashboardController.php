@@ -42,16 +42,25 @@ class DashboardController extends Controller
             $availability[] = rand(90, 99);
         }
 
+        $trend_gangguan = [];
+        foreach($bulan as $i)
+        {
+            $trend_gangguan[] = TransaksiBarang::whereYear('tanggal', $tahun)->whereMonth('tanggal', $i)->count();
+        }
+
         $data = [];
         foreach ($bulan as $i => $b) {
             $data[] = [
                 'bulan' => $bulan_name[$i],
                 'availability' => $availability[$i],
-                'url' => route('dashboard.availability.bulan', ['y' => $tahun, 'm' => $b])
+                'url' => route('dashboard.availability.bulan', ['y' => $tahun, 'm' => $b]),
+                'trend_gangguan' => $trend_gangguan[$i],
+                'url_trend_gangguan' => route('transaksi-barang.trend.monthly', ['y' => $tahun, 'm' => $b]),
             ];
         }
 
         return view('pages.user.dashboard.index', compact([
+            'tahun',
             'permit',
             'samcard',
             'gangguan',

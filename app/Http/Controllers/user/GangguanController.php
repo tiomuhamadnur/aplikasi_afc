@@ -5,8 +5,13 @@ namespace App\Http\Controllers\user;
 use App\DataTables\GangguanDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
+use App\Models\Category;
+use App\Models\Classification;
 use App\Models\Equipment;
 use App\Models\Gangguan;
+use App\Models\RelasiArea;
+use App\Models\Status;
+use App\Models\TipeEquipment;
 use App\Models\TransaksiBarang;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -14,24 +19,66 @@ use Illuminate\Support\Facades\Storage;
 
 class GangguanController extends Controller
 {
-    // public function index()
-    // {
-    //     $gangguan = Gangguan::all();
-    //     $equipment = Equipment::all();
-    //     return view('pages.user.gangguan.index', compact([
-    //         'gangguan',
-    //         'equipment'
-    //     ]));
-    // }
-
-    public function index(GangguanDataTable $dataTable)
+    public function index(GangguanDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'area_id' => 'numeric|nullable',
+            'category_id' => 'numeric|nullable',
+            'equipment_id' => 'numeric|nullable',
+            'tipe_equipment_id' => 'numeric|nullable',
+            'classification_id' => 'numeric|nullable',
+            'status_id' => 'numeric|nullable',
+            'start_date' => 'date|nullable',
+            'end_date' => 'date|nullable',
+            'is_changed' => 'numeric|nullable',
+        ]);
+
+        $area_id = $request->area_id ?? null;
+        $category_id = $request->category_id ?? null;
+        $equipment_id = $request->equipment_id ?? null;
+        $tipe_equipment_id = $request->tipe_equipment_id ?? null;
+        $classification_id = $request->classification_id ?? null;
+        $status_id = $request->status_id ?? null;
+        $start_date = $request->start_date ?? null;
+        $end_date = $request->end_date ?? $start_date;
+        $is_changed = $request->is_changed ?? null;
+
         $equipment = Equipment::all();
         $barang = Barang::all();
+        $status = Status::all();
+        $category = Category::all();
+        $classification = Classification::all();
+        $tipe_equipment = TipeEquipment::all();
+        $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
 
-        return $dataTable->render('pages.user.gangguan.index', compact([
+
+        return $dataTable->with([
+            'area_id' => $area_id,
+            'category_id' => $category_id,
+            'equipment_id' => $equipment_id,
+            'tipe_equipment_id' => $tipe_equipment_id,
+            'classification_id' => $classification_id,
+            'status_id' => $status_id,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'is_changed' => $is_changed,
+        ])->render('pages.user.gangguan.index', compact([
             'equipment',
-            'barang'
+            'tipe_equipment',
+            'barang',
+            'status',
+            'category',
+            'classification',
+            'area',
+            'area_id',
+            'category_id',
+            'equipment_id',
+            'tipe_equipment_id',
+            'classification_id',
+            'status_id',
+            'start_date',
+            'end_date',
+            'is_changed',
         ]));
     }
 
@@ -47,14 +94,14 @@ class GangguanController extends Controller
             'report_date' => 'required|date',
             'report_by' => 'required|string',
             'problem' => 'required|string',
-            'category' => 'required|string',
-            'classification' => 'required|string',
+            'category_id' => 'required|numeric',
+            'classification_id' => 'required|numeric',
             'action' => 'required|string',
             'response_date' => 'required|date',
             'solved_by' => 'required|string',
             'solved_date' => 'required|date',
             'analysis' => 'required|string',
-            'status' => 'required|string',
+            'status_id' => 'required|numeric',
             'is_changed' => 'boolean'
         ]);
 
@@ -107,16 +154,19 @@ class GangguanController extends Controller
             ]);
         }
 
-        foreach ($request->barang_ids as $i => $barang_id) {
-            $qty = $request->qty[$i];
+        if($request->barang_ids != null)
+        {
+            foreach ($request->barang_ids as $i => $barang_id) {
+                $qty = $request->qty[$i];
 
-            TransaksiBarang::create([
-                'barang_id' => $barang_id,
-                'equipment_id' => $request->equipment_id,
-                'tanggal' => $request->report_date,
-                'qty' => $qty,
-                'gangguan_id' => $data->id,
-            ]);
+                TransaksiBarang::create([
+                    'barang_id' => $barang_id,
+                    'equipment_id' => $request->equipment_id,
+                    'tanggal' => $request->report_date,
+                    'qty' => $qty,
+                    'gangguan_id' => $data->id,
+                ]);
+            }
         }
 
         return redirect()->route('gangguan.index')->withNotify('Data berhasil ditambahkan');
@@ -136,9 +186,16 @@ class GangguanController extends Controller
         $gangguan = Gangguan::where('uuid', $uuid)->firstOrFail();
 
         $equipment = Equipment::all();
+        $status = Status::all();
+        $category = Category::all();
+        $classification = Classification::all();
+
         return view('pages.user.gangguan.edit', compact([
             'gangguan',
-            'equipment'
+            'equipment',
+            'status',
+            'category',
+            'classification',
         ]));
     }
 
@@ -149,14 +206,14 @@ class GangguanController extends Controller
             'report_date' => 'required|date',
             'report_by' => 'required|string',
             'problem' => 'required|string',
-            'category' => 'required|string',
-            'classification' => 'required|string',
+            'category_id' => 'required|numeric',
+            'classification_id' => 'required|numeric',
             'action' => 'required|string',
             'response_date' => 'required|date',
             'solved_by' => 'required|string',
             'solved_date' => 'required|date',
             'analysis' => 'required|string',
-            'status' => 'required|string',
+            'status_id' => 'required|numeric',
             'is_changed' => 'boolean'
         ]);
 

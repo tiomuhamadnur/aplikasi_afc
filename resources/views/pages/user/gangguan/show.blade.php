@@ -57,13 +57,13 @@
                                 <label for="category">Category</label>
                                 <input type="text" class="form-control" id="report_by" name="report_by"
                                     autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->category }}" disabled>
+                                    value="{{ $gangguan->category->name ?? '-' }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="classification">Classification</label>
                                 <input type="text" class="form-control" id="report_by" name="report_by"
                                     autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->classification }}" disabled>
+                                    value="{{ $gangguan->classification->name ?? '-' }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="action">Action</label>
@@ -96,7 +96,7 @@
                                 <label for="status">Status</label>
                                 <input type="text" class="form-control" id="report_by" name="report_by"
                                     autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->status }}" disabled>
+                                    value="{{ $gangguan->status->name ?? '-' }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="is_changed">Ada pergantian Sparepart?</label>
@@ -106,7 +106,7 @@
                             </div>
                             <div class="form-group d-flex justify-content-end">
                                 <a href="{{ route('transaksi-barang.index') }}" type="button"
-                                    class="btn btn-secondary">Cancel</a>
+                                    class="btn btn-danger">Back</a>
                             </div>
                         </form>
                     </div>

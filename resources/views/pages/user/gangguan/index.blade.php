@@ -36,85 +36,13 @@
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export Excel" data-bs-toggle="modal"
+                                data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-responsive table-hover data-table">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th>Ticket Number</th>
-                                        <th>Station</th>
-                                        <th>Report Date</th>
-                                        <th>Report By</th>
-                                        <th>Equipment Type</th>
-                                        <th>Equipment ID</th>
-                                        <th>Problem</th>
-                                        <th>Category</th>
-                                        <th>Action</th>
-                                        <th>Action Date</th>
-                                        <th>Action By</th>
-                                        <th>Solved Date</th>
-                                        <th>Analysis</th>
-                                        <th>Class</th>
-                                        <th>Status</th>
-                                        <th>Photo</th>
-                                        <th>Changed Sparepart?</th>
-                                        <th>#</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($gangguan as $item)
-                                        <tr>
-                                            <td class="fw-bolder">{{ $item->ticket_number ?? '-' }}</td>
-                                            <td>{{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}</td>
-                                            <td>{{ $item->report_date ?? '-' }}</td>
-                                            <td>{{ $item->report_by ?? '-' }}</td>
-                                            <td>{{ $item->equipment->tipe_equipment->code ?? '-' }}</td>
-                                            <td>{{ $item->equipment->code ?? '-' }}</td>
-                                            <td>{{ $item->problem ?? '-' }}</td>
-                                            <td>{{ $item->category ?? '-' }}</td>
-                                            <td>{{ $item->action ?? '-' }}</td>
-                                            <td>{{ $item->response_date ?? '-' }}</td>
-                                            <td>{{ $item->solved_by ?? '-' }}</td>
-                                            <td>{{ $item->solved_date ?? '-' }}</td>
-                                            <td>{{ $item->analysis ?? '-' }}</td>
-                                            <td>{{ $item->classification ?? '-' }}</td>
-                                            <td>
-                                                <label
-                                                    class="badge @if ($item->status == 'closed') badge-gradient-success @elseif ($item->status == 'pending') badge-gradient-warning @else badge-gradient-danger @endif text-uppercase">
-                                                    {{ $item->status }}
-                                                </label>
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" title="Show"
-                                                    class="btn btn-gradient-primary btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#photoModal"
-                                                    data-photo='{{ asset('storage/' . $item->photo) }}'>
-                                                    <i class="mdi mdi-eye"></i>
-                                                </button>
-                                            </td>
-                                            <td class="text-center">{{ $item->is_changed ? 'Yes' : 'No' }}</td>
-                                            <td>
-                                                <a href="{{ route('gangguan.edit', $item->uuid) }}" title="Edit">
-                                                    <button type="button"
-                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                        <i class="text-white mdi mdi-lead-pencil"></i>
-                                                    </button>
-                                                </a>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -171,21 +99,21 @@
                                 placeholder="input photo" accept="image/*">
                         </div>
                         <div class="form-group">
-                            <label for="category">Category</label>
-                            <select class="tom-select-gangguan" name="category" id="category" required>
+                            <label for="category_id">Category</label>
+                            <select class="tom-select-gangguan" name="category_id" id="category_id" required>
                                 <option value="" selected disabled>- pilih category problem -</option>
-                                <option value="hardware">Hardware</option>
-                                <option value="software">Software</option>
-                                <option value="operation">Operation</option>
+                                @foreach ($category as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="classification">Classification</label>
-                            <select class="tom-select-gangguan" name="classification" id="classification" required>
+                            <label for="classification_id">Classification</label>
+                            <select class="tom-select-gangguan" name="classification_id" id="classification_id" required>
                                 <option value="" selected disabled>- pilih classification problem -</option>
-                                <option value="minor">Minor</option>
-                                <option value="moderate">Moderate</option>
-                                <option value="major">Major</option>
+                                @foreach ($classification as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">
@@ -223,12 +151,12 @@
                                 autocomplete="off" placeholder="input photo" accept="image/*">
                         </div>
                         <div class="form-group">
-                            <label for="status">Status</label>
-                            <select class="tom-select-gangguan" name="status" id="status" required>
+                            <label for="status_id">Status</label>
+                            <select class="tom-select-gangguan" name="status_id" id="status_id" required>
                                 <option value="" selected disabled>- pilih status -</option>
-                                <option value="open">Open</option>
-                                <option value="closed">Closed</option>
-                                <option value="pending">Pending</option>
+                                @foreach ($status as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">
@@ -273,6 +201,108 @@
         </div>
     </div>
     <!-- End Add Modal -->
+
+    <!-- Add Filter -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('gangguan.index') }}" method="GET" class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="area_id">Lokasi</label>
+                            <select class="tom-select-class" name="area_id" id="area_id">
+                                <option value="" selected disabled>- pilih lokasi -</option>
+                                @foreach ($area as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $area_id) selected @endif>
+                                        {{ $item->sub_lokasi->name ?? '-' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipe_equipment_id">Tipe Equipment</label>
+                            <select class="tom-select-class" name="tipe_equipment_id" id="tipe_equipment_id">
+                                <option value="" selected disabled>- pilih tipe equipment -</option>
+                                @foreach ($tipe_equipment as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $tipe_equipment_id) selected @endif>
+                                        {{ $item->code }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="category_id">Category</label>
+                            <select class="tom-select-class" name="category_id" id="category_id">
+                                <option value="" selected disabled>- pilih category problem -</option>
+                                @foreach ($category as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $category_id) selected @endif>
+                                        {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="classification_id">Classification</label>
+                            <select class="tom-select-class" name="classification_id" id="classification_id">
+                                <option value="" selected disabled>- pilih classification -</option>
+                                @foreach ($classification as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $classification_id) selected @endif>
+                                        {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status_id">Status</label>
+                            <select class="tom-select-class" name="status_id" id="status_id">
+                                <option value="" selected disabled>- pilih status -</option>
+                                @foreach ($status as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $status_id) selected @endif>
+                                        {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_changed">Is Changed Sparepart?</label>
+                            <select class="tom-select-class" name="is_changed" id="is_changed">
+                                <option value="" selected disabled>- pilih keterangan -</option>
+                                <option value="1">
+                                    Yes
+                                </option>
+                                <option value="0">
+                                    No
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Tanggal</label>
+                            <div class="input-group">
+                                <input type="text" id="start_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
+                                <input type="text" id="end_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="End Date"
+                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ route('gangguan.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Filter -->
 
     <!-- Photo Modal -->
     <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -331,6 +361,31 @@
         </div>
     </div>
     <!-- End Delete Modal -->
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
 @endsection
 
 @push('scripts')
@@ -498,5 +553,11 @@
             });
 
         });
+    </script>
+
+    <script>
+        function exportExcel() {
+            document.getElementById('datatable-excel').click();
+        }
     </script>
 @endsection

@@ -121,6 +121,15 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('gender.index') }}">Gender</a>
                         </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('status.index') }}">Status</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('classification.index') }}">Classification</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('category.index') }}">Category</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('problem.index') }}">Problem</a>
+                        </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('jabatan.index') }}">Jabatan</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('role.index') }}">Role</a>

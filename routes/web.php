@@ -3,6 +3,8 @@
 use App\Http\Controllers\admin\ArahController;
 use App\Http\Controllers\admin\BankController;
 use App\Http\Controllers\admin\BarangController;
+use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\ClassificationController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DepartemenController;
 use App\Http\Controllers\admin\DetailLokasiController;
@@ -13,11 +15,13 @@ use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
 use App\Http\Controllers\admin\PerusahaanController;
+use App\Http\Controllers\admin\ProblemController;
 use App\Http\Controllers\admin\RelasiAreaController;
 use App\Http\Controllers\admin\RelasiStrukturController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SatuanController;
 use App\Http\Controllers\admin\SeksiController;
+use App\Http\Controllers\admin\StatusController;
 use App\Http\Controllers\admin\SubLokasiController;
 use App\Http\Controllers\admin\TipeBarangController;
 use App\Http\Controllers\admin\TipeEmployeeController;
@@ -203,6 +207,35 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/gender', 'destroy')->name('gender.delete');
     });
 
+    Route::controller(StatusController::class)->group(function () {
+        Route::get('/status', 'index')->name('status.index');
+        Route::post('/status', 'store')->name('status.store');
+        Route::put('/status', 'update')->name('status.update');
+        Route::delete('/status', 'destroy')->name('status.delete');
+    });
+
+    Route::controller(ClassificationController::class)->group(function () {
+        Route::get('/classification', 'index')->name('classification.index');
+        Route::post('/classification', 'store')->name('classification.store');
+        Route::put('/classification', 'update')->name('classification.update');
+        Route::delete('/classification', 'destroy')->name('classification.delete');
+    });
+
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/category', 'index')->name('category.index');
+        Route::post('/category', 'store')->name('category.store');
+        Route::put('/category', 'update')->name('category.update');
+        Route::delete('/category', 'destroy')->name('category.delete');
+    });
+
+    Route::controller(ProblemController::class)->group(function () {
+        Route::get('/problem', 'index')->name('problem.index');
+        Route::post('/problem', 'store')->name('problem.store');
+        Route::get('/problem/{uuid}/edit', 'edit')->name('problem.edit');
+        Route::put('/problem', 'update')->name('problem.update');
+        Route::delete('/problem', 'destroy')->name('problem.delete');
+    });
+
     Route::controller(RoleController::class)->group(function () {
         Route::get('/role', 'index')->name('role.index');
         Route::post('/role', 'store')->name('role.store');
@@ -297,6 +330,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/transaksi-barang/import', 'import')->name('transaksi-barang.import');
         Route::put('/transaksi-barang', 'update')->name('transaksi-barang.update');
         Route::delete('/transaksi-barang', 'destroy')->name('transaksi-barang.delete');
+
+        Route::get('/transaksi-barang/trend/monthly', 'trend_monthly')->name('transaksi-barang.trend.monthly');
     });
 
     Route::controller(GangguanController::class)->group(function () {
@@ -307,6 +342,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/gangguan/import', 'import')->name('gangguan.import');
         Route::put('/gangguan', 'update')->name('gangguan.update');
         Route::delete('/gangguan', 'destroy')->name('gangguan.delete');
+
+        Route::get('/gangguan/filter', 'filter')->name('gangguan.filter');
     });
 });
 

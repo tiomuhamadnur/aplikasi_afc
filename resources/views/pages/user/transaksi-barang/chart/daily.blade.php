@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Availability Per Equipment</title>
+    <title>Trend Pergantian Sparepart</title>
 @endsection
 
 @section('content')
@@ -10,14 +10,14 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Availability Per Equipment</h4>
+                        <h4 class="card-title">Data Trend Pergantian Sparepart</h4>
                         <div class="btn-group my-2">
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded">
                                 <i class="mdi mdi-filter"></i> Filter
                             </button>
                         </div>
-                        <div id="availabilityEquipmentGraph"></div>
+                        <div id="trendDailySparepartGraph"></div>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="filterForm" action="{{ route('dashboard.availability.station') }}" method="GET"
+                    <form id="filterForm" action="{{ route('transaksi-barang.trend.monthly') }}" method="GET"
                         class="forms-sample">
                         <div class="form-group">
                             <label for="tahun">Tahun</label>
@@ -65,26 +65,6 @@
                                 <option value="12" @if ($bulan == 12) selected @endif>December</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="relasi_area_id">Stasiun</label>
-                            <select class="form-control form-control-lg" name="s" id="relasi_area_id">
-                                @foreach ($relasi_area as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $stasiun_id) selected @endif>
-                                        {{ $item->sub_lokasi->name ?? '-' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="tipe_equipment_id">Tipe Equipment</label>
-                            <select class="form-control form-control-lg" name="tipe_equipment_id" id="tipe_equipment_id">
-                                @foreach ($tipe_equipments as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $tipe_equipment_id) selected @endif>
-                                        {{ $item->code }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -103,16 +83,24 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script>
-        Highcharts.chart('availabilityEquipmentGraph', {
+        Highcharts.chart('trendDailySparepartGraph', {
             chart: {
                 type: 'column'
             },
             plotOptions: {
                 series: {
                     cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function() {
+                                var url = this.options.url; // Mengambil URL dari data point
+                                window.location.href = url;
+                            }
+                        }
+                    },
                     dataLabels: {
                         enabled: true,
-                        format: '{y}%',
+                        format: '{y}',
                         style: {
                             fontSize: '13px',
                             fontWeight: 'bold',
@@ -122,22 +110,26 @@
                 }
             },
             title: {
-                text: 'Availability {{ $tipe_equipment->name }} ({{ $tipe_equipment->code }}) - {{ $stasiun_name ?? '-' }} - ({{ $bulan_name ?? '-' }} {{ $tahun ?? '-' }})',
-                align: 'center',
-                margin: 70
+                text: 'Trend Pergantian Sparepart {{ $bulan_name ?? '-' }} {{ $tahun ?? '-' }}',
+                align: 'left',
+                margin: 50
             },
             xAxis: {
-                categories: {!! json_encode(array_column($data, 'equipment')) !!}
+                categories: {!! json_encode(array_column($data, 'tanggal')) !!}
             },
             yAxis: {
                 title: {
-                    text: 'Availability (%)'
+                    text: 'Jumlah'
                 }
             },
             series: [{
-                name: 'Availability',
-                color: '#cb6ce6',
-                data: {!! json_encode(array_column($data, 'availability')) !!}
+                name: 'Sparepart',
+                color: 'blue',
+                data: {!! json_encode(
+                    array_map(function ($item) {
+                        return ['y' => $item['sparepart'], 'url' => $item['url']];
+                    }, $data),
+                ) !!}
             }],
             legend: {
                 backgroundColor: '#FCFFC5',

@@ -55,25 +55,27 @@
                                     placeholder="input photo" accept="image/*">
                             </div>
                             <div class="form-group">
-                                <label for="category">Category</label>
-                                <select class="tom-select-class" name="category" id="category" required>
+                                <label for="category_id">Category</label>
+                                <select class="tom-select-class" name="category_id" id="category_id" required>
                                     <option value="" selected disabled>- pilih category problem -</option>
-                                    <option value="hardware" @if ($gangguan->category == 'hardware') selected @endif>Hardware
-                                    </option>
-                                    <option value="software" @if ($gangguan->category == 'software') selected @endif>Software
-                                    </option>
-                                    <option value="operation" @if ($gangguan->category == 'operation') selected @endif>Operation
-                                    </option>
+                                    @foreach ($category as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $gangguan->category_id) selected @endif>
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="classification">Classification</label>
-                                <select class="tom-select-class" name="classification" id="classification" required>
+                                <label for="classification_id">Classification</label>
+                                <select class="tom-select-class" name="classification_id" id="classification_id" required>
                                     <option value="" selected disabled>- pilih classification problem -</option>
-                                    <option value="minor" @if ($gangguan->classification == 'minor') selected @endif>Minor</option>
-                                    <option value="moderate" @if ($gangguan->classification == 'moderate') selected @endif>Moderate
-                                    </option>
-                                    <option value="major" @if ($gangguan->classification == 'major') selected @endif>Major</option>
+                                    @foreach ($classification as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $gangguan->classification_id) selected @endif>
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
@@ -114,14 +116,15 @@
                                     autocomplete="off" placeholder="input photo" accept="image/*">
                             </div>
                             <div class="form-group">
-                                <label for="status">Status</label>
-                                <select class="tom-select-class" name="status" id="status" required>
+                                <label for="status_id">Status</label>
+                                <select class="tom-select-class" name="status_id" id="status_id" required>
                                     <option value="" selected disabled>- pilih status -</option>
-                                    <option value="open" @if ($gangguan->status == 'open') selected @endif>Open</option>
-                                    <option value="closed" @if ($gangguan->status == 'closed') selected @endif>Closed
-                                    </option>
-                                    <option value="pending" @if ($gangguan->status == 'pending') selected @endif>Pending
-                                    </option>
+                                    @foreach ($status as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $gangguan->status_id) selected @endif>
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="form-group">

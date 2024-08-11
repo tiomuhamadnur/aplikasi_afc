@@ -28,7 +28,7 @@
                         <h4 class="font-weight-normal mb-3">Gangguan
                             <i class="mdi mdi-receipt mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">{{ $gangguan ?? 'N/A' }}</h2>
+                        <h2 class="mb-3">{{ $gangguan ?? 'N/A' }}</h2>
                         <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -41,7 +41,7 @@
                         <h4 class="font-weight-normal mb-3">Transaksi Barang <i
                                 class="mdi mdi-repeat mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">{{ $transaksi_barang ?? 'N/A' }}</h2>
+                        <h2 class="mb-3">{{ $transaksi_barang ?? 'N/A' }}</h2>
                         <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -54,7 +54,7 @@
                         <h4 class="font-weight-normal mb-3">SAM Card
                             <i class="mdi mdi-key-variant mdi-24px float-right"></i>
                         </h4>
-                        <div class="mb-5">
+                        <div class="mb-3">
                             <span class="badge badge-gradient-success">
                                 <h5>Ready: {{ $samcard['ready'] ?? 'N/A' }}</h5>
                             </span>
@@ -71,10 +71,10 @@
                 <div class="card bg-gradient-danger card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Permit
+                        <h4 class="font-weight-normal mb-3">Safety Stock
                             <i class="mdi mdi-alert-outline mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-5">{{ $permit ?? 'N/A' }}</h2>
+                        <h2 class="mb-3">5</h2>
                         <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -85,12 +85,6 @@
             <div class="col-md-7 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        {{-- <div class="clearfix">
-                            <div id="visit-sale-chart-legend"
-                                class="rounded-legend legend-horizontal legend-top-right float-right">
-                            </div>
-                        </div>
-                        <canvas id="visit-sale-chart" class="mt-4"></canvas> --}}
                         <div id="trendGangguanGraph"></div>
                     </div>
                 </div>
@@ -98,9 +92,16 @@
             <div class="col-md-5 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        {{-- <canvas id="traffic-chart"></canvas>
-                        <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div> --}}
                         <div id="klasifikasiGangguanGraph"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="trendSparepartGraph"></div>
                     </div>
                 </div>
             </div>
@@ -353,6 +354,7 @@
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             Highcharts.chart('trendGangguanGraph', {
@@ -360,7 +362,7 @@
                     type: 'column'
                 },
                 title: {
-                    text: 'Trend Gangguan Tahun 2024',
+                    text: 'Trend Gangguan Tahun {{ $tahun ?? '-' }}',
                     align: 'left',
                 },
                 xAxis: {
@@ -399,7 +401,7 @@
                     }
                 },
                 title: {
-                    text: 'Distribusi Status Gangguan Tahun 2024',
+                    text: 'Distribusi Status Gangguan Tahun {{ $tahun ?? '-' }}',
                     align: 'left'
                 },
                 subtitle: {
@@ -443,6 +445,62 @@
             });
 
 
+            Highcharts.chart('trendSparepartGraph', {
+                chart: {
+                    type: 'column'
+                },
+                plotOptions: {
+                    series: {
+                        cursor: 'pointer',
+                        point: {
+                            events: {
+                                click: function() {
+                                    var url = this.options.url; // Mengambil URL dari data point
+                                    window.location.href = url;
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            format: '{y}',
+                            style: {
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                color: '#000000'
+                            }
+                        }
+                    }
+                },
+                title: {
+                    text: 'Trend Pergantian Sparepart Tahun {{ $tahun ?? '-' }}',
+                    align: 'left',
+                    margin: 50
+                },
+                xAxis: {
+                    categories: {!! json_encode(array_column($data, 'bulan')) !!} // Nama bulan
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah'
+                    }
+                },
+                series: [{
+                    name: 'Sparepart',
+                    color: 'blue',
+                    data: {!! json_encode(
+                        array_map(function ($item) {
+                            return ['y' => $item['trend_gangguan'], 'url' => $item['url_trend_gangguan']];
+                        }, $data),
+                    ) !!}
+                }],
+                legend: {
+                    backgroundColor: '#FCFFC5',
+                    borderColor: '#C98657',
+                    borderWidth: 1
+                },
+            });
+
+
             Highcharts.chart('availabilityTotalGraph', {
                 chart: {
                     type: 'column'
@@ -470,8 +528,9 @@
                     }
                 },
                 title: {
-                    text: 'Total Availability Tahun 2024',
+                    text: 'Total Availability Ticketing System Tahun {{ $tahun ?? '-' }}',
                     align: 'left',
+                    margin: 50
                 },
                 xAxis: {
                     categories: {!! json_encode(array_column($data, 'bulan')) !!} // Nama bulan

@@ -43,6 +43,21 @@ class Gangguan extends Model
         return $this->belongsTo(Equipment::class);
     }
 
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function classification()
+    {
+        return $this->belongsTo(Classification::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function report_user()
     {
         return $this->belongsTo(User::class);

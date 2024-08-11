@@ -15,30 +15,56 @@ use Yajra\DataTables\Services\DataTable;
 
 class GangguanDataTable extends DataTable
 {
+    protected $area_id;
+    protected $category_id;
+    protected $equipment_id;
+    protected $tipe_equipment_id;
+    protected $classification_id;
+    protected $status_id;
+    protected $start_date;
+    protected $end_date;
+    protected $is_changed;
+
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('classification', function($item) {
                 $badgeClass = '';
-                if ($item->classification == 'minor') {
+                if ($item->classification_id == 1) {
                     $badgeClass = 'badge-gradient-success';
-                } elseif ($item->classification == 'moderate') {
+                } elseif ($item->classification_id == 2) {
                     $badgeClass = 'badge-gradient-warning';
                 } else {
                     $badgeClass = 'badge-gradient-danger';
                 }
-                return "<label class='badge {$badgeClass} text-uppercase'>{$item->classification}</label>";
+                return "<label class='badge {$badgeClass} text-uppercase'>{$item->classification->name}</label>";
             })
             ->addColumn('status', function($item) {
                 $badgeClass = '';
-                if ($item->status == 'closed') {
+                if ($item->status_id == 2) {
                     $badgeClass = 'badge-gradient-success';
-                } elseif ($item->status == 'pending') {
+                } elseif ($item->status_id == 3) {
                     $badgeClass = 'badge-gradient-warning';
+                } elseif ($item->status_id == 4) {
+                    $badgeClass = 'badge-gradient-info';
                 } else {
                     $badgeClass = 'badge-gradient-danger';
                 }
-                return "<label class='badge {$badgeClass} text-uppercase'>{$item->status}</label>";
+                return "<label class='badge {$badgeClass} text-uppercase'>{$item->status->name}</label>";
             })
             ->addColumn('photo', function($item) {
                 $photoUrl = asset('storage/' . $item->photo);
@@ -74,18 +100,52 @@ class GangguanDataTable extends DataTable
             ->rawColumns(['ticket_number', 'status', 'classification', 'photo', 'is_changed', '#']);
     }
 
-    public function query(Gangguan $model, Request $request): QueryBuilder
+    public function query(Gangguan $model): QueryBuilder
     {
-        $query = $model->with(['equipment', 'equipment.tipe_equipment', 'equipment.relasi_area.sub_lokasi'])->newQuery();
+        $query = $model->with([
+            'status',
+            'category',
+            'classification',
+            'equipment',
+            'equipment.tipe_equipment',
+            'equipment.relasi_area.sub_lokasi'
+            ])->newQuery();
 
-        // // Apply filters
-        // if ($request->has('transaction_type')) {
-        //     $query->where('transaction_type', $request->get('transaction_type'));
-        // }
-        // if ($request->has('transaction_id')) {
-        //     $query->where('transaction_id', 'like', '%' . $request->get('transaction_id') . '%');
-        // }
-        // Add more filters as needed
+        // Filter
+        if($this->area_id != null)
+        {
+            $query->whereRelation('equipment.relasi_area', 'id', '=', $this->area_id);
+        }
+
+        if($this->category_id != null)
+        {
+            $query->where('category_id', $this->category_id);
+        }
+
+        if($this->tipe_equipment_id != null)
+        {
+            $query->whereRelation('equipment.tipe_equipment', 'id', '=', $this->tipe_equipment_id);
+        }
+
+        if($this->classification_id != null)
+        {
+            $query->where('classification_id', $this->classification_id);
+        }
+
+        if($this->status_id != null)
+        {
+            $query->where('status_id', $this->status_id);
+        }
+
+        if($this->start_date != null && $this->end_date != null)
+        {
+            $query->whereBetween('tanggal', [$this->start_date, $this->end_date]);
+        }
+
+        if($this->is_changed != null)
+        {
+            $query->where('is_changed', $this->is_changed);
+        }
 
         return $query;
     }
@@ -101,7 +161,16 @@ class GangguanDataTable extends DataTable
                     //->dom('Bfrtip')
                     ->orderBy([2, 'desc'])
                     ->selectStyleSingle()
-                    ->buttons([]);
+                    ->buttons([
+                        [
+                            'extend' => 'excel',
+                            'text' => 'Export to Excel',
+                            'attr' => [
+                                'id' => 'datatable-excel',
+                                'style' => 'display: none;',
+                            ],
+                        ]
+                    ]);
     }
 
     public function getColumns(): array
@@ -114,7 +183,7 @@ class GangguanDataTable extends DataTable
             Column::make('equipment.tipe_equipment.code')->title('Equipment Type'),
             Column::make('equipment.code')->title('Equipment ID'),
             Column::make('problem')->title('Problem'),
-            Column::make('category')->title('Category'),
+            Column::make('category.name')->title('Category'),
             Column::make('action')->title('Action'),
             Column::make('response_date')->title('Action Date'),
             Column::make('solved_by')->title('Action By'),
@@ -122,13 +191,13 @@ class GangguanDataTable extends DataTable
             Column::make('analysis')->title('Analysis'),
             Column::computed('classification')
                     ->exportable(true)
-                    ->printable(false)
+                    ->printable(true)
                     ->width(20)
                     ->addClass('text-center')
                     ->searchable(true),
             Column::computed('status')
                     ->exportable(true)
-                    ->printable(false)
+                    ->printable(true)
                     ->width(20)
                     ->addClass('text-center')
                     ->searchable(true),
@@ -141,7 +210,7 @@ class GangguanDataTable extends DataTable
             Column::computed('is_changed')
                     ->title('Changed Sparepart?')
                     ->exportable(true)
-                    ->printable(false)
+                    ->printable(true)
                     ->width(30)
                     ->searchable(true)
                     ->addClass('text-center'),
@@ -155,6 +224,6 @@ class GangguanDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Gangguan_' . date('YmdHis');
+        return date('Ymd') . '_Data Gangguan';
     }
 }

@@ -15,6 +15,23 @@ use Yajra\DataTables\Services\DataTable;
 
 class TransaksiBarangDataTable extends DataTable
 {
+    protected $start_date;
+    protected $end_date;
+    protected $tipe_equipment_id;
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -57,18 +74,19 @@ class TransaksiBarangDataTable extends DataTable
             ->rawColumns(['ticket_number', 'action']);
     }
 
-    public function query(TransaksiBarang $model, Request $request): QueryBuilder
+    public function query(TransaksiBarang $model): QueryBuilder
     {
         $query = $model->with(['equipment.relasi_area.sub_lokasi', 'gangguan', 'barang', 'user'])->newQuery();
 
-        // // Apply filters
-        // if ($request->has('transaction_type')) {
-        //     $query->where('transaction_type', $request->get('transaction_type'));
-        // }
-        // if ($request->has('transaction_id')) {
-        //     $query->where('transaction_id', 'like', '%' . $request->get('transaction_id') . '%');
-        // }
-        // Add more filters as needed
+        if($this->start_date != null && $this->end_date != null)
+        {
+            $query->whereBetween('tanggal', [$this->start_date, $this->end_date]);
+        }
+
+        if($this->tipe_equipment_id != null)
+        {
+            $query->whereRelation('equipment.tipe_equipment', 'id', '=', $this->tipe_equipment_id);
+        }
 
         return $query;
     }
@@ -84,7 +102,16 @@ class TransaksiBarangDataTable extends DataTable
                     //->dom('Bfrtip')
                     ->orderBy([0, 'desc'])
                     ->selectStyleSingle()
-                    ->buttons([]);
+                    ->buttons([
+                        [
+                            'extend' => 'excel',
+                            'text' => 'Export to Excel',
+                            'attr' => [
+                                'id' => 'datatable-excel',
+                                'style' => 'display: none;',
+                            ],
+                        ]
+                    ]);
     }
 
     public function getColumns(): array
@@ -93,8 +120,9 @@ class TransaksiBarangDataTable extends DataTable
             Column::make('tanggal')->title('Tanggal'),
             Column::computed('ticket_number')
                     ->title('Ticket Gangguan')
-                    ->exportable(false)
+                    ->exportable(true)
                     ->printable(false)
+                    ->searchable(true)
                     ->width(60)
                     ->addClass('text-center'),
             Column::make('barang.name')->title('Material Name'),
@@ -114,6 +142,6 @@ class TransaksiBarangDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'TransaksiBarang_' . date('YmdHis');
+        return date('Ymd') . '_Data Transaksi Saparepart';
     }
 }

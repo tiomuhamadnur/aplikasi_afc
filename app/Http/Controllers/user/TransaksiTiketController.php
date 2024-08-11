@@ -57,12 +57,6 @@ class TransaksiTiketController extends Controller
         return redirect()->route('transaksi.tiket.index');
     }
 
-
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         //
