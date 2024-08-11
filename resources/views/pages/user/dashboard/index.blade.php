@@ -71,7 +71,7 @@
                 <div class="card bg-gradient-danger card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Safety Stock
+                        <h4 class="font-weight-normal mb-3">Safety Stock Alert
                             <i class="mdi mdi-alert-outline mdi-24px float-right"></i>
                         </h4>
                         <h2 class="mb-3">5</h2>
