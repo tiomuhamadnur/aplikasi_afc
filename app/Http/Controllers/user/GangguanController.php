@@ -254,6 +254,21 @@ class GangguanController extends Controller
             $raw_data['problem_id'] = null;
         }
 
+        if($request->report_date && $request->response_date && $request->solved_date)
+        {
+            $report_date = Carbon::parse($request->report_date);
+            $response_date = Carbon::parse($request->response_date);
+            $solved_date = Carbon::parse($request->solved_date);
+
+            $response_time = $report_date->diffInMinutes($response_date);
+            $resolution_time = $response_date->diffInMinutes($solved_date);
+            $total_time = $response_time + $resolution_time;
+
+            $raw_data['response_time'] = $response_time;
+            $raw_data['resolution_time'] = $resolution_time;
+            $raw_data['total_time'] = $total_time;
+        }
+
         $data = Gangguan::findOrFail($request->id);
 
         $data->update($raw_data);
