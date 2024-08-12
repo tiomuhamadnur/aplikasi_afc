@@ -16,10 +16,10 @@
                             @csrf
                             @method('PUT')
                             <div class="form-group">
-                                <label for="equipment_id">Equipment</label>
-                                <input type="text" class="form-control" autocomplete="off" required
-                                    value="{{ $gangguan->equipment->name }} - ({{ $gangguan->equipment->code ?? '-' }})"
-                                    disabled>
+                                <label for="report_by">Report By</label>
+                                <input type="text" class="form-control" id="report_by" name="report_by"
+                                    autocomplete="off" required placeholder="input report by"
+                                    value="{{ $gangguan->report_by }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="report_date">Report Date</label>
@@ -27,15 +27,26 @@
                                     autocomplete="off" required value="{{ $gangguan->report_date }}" disabled>
                             </div>
                             <div class="form-group">
-                                <label for="report_by">Report By</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->report_by }}" disabled>
+                                <label for="equipment_id">Equipment</label>
+                                <input type="text" class="form-control" autocomplete="off" required
+                                    value="{{ $gangguan->equipment->name }} - ({{ $gangguan->equipment->code ?? '-' }})"
+                                    disabled>
                             </div>
                             <div class="form-group">
-                                <label for="problem">Problem</label>
-                                <input type="text" class="form-control" id="problem" name="problem" autocomplete="off"
-                                    required placeholder="input problem" value="{{ $gangguan->problem }}" disabled>
+                                <label for="category">Category</label>
+                                <input type="text" class="form-control" id="report_by" name="report_by"
+                                    autocomplete="off" required placeholder="input report by"
+                                    value="{{ $gangguan->category->name ?? '-' }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="problem_id">Problem</label>
+                                <input type="text" class="form-control" id="problem" autocomplete="off" required
+                                    placeholder="input problem" value="{{ $gangguan->problem->name ?? '-' }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="problem_other">Problem Other</label>
+                                <input type="text" class="form-control" id="problem_other" autocomplete="off" required
+                                    placeholder="input problem" value="{{ $gangguan->problem_other ?? '-' }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="photo">Photo Before</label>
@@ -52,12 +63,6 @@
                                         src="{{ asset('storage/' . $gangguan->photo_after) }}" alt="Tidak ada photo"
                                         style="max-width: 250px; max-height: 250px;">
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="category">Category</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->category->name ?? '-' }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="classification">Classification</label>

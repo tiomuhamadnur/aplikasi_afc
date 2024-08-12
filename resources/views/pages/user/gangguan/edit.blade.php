@@ -17,6 +17,17 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $gangguan->id }}" hidden>
                             <div class="form-group">
+                                <label for="report_by">Report By</label>
+                                <input type="text" class="form-control" id="report_by" name="report_by"
+                                    autocomplete="off" required placeholder="input report by"
+                                    value="{{ $gangguan->report_by }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="report_date">Report Date</label>
+                                <input type="datetime-local" class="form-control" id="report_date" name="report_date"
+                                    autocomplete="off" required value="{{ $gangguan->report_date }}">
+                            </div>
+                            <div class="form-group">
                                 <label for="equipment_id">Equipment</label>
                                 <select class="tom-select-class" id="equipment_id" name="equipment_id" required>
                                     <option value="" selected disabled>- pilih equipment -</option>
@@ -29,32 +40,6 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="report_date">Report Date</label>
-                                <input type="datetime-local" class="form-control" id="report_date" name="report_date"
-                                    autocomplete="off" required value="{{ $gangguan->report_date }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="report_by">Report By</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->report_by }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="problem">Problem</label>
-                                <input type="text" class="form-control" id="problem" name="problem" autocomplete="off"
-                                    required placeholder="input problem" value="{{ $gangguan->problem }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="photo">Photo <span class="text-info">(optional)</span></label>
-                                <div class="text-left">
-                                    <img class="img-thumbnail" id="previewImage"
-                                        src="{{ asset('storage/' . $gangguan->photo) }}" alt="Tidak ada photo"
-                                        style="max-width: 250px; max-height: 250px;">
-                                </div>
-                                <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
-                                    placeholder="input photo" accept="image/*">
-                            </div>
-                            <div class="form-group">
                                 <label for="category_id">Category</label>
                                 <select class="tom-select-class" name="category_id" id="category_id" required>
                                     <option value="" selected disabled>- pilih category problem -</option>
@@ -65,6 +50,38 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="problem_id">Problem</label>
+                                <select class="tom-select-class" name="problem_id" id="problem_id" required>
+                                    <option value="" selected disabled>- pilih problem -</option>
+                                    <option value="0" selected>- Other -</option>
+                                    @foreach ($problem as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $gangguan->problem_id) selected @endif>
+                                            {{ $item->category->name ?? '-' }} - {{ $item->tipe_equipment->code ?? '-' }}
+                                            -
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="problemOtherContainer" class="form-group"
+                                @if ($gangguan->problem_id != null) style="display: none" @endif>
+                                <label for="problem_other">Problem Other</label>
+                                <input type="text" class="form-control" id="problem_other" name="problem_other"
+                                    autocomplete="off" placeholder="input problem other"
+                                    value="{{ $gangguan->problem_other }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="photo">Photo <span class="text-info">(optional)</span></label>
+                                <div class="text-left">
+                                    <img class="img-thumbnail" id="previewImage"
+                                        src="{{ asset('storage/' . $gangguan->photo) }}" alt="Tidak ada photo"
+                                        style="max-width: 250px; max-height: 250px;">
+                                </div>
+                                <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
+                                    placeholder="input photo" accept="image/*">
                             </div>
                             <div class="form-group">
                                 <label for="classification_id">Classification</label>
@@ -152,6 +169,24 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
+            const problemSelect = document.getElementById('problem_id');
+            const problemOtherContainer = document.getElementById('problemOtherContainer');
+            const problemOtherInput = document.getElementById('problem_other');
+
+            problemSelect.addEventListener('change', function() {
+                if (problemSelect.value === '0') {
+                    // Jika problem_id bernilai null (selected value is empty)
+                    problemOtherContainer.style.display = 'block';
+                    problemOtherInput.setAttribute('required', 'required');
+                } else {
+                    // Jika problem_id tidak bernilai null
+                    problemOtherContainer.style.display = 'none';
+                    problemOtherInput.removeAttribute('required');
+                    problemOtherInput.value = ''; // Mengosongkan input jika disembunyikan
+                }
+            });
+
+
             const imageInput = document.getElementById('photo');
             const previewImage = document.getElementById('previewImage');
 

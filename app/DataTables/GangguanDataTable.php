@@ -107,6 +107,7 @@ class GangguanDataTable extends DataTable
             'category',
             'classification',
             'equipment',
+            'problem',
             'equipment.tipe_equipment',
             'equipment.relasi_area.sub_lokasi'
             ])->newQuery();
@@ -182,7 +183,8 @@ class GangguanDataTable extends DataTable
             Column::make('report_by')->title('Report By'),
             Column::make('equipment.tipe_equipment.code')->title('Equipment Type'),
             Column::make('equipment.code')->title('Equipment ID'),
-            Column::make('problem')->title('Problem'),
+            Column::make('problem.name')->title('Problem'),
+            Column::make('problem_other')->title('Problem Other'),
             Column::make('category.name')->title('Category'),
             Column::make('action')->title('Action'),
             Column::make('response_date')->title('Action Date'),

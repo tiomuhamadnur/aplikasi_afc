@@ -64,6 +64,16 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
+                            <label for="report_by">Report By</label>
+                            <input type="text" class="form-control" id="report_by" name="report_by" autocomplete="off"
+                                required placeholder="input report by">
+                        </div>
+                        <div class="form-group">
+                            <label for="report_date">Report Date</label>
+                            <input type="datetime-local" class="form-control" id="report_date" name="report_date"
+                                autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
                             <label for="equipment_id">Equipment</label>
                             <select class="tom-select-gangguan" id="equipment_id" name="equipment_id" required>
                                 <option value="" selected disabled>- pilih equipment -</option>
@@ -75,19 +85,31 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="report_date">Report Date</label>
-                            <input type="datetime-local" class="form-control" id="report_date" name="report_date"
-                                autocomplete="off" required>
+                            <label for="category_id">Category</label>
+                            <select class="tom-select-gangguan" name="category_id" id="category_id" required>
+                                <option value="" selected disabled>- pilih category -</option>
+                                @foreach ($category as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="report_by">Report By</label>
-                            <input type="text" class="form-control" id="report_by" name="report_by" autocomplete="off"
-                                required placeholder="input report by">
+                            <label for="problem_id">Problem</label>
+                            <select class="tom-select-gangguan" name="problem_id" id="problem_id" required>
+                                <option value="" selected disabled>- pilih problem -</option>
+                                <option value="0">- Other -</option>
+                                @foreach ($problem as $item)
+                                    <option value="{{ $item->id }}">
+                                        {{ $item->category->name ?? '-' }} - {{ $item->tipe_equipment->code ?? '-' }} -
+                                        {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="problem">Problem</label>
-                            <input type="text" class="form-control" id="problem" name="problem" autocomplete="off"
-                                required placeholder="input problem">
+                        <div id="problemOtherContainer" class="form-group" style="display: none">
+                            <label for="problem_other">Problem Other</label>
+                            <input type="text" class="form-control" id="problem_other" name="problem_other"
+                                autocomplete="off" placeholder="input problem other">
                         </div>
                         <div class="form-group">
                             <label for="photo">Photo Before <span class="text-info">(optional)</span></label>
@@ -97,15 +119,6 @@
                             </div>
                             <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
                                 placeholder="input photo" accept="image/*">
-                        </div>
-                        <div class="form-group">
-                            <label for="category_id">Category</label>
-                            <select class="tom-select-gangguan" name="category_id" id="category_id" required>
-                                <option value="" selected disabled>- pilih category problem -</option>
-                                @foreach ($category as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
                         </div>
                         <div class="form-group">
                             <label for="classification_id">Classification</label>
@@ -443,7 +456,7 @@
             }
 
             // Inisialisasi Tom Select pada load halaman
-            initializeTomSelect('.tom-select-class');
+            // initializeTomSelect('.tom-select-class');
 
             addRowButton.addEventListener('click', function() {
                 var row = document.createElement('div');
@@ -496,6 +509,25 @@
 
     <script>
         $(document).ready(function() {
+            const problemSelect = document.getElementById('problem_id');
+            const problemOtherContainer = document.getElementById('problemOtherContainer');
+            const problemOtherInput = document.getElementById('problem_other');
+
+            problemSelect.addEventListener('change', function() {
+                if (problemSelect.value === '0') {
+                    // Jika problem_id bernilai null (selected value is empty)
+                    problemOtherContainer.style.display = 'block';
+                    problemOtherInput.setAttribute('required', 'required');
+                } else {
+                    // Jika problem_id tidak bernilai null
+                    problemOtherContainer.style.display = 'none';
+                    problemOtherInput.removeAttribute('required');
+                    problemOtherInput.value = ''; // Mengosongkan input jika disembunyikan
+                }
+            });
+
+
+
             var settings = {};
             document.querySelectorAll('.tom-select-gangguan').forEach(function(el) {
                 new TomSelect(el, settings);

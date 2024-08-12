@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Classification;
 use App\Models\Equipment;
 use App\Models\Gangguan;
+use App\Models\Problem;
 use App\Models\RelasiArea;
 use App\Models\Status;
 use App\Models\TipeEquipment;
@@ -50,6 +51,7 @@ class GangguanController extends Controller
         $classification = Classification::all();
         $tipe_equipment = TipeEquipment::all();
         $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
+        $problem = Problem::all();
 
 
         return $dataTable->with([
@@ -68,6 +70,7 @@ class GangguanController extends Controller
             'barang',
             'status',
             'category',
+            'problem',
             'classification',
             'area',
             'area_id',
@@ -93,8 +96,9 @@ class GangguanController extends Controller
             'equipment_id' => 'required|numeric',
             'report_date' => 'required|date',
             'report_by' => 'required|string',
-            'problem' => 'required|string',
             'category_id' => 'required|numeric',
+            'problem_id' => 'nullable|numeric',
+            'problem_other' => 'nullable|string',
             'classification_id' => 'required|numeric',
             'action' => 'required|string',
             'response_date' => 'required|date',
@@ -111,6 +115,10 @@ class GangguanController extends Controller
             'barang_ids' => 'array',
             'qty' => 'array',
         ]);
+
+        if ($raw_data['problem_id'] == 0) {
+            $raw_data['problem_id'] = null;
+        }
 
         $data = Gangguan::create($raw_data);
 
@@ -189,11 +197,13 @@ class GangguanController extends Controller
         $status = Status::all();
         $category = Category::all();
         $classification = Classification::all();
+        $problem = Problem::all();
 
         return view('pages.user.gangguan.edit', compact([
             'gangguan',
             'equipment',
             'status',
+            'problem',
             'category',
             'classification',
         ]));
@@ -205,7 +215,8 @@ class GangguanController extends Controller
             'equipment_id' => 'required|numeric',
             'report_date' => 'required|date',
             'report_by' => 'required|string',
-            'problem' => 'required|string',
+            'problem_id' => 'nullable|numeric',
+            'problem_other' => 'nullable|string',
             'category_id' => 'required|numeric',
             'classification_id' => 'required|numeric',
             'action' => 'required|string',
@@ -222,6 +233,10 @@ class GangguanController extends Controller
             'photo_after' => 'file|image',
             'id' => 'required|numeric'
         ]);
+
+        if ($raw_data['problem_id'] == 0) {
+            $raw_data['problem_id'] = null;
+        }
 
         $data = Gangguan::findOrFail($request->id);
 
