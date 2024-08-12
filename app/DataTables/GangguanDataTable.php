@@ -216,6 +216,9 @@ class GangguanDataTable extends DataTable
                     ->width(30)
                     ->searchable(true)
                     ->addClass('text-center'),
+            Column::make('response_time')->title('Response Time (Min)'),
+            Column::make('resolution_time')->title('Resolution Time (Min)'),
+            Column::make('total_time')->title('Total Time (Min)'),
             Column::computed('#')
                     ->exportable(false)
                     ->printable(false)

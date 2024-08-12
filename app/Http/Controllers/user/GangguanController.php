@@ -14,6 +14,7 @@ use App\Models\RelasiArea;
 use App\Models\Status;
 use App\Models\TipeEquipment;
 use App\Models\TransaksiBarang;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
@@ -118,6 +119,21 @@ class GangguanController extends Controller
 
         if ($raw_data['problem_id'] == 0) {
             $raw_data['problem_id'] = null;
+        }
+
+        if($request->report_date && $request->response_date && $request->solved_date)
+        {
+            $report_date = Carbon::parse($request->report_date);
+            $response_date = Carbon::parse($request->response_date);
+            $solved_date = Carbon::parse($request->solved_date);
+
+            $response_time = $report_date->diffInMinutes($response_date);
+            $resolution_time = $response_date->diffInMinutes($solved_date);
+            $total_time = $response_time + $resolution_time;
+
+            $raw_data['response_time'] = $response_time;
+            $raw_data['resolution_time'] = $resolution_time;
+            $raw_data['total_time'] = $total_time;
         }
 
         $data = Gangguan::create($raw_data);

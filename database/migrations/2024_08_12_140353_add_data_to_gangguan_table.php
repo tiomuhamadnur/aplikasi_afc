@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::table('gangguan', function (Blueprint $table) {
             $table->renameColumn('problem', 'problem_other');
+            $table->string('total_time')->after('resolution_time')->nullable();
             $table->bigInteger('problem_id')->unsigned()->nullable();
 
             $table->foreign('problem_id')->on('problem')->references('id');
