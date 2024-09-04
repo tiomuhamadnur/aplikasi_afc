@@ -133,42 +133,11 @@ class ChecksheetController extends Controller
 
     public function export_excel($uuid_equipment)
     {
-        $checksheetData = Checksheet::whereRelation('equipment', 'uuid', $uuid_equipment)
-            ->whereHas('parameter', function ($query) {
-                $query->whereNull('deleted_at');
-            })
-            ->with(['parameter' => function ($query) {
-                $query->select('id', 'name', 'urutan', 'tipe', 'satuan_id', 'min_value', 'max_value')
-                    ->with('satuan'); // Pastikan satuan juga diambil jika diperlukan
-            }, 'work_order'])
-            ->get();
-
-        if ($checksheetData->isEmpty()) {
-            return redirect()->back()->withNotifyerror('Data tidak ditemukan');
-        }
-
-        $pivotData = $checksheetData->groupBy('work_order.date')->map(function ($items) {
-            return $items->sortBy(function ($item) {
-                return $item->parameter->urutan;
-            })->mapWithKeys(function ($item) {
-                return [$item->parameter->name => $item->value];
-            });
-        });
-
-
-        $parameters = $checksheetData->pluck('parameter')->unique('id')->sortBy('urutan');
-
         $equipment = Equipment::where('uuid', $uuid_equipment)->firstOrFail();
 
         $waktu = Carbon::now()->format('Ymd');
 
         return Excel::download(new HistoryChecksheetExport($uuid_equipment), $waktu . '_data history checksheet_' . $equipment->name .'.xlsx', \Maatwebsite\Excel\Excel::XLSX);
-
-        // return view('pages.user.checksheet.history', compact([
-        //     'equipment',
-        //     'pivotData',
-        //     'parameters'
-        // ]));
     }
 
     public function trend(Request $request)
