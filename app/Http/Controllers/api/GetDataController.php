@@ -30,7 +30,7 @@ class GetDataController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function data_equipment(Request $request)
     {
         //
     }

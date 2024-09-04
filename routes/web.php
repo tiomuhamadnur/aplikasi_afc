@@ -11,9 +11,12 @@ use App\Http\Controllers\admin\DetailLokasiController;
 use App\Http\Controllers\admin\DirektoratController;
 use App\Http\Controllers\admin\DivisiController;
 use App\Http\Controllers\admin\EquipmentController;
+use App\Http\Controllers\admin\FormController;
 use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
+use App\Http\Controllers\admin\OptionFormController;
+use App\Http\Controllers\admin\ParameterController;
 use App\Http\Controllers\admin\PerusahaanController;
 use App\Http\Controllers\admin\ProblemController;
 use App\Http\Controllers\admin\RelasiAreaController;
@@ -29,6 +32,8 @@ use App\Http\Controllers\admin\TipeEquipmentController;
 use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\WorkOrderController;
+use App\Http\Controllers\user\ChecksheetController;
 use App\Http\Controllers\user\GangguanController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringEquipmentController;
@@ -257,6 +262,30 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/perusahaan', 'destroy')->name('perusahaan.delete');
     });
 
+    Route::controller(OptionFormController::class)->group(function () {
+        Route::get('/option-form', 'index')->name('option-form.index');
+        Route::post('/option-form', 'store')->name('option-form.store');
+        Route::put('/option-form', 'update')->name('option-form.update');
+        Route::delete('/option-form', 'destroy')->name('option-form.delete');
+    });
+
+    Route::controller(FormController::class)->group(function () {
+        Route::get('/form', 'index')->name('form.index');
+        Route::post('/form', 'store')->name('form.store');
+        Route::get('/form/{uuid}/edit', 'edit')->name('form.edit');
+        Route::put('/form', 'update')->name('form.update');
+        Route::delete('/form', 'destroy')->name('form.delete');
+    });
+
+    Route::controller(ParameterController::class)->group(function () {
+        Route::get('/parameter/{uuid}', 'index')->name('parameter.index');
+        Route::get('/parameter/{uuid}/create', 'create')->name('parameter.create');
+        Route::post('/parameter', 'store')->name('parameter.store');
+        Route::get('/parameter/{uuid}/edit', 'edit')->name('parameter.edit');
+        Route::put('/parameter', 'update')->name('parameter.update');
+        Route::delete('/parameter', 'destroy')->name('parameter.delete');
+    });
+
     // Route::controller(BankController::class)->group(function () {
     //     Route::get('/bank', 'store')->name('bank.store');
     // });
@@ -344,6 +373,27 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/gangguan', 'destroy')->name('gangguan.delete');
 
         Route::get('/gangguan/filter', 'filter')->name('gangguan.filter');
+    });
+
+    Route::controller(ChecksheetController::class)->group(function () {
+        Route::get('/checksheet/{uuid_work_order}/{uuid_equipment}/create', 'create')->name('checksheet.create');
+        Route::post('/checksheet', 'store')->name('checksheet.store');
+        Route::get('/checksheet/{uuid_equipment}/history', 'history')->name('checksheet.history');
+        Route::get('/checksheet/trend', 'trend')->name('checksheet.trend');
+        Route::put('/checksheet/{uuid_equipment}/history', 'export_excel')->name('checksheet.history.export.excel');
+    });
+
+    Route::controller(WorkOrderController::class)->group(function () {
+        Route::get('/work-order', 'index')->name('work-order.index');
+        Route::get('/work-order/create', 'create')->name('work-order.create');
+
+
+        Route::post('/work-order', 'store')->name('work-order.store');
+        Route::get('/work-order/{uuid}/edit', 'edit')->name('work-order.edit');
+        Route::get('/work-order/{uuid}/detail/work-order', 'detail')->name('work-order.detail');
+        Route::get('/work-order/{uuid}/equipment', 'equipment')->name('work-order.equipment');
+        Route::put('/work-order', 'update')->name('work-order.update');
+        Route::delete('/work-order', 'destroy')->name('work-order.delete');
     });
 });
 

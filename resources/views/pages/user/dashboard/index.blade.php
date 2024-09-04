@@ -83,35 +83,35 @@
         </div>
         <div class="row">
             <div class="col-md-7 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" id="trendGangguanGraph">
+                    {{-- <div class="card-body">
                         <div id="trendGangguanGraph"></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <div class="col-md-5 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" id="klasifikasiGangguanGraph">
+                    {{-- <div class="card-body">
                         <div id="klasifikasiGangguanGraph"></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" id="trendSparepartGraph">
+                    {{-- <div class="card-body">
                         <div id="trendSparepartGraph"></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12 grid-margin">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" id="availabilityTotalGraph">
+                    {{-- <div class="card-body">
                         <div id="availabilityTotalGraph"></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

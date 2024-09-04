@@ -73,6 +73,12 @@
                 <i class="mdi mdi-repeat menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('work-order.index') }}">
+                <span class="menu-title">Work Order</span>
+                <i class="mdi mdi-briefcase menu-icon"></i>
+            </a>
+        </li>
         @if (auth()->user()->role->id == 1)
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
@@ -95,7 +101,8 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('divisi.index') }}">Divisi</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('departemen.index') }}">Departemen</a>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('departemen.index') }}">Departemen</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('seksi.index') }}">Seksi</a>
                         </li>
@@ -138,6 +145,11 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link"
                                 href="{{ route('perusahaan.index') }}">Perusahaan</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('option-form.index') }}">Option
+                                Form</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('form.index') }}">Form</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('barang.index') }}">Barang</a>
                         </li>

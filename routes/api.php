@@ -31,4 +31,5 @@ Route::controller(MonitoringEquipmentController::class)->group(function () {
 
 Route::controller(GetDataController::class)->group(function () {
     Route::get('/get-data/monitoring-equipment', 'data_monitoring_equipment')->name('api.data.monitoring-equipment');
+    Route::get('/get-data/equipment', 'data_equipment')->name('api.data.equipment');
 });

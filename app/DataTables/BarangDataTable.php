@@ -102,14 +102,14 @@ class BarangDataTable extends DataTable
         return [
             Column::make('material_number')->title('Material Number'),
             Column::make('name')->title('Name'),
-            Column::make('tipe_barang.name')->title('Type'),
-            Column::make('relasi_area.detail_lokasi.name')->title('Location'),
+            Column::make('tipe_barang.name')->title('Type')->orderable(false),
+            Column::make('relasi_area.detail_lokasi.name')->title('Location')->orderable(false),
             Column::computed('detail')->title('Detail')
                     ->exportable(false)
                     ->printable(false)
                     ->width(30)
                     ->addClass('text-center')
-                    ->searchable(true),
+                    ->searchable(false),
             Column::computed('action')
                     ->exportable(false)
                     ->printable(false)

@@ -46,6 +46,17 @@ class EquipmentDataTable extends DataTable
                 <i class='mdi mdi-eye'></i>
             </button>";
         })
+        ->addColumn('history', function($item) {
+            $historyRoute = route('checksheet.history', $item->uuid);
+
+            $historyButton = "<a href='{$historyRoute}'>
+                <button type='button' title='History Checksheet' class='btn btn-gradient-primary btn-rounded btn-icon'>
+                    <i class='mdi mdi-history'></i>
+                </button>
+            </a>";
+
+            return $historyButton;
+        })
         ->addColumn('action', function($item) {
             $editRoute = route('equipment.edit', $item->uuid);
             $deleteModal = "<button type='button' title='Delete'
@@ -63,7 +74,7 @@ class EquipmentDataTable extends DataTable
 
             return $editButton . $deleteModal;
         })
-        ->rawColumns(['detail', 'action']);
+        ->rawColumns(['detail',  'history', 'action']);
     }
 
     public function query(Equipment $model, Request $request): QueryBuilder
@@ -109,7 +120,13 @@ class EquipmentDataTable extends DataTable
                     ->printable(false)
                     ->width(30)
                     ->addClass('text-center')
-                    ->searchable(true),
+                    ->searchable(false),
+            Column::computed('history')->title('History')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(30)
+                    ->addClass('text-center')
+                    ->searchable(false),
             Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
