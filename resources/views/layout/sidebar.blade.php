@@ -34,7 +34,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('log.index') }}">
-                <span class="menu-title">Log AFC</span>
+                <span class="menu-title">Log Perform. KUE Bank</span>
                 <i class="mdi mdi-file-find menu-icon"></i>
             </a>
         </li>

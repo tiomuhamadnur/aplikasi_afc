@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\user;
 
+use App\DataTables\MonitoringPermitDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Departemen;
 use App\Models\MonitoringPermit;
@@ -13,20 +14,57 @@ use Illuminate\Http\Request;
 
 class MonitoringPermitController extends Controller
 {
-    public function index()
+    public function index(MonitoringPermitDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'tipe_permit_id' => 'numeric|nullable',
+            'tipe_pekerjaan_id' => 'numeric|nullable',
+            'relasi_area_id' => 'numeric|nullable',
+            'status' => 'string|nullable',
+            'start_date' => 'date|nullable',
+            'end_date' => 'date|nullable',
+        ]);
+
+        $tipe_permit_id = $request->tipe_permit_id ?? null;
+        $tipe_pekerjaan_id = $request->tipe_pekerjaan_id ?? null;
+        $relasi_area_id = $request->relasi_area_id ?? null;
+        $status = $request->status ?? null;
+        $start_date = $request->start_date ?? null;
+        $end_date = $request->end_date ?? $start_date;
+
         $monitoring_permit = MonitoringPermit::where('departemen_id', auth()->user()->relasi_struktur->departemen->id)->get();
         $area = RelasiArea::all();
         $tipe_permit = TipePermit::all();
         $tipe_pekerjaan = TipePekerjaan::all();
 
-        return view('pages.user.monitoring-permit.index', compact([
-            'monitoring_permit',
+        return $dataTable->with([
+            'tipe_permit_id' => $tipe_permit_id,
+            'tipe_pekerjaan_id' => $tipe_pekerjaan_id,
+            'relasi_area_id' => $relasi_area_id,
+            'status' => $status,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ])->render('pages.user.monitoring-permit.index', compact([
             'area',
             'tipe_permit',
             'tipe_pekerjaan',
         ]));
     }
+
+    // public function index()
+    // {
+    //     $monitoring_permit = MonitoringPermit::where('departemen_id', auth()->user()->relasi_struktur->departemen->id)->get();
+    //     $area = RelasiArea::all();
+    //     $tipe_permit = TipePermit::all();
+    //     $tipe_pekerjaan = TipePekerjaan::all();
+
+    //     return view('pages.user.monitoring-permit.index', compact([
+    //         'monitoring_permit',
+    //         'area',
+    //         'tipe_permit',
+    //         'tipe_pekerjaan',
+    //     ]));
+    // }
 
     public function filter(Request $request)
     {

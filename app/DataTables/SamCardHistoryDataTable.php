@@ -49,7 +49,16 @@ class SamCardHistoryDataTable extends DataTable
                     //->dom('Bfrtip')
                     ->orderBy([5, 'desc'])
                     ->selectStyleSingle()
-                    ->buttons([]);
+                    ->buttons([
+                        [
+                            'extend' => 'excel',
+                            'text' => 'Export to Excel',
+                            'attr' => [
+                                'id' => 'datatable-excel',
+                                'style' => 'display: none;',
+                            ],
+                        ]
+                    ]);
     }
 
     public function getColumns(): array
@@ -66,6 +75,6 @@ class SamCardHistoryDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'SamCardHistory_' . date('YmdHis');
+        return date('Ymd') . '_Data History SAM Card';
     }
 }

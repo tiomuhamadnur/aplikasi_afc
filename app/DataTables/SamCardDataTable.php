@@ -54,15 +54,6 @@ class SamCardDataTable extends DataTable
     {
         $query = $model->newQuery();
 
-        // // Apply filters
-        // if ($request->has('transaction_type')) {
-        //     $query->where('transaction_type', $request->get('transaction_type'));
-        // }
-        // if ($request->has('transaction_id')) {
-        //     $query->where('transaction_id', 'like', '%' . $request->get('transaction_id') . '%');
-        // }
-        // Add more filters as needed
-
         return $query;
     }
 
@@ -78,12 +69,14 @@ class SamCardDataTable extends DataTable
                     ->orderBy(1)
                     ->selectStyleSingle()
                     ->buttons([
-                        // Button::make('excel'),
-                        // Button::make('csv'),
-                        // Button::make('pdf'),
-                        // Button::make('print'),
-                        // Button::make('reset'),
-                        // Button::make('reload')
+                        [
+                            'extend' => 'excel',
+                            'text' => 'Export to Excel',
+                            'attr' => [
+                                'id' => 'datatable-excel',
+                                'style' => 'display: none;',
+                            ],
+                        ]
                     ]);
     }
 
@@ -112,6 +105,6 @@ class SamCardDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'SamCard_' . date('YmdHis');
+        return date('Ymd') . '_Data SAM Card';
     }
 }

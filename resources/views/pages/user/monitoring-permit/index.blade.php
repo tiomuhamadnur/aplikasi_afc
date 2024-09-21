@@ -20,12 +20,14 @@
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export" data-bs-toggle="modal" data-bs-target="#exportExcelModal"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table .table-hover text-center">
+                            {{ $dataTable->table() }}
+                            {{-- <table class="table .table-hover text-center">
                                 <thead>
                                     <tr>
                                         <th> # </th>
@@ -89,7 +91,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -106,15 +108,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="filterForm" action="{{ route('monitoring-permit.filter') }}" method="GET"
+                    <form id="filterForm" action="{{ route('monitoring-permit.index') }}" method="GET"
                         class="forms-sample">
                         @csrf
                         @method('GET')
-                        <div class="form-group">
-                            <label for="">Nomor</label>
-                            <input type="text" class="form-control" name="nomor" placeholder="Nomor"
-                                autocomplete="off">
-                        </div>
                         <div class="form-group">
                             <label for="">Tipe Permit</label>
                             <select class="form-control form-control-lg" name="tipe_permit_id">
@@ -264,7 +261,36 @@
         </div>
     </div>
     <!-- End Delete Modal -->
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
 @endsection
+
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
 
 @section('javascript')
     <script>
@@ -275,5 +301,11 @@
                 $('#id_delete').val(id);
             });
         });
+    </script>
+
+    <script>
+        function exportExcel() {
+            document.getElementById('datatable-excel').click();
+        }
     </script>
 @endsection

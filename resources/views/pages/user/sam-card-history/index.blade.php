@@ -20,41 +20,13 @@
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" id="liveToastBtn"
-                                class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export to Excel" data-bs-toggle="modal"
+                                data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table .table-hover text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Tanggal </th>
-                                        <th> TID </th>
-                                        <th> PIN </th>
-                                        <th> MC </th>
-                                        <th> Stasiun </th>
-                                        <th> PG ID </th>
-                                        <th> Type </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($sam_card_history as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->tanggal ?? '-' }}</td>
-                                            <td>{{ $item->sam_card->tid ?? '-' }}</td>
-                                            <td>{{ $item->sam_card->pin ?? '-' }}</td>
-                                            <td>{{ $item->sam_card->mc ?? '-' }}</td>
-                                            <td>{{ $item->relasi_area->sub_lokasi->code ?? '-' }}</td>
-                                            <td>{{ $item->pg_id ?? '-' }}</td>
-                                            <td>{{ $item->type ?? '-' }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -131,6 +103,30 @@
         </div>
     </div>
     <!-- End Add Modal -->
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
 @endsection
 
 @push('scripts')
@@ -146,5 +142,11 @@
                 $('#id_delete').val(id);
             });
         });
+    </script>
+
+    <script>
+        function exportExcel() {
+            document.getElementById('datatable-excel').click();
+        }
     </script>
 @endsection
