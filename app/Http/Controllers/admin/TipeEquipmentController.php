@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\TipeEquipmentDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\TipeEquipment;
 use Illuminate\Http\Request;
 
 class TipeEquipmentController extends Controller
 {
-    public function index()
+    public function index(TipeEquipmentDataTable $dataTable)
     {
-        $tipe_equipment = TipeEquipment::all();
-        return view('pages.admin.tipe-equipment.index', compact([
-            'tipe_equipment',
-        ]));
+        return $dataTable->render('pages.admin.tipe-equipment.index');
     }
 
     public function create()

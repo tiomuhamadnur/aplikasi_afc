@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Problem extends Model
+class Cause extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'problem';
+    protected $table = 'cause';
 
     protected $guarded = [];
 

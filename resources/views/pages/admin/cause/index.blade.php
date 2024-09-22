@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Admin | Tipe Equipment</title>
+    <title>Admin | Cause</title>
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Tipe Equipment</h4>
+                        <h4 class="card-title">Data Cause</h4>
                         <div class="btn-group my-2">
                             <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#addModal">
@@ -19,6 +19,10 @@
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
+                            <button type="button" title="Import" data-bs-toggle="modal" data-bs-target="#importModal"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
+                                <i class="mdi mdi-file-import"></i>
+                            </button>
                             <button type="button" title="Export" data-bs-toggle="modal" data-bs-target="#exportExcelModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
@@ -26,40 +30,6 @@
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Nama </th>
-                                        <th> Code </th>
-                                        <th> Aksi </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($tipe_equipment as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->code }}</td>
-                                            <td>
-                                                <button type="button" title="Edit"
-                                                    class="btn btn-gradient-warning btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-code="{{ $item->code }}">
-                                                    <i class="mdi mdi-lead-pencil"></i>
-                                                </button>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -76,7 +46,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addForm" action="{{ route('tipe-equipment.store') }}" method="POST" class="forms-sample">
+                    <form id="addForm" action="{{ route('cause.store') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('POST')
                         <div class="form-group">
@@ -109,7 +79,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm" action="{{ route('tipe-equipment.update') }}" method="POST" class="forms-sample">
+                    <form id="editForm" action="{{ route('cause.update') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('PUT')
                         <input type="text" name="id" id="id_edit" hidden>
@@ -134,6 +104,44 @@
     </div>
     <!-- End Edit Modal -->
 
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Import</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importForm" action="{{ route('cause.import') }}" method="POST" class="forms-sample"
+                        enctype="multipart/form-data">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group">
+                            <label for="">
+                                File Import
+                                <span>
+                                    <a href="{{ asset('assets/format/Template Format Import Cause.xlsx') }}">
+                                        <button type="button" class="btn btn-icon btn-sm btn-success btn-rounded p-0"
+                                            title="Download Template File Import"><i class="mdi mdi-cloud-download"></i>
+                                        </button>
+                                    </a>
+                                </span>
+                            </label>
+                            <input type="file" class="form-control form-control-lg" id="file"
+                                accept=".xls,.xlsx" name="file" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="importForm" class="btn btn-gradient-primary me-2">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Import Modal -->
+
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -143,8 +151,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="deleteForm" action="{{ route('tipe-equipment.delete') }}" method="POST"
-                        class="forms-sample">
+                    <form id="deleteForm" action="{{ route('cause.delete') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('delete')
                         <input type="text" name="id" id="id_delete" hidden>
@@ -201,6 +208,7 @@
                 $('#name_edit').val(name);
                 $('#code_edit').val(code);
             });
+
 
             $('#deleteModal').on('show.bs.modal', function(e) {
                 var id = $(e.relatedTarget).data('id');

@@ -26,15 +26,6 @@ class SamCardHistoryDataTable extends DataTable
     {
         $query = $model->with(['sam_card', 'equipment.relasi_area.sub_lokasi'])->newQuery();
 
-        // // Apply filters
-        // if ($request->has('transaction_type')) {
-        //     $query->where('transaction_type', $request->get('transaction_type'));
-        // }
-        // if ($request->has('transaction_id')) {
-        //     $query->where('transaction_id', 'like', '%' . $request->get('transaction_id') . '%');
-        // }
-        // Add more filters as needed
-
         return $query;
     }
 

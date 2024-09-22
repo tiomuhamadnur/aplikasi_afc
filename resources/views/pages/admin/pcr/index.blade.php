@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Admin | Problem</title>
+    <title>Admin | PCR</title>
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Problem</h4>
+                        <h4 class="card-title">Data PCR</h4>
                         <div class="btn-group my-2">
                             <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#addModal">
@@ -46,18 +46,63 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addForm" action="{{ route('problem.store') }}" method="POST" class="forms-sample">
+                    <form id="addForm" action="{{ route('pcr.store') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name"
-                                autocomplete="off" required>
+                            <label for="tipe_equipment_id">Tipe Equipment</label>
+                            <select class="tom-select-class" name="tipe_equipment_id" id="tipe_equipment_id" required>
+                                <option value="" selected disabled>- pilih tipe equipment -</option>
+                                @foreach ($tipe_equipment as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->code }})
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="code">Code</label>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="Code"
-                                autocomplete="off" required>
+                            <label for="category_id">Category</label>
+                            <select class="tom-select-class" name="category_id" id="category_id" required>
+                                <option value="" selected disabled>- pilih category -</option>
+                                @foreach ($category as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="problem_id">Problem (P)</label>
+                            <select class="tom-select-class" name="problem_id" id="problem_id" required>
+                                <option value="" selected disabled>- pilih problem -</option>
+                                @foreach ($problem as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cause_id">Cause (C)</label>
+                            <select class="tom-select-class" name="cause_id" id="cause_id" required>
+                                <option value="" selected disabled>- pilih cause -</option>
+                                @foreach ($cause as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="remedy_id">Remedy (R)</label>
+                            <select class="tom-select-class" name="remedy_id" id="remedy_id" required>
+                                <option value="" selected disabled>- pilih remedy -</option>
+                                @foreach ($remedy as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="classification_id">Classification</label>
+                            <select class="tom-select-class" name="classification_id" id="classification_id" required>
+                                <option value="" selected disabled>- pilih classification -</option>
+                                @foreach ($classification as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </form>
                 </div>
@@ -70,39 +115,29 @@
     </div>
     <!-- End Add Modal -->
 
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Form Edit</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm" action="{{ route('problem.update') }}" method="POST" class="forms-sample">
+                    <form id="deleteForm" action="{{ route('pcr.delete') }}" method="POST" class="forms-sample">
                         @csrf
-                        @method('PUT')
-                        <input type="text" name="id" id="id_edit" hidden>
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name_edit" name="name" placeholder="Name"
-                                autocomplete="off" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="code">Code</label>
-                            <input type="text" class="form-control" id="code_edit" name="code" placeholder="Code"
-                                autocomplete="off" required>
-                        </div>
+                        @method('delete')
+                        <input type="text" name="id" id="id_delete" hidden>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="editForm" class="btn btn-gradient-primary me-2">Update</button>
+                    <button type="submit" form="deleteForm" class="btn btn-gradient-danger me-2">Delete</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Edit Modal -->
+    <!-- End Delete Modal -->
 
     <!-- Import Modal -->
     <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -113,7 +148,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="importForm" action="{{ route('problem.import') }}" method="POST" class="forms-sample"
+                    <form id="importForm" action="{{ route('pcr.import') }}" method="POST" class="forms-sample"
                         enctype="multipart/form-data">
                         @csrf
                         @method('POST')
@@ -121,7 +156,7 @@
                             <label for="">
                                 File Import
                                 <span>
-                                    <a href="{{ asset('assets/format/Template Format Import Problem.xlsx') }}">
+                                    <a href="{{ asset('assets/format/Template Format Import PCR.xlsx') }}">
                                         <button type="button" class="btn btn-icon btn-sm btn-success btn-rounded p-0"
                                             title="Download Template File Import"><i class="mdi mdi-cloud-download"></i>
                                         </button>
@@ -141,30 +176,6 @@
         </div>
     </div>
     <!-- End Import Modal -->
-
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="deleteForm" action="{{ route('problem.delete') }}" method="POST" class="forms-sample">
-                        @csrf
-                        @method('delete')
-                        <input type="text" name="id" id="id_delete" hidden>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="deleteForm" class="btn btn-gradient-danger me-2">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Delete Modal -->
 
     <!-- Export Excel Modal -->
     <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -199,17 +210,6 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            $('#editModal').on('show.bs.modal', function(e) {
-                var id = $(e.relatedTarget).data('id');
-                var name = $(e.relatedTarget).data('name');
-                var code = $(e.relatedTarget).data('code');
-
-                $('#id_edit').val(id);
-                $('#name_edit').val(name);
-                $('#code_edit').val(code);
-            });
-
-
             $('#deleteModal').on('show.bs.modal', function(e) {
                 var id = $(e.relatedTarget).data('id');
 

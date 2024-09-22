@@ -135,7 +135,14 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('category.index') }}">Category</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('problem.index') }}">Problem</a>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('problem.index') }}">Problem
+                                (P)</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('cause.index') }}">Cause (C)</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('remedy.index') }}">Remedy (R)</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('pcr.index') }}">PCR</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('jabatan.index') }}">Jabatan</a>
                         </li>

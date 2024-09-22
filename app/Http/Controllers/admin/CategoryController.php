@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\CategoryDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(CategoryDataTable $dataTable)
     {
-        $category = Category::all();
-        return view('pages.admin.category.index', compact([
-            'category',
-        ]));
+        return $dataTable->render('pages.admin.category.index');
     }
 
     public function create()

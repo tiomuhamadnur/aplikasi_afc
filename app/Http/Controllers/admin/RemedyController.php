@@ -2,20 +2,27 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\DataTables\ProblemDataTable;
+use App\DataTables\RemedyDataTable;
 use App\Http\Controllers\Controller;
-use App\Imports\ProblemImport;
-use App\Models\Category;
-use App\Models\Problem;
-use App\Models\TipeEquipment;
+use App\Imports\RemedyImport;
+use App\Models\Remedy;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ProblemController extends Controller
+class RemedyController extends Controller
 {
-    public function index(ProblemDataTable $dataTable)
+    // public function index()
+    // {
+    //     $remedy = Remedy::all();
+
+    //     return view('pages.admin.remedy.index', compact([
+    //         'remedy',
+    //     ]));
+    // }
+
+    public function index(RemedyDataTable $dataTable)
     {
-        return $dataTable->render('pages.admin.problem.index');
+        return $dataTable->render('pages.admin.remedy.index');
     }
 
     public function create()
@@ -30,9 +37,9 @@ class ProblemController extends Controller
             'code' => 'required|string',
         ]);
 
-        Problem::create($data);
+        Remedy::create($data);
 
-        return redirect()->route('problem.index')->withNotify('Data berhasil ditambahkan');
+        return redirect()->route('remedy.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function show(string $id)
@@ -49,10 +56,10 @@ class ProblemController extends Controller
         if($request->hasFile('file'))
         {
             $file = $request->file('file');
-            Excel::import(new ProblemImport, $file);
+            Excel::import(new RemedyImport, $file);
         }
 
-        return redirect()->route('problem.index')->withNotify('Data berhasil diimport');
+        return redirect()->route('remedy.index')->withNotify('Data berhasil diimport');
     }
 
     public function update(Request $request)
@@ -66,11 +73,11 @@ class ProblemController extends Controller
             'id' => 'required|numeric',
         ]);
 
-        $data = Problem::findOrFail($request->id);
+        $data = Remedy::findOrFail($request->id);
 
         $data->update($rawData);
 
-        return redirect()->route('problem.index')->withNotify('Data berhasil diubah');
+        return redirect()->route('remedy.index')->withNotify('Data berhasil diubah');
     }
 
     public function destroy(Request $request)
@@ -79,9 +86,9 @@ class ProblemController extends Controller
             'id' => 'required|numeric',
         ]);
 
-        $data = Problem::findOrFail($request->id);
+        $data = Remedy::findOrFail($request->id);
         $data->delete();
 
-        return redirect()->route('problem.index')->withNotify('Data berhasil dihapus');
+        return redirect()->route('remedy.index')->withNotify('Data berhasil dihapus');
     }
 }

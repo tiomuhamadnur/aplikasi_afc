@@ -15,13 +15,6 @@ use Symfony\Component\Process\Process;
 
 class SamCardController extends Controller
 {
-    // public function index()
-    // {
-    //     $sam_card = SamCard::orderByDesc('updated_at')->get();
-
-    //     return view('pages.user.sam-card.index', compact(['sam_card']));
-    // }
-
     public function index(SamCardDataTable $dataTable)
     {
         return $dataTable->render('pages.user.sam-card.index');

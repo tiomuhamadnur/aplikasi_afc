@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\ClassificationDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Classification;
 use Illuminate\Http\Request;
 
 class ClassificationController extends Controller
 {
-    public function index()
+    public function index(ClassificationDataTable $dataTable)
     {
-        $classification = Classification::all();
-        return view('pages.admin.classification.index', compact([
-            'classification',
-        ]));
+        return $dataTable->render('pages.admin.classification.index');
     }
 
     public function create()

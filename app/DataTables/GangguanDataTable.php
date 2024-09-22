@@ -160,7 +160,7 @@ class GangguanDataTable extends DataTable
                     ->pageLength(50)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([2, 'desc'])
+                    ->orderBy([4, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -179,18 +179,18 @@ class GangguanDataTable extends DataTable
         return [
             Column::make('ticket_number')->title('Ticket Number'),
             Column::make('equipment.relasi_area.sub_lokasi.name')->title('Station'),
-            Column::make('report_date')->title('Report Date'),
-            Column::make('report_by')->title('Report By'),
             Column::make('equipment.tipe_equipment.code')->title('Equipment Type'),
             Column::make('equipment.code')->title('Equipment ID'),
-            Column::make('problem.name')->title('Problem'),
-            Column::make('problem_other')->title('Problem Other'),
-            Column::make('category.name')->title('Category'),
-            Column::make('action')->title('Action'),
+            Column::make('report_date')->title('Report Date'),
             Column::make('response_date')->title('Action Date'),
-            Column::make('solved_by')->title('Action By'),
             Column::make('solved_date')->title('Solved Date'),
-            Column::make('analysis')->title('Analysis'),
+            Column::make('report_by')->title('Report By'),
+            Column::make('solved_by')->title('Action By'),
+            Column::make('problem.name')->title('Problem (P)'),
+            Column::make('problem_other')->title('Problem Other'),
+            Column::make('analysis')->title('Cause (C)'),
+            Column::make('action')->title('Remedy (R)'),
+            Column::make('category.name')->title('Category'),
             Column::computed('classification')
                     ->exportable(true)
                     ->printable(true)

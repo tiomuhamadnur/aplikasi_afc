@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\ArahController;
 use App\Http\Controllers\admin\BankController;
 use App\Http\Controllers\admin\BarangController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\CauseController;
 use App\Http\Controllers\admin\ClassificationController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DepartemenController;
@@ -17,10 +18,12 @@ use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
 use App\Http\Controllers\admin\OptionFormController;
 use App\Http\Controllers\admin\ParameterController;
+use App\Http\Controllers\admin\PCRController;
 use App\Http\Controllers\admin\PerusahaanController;
 use App\Http\Controllers\admin\ProblemController;
 use App\Http\Controllers\admin\RelasiAreaController;
 use App\Http\Controllers\admin\RelasiStrukturController;
+use App\Http\Controllers\admin\RemedyController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SatuanController;
 use App\Http\Controllers\admin\SeksiController;
@@ -59,7 +62,9 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', function () {
+    return redirect()->route('dashboard.index');
+})->name('home');
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -236,9 +241,34 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(ProblemController::class)->group(function () {
         Route::get('/problem', 'index')->name('problem.index');
         Route::post('/problem', 'store')->name('problem.store');
-        Route::get('/problem/{uuid}/edit', 'edit')->name('problem.edit');
         Route::put('/problem', 'update')->name('problem.update');
+        Route::post('/problem/import', 'import')->name('problem.import');
         Route::delete('/problem', 'destroy')->name('problem.delete');
+    });
+
+    Route::controller(CauseController::class)->group(function () {
+        Route::get('/cause', 'index')->name('cause.index');
+        Route::post('/cause', 'store')->name('cause.store');
+        Route::put('/cause', 'update')->name('cause.update');
+        Route::post('/cause/import', 'import')->name('cause.import');
+        Route::delete('/cause', 'destroy')->name('cause.delete');
+    });
+
+    Route::controller(RemedyController::class)->group(function () {
+        Route::get('/remedy', 'index')->name('remedy.index');
+        Route::post('/remedy', 'store')->name('remedy.store');
+        Route::put('/remedy', 'update')->name('remedy.update');
+        Route::post('/remedy/import', 'import')->name('remedy.import');
+        Route::delete('/remedy', 'destroy')->name('remedy.delete');
+    });
+
+    Route::controller(PCRController::class)->group(function () {
+        Route::get('/pcr', 'index')->name('pcr.index');
+        Route::post('/pcr', 'store')->name('pcr.store');
+        Route::get('/pcr/{uuid}/edit', 'edit')->name('pcr.edit');
+        Route::put('/pcr', 'update')->name('pcr.update');
+        Route::post('/pcr/import', 'import')->name('pcr.import');
+        Route::delete('/pcr', 'destroy')->name('pcr.delete');
     });
 
     Route::controller(RoleController::class)->group(function () {
