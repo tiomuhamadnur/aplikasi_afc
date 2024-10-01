@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\EquipmentImport;
 use App\Models\Arah;
 use App\Models\Equipment;
+use App\Models\FunctionalLocation;
 use App\Models\RelasiArea;
 use App\Models\RelasiStruktur;
 use App\Models\TipeEquipment;
@@ -17,35 +18,22 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EquipmentController extends Controller
 {
-    // public function index()
-    // {
-    //     $equipment = Equipment::all();
-    //     $tipe_equipment = TipeEquipment::all();
-    //     $area = RelasiArea::all();
-    //     $struktur = RelasiStruktur::all();
-    //     $arah = Arah::all();
-
-    //     return view('pages.admin.equipment.index', compact([
-    //         'equipment',
-    //         'tipe_equipment',
-    //         'area',
-    //         'struktur',
-    //         'arah',
-    //     ]));
-    // }
-
     public function index(EquipmentDataTable $dataTable)
     {
         $tipe_equipment = TipeEquipment::all();
         $area = RelasiArea::all();
         $struktur = RelasiStruktur::all();
         $arah = Arah::all();
+        $functional_location = FunctionalLocation::all();
+        $equipment = Equipment::all();
 
         return $dataTable->render('pages.admin.equipment.index', compact([
             'tipe_equipment',
             'area',
             'struktur',
             'arah',
+            'functional_location',
+            'equipment'
         ]));
     }
 
@@ -63,7 +51,9 @@ class EquipmentController extends Controller
             'tipe_equipment_id' => 'required|numeric',
             'relasi_area_id' => 'required|numeric',
             'relasi_struktur_id' => 'required|numeric',
-            'arah_id' => 'required|numeric',
+            'functional_location_id' => 'required|numeric',
+            'parent_id' => 'nullable|numeric',
+            'arah_id' => 'nullable|numeric',
             'photo' => 'image',
             'deskripsi' => 'nullable',
         ]);
@@ -76,6 +66,8 @@ class EquipmentController extends Controller
             "tipe_equipment_id" => $request->tipe_equipment_id,
             "relasi_area_id" => $request->relasi_area_id,
             "relasi_struktur_id" => $request->relasi_struktur_id,
+            "functional_location_id" => $request->functional_location_id,
+            "parent_id" => $request->parent_id,
             "arah_id" => $request->arah_id,
             "deskripsi" => $request->deskripsi,
         ]);
@@ -129,6 +121,8 @@ class EquipmentController extends Controller
         $area = RelasiArea::all();
         $struktur = RelasiStruktur::all();
         $arah = Arah::all();
+        $functional_location = FunctionalLocation::all();
+        $equipments = Equipment::whereNot('id', $equipment->id)->get();
 
         return view('pages.admin.equipment.edit', compact([
             'equipment',
@@ -136,6 +130,8 @@ class EquipmentController extends Controller
             'area',
             'struktur',
             'arah',
+            'functional_location',
+            'equipments'
         ]));
     }
 
@@ -149,6 +145,8 @@ class EquipmentController extends Controller
             'tipe_equipment_id' => 'required|numeric',
             'relasi_area_id' => 'required|numeric',
             'relasi_struktur_id' => 'required|numeric',
+            'functional_location_id' => 'required|numeric',
+            'parent_id' => 'nullable|numeric',
             'arah_id' => 'required|numeric',
             'photo' => 'image',
             'deskripsi' => 'nullable',
@@ -164,6 +162,8 @@ class EquipmentController extends Controller
             "tipe_equipment_id" => $request->tipe_equipment_id,
             "relasi_area_id" => $request->relasi_area_id,
             "relasi_struktur_id" => $request->relasi_struktur_id,
+            "functional_location_id" => $request->functional_location_id,
+            "parent_id" => $request->parent_id,
             "arah_id" => $request->arah_id,
             "deskripsi" => $request->deskripsi,
             "status" => $request->status,

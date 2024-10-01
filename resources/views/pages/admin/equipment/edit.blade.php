@@ -34,8 +34,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="tipe_equipment_id">Tipe Equipment</label>
-                                <select class="form-control form-control-lg" id="tipe_equipment_id" name="tipe_equipment_id"
-                                    required>
+                                <select class="tom-select-class" id="tipe_equipment_id" name="tipe_equipment_id" required>
                                     <option value="" selected disabled>- pilih tipe equipment -</option>
                                     @foreach ($tipe_equipment as $item)
                                         <option value="{{ $item->id }}"
@@ -47,8 +46,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="relasi_area_id">Area</label>
-                                <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id"
-                                    required>
+                                <select class="tom-select-class" id="relasi_area_id" name="relasi_area_id" required>
                                     <option value="" selected disabled>- pilih area spesifik -</option>
                                     @foreach ($area as $item)
                                         <option value="{{ $item->id }}"
@@ -58,9 +56,34 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label for="functional_location_id">Functional Location</label>
+                                <select class="tom-select-class" id="functional_location_id" name="functional_location_id"
+                                    required>
+                                    <option value="" selected disabled>- pilih functional location -</option>
+                                    @foreach ($functional_location as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $equipment->functional_location_id) selected @endif>
+                                            {{ $item->name }} - {{ $item->code }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="parent_id">Parent Equipment <span class="text-primary">(optional)</span></label>
+                                <select class="tom-select-class" id="parent_id" name="parent_id">
+                                    <option value="" selected disabled>- pilih parent equipment -</option>
+                                    @foreach ($equipments as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $equipment->parent_id) selected @endif>
+                                            {{ $item->code ?? 'N/A' }} -
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="relasi_struktur_id">Owner</label>
-                                <select class="form-control form-control-lg" id="relasi_struktur_id"
-                                    name="relasi_struktur_id" required>
+                                <select class="tom-select-class" id="relasi_struktur_id" name="relasi_struktur_id" required>
                                     <option value="" selected disabled>- pilih owner -</option>
                                     @foreach ($struktur as $item)
                                         <option value="{{ $item->id }}"
@@ -70,8 +93,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="arah_id">Corner</label>
-                                <select class="form-control form-control-lg" id="arah_id" name="arah_id" required>
+                                <label for="arah_id">Corner <span class="text-primary">(optional)</span></label>
+                                <select class="tom-select-class" id="arah_id" name="arah_id">
                                     <option value="" selected disabled>- pilih corner -</option>
                                     @foreach ($arah as $item)
                                         <option value="{{ $item->id }}"
@@ -82,7 +105,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="status">Status</label>
-                                <select class="form-control form-control-lg" id="status" name="status" required>
+                                <select class="tom-select-class" id="status" name="status" required>
                                     <option value="" selected disabled>- pilih status -</option>
                                     <option value="active" @if ($equipment->status == 'active') selected @endif>Active</option>
                                     <option value="non-active" @if ($equipment->status == 'non-active') selected @endif>Non-active
@@ -101,8 +124,8 @@
                                         src="{{ asset('storage/' . $equipment->photo) }}" alt="tidak ada photo"
                                         style="max-width: 250px; max-height: 250px;">
                                 </div>
-                                <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
-                                    accept="image/*">
+                                <input type="file" class="form-control" id="photo" name="photo"
+                                    autocomplete="off" accept="image/*">
                             </div>
                             <div class="form-group d-flex justify-content-end">
                                 <a href="{{ route('equipment.index') }}" type="button"

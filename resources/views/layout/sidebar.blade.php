@@ -1,6 +1,6 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
-        <li class="nav-item nav-profile">
+        {{-- <li class="nav-item nav-profile">
             <a href="{{ route('profile.index') }}" class="nav-link">
                 <div class="nav-profile-image">
                     <img src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg' }}"
@@ -13,7 +13,7 @@
                     <span class="text-secondary text-small">{{ auth()->user()->jabatan->name ?? '-' }}</span>
                 </div>
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item">
             <a class="nav-link" href="{{ route('dashboard.index') }}">
                 <span class="menu-title">Dashboard</span>
@@ -101,8 +101,7 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('divisi.index') }}">Divisi</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link"
-                                href="{{ route('departemen.index') }}">Departemen</a>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('departemen.index') }}">Departemen</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('seksi.index') }}">Seksi</a>
                         </li>
@@ -162,6 +161,9 @@
                         </li>
                         <li class="nav-item"> <a class="nav-link"
                                 href="{{ route('equipment.index') }}">Equipment</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('fun_loc.index') }}">Funct.
+                                Location</a>
                         </li>
                     </ul>
                 </div>

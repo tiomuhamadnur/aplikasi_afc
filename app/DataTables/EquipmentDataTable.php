@@ -18,6 +18,9 @@ class EquipmentDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+        ->addColumn('fun_loc', function($item) {
+            return $item->functional_location->code ?? '';
+        })
         ->addColumn('detail', function($item) {
             $photoUrl = asset('storage/' . $item->photo);
             $name = $item->name;
@@ -74,21 +77,18 @@ class EquipmentDataTable extends DataTable
 
             return $editButton . $deleteModal;
         })
-        ->rawColumns(['detail',  'history', 'action']);
+        ->rawColumns(['detail', 'fun_loc', 'history', 'action']);
     }
 
-    public function query(Equipment $model, Request $request): QueryBuilder
+    public function query(Equipment $model): QueryBuilder
     {
-        $query = $model->with(['tipe_equipment', 'relasi_area.sub_lokasi'])->newQuery();
-
-        // // Apply filters
-        // if ($request->has('transaction_type')) {
-        //     $query->where('transaction_type', $request->get('transaction_type'));
-        // }
-        // if ($request->has('transaction_id')) {
-        //     $query->where('transaction_id', 'like', '%' . $request->get('transaction_id') . '%');
-        // }
-        // Add more filters as needed
+        // $query = $model->with(['tipe_equipment', 'relasi_area.sub_lokasi', 'functional_location', 'parent'])->newQuery();
+        $query = $model->with([
+                'tipe_equipment',
+                'relasi_area.sub_lokasi',
+                'functional_location',
+                'parent',
+            ])->newQuery();
 
         return $query;
     }
@@ -99,22 +99,38 @@ class EquipmentDataTable extends DataTable
                     ->setTableId('equipment-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(50)
+                    ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([3, 'asc'])
+                    ->orderBy([0, 'asc'])
                     ->selectStyleSingle()
-                    ->buttons([]);
+                    ->buttons([
+                        [
+                            'extend' => 'excel',
+                            'text' => 'Export to Excel',
+                            'attr' => [
+                                'id' => 'datatable-excel',
+                                'style' => 'display: none;',
+                            ],
+                        ]
+                    ]);
     }
 
     public function getColumns(): array
     {
         return [
+            Column::make('id')->title('ID'),
             Column::make('name')->title('Name'),
             Column::make('code')->title('Code'),
             Column::make('tipe_equipment.code')->title('Type'),
             Column::make('equipment_number')->title('Equipment Number'),
             Column::make('relasi_area.sub_lokasi.name')->title('Location'),
+            Column::computed('fun_loc')
+                    ->title('Functional Location')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->addClass('text-center'),
+            Column::make('parent.name')->title('Parent'),
             Column::computed('detail')->title('Detail')
                     ->exportable(false)
                     ->printable(false)

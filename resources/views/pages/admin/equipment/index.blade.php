@@ -26,68 +26,6 @@
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Nama </th>
-                                        <th> Code </th>
-                                        <th> Tipe </th>
-                                        <th> Equipment <br> Number </th>
-                                        <th> Lokasi </th>
-                                        <th> Photo </th>
-                                        <th> Aksi </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($equipment as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->code ?? '-' }}</td>
-                                            <td class="text-wrap">
-                                                {{ $item->tipe_equipment->code ?? '-' }}
-                                            </td>
-                                            <td>{{ $item->equipment_number ?? '-' }}</td>
-                                            <td class="text-wrap">
-                                                {{ $item->relasi_area->sub_lokasi->code ?? '-' }} <br>
-                                                {{ $item->relasi_area->detail_lokasi->name ?? '-' }} <br>
-                                                {{ $item->arah->name ?? '' }}
-                                            </td>
-                                            <td>
-                                                <button type="button" title="Show"
-                                                    class="btn btn-gradient-success btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#photoModal"
-                                                    data-photo='{{ asset('storage/' . $item->photo) }}'
-                                                    data-name="{{ $item->name }}" data-code="{{ $item->code }}"
-                                                    data-equipment_number="{{ $item->equipment_number ?? '-' }}"
-                                                    data-tipe_equipment="{{ $item->tipe_equipment->code ?? '-' }} ({{ $item->tipe_equipment->name ?? '-' }})"
-                                                    data-lokasi="{{ $item->relasi_area->sub_lokasi->name ?? '-' }} - {{ $item->relasi_area->detail_lokasi->name ?? '-' }}"
-                                                    data-struktur="{{ $item->relasi_struktur->divisi->code ?? '-' }} - {{ $item->relasi_struktur->departemen->code ?? '-' }} - {{ $item->relasi_struktur->seksi->code ?? '-' }}"
-                                                    data-arah="{{ $item->arah->name ?? '-' }}"
-                                                    data-status="{{ $item->status ?? '-' }}"
-                                                    data-deskripsi="{{ $item->deskripsi }}">
-                                                    <i class="mdi mdi-eye"></i>
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('equipment.edit', $item->uuid) }}">
-                                                    <button type="button" title="Edit"
-                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                        <i class="mdi mdi-lead-pencil"></i>
-                                                    </button>
-                                                </a>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -125,8 +63,7 @@
                         </div>
                         <div class="form-group">
                             <label for="tipe_equipment_id">Tipe Equipment</label>
-                            <select class="form-control form-control-lg" id="tipe_equipment_id" name="tipe_equipment_id"
-                                required>
+                            <select class="tom-select-class" id="tipe_equipment_id" name="tipe_equipment_id" required>
                                 <option value="" selected disabled>- pilih tipe equipment -</option>
                                 @foreach ($tipe_equipment as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->code }})
@@ -136,7 +73,7 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_area_id">Area</label>
-                            <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id" required>
+                            <select class="tom-select-class" id="relasi_area_id" name="relasi_area_id" required>
                                 <option value="" selected disabled>- pilih area spesifik -</option>
                                 @foreach ($area as $item)
                                     <option value="{{ $item->id }}">{{ $item->lokasi->name }} -
@@ -145,9 +82,28 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="relasi_struktur_id">Owner</label>
-                            <select class="form-control form-control-lg" id="relasi_struktur_id" name="relasi_struktur_id"
+                            <label for="functional_location_id">Functional Location</label>
+                            <select class="tom-select-class" id="functional_location_id" name="functional_location_id"
                                 required>
+                                <option value="" selected disabled>- pilih functional location -</option>
+                                @foreach ($functional_location as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="parent_id">Parent Equipment <span class="text-primary">(optional)</span></label>
+                            <select class="tom-select-class" id="parent_id" name="parent_id">
+                                <option value="" selected disabled>- pilih parent equipment -</option>
+                                @foreach ($equipment as $item)
+                                    <option value="{{ $item->id }}">{{ $item->code ?? 'N/A' }} - {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="relasi_struktur_id">Owner</label>
+                            <select class="tom-select-class" id="relasi_struktur_id" name="relasi_struktur_id" required>
                                 <option value="" selected disabled>- pilih owner -</option>
                                 @foreach ($struktur as $item)
                                     <option value="{{ $item->id }}">{{ $item->divisi->name }} -
@@ -156,8 +112,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="arah_id">Corner</label>
-                            <select class="form-control form-control-lg" id="arah_id" name="arah_id" required>
+                            <label for="arah_id">Corner <span class="text-primary">(optional)</span></label>
+                            <select class="tom-select-class" id="arah_id" name="arah_id">
                                 <option value="" selected disabled>- pilih corner -</option>
                                 @foreach ($arah as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
