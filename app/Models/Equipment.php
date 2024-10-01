@@ -43,4 +43,19 @@ class Equipment extends Model
     {
         return $this->belongsTo(Arah::class);
     }
+
+    public function functional_location()
+    {
+        return $this->belongsTo(FunctionalLocation::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Equipment::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Equipment::class, 'parent_id');
+    }
 }

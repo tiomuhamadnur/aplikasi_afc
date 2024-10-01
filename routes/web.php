@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\ArahController;
+use App\Http\Controllers\admin\AssetController;
 use App\Http\Controllers\admin\BankController;
 use App\Http\Controllers\admin\BarangController;
 use App\Http\Controllers\admin\CategoryController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\admin\DirektoratController;
 use App\Http\Controllers\admin\DivisiController;
 use App\Http\Controllers\admin\EquipmentController;
 use App\Http\Controllers\admin\FormController;
+use App\Http\Controllers\admin\FunctionalLocationController;
 use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
@@ -338,6 +340,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/equipment', 'destroy')->name('equipment.delete');
     });
 
+    Route::controller(AssetController::class)->group(function () {
+        Route::get('/asset', 'index')->name('asset.index');
+    });
+
+    Route::controller(FunctionalLocationController::class)->group(function () {
+        Route::get('/fun-loc', 'index')->name('fun_loc.index');
+        Route::post('/fun-loc', 'store')->name('fun_loc.store');
+        Route::get('/fun-loc/{uuid}/edit', 'edit')->name('fun_loc.edit');
+        Route::put('/fun-loc', 'update')->name('fun_loc.update');
+    });
 
     Route::controller(MonitoringPermitController::class)->group(function () {
         Route::get('/monitoring-permit', 'index')->name('monitoring-permit.index');
