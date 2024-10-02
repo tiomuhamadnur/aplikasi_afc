@@ -12,27 +12,24 @@ use Illuminate\Http\Request;
 
 class SamCardHistoryController extends Controller
 {
-    // public function index()
-    // {
-    //     $sam_card = SamCard::where('status', 'ready')->where('mc', '!=', null)->orderBy('created_at', 'DESC')->get();
-    //     $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
-
-    //     $sam_card_history = SamCardHistory::all();
-
-    //     return view('pages.user.sam-card-history.index', compact([
-    //         'sam_card',
-    //         'area',
-    //         'sam_card_history',
-    //     ]));
-    // }
-
-    public function index(SamCardHistoryDataTable $dataTable)
+    public function index(SamCardHistoryDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'start_date' => 'date|nullable',
+            'end_date' => 'date|nullable',
+        ]);
+
+        $start_date = $request->start_date ?? null;
+        $end_date = $request->end_date ?? $start_date;
+
         $sam_card = SamCard::where('mc', '!=', null)->orderBy('created_at', 'DESC')->get();
         $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
         $pg = Equipment::where('tipe_equipment_id', 1)->get();
 
-        return $dataTable->render('pages.user.sam-card-history.index', compact([
+        return $dataTable->with([
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ])->render('pages.user.sam-card-history.index', compact([
             'sam_card',
             'area',
             'pg'

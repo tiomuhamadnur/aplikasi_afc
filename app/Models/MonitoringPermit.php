@@ -54,7 +54,7 @@ class MonitoringPermit extends Model
     {
         $today = Carbon::today();
         $startDate = $today->copy()->addDays(1);
-        $endDate = $today->copy()->addDays(7);
+        $endDate = $today->copy()->addDays(3);
 
         $departemen_ids = Departemen::distinct()->pluck('id')->toArray();
 
@@ -68,7 +68,7 @@ class MonitoringPermit extends Model
 
             if ($jumlah > 0) {
                 $departemen = Departemen::findOrFail($departemen_id)->name;
-                $url = route('monitoring-permit.filter', [
+                $url = route('monitoring-permit.index', [
                     'start_date' => $startDate->toDateString(),
                     'end_date' => $endDate->toDateString()
                 ]);

@@ -60,7 +60,7 @@ class EquipmentDataTable extends DataTable
 
             return $historyButton;
         })
-        ->addColumn('action', function($item) {
+        ->addColumn('#', function($item) {
             $editRoute = route('equipment.edit', $item->uuid);
             $deleteModal = "<button type='button' title='Delete'
                 class='btn btn-gradient-danger btn-rounded btn-icon'
@@ -77,7 +77,7 @@ class EquipmentDataTable extends DataTable
 
             return $editButton . $deleteModal;
         })
-        ->rawColumns(['detail', 'fun_loc', 'history', 'action']);
+        ->rawColumns(['detail', 'fun_loc', 'history', '#']);
     }
 
     public function query(Equipment $model): QueryBuilder
@@ -130,7 +130,9 @@ class EquipmentDataTable extends DataTable
                     ->exportable(true)
                     ->printable(true)
                     ->addClass('text-center'),
-            Column::make('parent.name')->title('Parent'),
+            Column::make('parent.name')
+                    ->title('Parent')
+                    ->sortable(false),
             Column::computed('detail')->title('Detail')
                     ->exportable(false)
                     ->printable(false)
@@ -143,7 +145,7 @@ class EquipmentDataTable extends DataTable
                     ->width(30)
                     ->addClass('text-center')
                     ->searchable(false),
-            Column::computed('action')
+            Column::computed('#')
                     ->exportable(false)
                     ->printable(false)
                     ->width(40)
@@ -153,6 +155,6 @@ class EquipmentDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Equipment_' . date('YmdHis');
+        return date('Ymd') . '_Master Data Equipments';
     }
 }

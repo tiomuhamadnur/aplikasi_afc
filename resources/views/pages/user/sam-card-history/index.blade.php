@@ -16,7 +16,7 @@
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#success-modal"
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
@@ -104,8 +104,44 @@
     </div>
     <!-- End Add Modal -->
 
+    <!-- Add Filter -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('sam-history.index') }}" method="GET" class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="">Tanggal Expired</label>
+                            <div class="input-group">
+                                <input type="text" id="start_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
+                                <input type="text" id="end_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="End Date"
+                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('sam-history.index') }}" class="btn btn-gradient-warning me-2">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary me-2">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Filter -->
+
     <!-- Export Excel Modal -->
-    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

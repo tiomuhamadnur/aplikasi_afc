@@ -8,6 +8,7 @@ use App\Models\Gangguan;
 use App\Models\MonitoringPermit;
 use App\Models\RelasiArea;
 use App\Models\SamCard;
+use App\Models\SamCardHistory;
 use App\Models\TipeEquipment;
 use App\Models\TransaksiBarang;
 use Carbon\Carbon;
@@ -37,15 +38,14 @@ class DashboardController extends Controller
         $bulan_name = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
         $availability = [];
+        $trend_gangguan = [];
+        $trend_sam_card = [];
+
         foreach($bulan as $i)
         {
             $availability[] = rand(90, 99);
-        }
-
-        $trend_gangguan = [];
-        foreach($bulan as $i)
-        {
             $trend_gangguan[] = TransaksiBarang::whereYear('tanggal', $tahun)->whereMonth('tanggal', $i)->count();
+            $trend_sam_card[] = SamCardHistory::whereYear('tanggal', $tahun)->whereMonth('tanggal', $i)->count();
         }
 
         $data = [];
@@ -56,6 +56,8 @@ class DashboardController extends Controller
                 'url' => route('dashboard.availability.bulan', ['y' => $tahun, 'm' => $b]),
                 'trend_gangguan' => $trend_gangguan[$i],
                 'url_trend_gangguan' => route('transaksi-barang.trend.monthly', ['y' => $tahun, 'm' => $b]),
+                'trend_sam_card' => $trend_sam_card[$i],
+                'url_trend_sam_card' => route('sam-history.index', ['start_date' => Carbon::create($tahun, $b)->startOfMonth()->toDateString(), 'end_date' => Carbon::create($tahun, $b)->endOfMonth()->toDateString()]),
             ];
         }
 

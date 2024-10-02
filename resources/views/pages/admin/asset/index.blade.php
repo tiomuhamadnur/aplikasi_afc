@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Admin | Asset</title>
+    <title>Admin | Asset Structure</title>
     <!-- jsTree CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 @endsection
@@ -12,7 +12,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Asset</h4>
+                        <h4 class="card-title">Data Asset Structure</h4>
                         <div class="btn-group my-2">
                             <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#addModal">
@@ -46,6 +46,9 @@
                     'data': {
                         'url': "{{ route('api.data.asset') }}", // URL untuk mengambil data tree
                         'dataType': 'json' // Data dikembalikan dalam bentuk JSON
+                    },
+                    "themes": {
+                        "variant": "large"
                     }
                 },
                 "checkbox": {
@@ -62,30 +65,31 @@
                     }
                 },
                 "plugins": [
-                    "types", "checkbox"
+                    "types",
+                    // "checkbox"
                 ]
             });
         });
 
-        $('#dataTree').on('select_node.jstree', function(e, data) {
-            var parentId = data.node.id;
-            console.log("Node yang dipilih:", parentId);
-        });
+        // $('#dataTree').on('select_node.jstree', function(e, data) {
+        //     var parentId = data.node.id;
+        //     console.log("Node yang dipilih:", parentId);
+        // });
 
-        function submitMe() {
-            // var checked_ids = [];
-            // $("#dataTree").jstree("get_checked", null, true).each(function() {
-            //     checked_ids.push(this.id);
-            // });
-            // doStuff(checked_ids);
+        // function submitMe() {
+        //     var checked_ids = [];
+        //     $("#dataTree").jstree("get_checked", null, true).each(function() {
+        //         checked_ids.push(this.id);
+        //     });
+        //     doStuff(checked_ids);
 
-            var selectedElmsIds = [];
-            var selectedElms = $('#dataTree').jstree("get_selected", true);
-            $.each(selectedElms, function() {
-                selectedElmsIds.push(this.id);
-            })
+        //     var selectedElmsIds = [];
+        //     var selectedElms = $('#dataTree').jstree("get_selected", true);
+        //     $.each(selectedElms, function() {
+        //         selectedElmsIds.push(this.id);
+        //     })
 
-            console.log(selectedElmsIds);
-        }
+        //     console.log(selectedElmsIds);
+        // }
     </script>
 @endsection
