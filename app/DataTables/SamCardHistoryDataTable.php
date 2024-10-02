@@ -15,6 +15,22 @@ use Yajra\DataTables\Services\DataTable;
 
 class SamCardHistoryDataTable extends DataTable
 {
+    protected $start_date;
+    protected $end_date;
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -25,6 +41,11 @@ class SamCardHistoryDataTable extends DataTable
     public function query(SamCardHistory $model, Request $request): QueryBuilder
     {
         $query = $model->with(['sam_card', 'equipment.relasi_area.sub_lokasi'])->newQuery();
+
+        if($this->start_date != null && $this->end_date != null)
+        {
+            $query->whereBetween('tanggal', [$this->start_date, $this->end_date]);
+        }
 
         return $query;
     }

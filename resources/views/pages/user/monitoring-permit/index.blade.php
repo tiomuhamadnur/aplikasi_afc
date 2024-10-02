@@ -84,11 +84,22 @@
                                 <option value="expired">Expired</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="">Tanggal Expired</label>
+                            <div class="input-group">
+                                <input type="text" id="start_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
+                                <input type="text" id="end_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="End Date" name="end_date"
+                                    autocomplete="off" value="{{ $end_date ?? null }}">
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <a href="{{ route('monitoring-permit.index') }}" class="btn btn-gradient-warning me-2">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" form="filterForm" class="btn btn-gradient-primary me-2">Filter</button>
                 </div>
             </div>
