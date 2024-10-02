@@ -165,6 +165,9 @@
                         <li class="nav-item"> <a class="nav-link" href="{{ route('fun_loc.index') }}">Funct.
                                 Location</a>
                         </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('asset.index') }}">Asset
+                                Structure</a>
+                        </li>
                     </ul>
                 </div>
             </li>

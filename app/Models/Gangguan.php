@@ -32,7 +32,7 @@ class Gangguan extends Model
     private static function generateUniqueCode()
     {
         do {
-            $code = Str::upper(Str::random(8));
+            $code = 'TR-' . Str::upper(Str::random(8));
         } while (self::where('ticket_number', $code)->exists());
 
         return $code;

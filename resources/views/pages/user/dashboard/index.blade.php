@@ -472,7 +472,7 @@
                     }
                 },
                 title: {
-                    text: 'Trend Pergantian Sparepart Tahun {{ $tahun ?? '-' }}',
+                    text: 'Trend Pergantian Sparepart & SAM Card Tahun {{ $tahun ?? '-' }}',
                     align: 'left',
                     margin: 50
                 },
@@ -490,6 +490,14 @@
                     data: {!! json_encode(
                         array_map(function ($item) {
                             return ['y' => $item['trend_gangguan'], 'url' => $item['url_trend_gangguan']];
+                        }, $data),
+                    ) !!}
+                }, {
+                    name: 'SAM Card',
+                    color: 'green',
+                    data: {!! json_encode(
+                        array_map(function ($item) {
+                            return ['y' => $item['trend_sam_card'], 'url' => $item['url_trend_sam_card']];
                         }, $data),
                     ) !!}
                 }],
