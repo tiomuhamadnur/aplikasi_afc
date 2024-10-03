@@ -43,7 +43,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addForm" action="{{ route('sam-history.store') }}" method="POST" class="forms-sample">
+                    <form id="addForm" action="{{ route('sam-history.store') }}" method="POST" class="forms-sample"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('POST')
                         <div class="form-group">
@@ -56,20 +57,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        {{-- <div class="form-group">
-                            <label for="relasi_area_id">Stasiun</label>
-                            <select name="relasi_area_id" id="relasi_area_id" class="form-control form-control-lg" required>
-                                <option value="" selected disabled>- pilih stasiun -</option>
-                                @foreach ($area as $item)
-                                    <option value="{{ $item->id }}">{{ $item->sub_lokasi->name ?? '-' }}</option>
-                                @endforeach
-                            </select>
-                        </div> --}}
-                        {{-- <div class="form-group">
-                            <label for="pg_id">PG ID</label>
-                            <input type="text" class="form-control" name="pg_id" id="pg_id"
-                                placeholder="input PG ID" required autocomplete="off">
-                        </div> --}}
                         <div class="form-group">
                             <label for="equipment_id">PG ID</label>
                             <select name="equipment_id" id="equipment_id" class="tom-select-class" required>
@@ -93,6 +80,30 @@
                             <input type="date" class="form-control" name="tanggal" id="tanggal"
                                 placeholder="input tanggal" required>
                         </div>
+                        <div class="form-group">
+                            <label for="old_uid">UID Old SAM Card <span class="text-info">(optional)</span></label>
+                            <input type="text" class="form-control" name="old_uid" id="old_uid"
+                                placeholder="input Old UID" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="old_sam_card_id">Old SAM Card <span class="text-info">(optional)</span></label>
+                            <select name="old_sam_card_id" id="old_sam_card_id" class="tom-select-class">
+                                <option value="" selected disabled>- pilih old SAM card -</option>
+                                @foreach ($sam_card as $item)
+                                    <option value="{{ $item->id }}">{{ $item->tid }} - {{ $item->pin }} -
+                                        {{ $item->mc ?? 'No MC' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="photo">Photo Old SAM Card</label>
+                            <div class="text-center">
+                                <img class="img-thumbnail" id="previewImage" src="#" alt="Preview"
+                                    style="max-width: 250px; max-height: 250px; display: none;">
+                            </div>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*"
+                                required>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -104,6 +115,31 @@
     </div>
     <!-- End Add Modal -->
 
+    <!-- Photo Modal -->
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Photo Old SAM Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="mb-4 text-center align-middle">
+                            <div class="border mx-auto">
+                                <img src="#" id="photo_modal" class="img-thumbnail" alt="Tidak ada photo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Photo Modal -->
+
     <!-- Add Filter -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -113,7 +149,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="filterForm" action="{{ route('sam-history.index') }}" method="GET" class="forms-sample">
+                    <form id="filterForm" action="{{ route('sam-history.index') }}" method="GET"
+                        class="forms-sample">
                         @csrf
                         @method('GET')
                         <div class="form-group">
@@ -176,6 +213,29 @@
                 var id = $(e.relatedTarget).data('id');
 
                 $('#id_delete').val(id);
+            });
+
+            $('#photoModal').on('show.bs.modal', function(e) {
+                var photo = $(e.relatedTarget).data('photo');
+                document.getElementById("photo_modal").src = photo;
+            });
+
+            const imageInput = document.getElementById('photo');
+            const previewImage = document.getElementById('previewImage');
+
+            imageInput.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
+
+                if (selectedFile) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(selectedFile);
+                }
             });
         });
     </script>

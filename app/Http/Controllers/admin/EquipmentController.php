@@ -147,7 +147,7 @@ class EquipmentController extends Controller
             'relasi_struktur_id' => 'required|numeric',
             'functional_location_id' => 'required|numeric',
             'parent_id' => 'nullable|numeric',
-            'arah_id' => 'required|numeric',
+            'arah_id' => 'nullable|numeric',
             'photo' => 'image',
             'deskripsi' => 'nullable',
             'status' => 'required',
