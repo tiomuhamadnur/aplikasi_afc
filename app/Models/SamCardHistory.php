@@ -28,6 +28,11 @@ class SamCardHistory extends Model
         return $this->belongsTo(SamCard::class);
     }
 
+    public function old_sam_card()
+    {
+        return $this->belongsTo(SamCard::class, 'old_sam_card_id');
+    }
+
     public function equipment()
     {
         return $this->belongsTo(Equipment::class);

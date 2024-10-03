@@ -80,6 +80,9 @@ class GangguanDataTable extends DataTable
             ->addColumn('is_changed', function($item) {
                 return $item->is_changed ? 'Yes' : 'No';
             })
+            ->addColumn('fun_loc', function($item) {
+                return $item->equipment->functional_location->code ?? '';
+            })
             ->addColumn('#', function($item) {
                 $editRoute = route('gangguan.edit', $item->uuid);
                 $deleteModal = "<button type='button' title='Delete'
@@ -97,7 +100,7 @@ class GangguanDataTable extends DataTable
 
                 return $editButton . $deleteModal;
             })
-            ->rawColumns(['ticket_number', 'status', 'classification', 'photo', 'is_changed', '#']);
+            ->rawColumns(['ticket_number', 'status', 'classification', 'photo', 'is_changed', 'fun_loc', '#']);
     }
 
     public function query(Gangguan $model): QueryBuilder
@@ -109,7 +112,8 @@ class GangguanDataTable extends DataTable
             'equipment',
             'problem',
             'equipment.tipe_equipment',
-            'equipment.relasi_area.sub_lokasi'
+            'equipment.relasi_area.sub_lokasi',
+            'equipment.functional_location'
             ])->newQuery();
 
         // Filter
@@ -157,7 +161,7 @@ class GangguanDataTable extends DataTable
                     ->setTableId('gangguan-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(50)
+                    ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
                     ->orderBy([12, 'desc'])
@@ -219,6 +223,11 @@ class GangguanDataTable extends DataTable
             Column::make('response_time')->title('Response Time (Min)'),
             Column::make('resolution_time')->title('Resolution Time (Min)'),
             Column::make('total_time')->title('Total Time (Min)'),
+            Column::computed('fun_loc')
+                    ->title('Functional Location')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->addClass('text-center'),
             Column::computed('#')
                     ->exportable(false)
                     ->printable(false)

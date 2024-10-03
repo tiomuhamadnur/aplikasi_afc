@@ -34,13 +34,25 @@ class SamCardHistoryDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'samcardhistory.action')
-            ->setRowId('id');
+        ->addColumn('old_sam_card_uid', function($item) {
+            return $item->old_sam_card_id ? $item->old_sam_card->uid : $item->old_uid;
+
+        })
+        ->addColumn('#', function($item) {
+            $photoUrl = asset('storage/' . $item->photo);
+            $photoButton = "<button type='button' title='Show' class='btn btn-gradient-primary btn-rounded btn-icon'
+                data-bs-toggle='modal' data-bs-target='#photoModal' data-photo='{$photoUrl}'>
+                <i class='mdi mdi-eye'></i>
+                </button>";
+
+            return $photoButton;
+        })
+        ->rawColumns(['old_sam_card_uid', '#']);
     }
 
-    public function query(SamCardHistory $model, Request $request): QueryBuilder
+    public function query(SamCardHistory $model): QueryBuilder
     {
-        $query = $model->with(['sam_card', 'equipment.relasi_area.sub_lokasi'])->newQuery();
+        $query = $model->with(['sam_card', 'old_sam_card', 'equipment.relasi_area.sub_lokasi'])->newQuery();
 
         if($this->start_date != null && $this->end_date != null)
         {
@@ -56,10 +68,10 @@ class SamCardHistoryDataTable extends DataTable
                     ->setTableId('samcardhistory-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(50)
+                    ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([5, 'desc'])
+                    ->orderBy([6, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -77,11 +89,21 @@ class SamCardHistoryDataTable extends DataTable
     {
         return [
             Column::make('sam_card.tid')->title('TID'),
+            Column::computed('old_sam_card_uid')
+                    ->title('Old UID')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->searchable(true),
             Column::make('sam_card.uid')->title('UID'),
-            Column::make('equipment.relasi_area.sub_lokasi.name')->title('Lokasi'),
+            Column::make('equipment.relasi_area.sub_lokasi.name')->title('Location'),
             Column::make('equipment.code')->title('PG ID'),
             Column::make('type')->title('Type'),
             Column::make('tanggal')->title('Tanggal'),
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
         ];
     }
 
