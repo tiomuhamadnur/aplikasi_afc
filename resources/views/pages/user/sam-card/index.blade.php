@@ -20,10 +20,6 @@
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            {{-- <button type="button" title="Marry Code SAM Card" data-bs-toggle="modal"
-                                data-bs-target="#samModal" class="btn btn-outline-primary btn-rounded btn-icon">
-                                <i class="mdi mdi-lan-pending"></i>
-                            </button> --}}
                             <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="mdi mdi-file-import"></i>
@@ -84,6 +80,14 @@
                             <label for="alokasi">Alokasi <span class="text-info">(opsional)</span></label>
                             <input type="text" class="form-control" id="alokasi" name="alokasi" placeholder="Alokasi"
                                 autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="photo">Photo <span class="text-info">(opsional)</span></label>
+                            <div class="text-center">
+                                <img class="img-thumbnail" id="previewImage" src="#" alt="Preview"
+                                    style="max-width: 250px; max-height: 250px; display: none;">
+                            </div>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
                         </div>
                     </form>
                 </div>
@@ -198,6 +202,31 @@
     </div>
     <!-- End Import Modal -->
 
+    <!-- Photo Modal -->
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Photo SAM Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="mb-4 text-center align-middle">
+                            <div class="border mx-auto">
+                                <img src="#" id="photo_modal" class="img-thumbnail" alt="Tidak ada photo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Photo Modal -->
+
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -257,8 +286,30 @@
         $(document).ready(function() {
             $('#deleteModal').on('show.bs.modal', function(e) {
                 var id = $(e.relatedTarget).data('id');
-
                 $('#id_delete').val(id);
+            });
+
+            $('#photoModal').on('show.bs.modal', function(e) {
+                var photo = $(e.relatedTarget).data('photo');
+                document.getElementById("photo_modal").src = photo;
+            });
+
+            const imageInput = document.getElementById('photo');
+            const previewImage = document.getElementById('previewImage');
+
+            imageInput.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
+
+                if (selectedFile) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(selectedFile);
+                }
             });
         });
     </script>

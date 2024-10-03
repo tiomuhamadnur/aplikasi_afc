@@ -11,7 +11,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Edit Data Sam Card</h4>
-                        <form id="editForm" action="{{ route('sam-card.update') }}" method="POST">
+                        <form id="editForm" action="{{ route('sam-card.update') }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <input type="text" name="id" value="{{ $sam_card->id }}" required hidden>
@@ -53,6 +54,15 @@
                                     <option value="used" @if ($sam_card->status == 'used') selected @endif>USED</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="photo">Photo <span class="text-info">(opsional)</span></label>
+                                <div class="text-start mb-1">
+                                    <img class="img-thumbnail" id="previewImage"
+                                        src="{{ asset('storage/' . $sam_card->photo) }}" alt="No Photo SAM Card"
+                                        style="max-width: 250px; max-height: 250px;">
+                                </div>
+                                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                            </div>
                             <div class="form-group d-flex justify-content-end">
                                 <a href="{{ route('sam-card.index') }}" type="button" class="btn btn-secondary">Cancel</a>
                                 <button type="submit" form="editForm" class="btn btn-primary">Submit</button>
@@ -63,4 +73,28 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('javascript')
+    <script>
+        $(document).ready(function() {
+            const imageInput = document.getElementById('photo');
+            const previewImage = document.getElementById('previewImage');
+
+            imageInput.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
+
+                if (selectedFile) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(selectedFile);
+                }
+            });
+        });
+    </script>
 @endsection

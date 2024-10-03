@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class SamCardController extends Controller
 {
@@ -33,11 +35,12 @@ class SamCardController extends Controller
             "tid" => 'required',
             "pin" => 'required',
             "mc" => 'required',
+            'photo' => 'file|image',
         ]);
 
         $status = 'ready';
 
-        SamCard::create([
+        $data = SamCard::create([
             'uid' => $request->uid,
             'mid' => $request->mid,
             'tid' => $request->tid,
@@ -47,7 +50,27 @@ class SamCardController extends Controller
             'alokasi' => $request->alokasi,
         ]);
 
-        return redirect()->route('sam-card.index');
+        if ($request->hasFile('photo') && $request->photo != '') {
+            $image = Image::make($request->file('photo'));
+
+            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
+            $detailPath = 'photo/sam-card/';
+            $destinationPath = public_path('storage/'. $detailPath);
+
+            $image->resize(null, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            $image->save($destinationPath.$imageName);
+
+            $photo = $detailPath.$imageName;
+
+            $data->update([
+                "photo" => $photo,
+            ]);
+        }
+
+        return redirect()->route('sam-card.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function merry_code(Request $request)
@@ -132,6 +155,7 @@ class SamCardController extends Controller
             "pin" => 'required',
             "mc" => 'required',
             "status" => 'required',
+            'photo' => 'file|image',
         ]);
 
         $data = SamCard::findOrFail($request->id);
@@ -144,6 +168,31 @@ class SamCardController extends Controller
             'status' => $request->status,
             'alokasi' => $request->alokasi,
         ]);
+
+        if ($request->hasFile('photo') && $request->photo != '') {
+            $image = Image::make($request->file('photo'));
+
+            $dataPhoto = $data->photo;
+            if ($dataPhoto != null) {
+                Storage::delete($dataPhoto);
+            }
+
+            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
+            $detailPath = 'photo/sam-card/';
+            $destinationPath = public_path('storage/'. $detailPath);
+
+            $image->resize(null, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            $image->save($destinationPath.$imageName);
+
+            $photo = $detailPath.$imageName;
+
+            $data->update([
+                "photo" => $photo,
+            ]);
+        }
 
         return redirect()->route('sam-card.index')->withNotify('Data berhasil diperbaharui.');
     }

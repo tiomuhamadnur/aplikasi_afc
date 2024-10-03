@@ -9,6 +9,8 @@ use App\Models\RelasiArea;
 use App\Models\SamCard;
 use App\Models\SamCardHistory;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class SamCardHistoryController extends Controller
 {
@@ -41,9 +43,11 @@ class SamCardHistoryController extends Controller
         $sam_card = SamCard::where('uuid', $uuid)->firstOrFail();
         $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
         $pg = Equipment::where('tipe_equipment_id', 1)->get();
+        $sam_cards = SamCard::all();
 
         return view('pages.user.sam-card-history.create', compact([
             'sam_card',
+            'sam_cards',
             'area',
             'pg'
         ]));
@@ -56,15 +60,40 @@ class SamCardHistoryController extends Controller
             "sam_card_id" => 'required|numeric',
             'equipment_id' => 'required|numeric',
             "type" => 'required',
-            "tanggal" => 'required|date'
+            "tanggal" => 'required|date',
+            "old_uid" => 'nullable|string',
+            "old_sam_card_id" => 'nullable|numeric',
+            'photo' => 'nullable|file|image',
         ]);
 
-        SamCardHistory::create([
+        $data = SamCardHistory::create([
             "sam_card_id" => $request->sam_card_id,
             "equipment_id" => $request->equipment_id,
             "type" => $request->type,
             "tanggal" => $request->tanggal,
+            "old_uid" => $request->old_uid,
+            "old_sam_card_id" => $request->old_sam_card_id,
         ]);
+
+        if ($request->hasFile('photo') && $request->photo != '') {
+            $image = Image::make($request->file('photo'));
+
+            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
+            $detailPath = 'photo/sam-card-history/';
+            $destinationPath = public_path('storage/'. $detailPath);
+
+            $image->resize(null, 500, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
+            $image->save($destinationPath.$imageName);
+
+            $photo = $detailPath.$imageName;
+
+            $data->update([
+                "photo" => $photo,
+            ]);
+        }
 
         $sam_card = SamCard::findOrFail($request->sam_card_id);
         $sam_card->update([

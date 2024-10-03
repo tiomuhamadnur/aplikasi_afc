@@ -23,6 +23,11 @@ class SamCardDataTable extends DataTable
                     return "<span class='badge {$badgeClass} text-uppercase'>{$item->status}</span>";
                 })
                 ->addColumn('action', function($item) {
+                    $photoUrl = asset('storage/' . $item->photo);
+                    $photoButton = "<button type='button' title='Show' class='btn btn-gradient-primary btn-rounded btn-icon'
+                        data-bs-toggle='modal' data-bs-target='#photoModal' data-photo='{$photoUrl}'>
+                        <i class='mdi mdi-eye'></i>
+                        </button>";
                     $editRoute = route('sam-card.edit', $item->uuid);
                     $createRoute = route('sam-history.create', $item->uuid);
                     $deleteModal = "<button type='button' title='Delete'
@@ -45,7 +50,7 @@ class SamCardDataTable extends DataTable
                         </button>
                     </a>" : '';
 
-                    return $editButton . $useButton . $deleteModal;
+                    return $photoButton . $editButton . $useButton . $deleteModal;
                 })
                 ->rawColumns(['status', 'action']);
     }
@@ -63,7 +68,7 @@ class SamCardDataTable extends DataTable
                     ->setTableId('samcard-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(50)
+                    ->pageLength(10)
                     ->lengthMenu([10, 20, 50, 100, 250, 500])
                     //->dom('Bfrtip')
                     ->orderBy(1)
