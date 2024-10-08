@@ -28,51 +28,6 @@
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-responsive table-hover data-table">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th style="width: 200px"> Material Name</th>
-                                        <th> Material Number </th>
-                                        <th> Qty. </th>
-                                        <th> Equipment Name </th>
-                                        <th> Equipment ID </th>
-                                        <th> Location </th>
-                                        <th> Tanggal </th>
-                                        <th> Updated By </th>
-                                        <th> Action </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($transaksi_barang as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td class="text-wrap">{{ $item->barang->name ?? '-' }}</td>
-                                            <td>{{ $item->barang->material_number ?? '-' }}</td>
-                                            <td>{{ $item->qty ?? '-' }}</td>
-                                            <td>{{ $item->equipment->name ?? '-' }}</td>
-                                            <td>{{ $item->equipment->code ?? '-' }}</td>
-                                            <td>{{ $item->equipment->relasi_area->sub_lokasi->name ?? '-' }}</td>
-                                            <td>{{ $item->tanggal ?? '-' }}</td>
-                                            <td>{{ $item->user->name ?? '-' }}</td>
-                                            <td>
-                                                <a href="{{ route('transaksi-barang.edit', $item->uuid) }}" title="Edit">
-                                                    <button type="button"
-                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                        <i class="text-white mdi mdi-lead-pencil"></i>
-                                                    </button>
-                                                </a>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
