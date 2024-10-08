@@ -48,6 +48,11 @@ class Gangguan extends Model
         return $this->belongsTo(Problem::class);
     }
 
+    public function cause()
+    {
+        return $this->belongsTo(Cause::class);
+    }
+
     public function status()
     {
         return $this->belongsTo(Status::class);
@@ -76,5 +81,20 @@ class Gangguan extends Model
     public function solved_user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function transaksi_barang()
+    {
+        return $this->hasMany(TransaksiBarang::class);
+    }
+
+    public function trans_gangguan_remedy()
+    {
+        return $this->hasMany(TransGangguanRemedy::class);
+    }
+
+    public function trans_gangguan_pending()
+    {
+        return $this->hasMany(TransGangguanPending::class);
     }
 }

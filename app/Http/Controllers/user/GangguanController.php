@@ -6,14 +6,18 @@ use App\DataTables\GangguanDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
 use App\Models\Category;
+use App\Models\Cause;
 use App\Models\Classification;
 use App\Models\Equipment;
 use App\Models\Gangguan;
 use App\Models\Problem;
 use App\Models\RelasiArea;
+use App\Models\Remedy;
 use App\Models\Status;
 use App\Models\TipeEquipment;
 use App\Models\TransaksiBarang;
+use App\Models\TransGangguanRemedy;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -40,12 +44,12 @@ class GangguanController extends Controller
         $equipment_id = $request->equipment_id ?? null;
         $tipe_equipment_id = $request->tipe_equipment_id ?? null;
         $classification_id = $request->classification_id ?? null;
-        $status_id = $request->status_id ?? null;
+        $status_id = $request->status_id ?? 1;
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
         $is_changed = $request->is_changed ?? null;
 
-        $equipment = Equipment::all();
+        $equipment = Equipment::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
         $barang = Barang::all();
         $status = Status::all();
         $category = Category::all();
@@ -88,26 +92,35 @@ class GangguanController extends Controller
 
     public function create()
     {
-        //
+        $barang = Barang::all();
+        $status = Status::all();
+        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->orderBy('name', 'ASC')->get();
+
+        return view('pages.user.gangguan.create', compact([
+            'barang',
+            'status',
+            'user',
+        ]));
     }
 
     public function store(Request $request)
     {
         $raw_data = $request->validate([
-            'equipment_id' => 'required|numeric',
-            'report_date' => 'required|date',
             'report_by' => 'required|string',
+            'report_date' => 'required|date',
+            'equipment_id' => 'required|numeric',
             'category_id' => 'required|numeric',
             'problem_id' => 'nullable|numeric',
             'problem_other' => 'nullable|string',
-            'classification_id' => 'required|numeric',
-            'action' => 'required|string',
+            'cause_id' => 'nullable|numeric',
+            'cause_other' => 'nullable|string',
             'response_date' => 'required|date',
-            'solved_by' => 'required|string',
+            'solved_user_id' => 'required|numeric',
             'solved_date' => 'required|date',
-            'analysis' => 'required|string',
+            'classification_id' => 'required|numeric',
+            'remark' => 'nullable|string',
             'status_id' => 'required|numeric',
-            'is_changed' => 'boolean'
+            'is_changed' => 'boolean|required',
         ]);
 
         $request->validate([
@@ -115,10 +128,13 @@ class GangguanController extends Controller
             'photo_after' => 'file|image',
             'barang_ids' => 'array',
             'qty' => 'array',
+            'remedy_id' => 'nullable|numeric',
+            'remedy_other' => 'nullable|string',
         ]);
 
-        if ($raw_data['problem_id'] == 0) {
+        if ($raw_data['problem_id'] == 0 && $raw_data['cause_id'] == 0) {
             $raw_data['problem_id'] = null;
+            $raw_data['cause_id'] = null;
         }
 
         if($request->report_date && $request->response_date && $request->solved_date)
@@ -137,6 +153,14 @@ class GangguanController extends Controller
         }
 
         $data = Gangguan::create($raw_data);
+
+        TransGangguanRemedy::create([
+            'gangguan_id' => $data->id,
+            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
+            'remedy_other' => $request->remedy_other,
+            'user_id' => $request->solved_user_id,
+            'date' => $data->response_date,
+        ]);
 
         if ($request->hasFile('photo') && $request->photo != '') {
             $image = Image::make($request->file('photo'));
@@ -209,45 +233,56 @@ class GangguanController extends Controller
     {
         $gangguan = Gangguan::where('uuid', $uuid)->firstOrFail();
 
-        $equipment = Equipment::all();
+        $equipment = Equipment::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
         $status = Status::all();
         $category = Category::all();
         $classification = Classification::all();
         $problem = Problem::all();
+        $cause = Cause::all();
+        $remedies = Remedy::all();
+        $remedy_id = TransGangguanRemedy::where('gangguan_id', $gangguan->id)->first()->remedy_id;
+        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->orderBy('name', 'ASC')->get();
 
         return view('pages.user.gangguan.edit', compact([
             'gangguan',
             'equipment',
             'status',
             'problem',
+            'cause',
+            'remedies',
+            'remedy_id',
             'category',
             'classification',
+            'user',
         ]));
     }
 
     public function update(Request $request)
     {
         $raw_data = $request->validate([
-            'equipment_id' => 'required|numeric',
-            'report_date' => 'required|date',
             'report_by' => 'required|string',
+            'report_date' => 'required|date',
+            'equipment_id' => 'required|numeric',
+            'category_id' => 'required|numeric',
             'problem_id' => 'nullable|numeric',
             'problem_other' => 'nullable|string',
-            'category_id' => 'required|numeric',
-            'classification_id' => 'required|numeric',
-            'action' => 'required|string',
+            'cause_id' => 'nullable|numeric',
+            'cause_other' => 'nullable|string',
             'response_date' => 'required|date',
-            'solved_by' => 'required|string',
+            'solved_user_id' => 'required|numeric',
             'solved_date' => 'required|date',
-            'analysis' => 'required|string',
+            'classification_id' => 'required|numeric',
+            'remark' => 'nullable|string',
             'status_id' => 'required|numeric',
-            'is_changed' => 'boolean'
+            'is_changed' => 'boolean|required',
         ]);
 
         $request->validate([
+            'id' => 'required|numeric',
             'photo' => 'file|image',
             'photo_after' => 'file|image',
-            'id' => 'required|numeric'
+            'remedy_id' => 'nullable|numeric',
+            'remedy_other' => 'nullable|string',
         ]);
 
         if ($raw_data['problem_id'] == 0) {

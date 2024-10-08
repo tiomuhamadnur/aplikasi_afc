@@ -52,41 +52,48 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="problem_id">Problem</label>
-                                <select class="tom-select-class" name="problem_id" id="problem_id" required>
+                                <label for="problem_id">Problem (P)</label>
+                                <select class="tom-select-class" name="problem_id" id="problem_id">
                                     <option value="" selected disabled>- pilih problem -</option>
-                                    <option value="0" selected>- Other -</option>
+                                    <option value="0">- Other -</option>
                                     @foreach ($problem as $item)
                                         <option value="{{ $item->id }}"
                                             @if ($item->id == $gangguan->problem_id) selected @endif>
-                                            {{ $item->category->name ?? '-' }} - {{ $item->tipe_equipment->code ?? '-' }}
-                                            -
-                                            {{ $item->name }}
+                                            {{ $item->name ?? '-' }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div id="problemOtherContainer" class="form-group"
-                                @if ($gangguan->problem_id != null) style="display: none" @endif>
-                                <label for="problem_other">Problem Other</label>
-                                <input type="text" class="form-control" id="problem_other" name="problem_other"
-                                    autocomplete="off" placeholder="input problem other"
-                                    value="{{ $gangguan->problem_other }}">
+                            <div class="form-group">
+                                <label for="cause_id">Cause (C)</label>
+                                <select class="tom-select-class" name="cause_id" id="cause_id">
+                                    <option value="" selected disabled>- pilih cause -</option>
+                                    <option value="0">- Other -</option>
+                                    @foreach ($cause as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $gangguan->cause_id) selected @endif>
+                                            {{ $item->name ?? '-' }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
-                                <label for="photo">Photo <span class="text-info">(optional)</span></label>
-                                <div class="text-left">
-                                    <img class="img-thumbnail" id="previewImage"
-                                        src="{{ asset('storage/' . $gangguan->photo) }}" alt="Tidak ada photo"
-                                        style="max-width: 250px; max-height: 250px;">
-                                </div>
-                                <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
-                                    placeholder="input photo" accept="image/*">
+                                <label for="remedy_id">Remedy (R)</label>
+                                <select class="tom-select-class" name="remedy_id" id="remedy_id">
+                                    <option value="" selected disabled>- pilih remedy -</option>
+                                    <option value="0">- Other -</option>
+                                    @foreach ($remedies as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $remedy_id) selected @endif>
+                                            {{ $item->name ?? '-' }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="classification_id">Classification</label>
                                 <select class="tom-select-class" name="classification_id" id="classification_id" required>
-                                    <option value="" selected disabled>- pilih classification problem -</option>
+                                    <option value="" selected disabled>- pilih classification -</option>
                                     @foreach ($classification as $item)
                                         <option value="{{ $item->id }}"
                                             @if ($item->id == $gangguan->classification_id) selected @endif>
@@ -96,20 +103,44 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="action">Action</label>
-                                <input type="text" class="form-control" id="action" name="action" autocomplete="off"
-                                    required placeholder="input action" value="{{ $gangguan->action }}">
+                                <label for="problem_other">Problem (P) Other</label>
+                                <input type="text" class="form-control" id="problem_other" name="problem_other"
+                                    autocomplete="off" placeholder="input other problem"
+                                    value="{{ $gangguan->problem_other }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cause_other">Cause (C) Other</label>
+                                <input type="text" class="form-control" id="cause_other" name="cause_other"
+                                    autocomplete="off" placeholder="input other cause"
+                                    value="{{ $gangguan->cause_other }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="remedy_other">Remedy (R) Other</label>
+                                @if ($gangguan->trans_gangguan_remedy)
+                                    @foreach ($gangguan->trans_gangguan_remedy as $remedy)
+                                        <input type="text" class="form-control" id="remedy_other" name="remedy_other"
+                                            autocomplete="off" placeholder="input other remedy"
+                                            value="{{ $remedy->remedy_other }}">
+                                    @endforeach
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="response_date">Action Date</label>
-                                <input type="datetime-local" class="form-control" id="response_date" name="response_date"
-                                    autocomplete="off" required value="{{ $gangguan->response_date }}">
+                                <input type="datetime-local" class="form-control" id="response_date"
+                                    name="response_date" autocomplete="off" required
+                                    value="{{ $gangguan->response_date }}">
                             </div>
                             <div class="form-group">
-                                <label for="solved_by">Action By</label>
-                                <input type="text" class="form-control" id="solved_by" name="solved_by"
-                                    autocomplete="off" required placeholder="input action by"
-                                    value="{{ $gangguan->solved_by }}">
+                                <label for="solved_user_id">Action By</label>
+                                <select class="tom-select-class" name="solved_user_id" id="solved_user_id" required>
+                                    <option value="" selected disabled>- pilih user -</option>
+                                    @foreach ($user as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if ($item->id == $gangguan->solved_user_id) selected @endif>
+                                            {{ $item->name ?? '-' }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="solved_date">Solved Date</label>
@@ -117,10 +148,14 @@
                                     autocomplete="off" required value="{{ $gangguan->solved_date }}">
                             </div>
                             <div class="form-group">
-                                <label for="analysis">Analysis</label>
-                                <input type="text" class="form-control" id="analysis" name="analysis"
-                                    autocomplete="off" required placeholder="input analysis"
-                                    value="{{ $gangguan->analysis }}">
+                                <label for="photo">Photo Before <span class="text-info">(optional)</span></label>
+                                <div class="text-left">
+                                    <img class="img-thumbnail" id="previewImage"
+                                        src="{{ asset('storage/' . $gangguan->photo) }}" alt="Tidak ada photo"
+                                        style="max-width: 250px; max-height: 250px;">
+                                </div>
+                                <input type="file" class="form-control" id="photo" name="photo"
+                                    autocomplete="off" placeholder="input photo" accept="image/*">
                             </div>
                             <div class="form-group">
                                 <label for="photo_after">Photo After <span class="text-info">(optional)</span></label>
@@ -143,6 +178,10 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="remark">Remark <span class="text-info">(optional)</span></label>
+                                <textarea class="form-control" name="remark" id="remark" rows="4" placeholder="input remark (optional)">{{ $gangguan->remark }}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="is_changed">Ada pergantian Sparepart?</label>
