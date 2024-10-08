@@ -11,136 +11,126 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Detail Data Gangguan</h4>
-                        <form id="editForm" action="#" class="forms-sample mt-4" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
-                            <div class="form-group">
-                                <label for="report_by">Report By</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->report_by }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="report_date">Report Date</label>
-                                <input type="datetime-local" class="form-control" id="report_date" name="report_date"
-                                    autocomplete="off" required value="{{ $gangguan->report_date }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="equipment_id">Equipment</label>
-                                <input type="text" class="form-control" autocomplete="off" required
-                                    value="{{ $gangguan->equipment->name }} - ({{ $gangguan->equipment->code ?? '-' }})"
-                                    disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="category">Category</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->category->name ?? '-' }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="problem_id">Problem</label>
-                                <input type="text" class="form-control" id="problem" autocomplete="off" required
-                                    placeholder="input problem" value="{{ $gangguan->problem->name ?? '-' }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="problem_other">Problem Other</label>
-                                <input type="text" class="form-control" id="problem_other" autocomplete="off" required
-                                    placeholder="input problem" value="{{ $gangguan->problem_other ?? '-' }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="photo">Photo Before</label>
-                                <div class="text-left">
-                                    <img class="img-thumbnail" id="previewImage"
-                                        src="{{ asset('storage/' . $gangguan->photo) }}" alt="Tidak ada photo"
-                                        style="max-width: 250px; max-height: 250px;">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="photo">Photo After</label>
-                                <div class="text-left">
-                                    <img class="img-thumbnail" id="previewImage"
-                                        src="{{ asset('storage/' . $gangguan->photo_after) }}" alt="Tidak ada photo"
-                                        style="max-width: 250px; max-height: 250px;">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="classification">Classification</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->classification->name ?? '-' }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="action">Action</label>
-                                <input type="text" class="form-control" id="action" name="action" autocomplete="off"
-                                    required placeholder="input action" value="{{ $gangguan->action }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="response_date">Action Date</label>
-                                <input type="datetime-local" class="form-control" id="response_date" name="response_date"
-                                    autocomplete="off" required value="{{ $gangguan->response_date }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="solved_by">Action By</label>
-                                <input type="text" class="form-control" id="solved_by" name="solved_by"
-                                    autocomplete="off" required placeholder="input action by"
-                                    value="{{ $gangguan->solved_by }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="solved_date">Solved Date</label>
-                                <input type="datetime-local" class="form-control" id="solved_date" name="solved_date"
-                                    autocomplete="off" required value="{{ $gangguan->solved_date }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="analysis">Analysis</label>
-                                <input type="text" class="form-control" id="analysis" name="analysis"
-                                    autocomplete="off" required placeholder="input analysis"
-                                    value="{{ $gangguan->analysis }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="{{ $gangguan->status->name ?? '-' }}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="is_changed">Ada pergantian Sparepart?</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
-                                    autocomplete="off" required placeholder="input report by"
-                                    value="@if ($gangguan->is_changed == 1) Yes @else No @endif" disabled>
-                            </div>
-                            <div class="form-group d-flex justify-content-end">
-                                <a href="{{ route('transaksi-barang.index') }}" type="button"
-                                    class="btn btn-danger">Back</a>
-                            </div>
-                        </form>
+                        <a href="{{ route('gangguan.index') }}" title="Back" class="btn btn-outline-primary btn-rounded">
+                            <i class="mdi mdi-arrow-left"></i> Back
+                        </a>
+                        <div class="table-responsive mt-4">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bolder">Ticket Number</td>
+                                        <td>{{ $gangguan->ticket_number ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Status</td>
+                                        <td>
+                                            {{ $gangguan->status->name ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Classification</td>
+                                        <td>{{ $gangguan->classification->name ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Report By</td>
+                                        <td>{{ $gangguan->report_by }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Report Date</td>
+                                        <td>{{ $gangguan->report_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Equipment</td>
+                                        <td>{{ $gangguan->equipment->name }} - ({{ $gangguan->equipment->code ?? '-' }})
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Category</td>
+                                        <td>{{ $gangguan->category->name ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Problem (P)</td>
+                                        <td>
+                                            {{ $gangguan->problem->name ?? '' }}
+                                            <br>
+                                            Other : {{ $gangguan->problem_other ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Cause (C)</td>
+                                        <td>
+                                            {{ $gangguan->cause->name ?? '' }}
+                                            <br>
+                                            Other : {{ $gangguan->cause_other ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Remedy (R)</td>
+                                        <td>
+                                            @foreach ($gangguan->trans_gangguan_remedy as $item)
+                                                {{ $loop->iteration }}. {{ $item->remedy->name ?? $item->remedy_other }}
+                                                ------- {{ $item->user->name ?? '-' }} ------- {{ $item->date }}
+                                                <br>
+                                            @endforeach
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Photo Before</td>
+                                        <td>
+                                            <div class="text-left">
+                                                <img class="img-thumbnail" src="{{ asset('storage/' . $gangguan->photo) }}"
+                                                    alt="Tidak ada photo before"
+                                                    style="width: 250px; height: 250px; border-radius: 0;">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Photo After</td>
+                                        <td>
+                                            <div class="text-left">
+                                                <img class="img-thumbnail"
+                                                    src="{{ asset('storage/' . $gangguan->photo_after) }}"
+                                                    alt="Tidak ada photo after"
+                                                    style="width: 250px; height: 250px; border-radius: 0;">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Remark</td>
+                                        <td>
+                                            {{ $gangguan->remark ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Penggantian Sparepart?</td>
+                                        <td>
+                                            @if ($gangguan->is_changed == 1)
+                                                Yes
+                                            @else
+                                                No
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @if ($gangguan->is_changed == 1 && $gangguan->transaksi_barang)
+                                        <tr>
+                                            <td class="fw-bolder">List Spareparts</td>
+                                            <td>
+                                                @foreach ($gangguan->transaksi_barang as $item)
+                                                    {{ $loop->iteration }}. {{ $item->barang->name ?? '#' }} -------
+                                                    ({{ $item->barang->material_number ?? '#' }})
+                                                    -------
+                                                    {{ $item->qty ?? '#' }} {{ $item->barang->satuan->code ?? '' }}
+                                                    <br>
+                                                @endforeach
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
-
-@section('javascript')
-    <script>
-        $(document).ready(function() {
-            const imageInput = document.getElementById('photo');
-            const previewImage = document.getElementById('previewImage');
-
-            imageInput.addEventListener('change', function(event) {
-                const selectedFile = event.target.files[0];
-
-                if (selectedFile) {
-                    const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        previewImage.src = e.target.result;
-                        previewImage.style.display = 'block';
-                    }
-
-                    reader.readAsDataURL(selectedFile);
-                }
-            });
-        });
-    </script>
 @endsection

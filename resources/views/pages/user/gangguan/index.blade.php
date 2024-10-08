@@ -27,11 +27,13 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Data Gangguan</h4>
+                        <a href="{{ route('gangguan.create') }}" class="btn btn-gradient-primary btn-rounded">Make
+                            Request</a>
                         <div class="btn-group my-2">
-                            <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
+                            {{-- <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
-                            </button>
+                            </button> --}}
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
@@ -308,8 +310,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <a href="{{ route('gangguan.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
                 </div>
             </div>

@@ -406,6 +406,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::controller(GangguanController::class)->group(function () {
         Route::get('/gangguan', 'index')->name('gangguan.index');
+        Route::get('/gangguan/create', 'create')->name('gangguan.create');
         Route::post('/gangguan', 'store')->name('gangguan.store');
         Route::get('/gangguan/{uuid}/edit', 'edit')->name('gangguan.edit');
         Route::get('/gangguan/{uuid}/show', 'show')->name('gangguan.show');

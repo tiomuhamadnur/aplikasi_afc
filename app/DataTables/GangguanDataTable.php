@@ -77,6 +77,22 @@ class GangguanDataTable extends DataTable
             ->addColumn('ticket_number', function($item) {
                 return "<span class='fw-bolder'>{$item->ticket_number}</span>";
             })
+            ->addColumn('remedy', function($item) {
+                if ($item->trans_gangguan_remedy->isNotEmpty()) {
+                    return $item->trans_gangguan_remedy->map(function($transRemedy) {
+                        return $transRemedy->remedy ? $transRemedy->remedy->name : $transRemedy->remedy_other;
+                    })->implode('<br>');
+                }
+                return '';
+            })
+            ->addColumn('action_by', function($item) {
+                if ($item->trans_gangguan_remedy->isNotEmpty()) {
+                    return $item->trans_gangguan_remedy->map(function($transRemedy) {
+                        return $transRemedy->user ? $transRemedy->user->name : '';
+                    })->implode('<br>');
+                }
+                return '';
+            })
             ->addColumn('is_changed', function($item) {
                 return $item->is_changed ? 'Yes' : 'No';
             })
@@ -84,6 +100,16 @@ class GangguanDataTable extends DataTable
                 return $item->equipment->functional_location->code ?? '';
             })
             ->addColumn('#', function($item) {
+                $showRoute = route('gangguan.show', $item->uuid);
+                $showButton = "<button type='button' class='btn btn-gradient-primary btn-rounded btn-icon'
+                    onclick=\"window.location.href='{$showRoute}'\" title='Show Detail'>
+                    <i class='text-white mdi mdi-eye'></i>
+                </button>";
+
+                if (auth()->user()->role_id != 1) {
+                    return $showButton;
+                }
+
                 $editRoute = route('gangguan.edit', $item->uuid);
                 $deleteModal = "<button type='button' title='Delete'
                     class='btn btn-gradient-danger btn-rounded btn-icon'
@@ -92,15 +118,14 @@ class GangguanDataTable extends DataTable
                     <i class='mdi mdi-delete'></i>
                 </button>";
 
-                $editButton = "<a href='{$editRoute}' title='Edit'>
-                    <button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'>
+                $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                        onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
                         <i class='text-white mdi mdi-lead-pencil'></i>
-                    </button>
-                </a>";
+                    </button>";
 
-                return $editButton . $deleteModal;
+                return $showButton . $editButton . $deleteModal;
             })
-            ->rawColumns(['ticket_number', 'status', 'classification', 'photo', 'is_changed', 'fun_loc', '#']);
+            ->rawColumns(['ticket_number', 'status', 'classification', 'remedy','action_by', 'photo', 'is_changed', 'fun_loc', '#']);
     }
 
     public function query(Gangguan $model): QueryBuilder
@@ -111,6 +136,9 @@ class GangguanDataTable extends DataTable
             'classification',
             'equipment',
             'problem',
+            'cause',
+            'trans_gangguan_remedy',
+            'trans_gangguan_pending',
             'equipment.tipe_equipment',
             'equipment.relasi_area.sub_lokasi',
             'equipment.functional_location'
@@ -164,7 +192,7 @@ class GangguanDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([12, 'desc'])
+                    ->orderBy([14, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -185,8 +213,13 @@ class GangguanDataTable extends DataTable
             Column::make('equipment.code')->title('Equipment ID'),
             Column::make('problem.name')->title('Problem (P)'),
             Column::make('problem_other')->title('Problem Other'),
-            Column::make('analysis')->title('Cause (C)'),
-            Column::make('action')->title('Remedy (R)'),
+            Column::make('cause.name')->title('Cause (C)'),
+            Column::make('cause_other')->title('Cause Other'),
+            Column::computed('remedy')
+                    ->title('Remedy (R)')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->searchable(true),
             Column::computed('classification')
                     ->exportable(true)
                     ->printable(true)
@@ -197,7 +230,11 @@ class GangguanDataTable extends DataTable
             Column::make('ticket_number')->title('Ticket Number'),
             Column::make('category.name')->title('Category'),
             Column::make('report_by')->title('Report By'),
-            Column::make('solved_by')->title('Action By'),
+            Column::computed('action_by')
+                    ->title('Action By')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->searchable(true),
             Column::make('report_date')->title('Report Date'),
             Column::make('response_date')->title('Action Date'),
             Column::make('solved_date')->title('Solved Date'),
@@ -220,6 +257,7 @@ class GangguanDataTable extends DataTable
                     ->width(30)
                     ->searchable(true)
                     ->addClass('text-center'),
+            Column::make('remark')->title('Remark'),
             Column::make('response_time')->title('Response Time (Min)'),
             Column::make('resolution_time')->title('Resolution Time (Min)'),
             Column::make('total_time')->title('Total Time (Min)'),

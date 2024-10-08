@@ -54,16 +54,18 @@ class TransaksiBarangDataTable extends DataTable
                     </td>
                 ";
             })
-            ->addColumn('action', function($item) {
+            ->addColumn('#', function($item) {
+                if (auth()->user()->role_id != 1) {
+                    return '';
+                }
                 $editRoute = route('transaksi-barang.edit', $item->uuid);
 
                 return "
                     <td>
-                        <a href='{$editRoute}' title='Edit'>
-                            <button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'>
-                                <i class='text-white mdi mdi-lead-pencil'></i>
-                            </button>
-                        </a>
+                        <button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                        onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                        <i class='text-white mdi mdi-lead-pencil'></i>
+                        </button>
                         <button type='button' title='Delete' class='btn btn-gradient-danger btn-rounded btn-icon'
                             data-bs-toggle='modal' data-bs-target='#deleteModal' data-id='{$item->id}'>
                             <i class='mdi mdi-delete'></i>
@@ -71,7 +73,7 @@ class TransaksiBarangDataTable extends DataTable
                     </td>
                 ";
             })
-            ->rawColumns(['ticket_number', 'action']);
+            ->rawColumns(['ticket_number', '#']);
     }
 
     public function query(TransaksiBarang $model): QueryBuilder
@@ -97,7 +99,7 @@ class TransaksiBarangDataTable extends DataTable
                     ->setTableId('transaksibarang-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(50)
+                    ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
                     ->orderBy([0, 'desc'])
@@ -132,7 +134,7 @@ class TransaksiBarangDataTable extends DataTable
             Column::make('equipment.code')->title('Equipment ID'),
             Column::make('equipment.relasi_area.sub_lokasi.name')->title('Location'),
             Column::make('user.name')->title('Updated by'),
-            Column::computed('action')
+            Column::computed('#')
                     ->exportable(false)
                     ->printable(false)
                     ->width(60)

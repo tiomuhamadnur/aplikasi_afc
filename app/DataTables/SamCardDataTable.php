@@ -22,7 +22,11 @@ class SamCardDataTable extends DataTable
                     $badgeClass = $item->status == 'ready' ? 'badge-gradient-success' : 'badge-gradient-danger';
                     return "<span class='badge {$badgeClass} text-uppercase'>{$item->status}</span>";
                 })
-                ->addColumn('action', function($item) {
+                ->addColumn('#', function($item) {
+                    if (auth()->user()->role_id != 1) {
+                        return '';
+                    }
+
                     $photoUrl = asset('storage/' . $item->photo);
                     $photoButton = "<button type='button' title='Show' class='btn btn-gradient-primary btn-rounded btn-icon'
                         data-bs-toggle='modal' data-bs-target='#photoModal' data-photo='{$photoUrl}'>
@@ -37,22 +41,20 @@ class SamCardDataTable extends DataTable
                         <i class='mdi mdi-delete'></i>
                     </button>";
 
-                    $editButton = "<a href='{$editRoute}' title='Edit'>
-                        <button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'>
-                            <i class='text-white mdi mdi-lead-pencil'></i>
-                        </button>
-                    </a>";
+                    $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                        onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                        <i class='text-white mdi mdi-lead-pencil'></i>
+                    </button>";
 
                     $useButton = $item->mc != null ?
-                    "<a href='{$createRoute}' title='Use this SAM Card'>
-                        <button type='button' class='btn btn-gradient-success btn-rounded btn-icon'>
-                            <i class='text-white mdi mdi-rocket'></i>
-                        </button>
-                    </a>" : '';
+                    "<button type='button' class='btn btn-gradient-success btn-rounded btn-icon'
+                        onclick=\"window.location.href='{$createRoute}'\" title='Use this SAM Card'>
+                        <i class='text-white mdi mdi-rocket'></i>
+                    </button>" : '';
 
                     return $photoButton . $editButton . $useButton . $deleteModal;
                 })
-                ->rawColumns(['status', 'action']);
+                ->rawColumns(['status', '#']);
     }
 
     public function query(SamCard $model, Request $request): QueryBuilder
@@ -100,7 +102,7 @@ class SamCardDataTable extends DataTable
                     ->addClass('text-center')
                     ->searchable(true),
             Column::make('alokasi')->title('Alokasi'),
-            Column::computed('action')
+            Column::computed('#')
                     ->exportable(false)
                     ->printable(false)
                     ->width(60)
