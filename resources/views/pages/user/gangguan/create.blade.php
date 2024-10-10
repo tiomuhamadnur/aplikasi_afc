@@ -119,7 +119,7 @@
                                     <option value="1">Yes</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="sparePartContainer" style="display: none">
+                            {{-- <div class="form-group" id="sparePartContainer" style="display: none">
                                 <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
                                     <label for="barang_id" class="mb-0">Spare Part</label>
                                     <button type="button" class="btn btn-success btn-rounded btn-icon" title="Add row"
@@ -142,7 +142,7 @@
                                             placeholder="qty" min="1">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="form-group d-flex justify-content-end">
                                 <a href="{{ route('gangguan.index') }}" type="button"
                                     class="btn btn-secondary">Cancel</a>
@@ -255,7 +255,7 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             var isChangedSelect = document.getElementById('is_changed');
             var sparePartContainer = document.getElementById('sparePartContainer');
@@ -352,5 +352,5 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 @endsection

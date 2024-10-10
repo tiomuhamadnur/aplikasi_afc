@@ -44,7 +44,8 @@ class GangguanController extends Controller
         $equipment_id = $request->equipment_id ?? null;
         $tipe_equipment_id = $request->tipe_equipment_id ?? null;
         $classification_id = $request->classification_id ?? null;
-        $status_id = $request->status_id ?? 1;
+        $status_id = $request->status_id ?? null;
+        // $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
         $is_changed = $request->is_changed ?? null;

@@ -69,7 +69,7 @@
                                         <td>
                                             @foreach ($gangguan->trans_gangguan_remedy as $item)
                                                 {{ $loop->iteration }}. {{ $item->remedy->name ?? $item->remedy_other }}
-                                                ------- {{ $item->user->name ?? '-' }} ------- {{ $item->date }}
+                                                ------- (by: {{ $item->user->name ?? '-' }} {{ $item->date }})
                                                 <br>
                                             @endforeach
                                         </td>
@@ -111,20 +111,6 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    @if ($gangguan->is_changed == 1 && $gangguan->transaksi_barang)
-                                        <tr>
-                                            <td class="fw-bolder">List Spareparts</td>
-                                            <td>
-                                                @foreach ($gangguan->transaksi_barang as $item)
-                                                    {{ $loop->iteration }}. {{ $item->barang->name ?? '#' }} -------
-                                                    ({{ $item->barang->material_number ?? '#' }})
-                                                    -------
-                                                    {{ $item->qty ?? '#' }} {{ $item->barang->satuan->code ?? '' }}
-                                                    <br>
-                                                @endforeach
-                                            </td>
-                                        </tr>
-                                    @endif
                                 </tbody>
                             </table>
                         </div>

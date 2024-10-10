@@ -69,13 +69,10 @@ class GangguanDataTable extends DataTable
             ->addColumn('photo', function($item) {
                 $photoUrl = asset('storage/' . $item->photo);
                 $photoAfterUrl = asset('storage/' . $item->photo_after);
-                return "<button type='button' title='Show' class='btn btn-gradient-primary btn-rounded btn-icon'
+                return "<button type='button' title='Show' class='btn btn-gradient-danger btn-rounded btn-icon'
                         data-bs-toggle='modal' data-bs-target='#photoModal' data-photo='{$photoUrl}' data-photo_after='{$photoAfterUrl}'>
-                        <i class='mdi mdi-eye'></i>
+                        <i class='mdi mdi-file-image'></i>
                         </button>";
-            })
-            ->addColumn('ticket_number', function($item) {
-                return "<span class='fw-bolder'>{$item->ticket_number}</span>";
             })
             ->addColumn('remedy', function($item) {
                 if ($item->trans_gangguan_remedy->isNotEmpty()) {
@@ -111,6 +108,24 @@ class GangguanDataTable extends DataTable
                 }
 
                 $editRoute = route('gangguan.edit', $item->uuid);
+
+                $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                        onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                        <i class='text-white mdi mdi-lead-pencil'></i>
+                    </button>";
+
+                $createWorkOrderButton = '';
+
+                if($item->work_order_id == null)
+                {
+                $createWorkOrderRoute = route('work-order.create.from-gangguan', $item->uuid);
+
+                $createWorkOrderButton = "<button type='button' class='btn btn-gradient-info btn-rounded btn-icon'
+                        onclick=\"window.location.href='{$createWorkOrderRoute}'\" title='Create Work Order'>
+                        <i class='text-white mdi mdi-briefcase-upload'></i>
+                    </button>";
+                }
+
                 $deleteModal = "<button type='button' title='Delete'
                     class='btn btn-gradient-danger btn-rounded btn-icon'
                     data-bs-toggle='modal' data-bs-target='#deleteModal'
@@ -118,14 +133,9 @@ class GangguanDataTable extends DataTable
                     <i class='mdi mdi-delete'></i>
                 </button>";
 
-                $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
-                        onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
-                        <i class='text-white mdi mdi-lead-pencil'></i>
-                    </button>";
-
-                return $showButton . $editButton . $deleteModal;
+                return $showButton . $createWorkOrderButton . $editButton . $deleteModal;
             })
-            ->rawColumns(['ticket_number', 'status', 'classification', 'remedy','action_by', 'photo', 'is_changed', 'fun_loc', '#']);
+            ->rawColumns(['status', 'classification', 'remedy','action_by', 'photo', 'is_changed', 'fun_loc', '#']);
     }
 
     public function query(Gangguan $model): QueryBuilder
@@ -141,7 +151,8 @@ class GangguanDataTable extends DataTable
             'trans_gangguan_pending',
             'equipment.tipe_equipment',
             'equipment.relasi_area.sub_lokasi',
-            'equipment.functional_location'
+            'equipment.functional_location',
+            'work_order'
             ])->newQuery();
 
         // Filter
@@ -172,7 +183,7 @@ class GangguanDataTable extends DataTable
 
         if($this->start_date != null && $this->end_date != null)
         {
-            $query->whereBetween('tanggal', [$this->start_date, $this->end_date]);
+            $query->whereBetween('report_date', [$this->start_date, $this->end_date]);
         }
 
         if($this->is_changed != null)
@@ -209,6 +220,12 @@ class GangguanDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('ticket_number')
+                    ->title('Ticket Number')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->addClass('text-center')
+                    ->searchable(true),
             Column::make('equipment.tipe_equipment.code')->title('Equipment Type'),
             Column::make('equipment.code')->title('Equipment ID'),
             Column::make('problem.name')->title('Problem (P)'),
@@ -227,7 +244,6 @@ class GangguanDataTable extends DataTable
                     ->addClass('text-center')
                     ->searchable(true),
             Column::make('equipment.relasi_area.sub_lokasi.name')->title('Station'),
-            Column::make('ticket_number')->title('Ticket Number'),
             Column::make('category.name')->title('Category'),
             Column::make('report_by')->title('Report By'),
             Column::computed('action_by')
@@ -266,6 +282,7 @@ class GangguanDataTable extends DataTable
                     ->exportable(true)
                     ->printable(true)
                     ->addClass('text-center'),
+            Column::make('work_order.ticket_number')->title('Work Order'),
             Column::computed('#')
                     ->exportable(false)
                     ->printable(false)
