@@ -39,6 +39,11 @@ class TransaksiBarang extends Model
         return $this->belongsTo(Gangguan::class);
     }
 
+    public function work_order()
+    {
+        return $this->belongsTo(WorkOrder::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

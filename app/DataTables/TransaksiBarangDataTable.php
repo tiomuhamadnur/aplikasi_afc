@@ -35,22 +35,37 @@ class TransaksiBarangDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->addColumn('work_order', function($item) {
+                if($item->work_order_id == null)
+                {
+                    return "";
+                }
+
+                $showRoute = route('work-order.detail',  $item->work_order->uuid);
+                $work_order = $item->work_order->ticket_number ?? '-';
+
+                return "
+                    <button type='button' class='btn btn-gradient-primary btn-rounded p-2'
+                        onclick=\"window.location.href='{$showRoute}'\" title='Show Detail Work Order'>
+                        {$work_order}
+                    </button>
+                ";
+            })
             ->addColumn('ticket_number', function($item) {
                 $showRoute = route('gangguan.show', $item->gangguan->uuid ?? '-');
                 $ticket_number = $item->gangguan->ticket_number ?? '-';
 
                 if($item->gangguan_id == null)
                 {
-                    return "-";
+                    return "";
                 }
 
                 return "
                     <td>
-                        <a href='{$showRoute}' title='Show Detail'>
-                            <button type='button' class='btn btn-gradient-primary btn-rounded p-2'>
-                                {$ticket_number}
-                            </button>
-                        </a>
+                        <button type='button' class='btn btn-gradient-success btn-rounded p-2'
+                            onclick=\"window.location.href='{$showRoute}'\" title='Show Detail Gangguan'>
+                            {$ticket_number}
+                        </button>
                     </td>
                 ";
             })
@@ -73,12 +88,12 @@ class TransaksiBarangDataTable extends DataTable
                     </td>
                 ";
             })
-            ->rawColumns(['ticket_number', '#']);
+            ->rawColumns(['work_order', 'ticket_number', '#']);
     }
 
     public function query(TransaksiBarang $model): QueryBuilder
     {
-        $query = $model->with(['equipment.relasi_area.sub_lokasi', 'gangguan', 'barang', 'user'])->newQuery();
+        $query = $model->with(['equipment.relasi_area.sub_lokasi', 'gangguan', 'work_order', 'barang', 'user'])->newQuery();
 
         if($this->start_date != null && $this->end_date != null)
         {
@@ -122,6 +137,13 @@ class TransaksiBarangDataTable extends DataTable
             Column::make('tanggal')->title('Tanggal'),
             Column::computed('ticket_number')
                     ->title('Ticket Gangguan')
+                    ->exportable(true)
+                    ->printable(false)
+                    ->searchable(true)
+                    ->width(60)
+                    ->addClass('text-center'),
+            Column::computed('work_order')
+                    ->title('Work Order')
                     ->exportable(true)
                     ->printable(false)
                     ->searchable(true)

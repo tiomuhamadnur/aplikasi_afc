@@ -63,4 +63,34 @@ class WorkOrder extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function transaksi_barang()
+    {
+        return $this->hasMany(TransaksiBarang::class);
+    }
+
+    public function trans_workorder_equipment()
+    {
+        return $this->hasMany(TransWorkOrderEquipment::class);
+    }
+
+    public function trans_workorder_tasklist()
+    {
+        return $this->hasMany(TransWorkOrderTasklist::class);
+    }
+
+    public function trans_workorder_user()
+    {
+        return $this->hasMany(TransWorkOrderUser::class);
+    }
+
+    public function trans_workorder_photo()
+    {
+        return $this->hasMany(TransWorkOrderPhoto::class);
+    }
+
+    public function gangguan()
+    {
+        return $this->hasMany(Gangguan::class);
+    }
 }

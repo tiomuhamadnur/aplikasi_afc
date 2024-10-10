@@ -97,4 +97,9 @@ class Gangguan extends Model
     {
         return $this->hasMany(TransGangguanPending::class);
     }
+
+    public function work_order()
+    {
+        return $this->belongsTo(WorkOrder::class);
+    }
 }
