@@ -129,8 +129,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <a href="{{ route('transaksi-barang.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
                 </div>
             </div>

@@ -36,6 +36,11 @@ use App\Http\Controllers\admin\TipeEmployeeController;
 use App\Http\Controllers\admin\TipeEquipmentController;
 use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
+use App\Http\Controllers\admin\TransWorkOrderBarangController;
+use App\Http\Controllers\admin\TransWorkOrderEquipmentController;
+use App\Http\Controllers\admin\TransWorkOrderPhotoController;
+use App\Http\Controllers\admin\TransWorkOrderTasklistController;
+use App\Http\Controllers\admin\TransWorkOrderUserController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\WorkOrderController;
 use App\Http\Controllers\user\ChecksheetController;
@@ -428,14 +433,42 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(WorkOrderController::class)->group(function () {
         Route::get('/work-order', 'index')->name('work-order.index');
         Route::get('/work-order/create', 'create')->name('work-order.create');
+        Route::get('/work-order/create-from-gangguan/{uuid}', 'create_from_gangguan')->name('work-order.create.from-gangguan');
 
 
         Route::post('/work-order', 'store')->name('work-order.store');
+        Route::post('/work-order/{uuid}/store-from-gangguan', 'store_from_gangguan')->name('work-order.store.from-gangguan');
         Route::get('/work-order/{uuid}/edit', 'edit')->name('work-order.edit');
         Route::get('/work-order/{uuid}/detail/work-order', 'detail')->name('work-order.detail');
         Route::get('/work-order/{uuid}/equipment', 'equipment')->name('work-order.equipment');
         Route::put('/work-order', 'update')->name('work-order.update');
         Route::delete('/work-order', 'destroy')->name('work-order.delete');
+    });
+
+    Route::controller(TransWorkOrderEquipmentController::class)->group(function () {
+        Route::post('/trans-workorder-equipment/{uuid_workorder}', 'store')->name('trans-workorder-equipment.store');
+        Route::delete('/trans-workorder-equipment', 'destroy')->name('trans-workorder-equipment.delete');
+    });
+
+    Route::controller(TransWorkOrderTasklistController::class)->group(function () {
+        Route::post('/trans-workorder-tasklist/{uuid_workorder}', 'store')->name('trans-workorder-tasklist.store');
+        Route::put('/trans-workorder-tasklist', 'update')->name('trans-workorder-tasklist.update');
+        Route::delete('/trans-workorder-tasklist', 'destroy')->name('trans-workorder-tasklist.delete');
+    });
+
+    Route::controller(TransWorkOrderBarangController::class)->group(function () {
+        Route::post('/trans-workorder-barang/{uuid_workorder}', 'store')->name('trans-workorder-barang.store');
+        Route::delete('/trans-workorder-barang', 'destroy')->name('trans-workorder-barang.delete');
+    });
+
+    Route::controller(TransWorkOrderUserController::class)->group(function () {
+        Route::post('/trans-workorder-user/{uuid_workorder}', 'store')->name('trans-workorder-user.store');
+        Route::delete('/trans-workorder-user', 'destroy')->name('trans-workorder-user.delete');
+    });
+
+    Route::controller(TransWorkOrderPhotoController::class)->group(function () {
+        Route::post('/trans-workorder-photo/{uuid_workorder}', 'store')->name('trans-workorder-photo.store');
+        Route::delete('/trans-workorder-photo', 'destroy')->name('trans-workorder-photo.delete');
     });
 });
 

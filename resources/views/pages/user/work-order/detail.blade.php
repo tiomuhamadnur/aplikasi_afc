@@ -69,8 +69,8 @@
                                                 <td></td>
                                                 <td class="fw-bolder" style="width: 130px">Type</td>
                                                 <td style="width: 10px">:</td>
-                                                <td style="width: 250px">{{ $work_order->tipe_pekerjaan->code ?? '-' }}
-                                                    ({{ $work_order->tipe_pekerjaan->name ?? '-' }})</td>
+                                                <td style="width: 250px">{{ $work_order->tipe_pekerjaan->name ?? '-' }}
+                                                    ({{ $work_order->tipe_pekerjaan->code ?? '-' }})</td>
                                             </tr>
                                             <tr>
                                                 <td class="fw-bolder">Location</td>
@@ -157,40 +157,47 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($trans_wo_equipment as $item)
+                                            @if ($work_order->trans_workorder_equipment)
+                                                @foreach ($work_order->trans_workorder_equipment as $item)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>
+                                                            @if ($item->status == null)
+                                                                <a href="{{ route('checksheet.create', [
+                                                                    'uuid_work_order' => $work_order->uuid,
+                                                                    'uuid_equipment' => $item->equipment->uuid,
+                                                                ]) }}"
+                                                                    title="Input Checksheet">
+                                                                    <button type="button"
+                                                                        class="btn btn-gradient-primary btn-rounded btn-icon">
+                                                                        <i class="mdi mdi-lead-pencil"></i>
+                                                                    </button>
+                                                                </a>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-start">{{ $item->equipment->name ?? '-' }}</td>
+                                                        <td class="text-start">{{ $item->equipment->code ?? '-' }}</td>
+                                                        <td>{{ $item->equipment->equipment_number ?? '-' }}</td>
+                                                        <td>{{ $item->equipment->tipe_equipment->code ?? '-' }}</td>
+                                                        <td>
+                                                            @if ($item->status == null)
+                                                                <h1 class="text-danger fw-bolder" title="Incomplete">
+                                                                    <i class="mdi mdi-close"></i>
+                                                                </h1>
+                                                            @else
+                                                                <h1 class="text-success fw-bolder"
+                                                                    title="{{ $item->status }}">
+                                                                    <i class="mdi mdi-check"></i>
+                                                                </h1>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
                                                 <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        @if ($item->status == null)
-                                                            <a href="{{ route('checksheet.create', [
-                                                                'uuid_work_order' => $work_order->uuid,
-                                                                'uuid_equipment' => $item->equipment->uuid,
-                                                            ]) }}"
-                                                                title="Input Checksheet">
-                                                                <button type="button"
-                                                                    class="btn btn-gradient-primary btn-rounded btn-icon">
-                                                                    <i class="mdi mdi-lead-pencil"></i>
-                                                                </button>
-                                                            </a>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-start">{{ $item->equipment->name ?? '-' }}</td>
-                                                    <td class="text-start">{{ $item->equipment->code ?? '-' }}</td>
-                                                    <td>{{ $item->equipment->equipment_number ?? '-' }}</td>
-                                                    <td>{{ $item->equipment->tipe_equipment->code ?? '-' }}</td>
-                                                    <td>
-                                                        @if ($item->status == null)
-                                                            <h1 class="text-danger fw-bolder" title="Incomplete">
-                                                                <i class="mdi mdi-close"></i>
-                                                            </h1>
-                                                        @else
-                                                            <h1 class="text-success fw-bolder" title="{{ $item->status }}">
-                                                                <i class="mdi mdi-check"></i>
-                                                            </h1>
-                                                        @endif
-                                                    </td>
+                                                    <td colspan="7" class="text-center">No data found!</td>
                                                 </tr>
-                                            @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>
@@ -208,7 +215,8 @@
                                                 <th class="fw-bolder" style="width: 110px"> Select </th>
                                                 <th class="fw-bolder"> Name </th>
                                                 <th class="fw-bolder"> Role </th>
-                                                <th class="fw-bolder"> Email </th>
+                                                <th class="fw-bolder"> Employee Type </th>
+                                                <th class="fw-bolder"> Company </th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -217,13 +225,18 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>
                                                         <input type="checkbox" class="form-check-success"
-                                                            style="height: 25px; width:25px;" name="user_ids"
-                                                            value="{{ $item->id }}">
-                                                    </td>
-                                                    <td class="text-start">{{ $item->name }}</td>
-                                                    <td>{{ $item->jabatan->name ?? 'NA' }}</td>
-                                                    <td class="text-start">{{ $item->email }}</td>
-                                                </tr>
+                                                            style="height: 25px; width:25px;"
+                                                            @if ($work_order->trans_workorder_user) @foreach ($work_order->trans_workorder_user as $data)
+                                                            @if ($item->id == $data->user_id) checked disabled @else  name="user_ids[]"
+                                                            value="{{ $item->id }}" @endif
+                                                            @endforeach
+                                            @endif>
+                                            </td>
+                                            <td class="text-start">{{ $item->name }}</td>
+                                            <td>{{ $item->jabatan->name ?? 'NA' }}</td>
+                                            <td class="text-start">{{ $item->tipe_employee->name ?? 'N/A' }}</td>
+                                            <td class="text-start">{{ $item->perusahaan->name ?? 'N/A' }}</td>
+                                            </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
