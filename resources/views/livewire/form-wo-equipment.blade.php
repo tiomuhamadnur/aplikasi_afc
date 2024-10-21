@@ -38,7 +38,7 @@
                 <tr>
                     <th>#</th>
                     <th>
-                        <input type="checkbox" wire:model="selectAllCheckbox" wire:click="toggleSelectAll"> Select All
+                        <input type="checkbox"> Select All
                     </th>
                     <th>Name</th>
                     <th>Equipment Number</th>
@@ -51,7 +51,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>
                         <td>
-                            <input type="checkbox" class="form-check-primary" wire:model="selectedEquipment" value="{{ $item['id'] }}">
+                            <input type="checkbox" class="form-check-primary">
                         </td>
                             <!-- <input type="checkbox" class="form-check-primary" name="equipment_ids[]"
                                 value="{{ $item->id }}" checked>

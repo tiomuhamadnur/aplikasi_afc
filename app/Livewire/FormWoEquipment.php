@@ -52,17 +52,4 @@ class FormWoEquipment extends Component
             'tipe_equipment'
         ]));
     }
-    // Method to select all equipment
-    public function selectAll()
-    {
-        // Get all equipment IDs and assign to the $selectedEquipment array
-        $this->selectedEquipment = $this->equipment->pluck('id')->toArray();
-    }
-
-    // Method to unselect all equipment
-    public function unselectAll()
-    {
-        // Clear the $selectedEquipment array
-        $this->selectedEquipment = [];
-    }
 }
