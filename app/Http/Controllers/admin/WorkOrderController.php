@@ -256,6 +256,7 @@ class WorkOrderController extends Controller
         $user_ids = $request->user_ids;
         $barang_ids = $request->barang_ids;
         $qty = $request->qty;
+        $relasi_struktur_id = auth()->user()->relasi_struktur->id;
 
         $rawData['relasi_area_id'] = $gangguan->equipment->relasi_area_id;
         $rawData['relasi_struktur_id'] = $gangguan->equipment->relasi_struktur_id;
@@ -307,6 +308,19 @@ class WorkOrderController extends Controller
                     'work_order_id' => $work_order->id,
                     'user_id' => $user_id,
                 ]);
+            }
+        }
+
+        // Trans Approval
+        if($relasi_struktur_id != null)
+        {
+            $approval = Approval::where('relasi_struktur_id', $relasi_struktur_id)->orderBy('priority', 'ASC')->get();
+            foreach ($approval as $item) {
+                $data = [
+                    'work_order_id' => $work_order->id,
+                    'approval_id' => $item->id,
+                ];
+                TransWorkOrderApproval::updateOrCreate($data, $data);
             }
         }
 
