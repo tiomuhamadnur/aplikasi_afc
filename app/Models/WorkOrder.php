@@ -36,7 +36,7 @@ class WorkOrder extends Model
 
     public function tipe_pekerjaan()
     {
-        return $this->belongsTo(TipePekerjaan::class);
+        return $this->belongsTo(TipePekerjaan::class, 'tipe_pekerjaan_id');
     }
 
     public function relasi_area()
@@ -87,6 +87,16 @@ class WorkOrder extends Model
     public function trans_workorder_photo()
     {
         return $this->hasMany(TransWorkOrderPhoto::class);
+    }
+
+    public function trans_workorder_functional_location()
+    {
+        return $this->hasMany(TransWorkOrderFunctionalLocation::class);
+    }
+
+    public function trans_workorder_approval()
+    {
+        return $this->hasMany(TransWorkOrderApproval::class);
     }
 
     public function gangguan()

@@ -5,28 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
-class Form extends Model
+class TransWorkOrderFunctionalLocation extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'form';
+    protected $table = 'trans_workorder_funloc';
 
     protected $guarded = [];
 
-    public static function boot()
+    public function work_order()
     {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->uuid = Str::uuid();
-        });
-    }
-
-    public function tipe_equipment()
-    {
-        return $this->belongsTo(TipeEquipment::class);
+        return $this->belongsTo(WorkOrder::class);
     }
 
     public function functional_location()

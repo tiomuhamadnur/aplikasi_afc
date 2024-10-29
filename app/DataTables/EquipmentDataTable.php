@@ -50,7 +50,7 @@ class EquipmentDataTable extends DataTable
             </button>";
         })
         ->addColumn('history', function($item) {
-            $historyRoute = route('checksheet.history', $item->uuid);
+            $historyRoute = route('checksheet.history', ['uuid_equipment' => $item->uuid]);
 
             $historyButton = "<a href='{$historyRoute}'>
                 <button type='button' title='History Checksheet' class='btn btn-gradient-primary btn-rounded btn-icon'>

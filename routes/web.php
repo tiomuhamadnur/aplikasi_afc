@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\ApprovalController;
 use App\Http\Controllers\admin\ArahController;
 use App\Http\Controllers\admin\AssetController;
 use App\Http\Controllers\admin\BankController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\admin\TipePekerjaanController;
 use App\Http\Controllers\admin\TipePermitController;
 use App\Http\Controllers\admin\TransWorkOrderBarangController;
 use App\Http\Controllers\admin\TransWorkOrderEquipmentController;
+use App\Http\Controllers\admin\TransWorkOrderFunctionalLocationController;
 use App\Http\Controllers\admin\TransWorkOrderPhotoController;
 use App\Http\Controllers\admin\TransWorkOrderTasklistController;
 use App\Http\Controllers\admin\TransWorkOrderUserController;
@@ -166,6 +168,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/struktur/{uuid}/edit', 'edit')->name('struktur.edit');
         Route::put('/struktur', 'update')->name('struktur.update');
         Route::delete('/struktur', 'destroy')->name('struktur.delete');
+    });
+
+    Route::controller(ApprovalController::class)->group(function () {
+        Route::get('/approval', 'index')->name('approval.index');
+        Route::post('/approval', 'store')->name('approval.store');
+        Route::get('/approval/{uuid}/edit', 'edit')->name('approval.edit');
+        Route::put('/approval', 'update')->name('approval.update');
+        Route::delete('/approval', 'destroy')->name('approval.delete');
     });
 
     Route::controller(TipeBarangController::class)->group(function () {
@@ -423,11 +433,11 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::controller(ChecksheetController::class)->group(function () {
-        Route::get('/checksheet/{uuid_work_order}/{uuid_equipment}/create', 'create')->name('checksheet.create');
+        Route::get('/checksheet/create', 'create')->name('checksheet.create');
         Route::post('/checksheet', 'store')->name('checksheet.store');
-        Route::get('/checksheet/{uuid_equipment}/history', 'history')->name('checksheet.history');
+        Route::get('/checksheet/history', 'history')->name('checksheet.history');
         Route::get('/checksheet/trend', 'trend')->name('checksheet.trend');
-        Route::put('/checksheet/{uuid_equipment}/history', 'export_excel')->name('checksheet.history.export.excel');
+        Route::put('/checksheet/history', 'export_excel')->name('checksheet.history.export.excel');
     });
 
     Route::controller(WorkOrderController::class)->group(function () {
@@ -442,6 +452,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/work-order/{uuid}/detail/work-order', 'detail')->name('work-order.detail');
         Route::get('/work-order/{uuid}/equipment', 'equipment')->name('work-order.equipment');
         Route::put('/work-order', 'update')->name('work-order.update');
+        Route::put('/work-order/note/{uuid}', 'update_note')->name('work-order.note.update');
+        Route::put('/work-order/time/{uuid}', 'update_time')->name('work-order.time.update');
+        Route::put('/work-order/approve/{uuid}', 'approve')->name('work-order.approve');
+        Route::put('/work-order/reject/{uuid}', 'reject')->name('work-order.reject');
+        Route::put('/work-order/revise/{uuid}', 'revise')->name('work-order.revise');
         Route::delete('/work-order', 'destroy')->name('work-order.delete');
     });
 
@@ -453,6 +468,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(TransWorkOrderTasklistController::class)->group(function () {
         Route::post('/trans-workorder-tasklist/{uuid_workorder}', 'store')->name('trans-workorder-tasklist.store');
         Route::put('/trans-workorder-tasklist', 'update')->name('trans-workorder-tasklist.update');
+        Route::put('/trans-workorder-tasklist/actual-duration', 'update_actual_duration')->name('trans-workorder-tasklist.update-actual-duration');
         Route::delete('/trans-workorder-tasklist', 'destroy')->name('trans-workorder-tasklist.delete');
     });
 
@@ -469,6 +485,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(TransWorkOrderPhotoController::class)->group(function () {
         Route::post('/trans-workorder-photo/{uuid_workorder}', 'store')->name('trans-workorder-photo.store');
         Route::delete('/trans-workorder-photo', 'destroy')->name('trans-workorder-photo.delete');
+    });
+
+    Route::controller(TransWorkOrderFunctionalLocationController::class)->group(function () {
+        Route::post('/trans-workorder-functional-location/{uuid_workorder}', 'store')->name('trans-workorder-functional-location.store');
+        Route::delete('/trans-workorder-functional-location', 'destroy')->name('trans-workorder-functional-location.delete');
     });
 });
 

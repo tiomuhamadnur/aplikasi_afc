@@ -29,11 +29,13 @@
                             @csrf
                             @method('POST')
                             <input type="text" name="work_order_id" hidden value="{{ $work_order->id }}">
-                            <input type="text" name="equipment_id" hidden value="{{ $equipment->id }}">
+                            <input type="text" name="equipment_id" hidden value="{{ $equipment->id ?? '' }}">
+                            <input type="text" name="functional_location_id" hidden
+                                value="{{ $functional_location->id ?? '' }}">
                             <table class="table-borderless">
                                 <tbody>
                                     <tr>
-                                        <td style="width: 120px">WO. Number</td>
+                                        <td style="width: 160px">WO. Number</td>
                                         <td style="width: 20px">:</td>
                                         <td>{{ $work_order->ticket_number }}</td>
                                     </tr>
@@ -48,19 +50,22 @@
                                         <td>{{ $work_order->date }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Location</td>
+                                        <td class="fw-bolder">Object Checksheet</td>
                                         <td>:</td>
-                                        <td>{{ $work_order->relasi_area->sub_lokasi->name ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Equipment</td>
-                                        <td>:</td>
-                                        <td>{{ $equipment->name ?? '-' }}</td>
+                                        <td class="fw-bolder">
+                                            @if ($equipment != null)
+                                                {{ $equipment->name ?? '-' }}
+                                            @elseif ($functional_location != null)
+                                                {{ $functional_location->name ?? '-' }}
+                                                ({{ $functional_location->code ?? '-' }})
+                                            @endif
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                             @livewire('form-checksheet', [
-                                'tipe_equipment_id' => $tipe_equipment->id,
+                                'tipe_equipment_id' => $equipment->tipe_equipment->id ?? null,
+                                'functional_location_id' => $functional_location->id ?? null,
                             ])
                             {{-- <div class="p-2 my-3">
                                 <h3 class="text-center">Form Checksheet</h3>

@@ -72,14 +72,14 @@
                                                 <td style="width: 250px">
                                                     <input type="text" class="form-control form-control-sm"
                                                         placeholder="input order name" name="name" id="name"
-                                                        value="{{ $work_order->name ?? 'N/A' }}" autocomplete="off">
+                                                        value="{{ $work_order->name ?? '' }}" autocomplete="off">
                                                 </td>
                                                 <td></td>
                                                 <td class="fw-bolder" style="width: 130px">Location</td>
                                                 <td style="width: 10px">:</td>
                                                 <td style="width: 260px">
                                                     <input type="text" class="form-control form-control-sm"
-                                                        value="{{ $work_order->relasi_area->sub_lokasi->name ?? 'N/A' }}"
+                                                        value="{{ $work_order->relasi_area->sub_lokasi->name ?? '-' }}"
                                                         disabled>
                                                 </td>
                                             </tr>
@@ -89,14 +89,14 @@
                                                 <td>
                                                     <input type="text" class="form-control form-control-sm"
                                                         placeholder="input description" name="description" id="description"
-                                                        value="{{ $work_order->description ?? 'N/A' }}">
+                                                        value="{{ $work_order->description ?? '' }}">
                                                 </td>
                                                 <td></td>
                                                 <td class="fw-bolder">Work Center</td>
                                                 <td>:</td>
                                                 <td>
                                                     <input type="text" class="form-control form-control-sm"
-                                                        value="{{ $work_order->relasi_struktur->departemen->name ?? 'N/A' }}"
+                                                        value="{{ $work_order->relasi_struktur->departemen->name ?? '-' }}"
                                                         disabled>
                                                 </td>
                                             </tr>
@@ -189,74 +189,167 @@
 
                                 {{-- EQUIPMENTS --}}
                                 <div>
-                                    <h3>2. Equipment</h3>
+                                    <h3>2. Equipment / Functional Location</h3>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
-                                    <label class="mb-0"></label>
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addEquipmentModal"
-                                        class="btn btn-success btn-rounded btn-icon" title="Add row"
-                                        id="addRowEquipment">
-                                        <i class="mdi mdi-plus-circle"></i>
-                                    </button>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered text-center">
-                                        <thead>
-                                            <tr>
-                                                <th class="fw-bolder" style="width: 10px"> # </th>
-                                                <th class="fw-bolder" style="width: 110px"> Checksheet </th>
-                                                <th class="fw-bolder"> Equipment Name </th>
-                                                <th class="fw-bolder"> Equipment Code </th>
-                                                <th class="fw-bolder"> Equipment Number </th>
-                                                <th class="fw-bolder"> Type </th>
-                                                <th class="fw-bolder"> Funct. Location </th>
-                                                <th class="fw-bolder"> Action </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if ($work_order->trans_workorder_equipment->count() > 0)
-                                                @foreach ($work_order->trans_workorder_equipment as $item)
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>
-                                                            @if ($item->status == null)
-                                                                <a href="{{ route('checksheet.create', [
-                                                                    'uuid_work_order' => $work_order->uuid,
-                                                                    'uuid_equipment' => $item->equipment->uuid,
-                                                                ]) }}"
-                                                                    title="Input Checksheet" target="_blank">
-                                                                    <button type="button"
-                                                                        class="btn btn-gradient-primary btn-rounded btn-icon">
-                                                                        <i class="mdi mdi-lead-pencil"></i>
-                                                                    </button>
-                                                                </a>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-start">{{ $item->equipment->name ?? '-' }}</td>
-                                                        <td>{{ $item->equipment->code ?? '-' }}</td>
-                                                        <td>{{ $item->equipment->equipment_number ?? '-' }}</td>
-                                                        <td>{{ $item->equipment->tipe_equipment->code ?? '-' }}</td>
-                                                        <td>{{ $item->equipment->functional_location->code ?? '-' }}
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" title="Delete"
-                                                                class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                                data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                                data-id="{{ $item->id }}"
-                                                                data-route="{{ route('trans-workorder-equipment.delete') }}">
-                                                                <i class="mdi mdi-delete"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @else
+                                @if (
+                                    $work_order->trans_workorder_equipment->count() == 0 &&
+                                        $work_order->trans_workorder_functional_location->count() == 0)
+                                    <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
+                                        <label class="mb-0"></label>
+                                        <div class="btn-group">
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#addEquipmentModal"
+                                                class="btn btn-success btn-rounded btn-icon" title="Add Equipment"
+                                                id="addRowEquipment">
+                                                <i class="mdi mdi-plus-circle"></i>
+                                            </button>
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#addFunctionalLocationModal"
+                                                class="btn btn-warning btn-rounded btn-icon"
+                                                title="Add Functional Location" id="addRowFunctionalLocation">
+                                                <i class="mdi mdi-plus-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if ($work_order->trans_workorder_equipment->count() > 0)
+                                    <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
+                                        <label class="mb-0"></label>
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#addEquipmentModal"
+                                            class="btn btn-success btn-rounded btn-icon" title="Add row"
+                                            id="addRowEquipment">
+                                            <i class="mdi mdi-plus-circle"></i>
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center">
+                                            <thead>
                                                 <tr>
-                                                    <td colspan="8" class="text-center">No data found!</td>
+                                                    <th class="fw-bolder" style="width: 10px"> # </th>
+                                                    <th class="fw-bolder" style="width: 110px"> Checksheet </th>
+                                                    <th class="fw-bolder"> Equipment Name </th>
+                                                    <th class="fw-bolder"> Equipment Code </th>
+                                                    <th class="fw-bolder"> Equipment Number </th>
+                                                    <th class="fw-bolder"> Type </th>
+                                                    <th class="fw-bolder"> Funct. Location </th>
+                                                    <th class="fw-bolder"> Action </th>
                                                 </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </thead>
+                                            <tbody>
+                                                @if ($work_order->trans_workorder_equipment->count() > 0)
+                                                    @foreach ($work_order->trans_workorder_equipment as $item)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>
+                                                                @if ($item->status == null)
+                                                                    <a href="{{ route('checksheet.create', [
+                                                                        'uuid_work_order' => $work_order->uuid,
+                                                                        'uuid_equipment' => $item->equipment->uuid,
+                                                                    ]) }}"
+                                                                        title="Input Checksheet">
+                                                                        <button type="button"
+                                                                            class="btn btn-gradient-primary btn-rounded btn-icon">
+                                                                            <i class="mdi mdi-lead-pencil"></i>
+                                                                        </button>
+                                                                    </a>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-start">{{ $item->equipment->name ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $item->equipment->code ?? '-' }}</td>
+                                                            <td>{{ $item->equipment->equipment_number ?? '-' }}</td>
+                                                            <td>{{ $item->equipment->tipe_equipment->code ?? '-' }}</td>
+                                                            <td>{{ $item->equipment->functional_location->code ?? '-' }}
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" title="Delete"
+                                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
+                                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                                    data-id="{{ $item->id }}"
+                                                                    data-route="{{ route('trans-workorder-equipment.delete') }}">
+                                                                    <i class="mdi mdi-delete"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @else
+                                                    <tr>
+                                                        <td colspan="8" class="text-center">No data found!</td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+
+                                @if ($work_order->trans_workorder_functional_location->count() > 0)
+                                    <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
+                                        <label class="mb-0"></label>
+                                        <button type="button" data-bs-toggle="modal"
+                                            data-bs-target="#addFunctionalLocationModal"
+                                            class="btn btn-success btn-rounded btn-icon" title="Add row"
+                                            id="addRowFunctionalLocation">
+                                            <i class="mdi mdi-plus-circle"></i>
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th class="fw-bolder" style="width: 10px"> # </th>
+                                                    <th class="fw-bolder" style="width: 110px"> Checksheet </th>
+                                                    <th class="fw-bolder"> Funct. Loc. Name </th>
+                                                    <th class="fw-bolder"> Funct. Loc. Code </th>
+                                                    <th class="fw-bolder"> Description </th>
+                                                    <th class="fw-bolder"> Parent </th>
+                                                    <th class="fw-bolder"> Action </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if ($work_order->trans_workorder_functional_location->count() > 0)
+                                                    @foreach ($work_order->trans_workorder_functional_location as $item)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>
+                                                                @if ($item->status == null)
+                                                                    <a href="{{ route('checksheet.create', [
+                                                                        'uuid_work_order' => $work_order->uuid,
+                                                                        'uuid_functional_location' => $item->functional_location->uuid,
+                                                                    ]) }}"
+                                                                        title="Input Checksheet">
+                                                                        <button type="button"
+                                                                            class="btn btn-gradient-primary btn-rounded btn-icon">
+                                                                            <i class="mdi mdi-lead-pencil"></i>
+                                                                        </button>
+                                                                    </a>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-start">
+                                                                {{ $item->functional_location->name ?? '-' }}</td>
+                                                            <td>{{ $item->functional_location->code ?? '-' }}</td>
+                                                            <td>{{ $item->functional_location->description ?? '-' }}</td>
+                                                            <td>{{ $item->functional_location->parent->code ?? '-' }}</td>
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" title="Delete"
+                                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
+                                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                                    data-id="{{ $item->id }}"
+                                                                    data-route="{{ route('trans-workorder-functional-location.delete') }}">
+                                                                    <i class="mdi mdi-delete"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @else
+                                                    <tr>
+                                                        <td colspan="7" class="text-center">No data found!</td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
                                 <hr class="my-5">
 
 
@@ -548,6 +641,44 @@
     </div>
     <!-- End Add Equipment Modal -->
 
+    <!-- Add Functional Location Modal -->
+    <div class="modal fade" id="addFunctionalLocationModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Add</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addFunctionalLocationForm"
+                        action="{{ route('trans-workorder-functional-location.store', $work_order->uuid) }}"
+                        method="POST" class="forms-sample">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group">
+                            <label for="functional_location_id">Functional Location</label>
+                            <select class="tom-select-class" name="functional_location_id" id="functional_location_id">
+                                <option value="" selected disabled>- select functional location -</option>
+                                @foreach ($functional_location as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name ?? '-' }} -----
+                                        ({{ $item->code ?? '-' }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="addFunctionalLocationForm"
+                        class="btn btn-gradient-primary me-2">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Functional Location Modal -->
+
     <!-- Add Tasklist Modal -->
     <div class="modal fade" id="addTasklistModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -603,8 +734,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editTasklistForm"
-                        action="{{ route('trans-workorder-tasklist.update', $work_order->uuid) }}" method="POST"
+                    <form id="editTasklistForm" action="{{ route('trans-workorder-tasklist.update') }}" method="POST"
                         class="forms-sample">
                         @csrf
                         @method('PUT')

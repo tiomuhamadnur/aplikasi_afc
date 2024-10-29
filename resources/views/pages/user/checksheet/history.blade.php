@@ -10,7 +10,9 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">History Data Checksheet ({{ $equipment->code }})</h4>
+                        <h4 class="card-title">History Data Checksheet
+                            ({{ $equipment->name ?? '' }}{{ $functional_location->name ?? '' }})
+                        </h4>
                         {{-- <h5 class="card-title">({{ $equipment->code }} - {{ $form->name }})</h5> --}}
                         <div class="btn-group my-2">
                             {{-- <button type="button" onclick="window.location.href='{{ route('work-order.equipment') }}'"
@@ -40,8 +42,9 @@
                                                     ({{ $parameter->min_value }} - {{ $parameter->max_value }})
                                                     <br>
                                                     <a href="{{ route('checksheet.trend', [
-                                                        'eq_uuid' => $equipment->uuid,
-                                                        'param_uuid' => $parameter->uuid,
+                                                        'eq_uuid' => $equipment->uuid ?? null,
+                                                        'funloc_uuid' => $functional_location->uuid ?? null,
+                                                        'param_uuid' => $parameter->uuid ?? null,
                                                     ]) }}"
                                                         target="_blank" title="Plot Graph">
                                                         <button type="button"
@@ -96,7 +99,8 @@
                             alt="Excel" style="height: 150px; width: 150px">
                     </div>
                     <form hidden id="formExportExcel"
-                        action="{{ route('checksheet.history.export.excel', $equipment->uuid) }}" method="POST">
+                        action="{{ route('checksheet.history.export.excel', ['uuid_equipment' => $equipment->uuid ?? null, 'uuid_functional_location' => $functional_location->uuid ?? null]) }}"
+                        method="POST">
                         @csrf
                         @method('PUT')
                     </form>

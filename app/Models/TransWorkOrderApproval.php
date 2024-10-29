@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Checksheet extends Model
+class TransWorkOrderApproval extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'checksheet';
+    protected $table = 'trans_workorder_approval';
 
     protected $guarded = [];
 
@@ -26,22 +26,12 @@ class Checksheet extends Model
 
     public function work_order()
     {
-        return $this->belongsTo(WorkOrder::class, 'work_order_id');
+        return $this->belongsTo(WorkOrder::class);
     }
 
-    public function equipment()
+    public function approval()
     {
-        return $this->belongsTo(Equipment::class, 'equipment_id');
-    }
-
-    public function functional_location()
-    {
-        return $this->belongsTo(FunctionalLocation::class, 'functional_location_id');
-    }
-
-    public function parameter()
-    {
-        return $this->belongsTo(Parameter::class);
+        return $this->belongsTo(Approval::class);
     }
 
     public function user()
