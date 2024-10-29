@@ -52,6 +52,21 @@ class TransWorkOrderTasklistController extends Controller
         return redirect()->back()->withNotify('Data Tasklist/Operation berhasil diubah');
     }
 
+    public function update_actual_duration(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|numeric|min:1',
+            'actual_duration' => 'nullable|numeric|min:1',
+        ]);
+
+        $data = TransWorkOrderTasklist::findOrFail($request->id);
+        $data->update([
+            'actual_duration' => $request->actual_duration,
+        ]);
+
+        return redirect()->back()->withNotify('Data Actual Time Tasklist/Operation berhasil ditambahkan');
+    }
+
     public function destroy(Request $request)
     {
         $request->validate([

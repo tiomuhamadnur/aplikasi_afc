@@ -8,9 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Checksheet;
 use App\Models\Equipment;
 use App\Models\Form;
+use App\Models\FunctionalLocation;
 use App\Models\Parameter;
 use App\Models\TipeEquipment;
 use App\Models\TransWorkOrderEquipment;
+use App\Models\TransWorkOrderFunctionalLocation;
 use App\Models\WorkOrder;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,19 +25,41 @@ class ChecksheetController extends Controller
         //
     }
 
-    public function create($uuid_work_order, $uuid_equipment)
+    public function create(Request $request)
     {
-        $work_order = WorkOrder::where('uuid', $uuid_work_order)->firstOrFail();
-        $equipment = Equipment::where('uuid', $uuid_equipment)->firstOrFail();
-        $tipe_equipment = TipeEquipment::where('uuid', $equipment->tipe_equipment->uuid)->firstOrFail();
+        $request->validate([
+            'uuid_work_order' => 'required|string',
+            'uuid_equipment' => 'nullable|string',
+            'uuid_functional_location' => 'nullable|string',
+        ]);
 
-        $parameter = Parameter::whereRelation('form.tipe_equipment', 'id', '=', $tipe_equipment->id)
-                    ->orderBy('urutan', 'ASC')
-                    ->get();
+        $uuid_work_order = $request->uuid_work_order;
+        $uuid_equipment = $request->uuid_equipment;
+        $uuid_functional_location = $request->uuid_functional_location;
+
+        $work_order = WorkOrder::where('uuid', $uuid_work_order)->firstOrFail();
+        $equipment = null;
+        $functional_location = null;
+
+        if($uuid_equipment)
+        {
+            $equipment = Equipment::where('uuid', $uuid_equipment)->firstOrFail();
+            $parameter = Parameter::whereRelation('form.tipe_equipment', 'id', '=', $equipment->tipe_equipment->id)
+                        ->orderBy('urutan', 'ASC')
+                        ->get();
+        }
+        elseif($uuid_functional_location)
+        {
+            $functional_location = FunctionalLocation::where('uuid', $uuid_functional_location)->firstOrFail();
+            $parameter = Parameter::whereRelation('form.functional_location', 'id', '=', $functional_location->id)
+                        ->orderBy('urutan', 'ASC')
+                        ->get();
+
+        }
 
         return view('pages.user.checksheet.create', compact([
             'work_order',
-            'tipe_equipment',
+            'functional_location',
             'equipment',
             'parameter',
         ]));
@@ -45,20 +69,36 @@ class ChecksheetController extends Controller
     {
         $request->validate([
             "work_order_id" => 'required|numeric',
-            "equipment_id" => 'required|numeric',
-            "values" => 'required|array',
+            "equipment_id" => 'nullable|numeric',
+            "functional_location_id" => 'nullable|numeric',
             "parameter_ids" => 'required|array',
             'parameter_ids.*' => 'numeric',
+            "values" => 'required|array',
+            "values.*" => 'required|string',
         ]);
 
+        $equipment_id = null;
+        $functional_location_id = null;
         $work_order = WorkOrder::findOrFail($request->work_order_id);
-        $equipment = Equipment::findOrFail($request->equipment_id);
+
+        if($request->equipment_id != null)
+        {
+            $equipment = Equipment::findOrFail($request->equipment_id);
+            $equipment_id = $equipment->id;
+        }
+        elseif($request->functional_location_id != null)
+        {
+            $functional_location = FunctionalLocation::findOrFail($request->functional_location_id);
+            $functional_location_id = $functional_location->id;
+        }
 
         foreach ($request->values as $index => $value) {
             $status = $this->checkTolerance((int) $request->parameter_ids[$index], $value);
+
             Checksheet::create([
                 'work_order_id' => $work_order->id,
-                'equipment_id' => $equipment->id,
+                'equipment_id' => $equipment_id,
+                'functional_location_id' => $functional_location_id,
                 'parameter_id' => $request->parameter_ids[$index],
                 'value' => $value,
                 'user_id' => auth()->user()->id,
@@ -66,16 +106,24 @@ class ChecksheetController extends Controller
             ]);
         }
 
-        $data = TransWorkOrderEquipment::where('work_order_id', $work_order->id)
-                                ->where('equipment_id', $equipment->id)
+        if($request->equipment_id != null)
+        {
+            $data = TransWorkOrderEquipment::where('work_order_id', $work_order->id)
+                                ->where('equipment_id', $equipment_id)
                                 ->firstOrFail();
+        } elseif($request->functional_location_id != null)
+        {
+            $data = TransWorkOrderFunctionalLocation::where('work_order_id', $work_order->id)
+                                ->where('functional_location_id', $functional_location_id)
+                                ->firstOrFail();
+        }
 
         $data->update([
             'status' => 'completed'
         ]);
 
-        return redirect()->route('work-order.equipment', $work_order->uuid)
-                        ->withNotify('Data checksheet ' . $equipment->name . ' berhasil ditambahkan');
+        return redirect()->route('work-order.detail', $work_order->uuid)
+                        ->withNotify('Data checksheet berhasil diinput');
     }
 
     private function checkTolerance(int $parameter_id, $value)
@@ -95,19 +143,48 @@ class ChecksheetController extends Controller
         return $status;
     }
 
-    public function history($uuid_equipment)
+    public function history(Request $request)
     {
-        $checksheetData = Checksheet::whereRelation('equipment', 'uuid', $uuid_equipment)
-            ->whereHas('parameter', function ($query) {
-                $query->whereNull('deleted_at');
-            })
-            ->with(['parameter' => function ($query) {
-                $query->select('id', 'uuid', 'name', 'urutan', 'tipe', 'satuan_id', 'min_value', 'max_value')
-                    ->with('satuan'); // Pastikan satuan juga diambil jika diperlukan
-            }, 'work_order'])
-            ->get();
+        // dd($request);
+        $request->validate([
+            'uuid_equipment' => 'nullable|string',
+            'uuid_functional_location' => 'nullable|string',
+        ]);
 
-        if ($checksheetData->isEmpty()) {
+        $uuid_equipment = $request->uuid_equipment ?? null;
+        $uuid_functional_location = $request->uuid_functional_location ?? null;
+
+        $equipment = null;
+        $functional_location = null;
+        $checksheetData = collect();
+
+        if($uuid_equipment != null)
+        {
+            $equipment = Equipment::where('uuid', $uuid_equipment)->firstOrFail();
+            $checksheetData = Checksheet::whereRelation('equipment', 'uuid', $uuid_equipment)
+                ->whereHas('parameter', function ($query) {
+                    $query->whereNull('deleted_at');
+                })
+                ->with(['parameter' => function ($query) {
+                    $query->select('id', 'uuid', 'name', 'urutan', 'tipe', 'satuan_id', 'min_value', 'max_value')
+                        ->with('satuan'); // Pastikan satuan juga diambil jika diperlukan
+                }, 'work_order'])
+                ->get();
+        } elseif($uuid_functional_location != null)
+        {
+            $functional_location = FunctionalLocation::where('uuid', $uuid_functional_location)->firstOrFail();
+            $checksheetData = Checksheet::whereRelation('functional_location', 'uuid', $uuid_functional_location)
+                ->whereHas('parameter', function ($query) {
+                    $query->whereNull('deleted_at');
+                })
+                ->with(['parameter' => function ($query) {
+                    $query->select('id', 'uuid', 'name', 'urutan', 'tipe', 'satuan_id', 'min_value', 'max_value')
+                        ->with('satuan'); // Pastikan satuan juga diambil jika diperlukan
+                }, 'work_order'])
+                ->get();
+        }
+
+        if ($checksheetData->count() == 0) {
             return redirect()->back()->withNotifyerror('Data tidak ditemukan');
         }
 
@@ -119,20 +196,21 @@ class ChecksheetController extends Controller
             });
         });
 
-
         $parameters = $checksheetData->pluck('parameter')->unique('id')->sortBy('urutan');
-
-        $equipment = Equipment::where('uuid', $uuid_equipment)->firstOrFail();
 
         return view('pages.user.checksheet.history', compact([
             'equipment',
+            'functional_location',
             'pivotData',
             'parameters'
         ]));
     }
 
-    public function export_excel($uuid_equipment)
+    public function export_excel(Request $request)
     {
+        dd($request);
+        $uuid_equipment = $request->uuid_equipment;
+        $uuid_functional_location = $request->uuid_functional_location;
         $equipment = Equipment::where('uuid', $uuid_equipment)->firstOrFail();
 
         $waktu = Carbon::now()->format('Ymd');

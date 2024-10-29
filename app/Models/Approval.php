@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Form extends Model
+class Approval extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'form';
+    protected $table = 'approval';
 
     protected $guarded = [];
 
@@ -24,13 +24,18 @@ class Form extends Model
         });
     }
 
-    public function tipe_equipment()
+    public function relasi_struktur()
     {
-        return $this->belongsTo(TipeEquipment::class);
+        return $this->belongsTo(RelasiStruktur::class);
     }
 
-    public function functional_location()
+    public function jabatan()
     {
-        return $this->belongsTo(FunctionalLocation::class);
+        return $this->belongsTo(Jabatan::class);
+    }
+
+    public function tipe_employee()
+    {
+        return $this->belongsTo(TipeEmployee::class);
     }
 }

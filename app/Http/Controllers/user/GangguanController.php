@@ -155,7 +155,12 @@ class GangguanController extends Controller
 
         $data = Gangguan::create($raw_data);
 
-        TransGangguanRemedy::create([
+        TransGangguanRemedy::updateOrCreate([
+            'gangguan_id' => $data->id,
+            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
+            'user_id' => $request->solved_user_id,
+            'date' => $data->response_date,
+        ],[
             'gangguan_id' => $data->id,
             'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
             'remedy_other' => $request->remedy_other,
@@ -201,21 +206,6 @@ class GangguanController extends Controller
             $data->update([
                 "photo_after" => $photo,
             ]);
-        }
-
-        if($request->barang_ids != null)
-        {
-            foreach ($request->barang_ids as $i => $barang_id) {
-                $qty = $request->qty[$i];
-
-                TransaksiBarang::create([
-                    'barang_id' => $barang_id,
-                    'equipment_id' => $request->equipment_id,
-                    'tanggal' => $request->report_date,
-                    'qty' => $qty,
-                    'gangguan_id' => $data->id,
-                ]);
-            }
         }
 
         return redirect()->route('gangguan.index')->withNotify('Data berhasil ditambahkan');

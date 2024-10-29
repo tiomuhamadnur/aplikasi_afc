@@ -28,7 +28,18 @@ class FunctionalLocationDataTable extends DataTable
 
             return $editButton;
         })
-        ->rawColumns(['#']);
+        ->addColumn('history', function($item) {
+            $historyRoute = route('checksheet.history', ['uuid_functional_location' => $item->uuid]);
+
+            $historyButton = "<a href='{$historyRoute}'>
+                <button type='button' title='History Checksheet' class='btn btn-gradient-primary btn-rounded btn-icon'>
+                    <i class='mdi mdi-history'></i>
+                </button>
+            </a>";
+
+            return $historyButton;
+        })
+        ->rawColumns(['history', '#']);
     }
 
     public function query(FunctionalLocation $model): QueryBuilder
@@ -67,6 +78,12 @@ class FunctionalLocationDataTable extends DataTable
             Column::make('code')->title('Code'),
             Column::make('description')->title('Description'),
             Column::make('parent.code')->title('Parent'),
+            Column::computed('history')->title('History')
+                ->exportable(false)
+                ->printable(false)
+                ->width(30)
+                ->addClass('text-center')
+                ->searchable(false),
             Column::computed('#')
                 ->exportable(false)
                 ->printable(false)

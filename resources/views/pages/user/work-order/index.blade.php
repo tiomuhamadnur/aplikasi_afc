@@ -11,20 +11,24 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Data Work Order</h4>
+                        <a href="{{ route('work-order.create') }}" title="Create New Work Order"
+                            class="btn btn-gradient-primary btn-rounded">Create WO</a>
                         <div class="btn-group my-2">
-                            <button type="button" onclick="window.location.href='{{ route('work-order.create') }}'"
+                            {{-- <button type="button" onclick="window.location.href='{{ route('work-order.create') }}'"
                                 title="Add" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-plus-circle"></i>
-                            </button>
+                            </button> --}}
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export Excel" data-bs-toggle="modal"
+                                data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
+                            {{ $dataTable->table() }}
+                            {{-- <table class="table table-bordered text-center">
                                 <thead>
                                     <tr>
                                         <th> # </th>
@@ -73,23 +77,47 @@
                                                         <i class="mdi mdi-lead-pencil"></i>
                                                     </button>
                                                 </a>
-                                                {{-- <button type="button" title="Delete"
+                                                <button type="button" title="Delete"
                                                     class="btn btn-gradient-danger btn-rounded btn-icon"
                                                     data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                     data-id="{{ $item->id }}">
                                                     <i class="mdi mdi-delete"></i>
-                                                </button> --}}
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> --}}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
 
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -116,6 +144,10 @@
     <!-- End Delete Modal -->
 @endsection
 
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
+
 @section('javascript')
     <script>
         $(document).ready(function() {
@@ -125,5 +157,11 @@
                 $('#id_delete').val(id);
             });
         });
+    </script>
+
+    <script>
+        function exportExcel() {
+            document.getElementById('datatable-excel').click();
+        }
     </script>
 @endsection

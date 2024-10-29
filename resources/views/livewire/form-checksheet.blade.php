@@ -10,7 +10,7 @@
     </div>
     @if (count($parameter) > 0)
         <div class="p-2 my-3">
-            <h3 class="text-center">Form Checksheet</h3>
+            <h3 class="text-center">Form Checksheet </h3>
             <hr class="mb-5">
             @foreach ($parameter as $item)
                 @if ($item->tipe == 'option')
@@ -62,6 +62,10 @@
                     </div>
                 @endif
             @endforeach
+        </div>
+    @else
+        <div class="form-group text-center">
+            <h6>There is no checksheet for this Equipment / Functional Location</h6>
         </div>
     @endif
 </div>

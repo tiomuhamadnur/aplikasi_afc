@@ -31,6 +31,7 @@
                                         <th> Nama </th>
                                         <th> Code </th>
                                         <th> Tipe Equipment </th>
+                                        <th> Funct. Location </th>
                                         <th> Description </th>
                                         <th> Status </th>
                                         <th> List Parameter </th>
@@ -44,8 +45,16 @@
                                             <td>{{ $item->name }}</td>
                                             <td>{{ $item->code }}</td>
                                             <td>
-                                                {{ $item->tipe_equipment->code ?? '-' }} <br>
-                                                ({{ $item->tipe_equipment->name ?? '-' }})
+                                                @if ($item->tipe_equipment)
+                                                    {{ $item->tipe_equipment->code ?? '-' }} <br>
+                                                    ({{ $item->tipe_equipment->name ?? '-' }})
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->functional_location)
+                                                    {{ $item->functional_location->code ?? '-' }} <br>
+                                                    ({{ $item->functional_location->name ?? '-' }})
+                                                @endif
                                             </td>
                                             <td>{{ $item->description }}</td>
                                             <td>{{ $item->status }}</td>
@@ -106,12 +115,30 @@
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
+                            <label for="object_type">Object Type</label>
+                            <select class="tom-select-class" name="object_type" id="object_type" required>
+                                <option value="" selected disabled>- select object type -</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="functional_location">Functional Location</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="tipeEquipmentContainer" style="display: none">
                             <label for="tipe_equipment_id">Tipe Equipment</label>
-                            <select class="form-control form-control-lg" name="tipe_equipment_id" id="tipe_equipment_id"
-                                required>
+                            <select class="tom-select-class" name="tipe_equipment_id" id="tipe_equipment_id">
                                 <option value="" selected disabled>- pilih tipe equipment -</option>
                                 @foreach ($tipe_equipment as $item)
                                     <option value="{{ $item->id }}">{{ $item->code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group" id="functionalLocationContainer" style="display: none">
+                            <label for="functional_location_id">Functional Location</label>
+                            <select class="tom-select-class" name="functional_location_id" id="functional_location_id">
+                                <option value="" selected disabled>- pilih functional location -</option>
+                                @foreach ($functional_location as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }} ----
+                                        ({{ $item->code ?? '#' }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -252,5 +279,55 @@
             // Hapus form-group dari container
             inputContainer.removeChild(formGroup);
         }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elemen-elemen yang terlibat
+            const objectTypeSelect = document.getElementById('object_type');
+            const tipeEquipmentContainer = document.getElementById('tipeEquipmentContainer');
+            const functionalLocationContainer = document.getElementById('functionalLocationContainer');
+            const tipeEquipmentSelect = document.getElementById('tipe_equipment_id');
+            const functionalLocationSelect = document.getElementById('functional_location_id');
+
+            // Fungsi untuk menyembunyikan dan menampilkan container yang sesuai
+            function toggleContainers() {
+                const selectedType = objectTypeSelect.value;
+
+                if (selectedType === 'equipment') {
+                    // Tampilkan Tipe Equipment, sembunyikan Functional Location
+                    tipeEquipmentContainer.style.display = 'block';
+                    functionalLocationContainer.style.display = 'none';
+
+                    // Set required dan clear value untuk Functional Location
+                    tipeEquipmentSelect.required = true;
+                    functionalLocationSelect.required = false;
+                    functionalLocationSelect.value = ''; // Kosongkan pilihan Functional Location
+
+                } else if (selectedType === 'functional_location') {
+                    // Tampilkan Functional Location, sembunyikan Tipe Equipment
+                    functionalLocationContainer.style.display = 'block';
+                    tipeEquipmentContainer.style.display = 'none';
+
+                    // Set required dan clear value untuk Tipe Equipment
+                    functionalLocationSelect.required = true;
+                    tipeEquipmentSelect.required = false;
+                    tipeEquipmentSelect.value = ''; // Kosongkan pilihan Tipe Equipment
+
+                } else {
+                    // Jika tidak ada yang dipilih, sembunyikan keduanya dan set semua required false
+                    tipeEquipmentContainer.style.display = 'none';
+                    functionalLocationContainer.style.display = 'none';
+                    tipeEquipmentSelect.required = false;
+                    functionalLocationSelect.required = false;
+                }
+            }
+
+            // Event listener ketika nilai dropdown diubah
+            objectTypeSelect.addEventListener('change', toggleContainers);
+
+            // Panggil fungsi saat halaman pertama kali dimuat
+            toggleContainers();
+        });
     </script>
 @endsection
