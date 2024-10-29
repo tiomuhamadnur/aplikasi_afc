@@ -37,7 +37,9 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Select</th>
+                    <th>
+                        <input type="checkbox"> Select All
+                    </th>
                     <th>Name</th>
                     <th>Equipment Number</th>
                     <th>Type</th>
@@ -48,7 +50,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
-                            <input type="checkbox" class="form-check-primary" name="equipment_ids[]"
+                        <input type="checkbox" class="form-check-primary" name="equipment_ids[]"
                                 value="{{ $item->id }}" checked>
                         </td>
                         <td class="text-left">{{ $item->code }} ({{ $item->name }})</td>

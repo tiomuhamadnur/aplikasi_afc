@@ -119,42 +119,48 @@ class GetDataController extends Controller
     // }
 
 
-    public function data_asset()
+    public function data_asset(Request $request)
     {
+        $request->validate([
+            'relasi_struktur_id' => 'nullable|numeric|min:1',
+        ]);
+
+        $relasi_struktur_id = $request->relasi_struktur_id;
         $functionalLocations = FunctionalLocation::all()->toArray();
 
-        $equipments = Equipment::all()->toArray();
+        $equipmentsQuery = Equipment::query();
+
+        if ($relasi_struktur_id) {
+            $equipmentsQuery->where('relasi_struktur_id', $relasi_struktur_id);
+        }
+
+        $equipments = $equipmentsQuery->get()->toArray();
 
         function buildFunctionalLocationTree(array $locations, array $equipments, $parentId = null) {
             $branch = [];
 
             foreach ($locations as $location) {
                 if ($location['parent_id'] == $parentId) {
-                    // Rekursi untuk functional location children
                     $children = buildFunctionalLocationTree($locations, $equipments, $location['id']);
 
                     $icon = !empty($children) ? 'mdi mdi-home' : 'mdi mdi-home text-danger';
                     // $icon = !empty($children) ? false : false;
 
-                    // Ambil equipment yang berhubungan dengan lokasi ini
                     $locationEquipments = array_filter($equipments, function($equipment) use ($location) {
                         return $equipment['functional_location_id'] == $location['id'] && is_null($equipment['parent_id']);
                     });
 
-                    // Buat equipment nodes, cek juga jika equipment punya child equipment
                     $equipmentNodes = array_map(function($equipment) use ($equipments) {
-                        // Cari children dari equipment
                         $equipmentChildren = buildEquipmentTree($equipments, $equipment['id']);
 
                         return [
                             'id' => 'equipment_id_' . $equipment['id'],
                             'text' => ($equipment['equipment_number'] ?? '#') . ' ------ ' . $equipment['name'],
                             'icon' => 'mdi mdi-settings text-success',
-                            'children' => $equipmentChildren // Tambahkan children equipment di sini
+                            'children' => $equipmentChildren
                         ];
                     }, $locationEquipments);
 
-                    // Gabungkan functional location children dan equipment nodes
                     $branch[] = [
                         'id' => 'location_id_' . $location['id'],
                         'text' => ($location['code'] ?? '#') . ' ------ ' .$location['name'],
@@ -167,13 +173,11 @@ class GetDataController extends Controller
             return $branch;
         }
 
-        // Fungsi rekursif untuk membangun pohon equipment
         function buildEquipmentTree(array $equipments, $parentId) {
             $children = [];
 
             foreach ($equipments as $equipment) {
                 if ($equipment['parent_id'] == $parentId) {
-                    // Rekursi untuk mencari child equipment
                     $equipmentChildren = buildEquipmentTree($equipments, $equipment['id']);
 
                     $children[] = [
@@ -188,13 +192,8 @@ class GetDataController extends Controller
             return $children;
         }
 
-        // Bangun data pohon functional location dan equipment
         $treeData = buildFunctionalLocationTree($functionalLocations, $equipments);
 
-        // Kembalikan dalam format JSON untuk jsTree
         return response()->json($treeData);
     }
-
-
-
 }

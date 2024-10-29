@@ -108,6 +108,8 @@
                         <li class="nav-item"> <a class="nav-link" href="{{ route('struktur.index') }}">Relasi
                                 Struktur</a>
                         </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('approval.index') }}">Approval</a>
+                        </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('tipe-barang.index') }}">Tipe
                                 Barang</a>
                         </li>
