@@ -16,13 +16,20 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Data Work Order</h4>
-                        <div class="btn-group my-2">
+                        <a href="{{ route('work-order.index') }}" title="Back" class="btn btn-gradient-primary btn-rounded">
+                            <i class="mdi mdi-arrow-left"></i> Back
+                        </a>
+                        @if ($work_order->status_id == 2)
                             <div class="btn-group my-2">
-                                <a href="{{ route('work-order.index') }}" title="Back" class="btn btn-primary btn-rounded">
-                                    <i class="mdi mdi-arrow-left"></i> Back
-                                </a>
+                                <div class="btn-group my-2">
+                                    <button type="button" title="Export PDF" data-bs-toggle="modal"
+                                        data-bs-target="#exportPDFModal"
+                                        class="btn btn-gradient-danger btn-rounded btn-icon">
+                                        <i class="mdi mdi-file-pdf"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="table-responsive">
                             <div>
                                 <h3>1. Detail</h3>
@@ -155,7 +162,7 @@
                                                                 ]) }}"
                                                                     title="Input Checksheet">
                                                                     <button type="button"
-                                                                        class="btn btn-gradient-primary btn-rounded btn-icon">
+                                                                        class="btn btn-gradient-primary btn-rounded btn-icon if-closed">
                                                                         <i class="mdi mdi-lead-pencil"></i>
                                                                     </button>
                                                                 </a>
@@ -206,7 +213,7 @@
                                                                 ]) }}"
                                                                     title="Input Checksheet">
                                                                     <button type="button"
-                                                                        class="btn btn-gradient-primary btn-rounded btn-icon">
+                                                                        class="btn btn-gradient-primary btn-rounded btn-icon if-closed">
                                                                         <i class="mdi mdi-lead-pencil"></i>
                                                                     </button>
                                                                 </a>
@@ -255,7 +262,7 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>
                                                         <button type='button'
-                                                            class='btn btn-gradient-primary btn-rounded btn-icon'
+                                                            class='btn btn-gradient-primary btn-rounded btn-icon if-closed'
                                                             title='Input Actual Duration' data-bs-toggle="modal"
                                                             data-bs-target="#editTasklistModal"
                                                             data-id="{{ $item->id }}"
@@ -331,7 +338,8 @@
                             <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
                                 <label class="mb-0"></label>
                                 <button type="button" data-bs-toggle="modal" data-bs-target="#addUserModal"
-                                    class="btn btn-success btn-rounded btn-icon" title="Add row" id="addRowManPower">
+                                    class="btn btn-success btn-rounded btn-icon if-closed" title="Add row"
+                                    id="addRowManPower">
                                     <i class="mdi mdi-plus-circle"></i>
                                 </button>
                             </div>
@@ -361,7 +369,7 @@
                                                         {{ $item->user->perusahaan->name ?? 'N/A' }}</td>
                                                     <td>
                                                         <button type="button" title="Delete"
-                                                            class="btn btn-gradient-danger btn-rounded btn-icon"
+                                                            class="btn btn-gradient-danger btn-rounded btn-icon if-closed"
                                                             data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                             data-id="{{ $item->id }}"
                                                             data-route="{{ route('trans-workorder-user.delete') }}">
@@ -388,7 +396,8 @@
                             <div class="d-flex justify-content-between align-items-center mx-auto mb-2">
                                 <label class="mb-0"></label>
                                 <button type="button" data-bs-toggle="modal" data-bs-target="#addPhotoModal"
-                                    class="btn btn-success btn-rounded btn-icon" title="Add row" id="addRowPhoto">
+                                    class="btn btn-success btn-rounded btn-icon if-closed" title="Add row"
+                                    id="addRowPhoto">
                                     <i class="mdi mdi-plus-circle"></i>
                                 </button>
                             </div>
@@ -399,7 +408,7 @@
                                             <th class="fw-bolder" style="width: 10px"> # </th>
                                             <th class="fw-bolder"> Photo </th>
                                             <th class="fw-bolder"> Description </th>
-                                            <th class="fw-bolder" style="width: 30%"> Action </th>
+                                            <th class="fw-bolder" style="width: 30px"> Action </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -411,14 +420,14 @@
                                                         <img class="img-thumbnail"
                                                             src="{{ asset('storage/' . $item->photo) }}"
                                                             alt="No Photo found"
-                                                            style="border-radius: 0; height: 300px; width: auto;">
+                                                            style="border-radius: 0; height: auto; width: auto;">
                                                     </td>
                                                     <td>
                                                         {{ $item->description ?? '-' }}
                                                     </td>
                                                     <td>
                                                         <button type="button" title="Delete"
-                                                            class="btn btn-gradient-danger btn-rounded btn-icon"
+                                                            class="btn btn-gradient-danger btn-rounded btn-icon if-closed"
                                                             data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                             data-id="{{ $item->id }}"
                                                             data-route="{{ route('trans-workorder-photo.delete') }}">
@@ -456,7 +465,7 @@
                                             <td>1</td>
                                             <td>
                                                 <button type='button'
-                                                    class='btn btn-gradient-primary btn-rounded btn-icon'
+                                                    class='btn btn-gradient-primary btn-rounded btn-icon if-closed'
                                                     title='Input Remark/Note' data-bs-toggle="modal"
                                                     data-bs-target="#noteModal" data-note="{{ $work_order->note }}">
                                                     <i class='text-white mdi mdi-lead-pencil'></i>
@@ -491,7 +500,7 @@
                                             <td>1</td>
                                             <td>
                                                 <button type='button'
-                                                    class='btn btn-gradient-primary btn-rounded btn-icon'
+                                                    class='btn btn-gradient-primary btn-rounded btn-icon if-closed'
                                                     title='Input Job Time' data-bs-toggle="modal"
                                                     data-bs-target="#jobTimeModal"
                                                     data-start_time="{{ $work_order->start_time }}"
@@ -840,6 +849,32 @@
         </div>
     </div>
     <!-- End Delete Modal -->
+
+    <!-- Export PDF Modal -->
+    <div class="modal fade" id="exportPDFModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://static.vecteezy.com/system/resources/thumbnails/023/234/824/small/pdf-icon-red-and-white-color-for-free-png.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                    <form id="exportFormPDF" action="{{ route('work-order.export.pdf', $work_order->uuid) }}"
+                        method="GET">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="exportFormPDF" class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export PDF Modal -->
 @endsection
 
 @section('javascript')
@@ -881,6 +916,16 @@
                 $('#deleteForm').attr('action', route);
             });
 
+            // Cek status dari Blade
+            let statusId = {{ $work_order->status->id ?? null }};
+
+            // Jika statusId adalah 2, tambahkan kelas 'd-none' ke elemen dengan class 'if-closed'
+            if (statusId === 2) {
+                document.querySelectorAll('.if-closed').forEach(function(element) {
+                    element.classList.add('d-none');
+                });
+            }
+
             const imageInput = document.getElementById('photo');
             const previewImage = document.getElementById('previewImage');
 
@@ -900,143 +945,4 @@
             });
         });
     </script>
-
-    {{-- Sparepart --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var isChangedSelect = document.getElementById('is_changed');
-            var sparePartContainer = document.getElementById('sparePartContainer');
-            var barangSelect = document.getElementById('barang_id');
-            var qtyInput = document.getElementById('qty');
-
-            function removeAllTomSelectBaru() {
-                var elements = document.querySelectorAll('.tom-select-baru');
-
-                elements.forEach(function(element) {
-                    element.remove();
-                });
-            }
-
-            function updateDisplay() {
-                if (isChangedSelect.value === '1') {
-                    sparePartContainer.style.display = 'block';
-                    barangSelect.required = true;
-                    qtyInput.required = true;
-                } else {
-                    sparePartContainer.style.display = 'none';
-                    barangSelect.required = false;
-                    qtyInput.required = false;
-                    removeAllTomSelectBaru();
-                }
-            }
-
-            // Initial update on page load
-            updateDisplay();
-
-            // Add event listener to handle changes
-            isChangedSelect.addEventListener('change', function() {
-                updateDisplay();
-            });
-
-            var addRowButton = document.getElementById('addRow');
-            var inputContainer = document.getElementById('inputContainer');
-            var settings = {}; // Atur pengaturan Tom Select sesuai kebutuhan
-
-            function initializeTomSelect(selector) {
-                document.querySelectorAll(selector).forEach(function(el) {
-                    if (!el.tomSelectInstance) {
-                        el.tomSelectInstance = new TomSelect(el, settings);
-                    }
-                });
-            }
-
-            // Inisialisasi Tom Select pada load halaman
-            // initializeTomSelect('.tom-select-class');
-
-            addRowButton.addEventListener('click', function() {
-                var row = document.createElement('div');
-                row.classList.add('input-group');
-                row.classList.add('tom-select-baru');
-                var uniqueClass = 'tom-select-' + Date.now();
-                row.innerHTML = `
-                <select class="tom-select-class mt-2 ${uniqueClass} col-8" name="barang_ids[]" required>
-                    <option value="" selected disabled>- pilih spare part -</option>
-                    @foreach ($barang as $item)
-                        <option value="{{ $item->id }}">
-                            ({{ $item->material_number ?? '-' }}) - {{ $item->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <input type="number" class="form-control col-3" name="qty[]" placeholder="qty" required min="1">
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-danger btn-rounded btn-icon removeRow" title="Remove row" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1.5;">
-                        <i class="mdi mdi-minus-circle"></i>
-                    </button>
-                </div>
-            `;
-                inputContainer.appendChild(row);
-
-                // Inisialisasi Tom Select untuk elemen baru
-                initializeTomSelect('.' + uniqueClass);
-
-                // Add event listener for the new remove button
-                row.querySelector('.removeRow').addEventListener('click', function() {
-                    if (inputContainer.children.length > 1) {
-                        inputContainer.removeChild(row);
-                    } else {
-                        console.warn('Cannot remove the last row.');
-                    }
-                });
-            });
-
-            // Event delegation for remove buttons in existing rows
-            inputContainer.addEventListener('click', function(event) {
-                if (event.target.classList.contains('removeRow')) {
-                    var row = event.target.closest('.input-group');
-                    if (inputContainer.children.length > 1) {
-                        inputContainer.removeChild(row);
-                    }
-                }
-            });
-        });
-    </script> --}}
-
-    {{-- Tasklist --}}
-    {{-- <script>
-        $(document).ready(function() {
-            // Add row
-            $('#addRowTasklist').on('click', function() {
-                var rowCount = $('#tasklistTable tbody tr').length + 1; // Get the current number of rows
-
-                var newRow = `
-                <tr>
-                    <td>` + rowCount + `</td>
-                    <td>
-                        <input type="text" class="form-control" name="tasklist[]" placeholder="input tasklist" required autocomplete="off">
-                    </td>
-                    <td>
-                        <input type="number" class="form-control" name="duration[]" placeholder="input duration (optional)" min="1">
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-rounded btn-icon btn-remove">
-                            <i class="mdi mdi-minus-circle"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-                $('#tasklistTable tbody').append(newRow); // Add the new row to the table
-            });
-
-            // Remove row
-            $(document).on('click', '.btn-remove', function() {
-                $(this).closest('tr').remove(); // Remove the row when 'Remove' button is clicked
-
-                // Re-index the rows after removal
-                $('#tasklistTable tbody tr').each(function(index, tr) {
-                    $(tr).find('td:first').text(index + 1); // Update row number
-                });
-            });
-        });
-    </script> --}}
 @endsection

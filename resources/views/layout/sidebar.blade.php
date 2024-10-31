@@ -21,56 +21,9 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('monitoring-permit.index') }}">
-                <span class="menu-title">Monitoring Permit</span>
-                <i class="mdi mdi-key-variant menu-icon"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('monitoring-equipment.index') }}">
-                <span class="menu-title">Monitoring Equipment</span>
-                <i class="mdi mdi-monitor-multiple menu-icon"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('log.index') }}">
-                <span class="menu-title">Log Perform. KUE Bank</span>
-                <i class="mdi mdi-file-find menu-icon"></i>
-            </a>
-        </li>
-        {{-- <li class="nav-item">
-            <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
-                <span class="menu-title">Transaksi Tiket</span>
-                <i class="mdi mdi-cards-outline menu-icon"></i>
-            </a>
-        </li> --}}
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
-                aria-controls="sam-card">
-                <span class="menu-title">SAM Card</span>
-                <i class="menu-arrow"></i>
-                <i class="mdi mdi mdi-credit-card-scan menu-icon"></i>
-            </a>
-            <div class="collapse" id="sam-card">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('sam-card.index') }}">Data SAM Card</a>
-                    </li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('sam-history.index') }}">
-                            History SAM Card</a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="{{ route('gangguan.index') }}">
-                <span class="menu-title">Rekap Gangguan</span>
+                <span class="menu-title">Trouble Report</span>
                 <i class="mdi mdi-receipt menu-icon"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
-                <span class="menu-title">Transaksi Barang</span>
-                <i class="mdi mdi-repeat menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
@@ -79,7 +32,54 @@
                 <i class="mdi mdi-briefcase menu-icon"></i>
             </a>
         </li>
-        @if (auth()->user()->role->id == 1)
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
+                <span class="menu-title">Log Sparepart</span>
+                <i class="mdi mdi-repeat menu-icon"></i>
+            </a>
+        </li>
+        @if (auth()->user()->role->id == 1 && auth()->user()->tipe_employee->id == 1)
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('monitoring-permit.index') }}">
+                    <span class="menu-title">Monitoring Permit</span>
+                    <i class="mdi mdi-key-variant menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('monitoring-equipment.index') }}">
+                    <span class="menu-title">Monitoring Equipment</span>
+                    <i class="mdi mdi-monitor-multiple menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('log.index') }}">
+                    <span class="menu-title">Log Perform. KUE Bank</span>
+                    <i class="mdi mdi-file-find menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
+                    <span class="menu-title">Transaksi Tiket</span>
+                    <i class="mdi mdi-cards-outline menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
+                    aria-controls="sam-card">
+                    <span class="menu-title">SAM Card</span>
+                    <i class="menu-arrow"></i>
+                    <i class="mdi mdi mdi-credit-card-scan menu-icon"></i>
+                </a>
+                <div class="collapse" id="sam-card">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('sam-card.index') }}">Data SAM Card</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('sam-history.index') }}">
+                                History SAM Card</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
                     aria-controls="ui-basic">

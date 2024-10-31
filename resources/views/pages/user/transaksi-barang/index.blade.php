@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Transaksi Barang</title>
+    <title>Log Sparepart</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
@@ -11,12 +11,12 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Transaksi Barang</h4>
+                        <h4 class="card-title">Data Log Sparepart</h4>
                         <div class="btn-group my-2">
-                            <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
+                            {{-- <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
-                            </button>
+                            </button> --}}
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>

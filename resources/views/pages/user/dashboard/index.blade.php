@@ -25,7 +25,7 @@
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Gangguan
+                        <h4 class="font-weight-normal mb-3">Trouble Report
                             <i class="mdi mdi-receipt mdi-24px float-right"></i>
                         </h4>
                         <h2 class="mb-3">{{ $gangguan ?? 'N/A' }}</h2>
@@ -38,7 +38,7 @@
                 <div class="card bg-gradient-success card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Transaksi Barang <i
+                        <h4 class="font-weight-normal mb-3">Log Sparepart <i
                                 class="mdi mdi-repeat mdi-24px float-right"></i>
                         </h4>
                         <h2 class="mb-3">{{ $transaksi_barang ?? 'N/A' }}</h2>
@@ -71,10 +71,17 @@
                 <div class="card bg-gradient-danger card-img-holder text-white">
                     <div class="card-body">
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                        <h4 class="font-weight-normal mb-3">Safety Stock Alert
-                            <i class="mdi mdi-alert-outline mdi-24px float-right"></i>
+                        <h4 class="font-weight-normal mb-3">Work Order
+                            <i class="mdi mdi-briefcase mdi-24px float-right"></i>
                         </h4>
-                        <h2 class="mb-3">5</h2>
+                        <h2 class="mb-3">
+                            <span class="badge badge-gradient-success">
+                                <h5>PM: {{ $work_order['PM'] ?? 0 }}</h5>
+                            </span>
+                            <span class="badge badge-gradient-primary">
+                                <h5>CM: {{ $work_order['CM'] ?? 0 }}</h5>
+                            </span>
+                        </h2>
                         <h6 class="card-text">Departemen {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -119,66 +126,44 @@
             <div class="col-12 grid-margin">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Recent Tickets</h4>
+                        <h4 class="card-title fw-bolder">Recent Trouble Reports</h4>
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th> Assignee </th>
-                                        <th> Subject </th>
+                                        <th> Location </th>
+                                        <th> Equipment ID </th>
+                                        <th> Category </th>
+                                        <th> Date </th>
+                                        <th> Ticket Number </th>
                                         <th> Status </th>
-                                        <th> Last Update </th>
-                                        <th> Tracking ID </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <img src="assets/images/faces/face1.jpg" class="me-2" alt="image"> David
-                                            Grey
-                                        </td>
-                                        <td> Fund is not recieved </td>
-                                        <td>
-                                            <label class="badge badge-gradient-success">DONE</label>
-                                        </td>
-                                        <td> Dec 5, 2017 </td>
-                                        <td> WD-12345 </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <img src="assets/images/faces/face2.jpg" class="me-2" alt="image"> Stella
-                                            Johnson
-                                        </td>
-                                        <td> High loading time </td>
-                                        <td>
-                                            <label class="badge badge-gradient-warning">PROGRESS</label>
-                                        </td>
-                                        <td> Dec 12, 2017 </td>
-                                        <td> WD-12346 </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <img src="assets/images/faces/face3.jpg" class="me-2" alt="image"> Marina
-                                            Michel
-                                        </td>
-                                        <td> Website down for one week </td>
-                                        <td>
-                                            <label class="badge badge-gradient-info">ON HOLD</label>
-                                        </td>
-                                        <td> Dec 16, 2017 </td>
-                                        <td> WD-12347 </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <img src="assets/images/faces/face4.jpg" class="me-2" alt="image"> John Doe
-                                        </td>
-                                        <td> Loosing control on server </td>
-                                        <td>
-                                            <label class="badge badge-gradient-danger">REJECTED</label>
-                                        </td>
-                                        <td> Dec 3, 2017 </td>
-                                        <td> WD-12348 </td>
-                                    </tr>
+                                    @foreach ($latest_gangguan as $item)
+                                        <tr>
+                                            <td>{{ $item->equipment->relasi_area->sub_lokasi->name ?? 'N/A' }}</td>
+                                            <td>{{ $item->equipment->code ?? 'N/A' }}</td>
+                                            <td>{{ $item->category->name ?? 'N/A' }}</td>
+                                            <td>{{ $item->report_date ?? 'N/A' }}</td>
+                                            <td>{{ $item->ticket_number ?? 'N/A' }}</td>
+                                            <td>
+                                                @php
+                                                    if ($item->status_id == 2) {
+                                                        $badgeClass = 'badge-gradient-success';
+                                                    } elseif ($item->status_id == 3) {
+                                                        $badgeClass = 'badge-gradient-warning';
+                                                    } elseif ($item->status_id == 4) {
+                                                        $badgeClass = 'badge-gradient-info';
+                                                    } else {
+                                                        $badgeClass = 'badge-gradient-danger';
+                                                    }
+                                                @endphp
+                                                <label
+                                                    class="badge {{ $badgeClass }}">{{ $item->status->code ?? 'N?A' }}</label>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -186,7 +171,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-7 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
@@ -345,7 +330,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 
@@ -362,7 +347,7 @@
                     type: 'column'
                 },
                 title: {
-                    text: 'Trend Gangguan Tahun {{ $tahun ?? '-' }}',
+                    text: 'Trend Gangguan Tahun {{ $tahun ?? '-' }} (Dummy)',
                     align: 'left',
                 },
                 xAxis: {
@@ -401,7 +386,7 @@
                     }
                 },
                 title: {
-                    text: 'Distribusi Status Gangguan Tahun {{ $tahun ?? '-' }}',
+                    text: 'Distribusi Status Gangguan Tahun {{ $tahun ?? '-' }} (Dummy)',
                     align: 'left'
                 },
                 subtitle: {
@@ -536,7 +521,7 @@
                     }
                 },
                 title: {
-                    text: 'Total Availability Ticketing System Tahun {{ $tahun ?? '-' }}',
+                    text: 'Total Availability Ticketing System Tahun {{ $tahun ?? '-' }} (Dummy)',
                     align: 'left',
                     margin: 50
                 },

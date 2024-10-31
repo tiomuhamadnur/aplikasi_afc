@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Detail Data Gangguan</title>
+    <title>Detail Trouble Report</title>
 @endsection
 
 @section('content')
@@ -10,8 +10,8 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Detail Data Gangguan</h4>
-                        <a href="{{ route('gangguan.index') }}" title="Back" class="btn btn-outline-primary btn-rounded">
+                        <h4 class="card-title">Detail Trouble Report</h4>
+                        <a href="{{ route('gangguan.index') }}" title="Back" class="btn btn-gradient-primary btn-rounded">
                             <i class="mdi mdi-arrow-left"></i> Back
                         </a>
                         <div class="table-responsive mt-4">
@@ -19,12 +19,24 @@
                                 <tbody>
                                     <tr>
                                         <td class="fw-bolder">Ticket Number</td>
-                                        <td>{{ $gangguan->ticket_number ?? '-' }}</td>
+                                        <td class="fw-bolder">{{ $gangguan->ticket_number ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bolder">Status</td>
                                         <td>
-                                            {{ $gangguan->status->name ?? '-' }}
+                                            @php
+                                                if ($gangguan->status_id == 2) {
+                                                    $badgeClass = 'badge-gradient-success';
+                                                } elseif ($gangguan->status_id == 3) {
+                                                    $badgeClass = 'badge-gradient-warning';
+                                                } elseif ($gangguan->status_id == 4) {
+                                                    $badgeClass = 'badge-gradient-info';
+                                                } else {
+                                                    $badgeClass = 'badge-gradient-danger';
+                                                }
+                                            @endphp
+                                            <label
+                                                class="badge {{ $badgeClass }}">{{ $gangguan->status->code ?? 'N/A' }}</label>
                                         </td>
                                     </tr>
                                     <tr>
@@ -40,8 +52,13 @@
                                         <td>{{ $gangguan->report_date }}</td>
                                     </tr>
                                     <tr>
+                                        <td class="fw-bolder">Location</td>
+                                        <td>{{ $gangguan->equipment->relasi_area->sub_lokasi->name ?? 'N/A' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="fw-bolder">Equipment</td>
-                                        <td>{{ $gangguan->equipment->name }} - ({{ $gangguan->equipment->code ?? '-' }})
+                                        <td>{{ $gangguan->equipment->name }} ({{ $gangguan->equipment->code ?? '-' }})
                                         </td>
                                     </tr>
                                     <tr>
@@ -75,6 +92,10 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td class="fw-bolder">Solved Date</td>
+                                        <td>{{ $gangguan->solved_date ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
                                         <td class="fw-bolder">Photo Before</td>
                                         <td>
                                             <div class="text-left">
@@ -93,6 +114,24 @@
                                                     alt="Tidak ada photo after"
                                                     style="width: 250px; height: 250px; border-radius: 0;">
                                             </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Response Time (Minutes)</td>
+                                        <td>
+                                            {{ $gangguan->response_time ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Resolution Time (Minutes)</td>
+                                        <td>
+                                            {{ $gangguan->resolution_time ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Total Time (Minutes)</td>
+                                        <td>
+                                            {{ $gangguan->total_time ?? '-' }}
                                         </td>
                                     </tr>
                                     <tr>

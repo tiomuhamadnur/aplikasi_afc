@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Add Data Gangguan</title>
+    <title>Add Trouble Report</title>
     <style>
         .input-group {
             display: flex;
@@ -24,7 +24,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Add Data Gangguan</h4>
+                        <h4 class="card-title">Add Trouble Report</h4>
                         <form id="addForm" action="{{ route('gangguan.store') }}" class="forms-sample mt-4" method="POST"
                             enctype="multipart/form-data">
                             @csrf

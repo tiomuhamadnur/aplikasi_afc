@@ -15,6 +15,7 @@ class TransWorkOrderPhotoController extends Controller
     {
         $request->validate([
             'photo' => 'required|file|image',
+            'description' => 'string|required',
         ]);
 
         $work_order = WorkOrder::where('uuid', $uuid_workorder)->firstOrFail();
@@ -26,7 +27,7 @@ class TransWorkOrderPhotoController extends Controller
             $detailPath = 'photo/work-order/documentation/';
             $destinationPath = public_path('storage/'. $detailPath);
 
-            $image->resize(null, 500, function ($constraint) {
+            $image->resize(null, 300, function ($constraint) {
                 $constraint->aspectRatio();
             });
 
@@ -37,6 +38,7 @@ class TransWorkOrderPhotoController extends Controller
             TransWorkOrderPhoto::create([
                 "work_order_id" => $work_order->id,
                 "photo" => $photo,
+                "description" => $request->description,
             ]);
         }
 
