@@ -11,6 +11,7 @@ use App\Models\SamCard;
 use App\Models\SamCardHistory;
 use App\Models\TipeEquipment;
 use App\Models\TransaksiBarang;
+use App\Models\WorkOrder;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -28,10 +29,16 @@ class DashboardController extends Controller
             'used' => $samcard_used
         ];
 
-
         $tahun = Carbon::now()->year;
 
+        $wo = WorkOrder::whereYear('date', $tahun)->where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
+        $work_order = [
+            'PM' => $wo->where('tipe_pekerjaan_id', 1)->count(),
+            'CM' => $wo->where('tipe_pekerjaan_id', 2)->count()
+        ];
+
         $gangguan = Gangguan::whereYear('report_date', $tahun)->count();
+        $latest_gangguan = Gangguan::latest()->take(5)->orderBy('report_date', 'DESC')->get();
         $transaksi_barang = TransaksiBarang::whereYear('tanggal', $tahun)->count();
 
         $bulan = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -65,7 +72,9 @@ class DashboardController extends Controller
             'tahun',
             'permit',
             'samcard',
+            'work_order',
             'gangguan',
+            'latest_gangguan',
             'transaksi_barang',
             'data'
         ]));

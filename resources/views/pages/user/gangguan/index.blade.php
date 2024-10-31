@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Gangguan</title>
+    <title>Trouble Report</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
     <style>
@@ -26,7 +26,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Gangguan</h4>
+                        <h4 class="card-title">Data Trouble Report</h4>
                         <a href="{{ route('gangguan.create') }}" class="btn btn-gradient-primary btn-rounded">Make
                             Request</a>
                         <div class="btn-group my-2">
