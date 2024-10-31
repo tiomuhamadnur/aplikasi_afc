@@ -11,13 +11,13 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Data Work Order</h4>
-                        <a href="{{ route('work-order.create') }}" title="Create New Work Order"
-                            class="btn btn-gradient-primary btn-rounded">Create WO</a>
+                        @if (auth()->user()->role->id == 1 && auth()->user()->tipe_employee->id == 1)
+                            <a href="{{ route('work-order.create') }}" title="Create New Work Order"
+                                class="btn btn-gradient-primary btn-rounded">
+                                Create WO
+                            </a>
+                        @endif
                         <div class="btn-group my-2">
-                            {{-- <button type="button" onclick="window.location.href='{{ route('work-order.create') }}'"
-                                title="Add" class="btn btn-outline-primary btn-rounded btn-icon">
-                                <i class="mdi mdi-plus-circle"></i>
-                            </button> --}}
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
@@ -28,66 +28,6 @@
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Date </th>
-                                        <th> WO Number </th>
-                                        <th> WO SAP </th>
-                                        <th> Name </th>
-                                        <th> Description </th>
-                                        <th> Location </th>
-                                        <th> Type </th>
-                                        <th> Status </th>
-                                        <th> Updated By </th>
-                                        <th> Detail </th>
-                                        <th> Action </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($work_order as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->date }}</td>
-                                            <td class="fw-bolder">{{ $item->ticket_number ?? '-' }}</td>
-                                            <td>{{ $item->wo_number_sap ?? '-' }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->description }}</td>
-                                            <td>{{ $item->relasi_area->sub_lokasi->name ?? '-' }}</td>
-                                            <td>{{ $item->tipe_pekerjaan->code ?? '-' }}</td>
-                                            <td>{{ $item->status->code ?? '-' }}</td>
-                                            <td>
-                                                {{ $item->user->name ?? '-' }} <br>
-                                                ({{ $item->updated_at }})
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('work-order.detail', $item->uuid) }}"
-                                                    title="Show Detail Work Order">
-                                                    <button type="button"
-                                                        class="btn btn-gradient-success btn-rounded btn-icon">
-                                                        <i class="mdi mdi-eye"></i>
-                                                    </button>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('work-order.edit', $item->uuid) }}" title="Edit">
-                                                    <button type="button"
-                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                        <i class="mdi mdi-lead-pencil"></i>
-                                                    </button>
-                                                </a>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>

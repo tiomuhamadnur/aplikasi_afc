@@ -220,6 +220,11 @@ class GangguanDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(30)
+                    ->addClass('text-center'),
             Column::make('ticket_number')
                     ->title('Ticket Number')
                     ->exportable(true)
@@ -283,11 +288,6 @@ class GangguanDataTable extends DataTable
                     ->printable(true)
                     ->addClass('text-center'),
             Column::make('work_order.ticket_number')->title('Work Order'),
-            Column::computed('#')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(30)
-                    ->addClass('text-center'),
         ];
     }
 

@@ -22,6 +22,7 @@ use App\Models\TransWorkOrderTasklist;
 use App\Models\TransWorkOrderUser;
 use App\Models\User;
 use App\Models\WorkOrder;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -551,7 +552,8 @@ class WorkOrderController extends Controller
         $dokumentasi = $work_order->trans_workorder_photo->count();
 
         // Cek job time
-        $job_time = $work_order->orWhere('start_time', null)->orWhere('end_time', null)->count();
+        $start_time = $work_order->start_time;
+        $end_time = $work_order->end_time;
 
 
         if($tasklist > 0)
@@ -569,12 +571,41 @@ class WorkOrderController extends Controller
             return 'Data Dokumentasi belum diisi';
         }
 
-        if($job_time > 0)
+        if($start_time == null && $end_time == null)
         {
-            return 'Data Dokumentasi belum diisi';
+            return 'Data Job Time belum diisi';
         }
 
         return null;
+    }
+
+    public function pdf(string $uuid_workorder)
+    {
+        $work_order = WorkOrder::where('uuid', $uuid_workorder)->firstOrFail();
+
+        if($work_order->status_id != 2)
+        {
+            return redirect()->back()->withNotifyerror('Data work order belum di-closed');
+        }
+
+        $pdf = PDF::loadView('pages.user.work-order.export.pdf', [
+            'work_order' => $work_order,
+        ]);
+
+        $pdf->output();
+        $domPdf = $pdf->getDomPDF();
+
+        $canvas = $domPdf->get_canvas();
+
+        // $canvas->page_text(190, 10, "Page {PAGE_NUM} of {PAGE_COUNT}", "arial", 10, [0, 0, 0]);
+
+
+
+        /* Set Page Number to Footer */
+
+        $canvas->page_text($canvas->get_width() - 60, $canvas->get_height() - 20, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, [0, 0, 0]);
+
+        return $pdf->stream('Work Order_' . $work_order->ticket_number .' (' .$work_order->date . ').pdf');
     }
 
     public function destroy(Request $request)

@@ -39,8 +39,8 @@ class ProfileController extends Controller
     {
         $request->validate([
             'no_hp' => 'numeric|required',
-            'photo' => 'file|image',
-            'ttd' => 'file|image',
+            'photo' => 'file|image|nullable',
+            'ttd' => 'file|image|nullable',
         ]);
 
         $data = User::findOrFail(auth()->user()->id);
@@ -82,7 +82,7 @@ class ProfileController extends Controller
                 Storage::delete($dataPhoto);
             }
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
+            $imageName = time().'-'.$request->file('ttd')->getClientOriginalName();
             $detailPath = 'photo/ttd/';
             $destinationPath = public_path('storage/'. $detailPath);
 
