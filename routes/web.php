@@ -16,6 +16,8 @@ use App\Http\Controllers\admin\DivisiController;
 use App\Http\Controllers\admin\EquipmentController;
 use App\Http\Controllers\admin\FormController;
 use App\Http\Controllers\admin\FunctionalLocationController;
+use App\Http\Controllers\admin\FundController;
+use App\Http\Controllers\admin\FundSourceController;
 use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
@@ -45,12 +47,15 @@ use App\Http\Controllers\admin\TransWorkOrderTasklistController;
 use App\Http\Controllers\admin\TransWorkOrderUserController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\WorkOrderController;
+use App\Http\Controllers\user\BudgetAbsorptionController;
 use App\Http\Controllers\user\ChecksheetController;
+use App\Http\Controllers\user\DashboardBudgetController;
 use App\Http\Controllers\user\GangguanController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringEquipmentController;
 use App\Http\Controllers\user\MonitoringPermitController;
 use App\Http\Controllers\user\ProfileController;
+use App\Http\Controllers\user\ProjectController;
 use App\Http\Controllers\user\SamCardController;
 use App\Http\Controllers\user\SamCardHistoryController;
 use App\Http\Controllers\user\TransaksiBarangController;
@@ -181,6 +186,27 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(TransWorkOrderFunctionalLocationController::class)->group(function () {
         Route::post('/trans-workorder-functional-location/{uuid_workorder}', 'store')->name('trans-workorder-functional-location.store');
         Route::delete('/trans-workorder-functional-location', 'destroy')->name('trans-workorder-functional-location.delete');
+    });
+
+    Route::controller(ProjectController::class)->group(function () {
+        Route::get('/project', 'index')->name('project.index');
+        Route::post('/project', 'store')->name('project.store');
+        Route::get('/project/{uuid}/edit', 'edit')->name('project.edit');
+        Route::put('/project', 'update')->name('project.update');
+        Route::delete('/project', 'destroy')->name('project.delete');
+    });
+
+    Route::controller(BudgetAbsorptionController::class)->group(function () {
+        Route::get('/budget-absorption', 'index')->name('budget-absorption.index');
+        Route::post('/budget-absorption', 'store')->name('budget-absorption.store');
+        Route::get('/budget-absorption/{uuid}/edit', 'edit')->name('budget-absorption.edit');
+        Route::put('/budget-absorption', 'update')->name('budget-absorption.update');
+        Route::delete('/budget-absorption', 'destroy')->name('budget-absorption.delete');
+    });
+
+    Route::controller(DashboardBudgetController::class)->group(function () {
+        Route::get('/dashboard-budget', 'index')->name('dashboard-budget.index');
+        Route::get('/dashboard-budget/department', 'departemen')->name('dashboard-budget.departemen');
     });
 
 
@@ -425,9 +451,20 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/parameter', 'destroy')->name('parameter.delete');
         });
 
-        // Route::controller(BankController::class)->group(function () {
-        //     Route::get('/bank', 'store')->name('bank.store');
-        // });
+        Route::controller(FundController::class)->group(function () {
+            Route::get('/fund', 'index')->name('fund.index');
+            Route::post('/fund', 'store')->name('fund.store');
+            Route::put('/fund', 'update')->name('fund.update');
+            Route::delete('/fund', 'destroy')->name('fund.delete');
+        });
+
+        Route::controller(FundSourceController::class)->group(function () {
+            Route::get('/fund-source', 'index')->name('fund-source.index');
+            Route::post('/fund-source', 'store')->name('fund-source.store');
+            Route::get('/fund-source/{uuid}/edit', 'edit')->name('fund-source.edit');
+            Route::put('/fund-source', 'update')->name('fund-source.update');
+            Route::delete('/fund-source', 'destroy')->name('fund-source.delete');
+        });
 
         Route::controller(BarangController::class)->group(function () {
             Route::get('/barang', 'index')->name('barang.index');
