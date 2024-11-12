@@ -386,12 +386,12 @@
             @if ($work_order->trans_workorder_photo->count() > 0)
                 @foreach ($work_order->trans_workorder_photo as $item)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td style="vertical-align: top;">{{ $loop->iteration }}</td>
                         <td>
                             <img class="img-thumbnail" src="{{ public_path('storage/' . $item->photo) }}"
-                                alt="No Photo found" style="border-radius: 0; height: auto; width: auto;">
+                                alt="No Photo found" style="border-radius: 0; height: auto; width: 250px;">
                         </td>
-                        <td>{{ $item->description ?? '-' }}</td>
+                        <td style="vertical-align: top;">{{ $item->description ?? '-' }}</td>
                     </tr>
                 @endforeach
             @else

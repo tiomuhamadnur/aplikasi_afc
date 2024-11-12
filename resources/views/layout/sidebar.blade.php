@@ -64,6 +64,32 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#budgeting" aria-expanded="false"
+                    aria-controls="budgeting">
+                    <span class="menu-title">Monitoring Budget</span>
+                    <i class="menu-arrow"></i>
+                    <i class="mdi mdi mdi-currency-usd menu-icon"></i>
+                </a>
+                <div class="collapse" id="budgeting">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('fund.index') }}">Fund</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('fund-source.index') }}">Fund
+                                Source</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('project.index') }}">Projects</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('budget-absorption.index') }}">Budget
+                                Absorption</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('dashboard-budget.index') }}">Dashboard Divisi</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('dashboard-budget.departemen') }}">Dashboard Departemen</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
                     aria-controls="sam-card">
                     <span class="menu-title">SAM Card</span>
@@ -72,7 +98,8 @@
                 </a>
                 <div class="collapse" id="sam-card">
                     <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('sam-card.index') }}">Data SAM Card</a>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('sam-card.index') }}">Data SAM
+                                Card</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('sam-history.index') }}">
                                 History SAM Card</a>
@@ -91,17 +118,20 @@
                     <ul class="nav flex-column sub-menu">
                         <li class="nav-item"> <a class="nav-link" href="{{ route('user.index') }}">User</a></li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('lokasi.index') }}">Lokasi</a></li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('sub-lokasi.index') }}">Sub Lokasi</a>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('sub-lokasi.index') }}">Sub
+                                Lokasi</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('detail-lokasi.index') }}">Detail
                                 Lokasi</a></li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('area.index') }}">Relasi Area</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('direktorat.index') }}">Direktorat</a>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('direktorat.index') }}">Direktorat</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('divisi.index') }}">Divisi</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link" href="{{ route('departemen.index') }}">Departemen</a>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('departemen.index') }}">Departemen</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('seksi.index') }}">Seksi</a>
                         </li>
