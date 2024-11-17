@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\FundSourceDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\BudgetAbsorption;
 use App\Models\Fund;
@@ -10,20 +11,22 @@ use Illuminate\Http\Request;
 
 class FundSourceController extends Controller
 {
-    public function index()
+    public function index(FundSourceDataTable $dataTable, Request $request)
     {
-        $fund_source = FundSource::all();
+        $request->validate([
+            'start_period' => 'date|nullable',
+            'end_period' => 'date|nullable',
+        ]);
+
+        $start_period = $request->start_period ?? null;
+        $end_period = $request->end_period ?? $start_period;
+
         $fund = Fund::all();
 
-        $fund_source->each(function ($item) {
-            $sum_value_absorption = BudgetAbsorption::whereRelation('project.fund_source', 'id', '=', $item->id)->sum('value');
-
-            $item->balance = (int) $item->balance;
-            $item->current_balance = $item->balance - $sum_value_absorption;
-        });
-
-        return view('pages.admin.fund-source.index', compact([
-            'fund_source',
+        return $dataTable->with([
+            'start_period' => $start_period,
+            'end_period' => $end_period,
+        ])->render('pages.admin.fund-source.index', compact([
             'fund',
         ]));
     }
@@ -38,7 +41,6 @@ class FundSourceController extends Controller
         $data = $request->validate([
             'fund_id' => 'required|numeric',
             'balance' => 'required|numeric|min:0',
-            'current_balance' => 'required|numeric|min:0',
             'start_period' => 'required|date',
             'end_period' => 'required|date',
         ]);
@@ -73,7 +75,6 @@ class FundSourceController extends Controller
         $rawData = $request->validate([
             'fund_id' => 'required|numeric',
             'balance' => 'required|numeric|min:0',
-            'current_balance' => 'required|numeric|min:0',
             'start_period' => 'required|date',
             'end_period' => 'required|date',
         ]);

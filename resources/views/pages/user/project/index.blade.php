@@ -52,15 +52,15 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name">Project Name</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="input project name" autocomplete="off" required>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="description">Description</label>
                             <input type="text" class="form-control" id="description" name="description"
                                 placeholder="input project description" autocomplete="off" required>
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="fund_source_id">Fund Source</label>
                             <select class="tom-select-class" name="fund_source_id" id="fund_source_id" required>
@@ -73,16 +73,6 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="value">Value (IDR)</label>
-                            <input type="number" min="0" class="form-control" id="value" name="value"
-                                placeholder="input value project" autocomplete="off" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="current_value">Current Value (IDR)</label>
-                            <input type="number" min="0" class="form-control" id="current_value"
-                                name="current_value" placeholder="input current value project" autocomplete="off" required>
-                        </div>
-                        <div class="form-group">
                             <label for="start_period">Start Period</label>
                             <input type="date" class="form-control" id="start_period" name="start_period"
                                 placeholder="Start Period" autocomplete="off" required>
@@ -93,7 +83,7 @@
                                 placeholder="End Period" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="departemen_id">Owner</label>
+                            <label for="departemen_id">Project Owner</label>
                             <select class="tom-select-class" name="departemen_id" id="departemen_id" required>
                                 <option value="" disabled selected>- select project owner -</option>
                                 @foreach ($departemen as $item)
@@ -111,6 +101,15 @@
                                     <option value="{{ $item->id }}">
                                         {{ $item->name ?? '-' }}
                                     </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status_budgeting_id">Status</label>
+                            <select class="tom-select-class" name="status_budgeting_id" id="status_budgeting_id" required>
+                                <option value="" disabled selected>- select status -</option>
+                                @foreach ($status_budgeting as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>

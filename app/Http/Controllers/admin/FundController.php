@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\FundDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\Divisi;
 use App\Models\Fund;
 use Illuminate\Http\Request;
 
 class FundController extends Controller
 {
-    public function index()
+    public function index(FundDataTable $dataTable)
     {
-        $fund = Fund::all();
-        return view('pages.admin.fund.index', compact([
-            'fund',
+        $divisi = Divisi::all();
+
+        return $dataTable->render('pages.admin.fund.index', compact([
+            'divisi'
         ]));
     }
 
@@ -28,6 +31,7 @@ class FundController extends Controller
             'code' => 'required|string',
             'type' => 'required|string',
             'description' => 'required|string',
+            'divisi_id' => 'required|numeric',
         ]);
 
         Fund::updateOrCreate($data, $data);
@@ -54,6 +58,7 @@ class FundController extends Controller
             'code' => 'required|string',
             'type' => 'required|string',
             'description' => 'required|string',
+            'divisi_id' => 'required|numeric',
         ]);
 
         $data->update($rawData);

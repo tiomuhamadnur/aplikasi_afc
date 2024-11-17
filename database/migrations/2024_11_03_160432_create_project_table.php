@@ -14,11 +14,11 @@ return new class extends Migration
             $table->bigInteger('fund_source_id')->unsigned()->nullable();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-            $table->integer('value')->nullable();
-            $table->integer('current_value')->nullable();
+            $table->string('value')->nullable();
+            $table->string('current_value')->nullable();
             $table->date('start_period')->nullable();
             $table->date('end_period')->nullable();
-            $table->string('status')->nullable();
+            $table->bigInteger('status_budgeting_id')->unsigned()->nullable();
             $table->string('attachment')->nullable();
             $table->bigInteger('relasi_struktur_id')->unsigned()->nullable();
             $table->bigInteger('departemen_id')->unsigned()->nullable();
@@ -32,6 +32,7 @@ return new class extends Migration
             $table->foreign('departemen_id')->on('departemen')->references('id');
             $table->foreign('perusahaan_id')->on('perusahaan')->references('id');
             $table->foreign('user_id')->on('users')->references('id');
+            $table->foreign('status_budgeting_id')->on('status_budgeting')->references('id');
         });
     }
 

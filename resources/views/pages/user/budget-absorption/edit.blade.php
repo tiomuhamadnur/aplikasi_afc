@@ -30,26 +30,31 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="name">Name</label>
+                                <label for="name">Activity Name</label>
                                 <input type="text" class="form-control" id="name" name="name"
-                                    placeholder="input project name" autocomplete="off" required
+                                    placeholder="input activity name" autocomplete="off" required
                                     value="{{ $budget_absorption->name }}">
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="description">Description</label>
                                 <input type="text" class="form-control" id="description" name="description"
-                                    placeholder="input project description" autocomplete="off" required
+                                    placeholder="input activity description" autocomplete="off" required
                                     value="{{ $budget_absorption->description }}">
+                            </div> --}}
+                            <div class="form-group">
+                                <label for="activity_date">Activity Date</label>
+                                <input type="date" min="0" class="form-control" id="activity_date"
+                                    name="activity_date" autocomplete="off" value="{{ $budget_absorption->activity_date }}">
                             </div>
                             <div class="form-group">
-                                <label for="date">Date</label>
-                                <input type="date" min="0" class="form-control" id="date" name="date"
-                                    autocomplete="off" required value="{{ $budget_absorption->date }}">
+                                <label for="paid_date">Paid Date</label>
+                                <input type="date" min="0" class="form-control" id="paid_date" name="paid_date"
+                                    autocomplete="off" value="{{ $budget_absorption->paid_date }}">
                             </div>
                             <div class="form-group">
-                                <label for="value">Value (IDR)</label>
+                                <label for="value">Activity Value (IDR)</label>
                                 <input type="number" min="0" class="form-control" id="value" name="value"
-                                    placeholder="input value project" autocomplete="off" required
+                                    placeholder="input activity value" autocomplete="off" required
                                     value="{{ $budget_absorption->value }}">
                             </div>
                             <div class="form-group">
@@ -59,7 +64,7 @@
                                     value="{{ $budget_absorption->po_number_sap }}">
                             </div>
                             <div class="form-group">
-                                <label for="attachment">Attachment</label> <br>
+                                <label for="attachment">Attachment Document</label> <br>
                                 @if ($budget_absorption->attachment != null)
                                     <button type='button' title='Attachment'
                                         class='btn btn-gradient-success btn-rounded btn-icon mb-2'
@@ -74,8 +79,6 @@
                                 <label for="status">Status</label>
                                 <select class="tom-select-class" name="status" id="status" required>
                                     <option value="" disabled selected>- select status -</option>
-                                    <option value="Planned" @if ($budget_absorption->status == 'Planned') selected @endif>Planned
-                                    </option>
                                     <option value="Realisasi Kegiatan" @if ($budget_absorption->status == 'Realisasi Kegiatan') selected @endif>
                                         Realisasi Kegiatan</option>
                                     <option value="Realisasi Pembayaran" @if ($budget_absorption->status == 'Realisasi Pembayaran') selected @endif>

@@ -32,6 +32,7 @@ use App\Http\Controllers\admin\RemedyController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SatuanController;
 use App\Http\Controllers\admin\SeksiController;
+use App\Http\Controllers\admin\StatusBudgetingController;
 use App\Http\Controllers\admin\StatusController;
 use App\Http\Controllers\admin\SubLokasiController;
 use App\Http\Controllers\admin\TipeBarangController;
@@ -205,8 +206,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::controller(DashboardBudgetController::class)->group(function () {
-        Route::get('/dashboard-budget', 'index')->name('dashboard-budget.index');
-        Route::get('/dashboard-budget/department', 'departemen')->name('dashboard-budget.departemen');
+        Route::get('/monitoring-budget', 'index')->name('dashboard-budget.index');
+        Route::get('/monitoring-budget/department', 'departemen')->name('dashboard-budget.departemen');
     });
 
 
@@ -357,6 +358,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/status', 'store')->name('status.store');
             Route::put('/status', 'update')->name('status.update');
             Route::delete('/status', 'destroy')->name('status.delete');
+        });
+
+        Route::controller(StatusBudgetingController::class)->group(function () {
+            Route::get('/status-budgeting', 'index')->name('status-budgeting.index');
+            Route::post('/status-budgeting', 'store')->name('status-budgeting.store');
+            Route::put('/status-budgeting', 'update')->name('status-budgeting.update');
+            Route::delete('/status-budgeting', 'destroy')->name('status-budgeting.delete');
         });
 
         Route::controller(ClassificationController::class)->group(function () {

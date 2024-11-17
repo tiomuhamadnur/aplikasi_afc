@@ -45,7 +45,7 @@
                     <i class="mdi mdi-key-variant menu-icon"></i>
                 </a>
             </li>
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link" href="{{ route('monitoring-equipment.index') }}">
                     <span class="menu-title">Monitoring Equipment</span>
                     <i class="mdi mdi-monitor-multiple menu-icon"></i>
@@ -62,7 +62,7 @@
                     <span class="menu-title">Transaksi Tiket</span>
                     <i class="mdi mdi-cards-outline menu-icon"></i>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#budgeting" aria-expanded="false"
                     aria-controls="budgeting">
@@ -80,11 +80,8 @@
                         <li class="nav-item"> <a class="nav-link" href="{{ route('budget-absorption.index') }}">Budget
                                 Absorption</a>
                         </li>
-                        <li class="nav-item"> <a class="nav-link"
-                                href="{{ route('dashboard-budget.index') }}">Dashboard Divisi</a>
-                        </li>
-                        <li class="nav-item"> <a class="nav-link"
-                                href="{{ route('dashboard-budget.departemen') }}">Dashboard Departemen</a>
+                        <li class="nav-item"> <a class="nav-link" href="{{ route('dashboard-budget.index') }}">Dashboard
+                                Divisi</a>
                         </li>
                     </ul>
                 </div>
@@ -160,6 +157,9 @@
                         <li class="nav-item"> <a class="nav-link" href="{{ route('gender.index') }}">Gender</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link" href="{{ route('status.index') }}">Status</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('status-budgeting.index') }}">Status Budgeting</a>
                         </li>
                         <li class="nav-item"> <a class="nav-link"
                                 href="{{ route('classification.index') }}">Classification</a>

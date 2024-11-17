@@ -9,6 +9,7 @@ use App\Models\FundSource;
 use App\Models\Perusahaan;
 use App\Models\Project;
 use App\Models\RelasiStruktur;
+use App\Models\StatusBudgeting;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -27,6 +28,7 @@ class ProjectController extends Controller
         $relasi_struktur = RelasiStruktur::all();
         $departemen = Departemen::all();
         $perusahaan = Perusahaan::all();
+        $status_budgeting = StatusBudgeting::all();
 
         return $dataTable->with([
             'start_period' => $start_period,
@@ -36,6 +38,7 @@ class ProjectController extends Controller
             'relasi_struktur',
             'departemen',
             'perusahaan',
+            'status_budgeting',
         ]));
     }
 
@@ -48,14 +51,13 @@ class ProjectController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'description' => 'required|string',
+            // 'description' => 'required|string',
             'fund_source_id' => 'required|numeric',
-            'value' => 'required|numeric|min:0',
-            'current_value' => 'required|numeric|min:0',
             'start_period' => 'required|date',
             'end_period' => 'required|date',
             'departemen_id' => 'required|numeric|min:1',
             'perusahaan_id' => 'required|numeric|min:1',
+            'status_budgeting_id' => 'required|numeric',
         ]);
 
         $data['user_id'] = auth()->user()->id;
@@ -78,6 +80,7 @@ class ProjectController extends Controller
         $relasi_struktur = RelasiStruktur::all();
         $departemen = Departemen::all();
         $perusahaan = Perusahaan::all();
+        $status_budgeting = StatusBudgeting::all();
 
         return view('pages.user.project.edit', compact([
             'project',
@@ -85,6 +88,7 @@ class ProjectController extends Controller
             'relasi_struktur',
             'departemen',
             'perusahaan',
+            'status_budgeting',
         ]));
     }
 
@@ -93,14 +97,13 @@ class ProjectController extends Controller
         $data = Project::findOrFail($request->id);
         $rawData = $request->validate([
             'name' => 'required|string',
-            'description' => 'required|string',
+            // 'description' => 'required|string',
             'fund_source_id' => 'required|numeric',
-            'value' => 'required|numeric|min:0',
-            'current_value' => 'required|numeric|min:0',
             'start_period' => 'required|date',
             'end_period' => 'required|date',
             'departemen_id' => 'required|numeric|min:1',
             'perusahaan_id' => 'required|numeric|min:1',
+            'status_budgeting_id' => 'required|numeric',
         ]);
 
         $rawData['user_id'] = auth()->user()->id;

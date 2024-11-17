@@ -64,24 +64,29 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name">Activity Name</label>
                             <input type="text" class="form-control" id="name" name="name"
-                                placeholder="input project name" autocomplete="off" required>
+                                placeholder="input activity name" autocomplete="off" required>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="description">Description</label>
                             <input type="text" class="form-control" id="description" name="description"
                                 placeholder="input project description" autocomplete="off" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="date">Date</label>
-                            <input type="date" min="0" class="form-control" id="date" name="date"
-                                autocomplete="off" required>
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="value">Value (IDR)</label>
                             <input type="number" min="0" class="form-control" id="value" name="value"
-                                placeholder="input value project" autocomplete="off" required>
+                                placeholder="input activity value" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity_date">Activity Date</label>
+                            <input type="date" min="0" class="form-control" id="activity_date"
+                                name="activity_date" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="paid_date">Paid Date</label>
+                            <input type="date" min="0" class="form-control" id="paid_date" name="paid_date"
+                                autocomplete="off">
                         </div>
                         <div class="form-group">
                             <label for="po_number_sap">PO Number SAP</label>
@@ -89,7 +94,7 @@
                                 name="po_number_sap" placeholder="input PO number SAP" autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <label for="attachment">Attachment</label>
+                            <label for="attachment">Attachment Document</label>
                             <input type="file" class="form-control" id="attachment" name="attachment"
                                 accept="application/pdf">
                         </div>
@@ -97,7 +102,6 @@
                             <label for="status">Status</label>
                             <select class="tom-select-class" name="status" id="status" required>
                                 <option value="" disabled selected>- select status -</option>
-                                <option value="Planned">Planned</option>
                                 <option value="Realisasi Kegiatan">Realisasi Kegiatan</option>
                                 <option value="Realisasi Pembayaran">Realisasi Pembayaran</option>
                             </select>
