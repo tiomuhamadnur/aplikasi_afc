@@ -28,7 +28,7 @@
                         <h4 class="font-weight-normal mb-3">Anggaran
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
-                        <h3 class="mb-3">Rp. 45.700.000.000</h3>
+                        <h3 class="mb-3">{{ $balance }}</h3>
                         <h6 class="card-text">Divisi {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -40,7 +40,7 @@
                         <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
                         <h4 class="font-weight-normal mb-3">Penyerapan <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
-                        <h3 class="mb-3">Rp. 35.600.000.000</h3>
+                        <h3 class="mb-3">{{ $used_balance }}</h3>
                         <h6 class="card-text">Divisi {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -53,7 +53,7 @@
                         <h4 class="font-weight-normal mb-3">Proyeksi
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
-                        <h3>Rp. 2.000.000.000</h3>
+                        <h3>Rp. x.xxx.xxx</h3>
                         <h6 class="card-text">Divisi {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -66,7 +66,7 @@
                         <h4 class="font-weight-normal mb-3">Sisa
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
-                        <h3>Rp. 10.100.000.000</h3>
+                        <h3>{{ $remaining_balance }}</h3>
                         <h6 class="card-text">Divisi {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -208,15 +208,15 @@
 
             // SETIAP FUND
             // Data categories
-            const categories = ['J1234', 'J4312', 'J0120', 'J0635', 'J4345', 'J8643', 'J3666',
-                '89544', 'J2234',
-                'J5566', 'J7788', 'J9900', 'J3322', 'J4455', 'J6677'
-            ];
+            const categoriesFund = @json($categoriesFund);
+            const seriesFund = @json($seriesFund);
+
+
             const minChartHeight = 400; // Tinggi minimum
             const additionalHeightPerCategory = 40; // Tinggi tambahan per kategori
 
             // Mengatur tinggi chart secara dinamis
-            const chartHeight = minChartHeight + (categories.length * additionalHeightPerCategory);
+            const chartHeight = minChartHeight + (categoriesFund.length * additionalHeightPerCategory);
             document.getElementById('fundGraph').style.height = chartHeight + 'px';
 
             // Membuat chart Highcharts
@@ -229,7 +229,7 @@
                     align: 'left',
                 },
                 xAxis: {
-                    categories: categories,
+                    categories: categoriesFund,
                 },
                 yAxis: {
                     title: {
@@ -252,39 +252,12 @@
                         },
                     },
                 },
-                series: [{
-                    name: 'Realisasi Kegiatan',
-                    data: [3000000000, 5000000000, 1000000000, 13000000000, 7000000000, 10000000000,
-                        4000000000, 8000000000, 6000000000, 9000000000, 2000000000, 5000000000,
-                        12000000000, 11000000000, 7000000000
-                    ],
-                }, {
-                    name: 'Realisasi Pembayaran',
-                    data: [14000000000, 8000000000, 8000000000, 12000000000, 9000000000, 3000000000,
-                        5000000000, 10000000000, 11000000000, 4000000000, 7000000000,
-                        13000000000, 6000000000, 8000000000, 5000000000
-                    ],
-                }, {
-                    name: 'Proyeksi',
-                    data: [0000000000, 2000000000, 6000000000, 3000000000, 5000000000, 8000000000,
-                        4000000000, 7000000000, 2000000000, 6000000000, 3000000000, 1000000000,
-                        9000000000, 5000000000, 8000000000
-                    ],
-                }, {
-                    name: 'Sisa',
-                    data: [1000000000, 3000000000, 7000000000, 2000000000, 6000000000, 9000000000,
-                        5000000000, 4000000000, 3000000000, 2000000000, 7000000000, 8000000000,
-                        4000000000, 6000000000, 1000000000
-                    ],
-                }],
+                series: seriesFund,
             });
 
 
             // CAPEX
-            let capex_kegiatan = 34000000000;
-            let capex_pembayaran = 45000000000;
-            let capex_proyeksi = 17000000000;
-            let capex_sisa = 3500000000;
+            const seriesCapex = @json($seriesCapex);
             Highcharts.chart('capexGraph', {
                 chart: {
                     type: 'pie',
@@ -327,21 +300,13 @@
                 },
                 series: [{
                     name: 'Jumlah Anggaran (IDR)',
-                    data: [
-                        ['Realisasi Kegiatan', capex_kegiatan],
-                        ['Realisasi Pembayaran', capex_pembayaran],
-                        ['Proyeksi', capex_proyeksi],
-                        ['Sisa', capex_sisa],
-                    ]
+                    data: seriesCapex
                 }]
             });
 
 
             // OPEX
-            let opex_kegiatan = 23000000000;
-            let opex_pembayaran = 12000000000;
-            let opex_proyeksi = 31000000000;
-            let opex_sisa = 10000000000;
+            const seriesOpex = @json($seriesOpex);
             Highcharts.chart('opexGraph', {
                 chart: {
                     type: 'pie',
@@ -384,21 +349,13 @@
                 },
                 series: [{
                     name: 'Jumlah Anggaran (IDR)',
-                    data: [
-                        ['Realisasi Kegiatan', opex_kegiatan],
-                        ['Realisasi Pembayaran', opex_pembayaran],
-                        ['Proyeksi', opex_proyeksi],
-                        ['Sisa', opex_sisa],
-                    ]
+                    data: seriesOpex
                 }]
             });
 
 
             // TOTAL
-            let total_kegiatan = 25000000000;
-            let total_pembayaran = 17000000000;
-            let total_proyeksi = 39000000000;
-            let total_sisa = 23000000000;
+            const seriesCapexOpexTotal = @json($seriesCapexOpexTotal);
             Highcharts.chart('totalGraph', {
                 chart: {
                     type: 'pie',
@@ -441,12 +398,7 @@
                 },
                 series: [{
                     name: 'Jumlah Anggaran (IDR)',
-                    data: [
-                        ['Realisasi Kegiatan', total_kegiatan],
-                        ['Realisasi Pembayaran', total_pembayaran],
-                        ['Proyeksi', total_proyeksi],
-                        ['Sisa', total_sisa],
-                    ]
+                    data: seriesCapexOpexTotal
                 }]
             });
         });

@@ -19,50 +19,13 @@
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export to Excel" data-bs-toggle="modal"
+                                data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Code </th>
-                                        <th> Name </th>
-                                        <th> Type </th>
-                                        <th> Description </th>
-                                        <th> Action </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($fund as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->code }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->type }}</td>
-                                            <td>{{ $item->description }}</td>
-                                            <td>
-                                                <button type="button" title="Edit"
-                                                    class="btn btn-gradient-warning btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-code="{{ $item->code }}" data-type="{{ $item->type }}"
-                                                    data-description="{{ $item->description }}">
-                                                    <i class="mdi mdi-lead-pencil"></i>
-                                                </button>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            {{ $dataTable->table() }}
                         </div>
                     </div>
                 </div>
@@ -104,6 +67,15 @@
                             <label for="description">Description</label>
                             <input type="text" class="form-control" id="description" name="description"
                                 placeholder="Description" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="divisi_id">Division</label>
+                            <select class="form-control form-control-lg" name="divisi_id" id="divisi_id" required>
+                                <option value="">- select division -</option>
+                                @foreach ($divisi as $item)
+                                    <option value="{{ $item->id }}">{{ $item->code }} ({{ $item->name }})</option>
+                                @endforeach
+                            </select>
                         </div>
                     </form>
                 </div>
@@ -152,6 +124,15 @@
                             <input type="text" class="form-control" id="description_edit" name="description"
                                 placeholder="Description" autocomplete="off" required>
                         </div>
+                        <div class="form-group">
+                            <label for="divisi_id_edit">Division</label>
+                            <select class="form-control form-control-lg" name="divisi_id" id="divisi_id_edit" required>
+                                <option value="">- select division -</option>
+                                @foreach ($divisi as $item)
+                                    <option value="{{ $item->id }}">{{ $item->code }} ({{ $item->name }})</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -186,7 +167,36 @@
         </div>
     </div>
     <!-- End Delete Modal -->
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
 @endsection
+
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
 
 @section('javascript')
     <script>
@@ -197,12 +207,13 @@
                 var code = $(e.relatedTarget).data('code');
                 var type = $(e.relatedTarget).data('type');
                 var description = $(e.relatedTarget).data('description');
+                var divisi_id = $(e.relatedTarget).data('divisi_id');
 
                 $('#id_edit').val(id);
                 $('#name_edit').val(name);
                 $('#code_edit').val(code);
                 $('#description_edit').val(description);
-
+                $('#divisi_id_edit').val(divisi_id);
                 $('#type_edit').val(type);
             });
 
@@ -212,5 +223,11 @@
                 $('#id_delete').val(id);
             });
         });
+    </script>
+
+    <script>
+        function exportExcel() {
+            document.getElementById('datatable-excel').click();
+        }
     </script>
 @endsection

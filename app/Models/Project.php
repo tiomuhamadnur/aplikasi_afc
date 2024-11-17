@@ -48,4 +48,14 @@ class Project extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function status_budgeting()
+    {
+        return $this->belongsTo(StatusBudgeting::class);
+    }
+
+    public function budget_absorption()
+    {
+        return $this->hasMany(BudgetAbsorption::class);
+    }
 }

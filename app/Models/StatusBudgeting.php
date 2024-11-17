@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Fund extends Model
+class StatusBudgeting extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'fund';
+    protected $table = 'status_budgeting';
 
     protected $guarded = [];
 
@@ -22,20 +22,5 @@ class Fund extends Model
         self::creating(function ($model) {
             $model->uuid = Str::uuid();
         });
-    }
-
-    public function divisi()
-    {
-        return $this->belongsTo(Divisi::class);
-    }
-
-    public function status_budgeting()
-    {
-        return $this->belongsTo(StatusBudgeting::class);
-    }
-
-    public function fund_source()
-    {
-        return $this->hasMany(FundSource::class);
     }
 }

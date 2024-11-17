@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\BudgetAbsorption;
+use App\Models\FundSource;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Laraindo\RupiahFormat;
@@ -14,15 +15,10 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class BudgetAbsorptionDataTable extends DataTable
+class FundSourceDataTable extends DataTable
 {
-    protected $fund_id;
-    protected $project_id;
-    protected $departemen_id;
-    protected $type;
-    protected $start_date;
-    protected $end_date;
-
+    protected $start_period;
+    protected $end_period;
 
     public function with(array|string $key, mixed $value = null): static
     {
@@ -41,19 +37,7 @@ class BudgetAbsorptionDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
         ->addColumn('#', function($item) {
-            if($item->attachment != null)
-            {
-                $attachmentRoute = asset('storage/' . $item->attachment);
-                $attachmentButton = "<button type='button' title='Attachment'
-                    class='btn btn-gradient-success btn-rounded btn-icon'
-                    onclick=\"window.open('{$attachmentRoute}', '_blank')\">
-                    <i class='mdi mdi-file-pdf'></i>
-                </button>";
-            } else {
-                $attachmentButton = '';
-            }
-
-            $editRoute = route('budget-absorption.edit', $item->uuid);
+            $editRoute = route('fund-source.edit', $item->uuid);
 
             $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
                     onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
@@ -67,55 +51,32 @@ class BudgetAbsorptionDataTable extends DataTable
                 <i class='mdi mdi-delete'></i>
             </button>";
 
-            return $attachmentButton . $editButton . $deleteModal;
+            return $editButton . $deleteModal;
         })
-        ->addColumn('rka', function($item) {
-            return RupiahFormat::currency($item->project->fund_source->balance);
+        ->addColumn('balance', function($item) {
+            return RupiahFormat::currency($item->balance ?? null);
         })
-        ->addColumn('value', function($item) {
-            return RupiahFormat::currency($item->value);
+        ->addColumn('used_balance', function($item) {
+            $sum_value_absorption = BudgetAbsorption::whereRelation('project.fund_source',  'id', '=', $item->id)->sum('value');
+            return RupiahFormat::currency($sum_value_absorption);
+        })
+        ->addColumn('remaining_balance', function($item) {
+            $balance = $item->balance ?? null;
+            $sum_value_absorption = BudgetAbsorption::whereRelation('project.fund_source',  'id', '=', $item->id)->sum('value');
+            return RupiahFormat::currency($balance - $sum_value_absorption);
         })
         ->addColumn('updated_at', function($item) {
             return Carbon::parse($item->updated_at)->format('Y-m-d H:i:s');
         })
-        ->rawColumns(['', 'updated_at', '#']);
+        ->rawColumns(['updated_at', '#']);
     }
 
-    public function query(BudgetAbsorption $model): QueryBuilder
+    public function query(FundSource $model): QueryBuilder
     {
         $query = $model->with([
-            'project',
-            'project.fund_source.fund',
-            'project.fund_source',
-            'project.departemen',
+            'fund',
             'user'
             ])->newQuery();
-
-        // Filter
-        if($this->fund_id != null)
-        {
-            $query->whereRelation('project.fund_source.fund', 'id', '=', $this->fund_id);
-        }
-
-        if($this->project_id != null)
-        {
-            $query->where('project_id', $this->project_id);
-        }
-
-        if($this->departemen_id != null)
-        {
-            $query->where('departemen_id', $this->departemen_id);
-        }
-
-        if($this->type != null)
-        {
-            $query->whereRelation('project.fund_source.fund', 'type', '=', $this->type);
-        }
-
-        if($this->start_date != null && $this->end_date != null)
-        {
-            $query->whereBetween('activity_date', [$this->start_date, $this->end_date]);
-        }
 
         return $query;
     }
@@ -123,7 +84,7 @@ class BudgetAbsorptionDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('budgetabsorption-table')
+                    ->setTableId('fundsource-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->pageLength(10)
@@ -146,19 +107,14 @@ class BudgetAbsorptionDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('project.fund_source.fund.code')->title('Fund'),
-            Column::make('project.fund_source.fund.type')->title('Type'),
-            Column::computed('rka')->title('RKA Budget'),
-            Column::make('project.name')->title('Project Name'),
-            Column::make('name')->title('Activity Name'),
-            // Column::make('description')->title('Description'),
-            Column::computed('value')->title('Activity Value'),
-            Column::make('activity_date')->title('Activity Date'),
-            Column::make('paid_date')->title('Paid Date'),
-            Column::make('po_number_sap')->title('PO Number SAP'),
-            Column::make('project.departemen.code')->title('Department'),
-            Column::make('status')->title('Status'),
-            // Column::make('termin')->title('Termin'),
+            Column::make('fund.code')->title('Fund Code'),
+            Column::make('fund.type')->title('Type'),
+            Column::make('fund.name')->title('Fund Name'),
+            Column::computed('balance')->title('Total Balance'),
+            Column::computed('used_balance')->title('Used Balance'),
+            Column::computed('remaining_balance')->title('Remaining Balance'),
+            Column::make('start_period')->title('Start Period'),
+            Column::make('end_period')->title('End Period'),
             Column::make('user.name')->title('Updated By'),
             Column::computed('updated_at')->title('Updated At'),
             Column::computed('#')
@@ -171,6 +127,6 @@ class BudgetAbsorptionDataTable extends DataTable
 
     protected function filename(): string
     {
-        return date('Ymd') . '_Data Budget Absorption';
+        return date('Ymd') . '_Data Fund Source';
     }
 }

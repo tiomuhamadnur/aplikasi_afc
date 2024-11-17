@@ -33,4 +33,14 @@ class FundSource extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function status_budgeting()
+    {
+        return $this->belongsTo(StatusBudgeting::class);
+    }
+
+    public function project()
+    {
+        return $this->hasMany(Project::class);
+    }
 }
