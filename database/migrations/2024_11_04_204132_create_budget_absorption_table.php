@@ -14,18 +14,22 @@ return new class extends Migration
             $table->bigInteger('project_id')->unsigned()->nullable();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-            $table->integer('value')->nullable();
+            $table->string('value')->nullable();
+            $table->date('activity_date')->nullable();
             $table->string('po_number_sap')->nullable();
-            $table->date('date')->nullable();
+            $table->date('paid_date')->nullable();
             $table->string('attachment')->nullable();
             $table->string('status')->nullable();
             $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->bigInteger('status_budgeting_id')->unsigned()->nullable();
             $table->integer('termin')->nullable();
+            $table->string('remark')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('project_id')->on('project')->references('id');
             $table->foreign('user_id')->on('users')->references('id');
+            $table->foreign('status_budgeting_id')->on('status_budgeting')->references('id');
         });
     }
 

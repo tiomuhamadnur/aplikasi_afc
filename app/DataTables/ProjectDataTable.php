@@ -53,10 +53,14 @@ class ProjectDataTable extends DataTable
 
             return $editButton . $deleteModal;
         })
+        ->addColumn('rka', function($item) {
+            $rka = $item->fund_source->balance ?? null;
+            return RupiahFormat::currency($rka);
+        })
         ->addColumn('value', function($item) {
             return RupiahFormat::currency($item->value);
         })
-        ->addColumn('current_value', function($item) {
+        ->addColumn('absorbed_budget', function($item) {
             $sum_value_absorption = BudgetAbsorption::where('project_id',  $item->id)->sum('value');
             return RupiahFormat::currency($sum_value_absorption);
         })
@@ -68,7 +72,7 @@ class ProjectDataTable extends DataTable
 
     public function query(Project $model): QueryBuilder
     {
-        $query = $model->with(['fund_source.fund', 'perusahaan', 'departemen', 'user'])
+        $query = $model->with(['fund_source', 'fund_source.fund', 'perusahaan', 'departemen', 'user', 'status_budgeting'])
                     ->where('departemen_id', auth()->user()->relasi_struktur->departemen_id)
                     ->newQuery();
 
@@ -101,15 +105,17 @@ class ProjectDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title('Project Name'),
-            Column::make('description')->title('Description'),
             Column::make('fund_source.fund.code')->title('Fund'),
-            Column::computed('value')->title('Value (IDR)'),
-            Column::computed('current_value')->title('Current Value (IDR)'),
+            Column::make('fund_source.fund.type')->title('Type'),
+            Column::computed('rka')->title('RKA Budget'),
+            Column::make('name')->title('Project Name'),
+            // Column::make('description')->title('Description'),
+            Column::computed('absorbed_budget')->title('Absorbed Budget'),
             Column::make('start_period')->title('Start Period'),
             Column::make('end_period')->title('End Period'),
-            Column::make('perusahaan.name')->title('Company'),
             Column::make('departemen.code')->title('Department'),
+            Column::make('perusahaan.name')->title('Company'),
+            Column::make('status_budgeting.name')->title('Status'),
             Column::make('user.name')->title('Updated By'),
             Column::computed('updated_at')->title('Updated At'),
             Column::computed('#')

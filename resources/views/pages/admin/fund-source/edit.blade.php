@@ -34,12 +34,6 @@
                                     value="{{ $fund_source->balance }}">
                             </div>
                             <div class="form-group">
-                                <label for="current_balance">Current Balance (IDR)</label>
-                                <input type="number" min="0" class="form-control" id="current_balance"
-                                    name="current_balance" placeholder="Input Current Balance" autocomplete="off" required
-                                    value="{{ $fund_source->current_balance }}">
-                            </div>
-                            <div class="form-group">
                                 <label for="start_period">Start Period</label>
                                 <input type="date" class="form-control" id="start_period" name="start_period"
                                     placeholder="Start Period" autocomplete="off" required

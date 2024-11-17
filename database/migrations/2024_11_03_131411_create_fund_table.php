@@ -15,8 +15,13 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->string('type')->nullable();
             $table->string('description')->nullable();
+            $table->bigInteger('divisi_id')->unsigned()->nullable();
+            $table->bigInteger('status_budgeting_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('divisi_id')->on('fund')->references('id');
+            $table->foreign('status_budgeting_id')->on('status_budgeting')->references('id');
         });
     }
 
