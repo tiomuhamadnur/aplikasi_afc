@@ -89,7 +89,7 @@ class BudgetAbsorptionDataTable extends DataTable
             'project.fund_source',
             'project.departemen',
             'user'
-            ])->newQuery();
+            ])->orderBy('project_id', 'DESC')->newQuery();
 
         // Filter
         if($this->fund_id != null)
@@ -129,7 +129,7 @@ class BudgetAbsorptionDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([6, 'desc'])
+                    ->orderBy([7, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -146,6 +146,11 @@ class BudgetAbsorptionDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
             Column::make('project.fund_source.fund.code')->title('Fund'),
             Column::make('project.fund_source.fund.type')->title('Type'),
             Column::computed('rka')->title('RKA Budget'),
@@ -161,11 +166,6 @@ class BudgetAbsorptionDataTable extends DataTable
             // Column::make('termin')->title('Termin'),
             Column::make('user.name')->title('Updated By'),
             Column::computed('updated_at')->title('Updated At'),
-            Column::computed('#')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(60)
-                    ->addClass('text-center'),
         ];
     }
 

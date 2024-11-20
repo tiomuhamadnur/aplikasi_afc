@@ -10,7 +10,7 @@
             <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
                     <i class="mdi mdi-home"></i>
-                </span> Dashboard Budgeting (Divisi {{ auth()->user()->relasi_struktur->divisi->name ?? 'N/A' }})
+                </span> Dashboard Budgeting
             </h3>
             <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
@@ -21,6 +21,19 @@
             </nav>
         </div>
         <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white">
+                    <div class="card-body p-1 text-center">
+                        <h3>
+                            Divisi {{ auth()->user()->relasi_struktur->divisi->name ?? 'N/A' }}
+                            ({{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})
+                        </h3>
+                        <h4>Update: {{ $today }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">
@@ -28,7 +41,7 @@
                         <h4 class="font-weight-normal mb-3">Anggaran
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
-                        <h3 class="mb-3">{{ $balance }}</h3>
+                        <h3 class="mb-3">{{ $total_balance }}</h3>
                         <h6 class="card-text">Divisi {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -53,7 +66,7 @@
                         <h4 class="font-weight-normal mb-3">Proyeksi
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
-                        <h3>Rp. x.xxx.xxx</h3>
+                        <h3>{{ $planned_balance }}</h3>
                         <h6 class="card-text">Divisi {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }}
                         </h6>
                     </div>
@@ -115,7 +128,8 @@
             Highcharts.setOptions({
                 lang: {
                     numericSymbols: ['rb', 'jt', 'M', 'T']
-                }
+                },
+                thousandsSep: '.',
             });
 
             // SETIAP DEPARTEMEN
@@ -134,7 +148,7 @@
                     type: 'column',
                 },
                 title: {
-                    text: 'Penyerapan Anggaran Tiap Departemen',
+                    text: 'Penyerapan Anggaran Tiap Departemen (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
                     align: 'left',
                 },
                 xAxis: {
@@ -146,13 +160,25 @@
                     },
                     stackLabels: {
                         enabled: true,
+                        formatter: function() {
+                            return Highcharts.numberFormat(this.total, 0, ',', '.');
+                        },
                     },
+                },
+                tooltip: {
+                    formatter: function() {
+                        return '<b>' + this.series.name + '</b>: ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                    }
                 },
                 plotOptions: {
                     column: {
                         stacking: 'normal',
                         dataLabels: {
                             enabled: true,
+                            formatter: function() {
+                                return Highcharts.numberFormat(this.y, 0, ',', '.');
+                            }
                         },
                     },
                     series: {
@@ -225,7 +251,7 @@
                     type: 'bar',
                 },
                 title: {
-                    text: 'Penyerapan Anggaran Tiap Fund',
+                    text: 'Penyerapan Anggaran Tiap Fund (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
                     align: 'left',
                 },
                 xAxis: {
@@ -237,6 +263,9 @@
                     },
                     stackLabels: {
                         enabled: true,
+                        formatter: function() {
+                            return Highcharts.numberFormat(this.total, 0, ',', '.');
+                        },
                     },
                 },
                 legend: {
@@ -244,11 +273,20 @@
                     verticalAlign: 'top',
                     layout: 'horizontal'
                 },
+                tooltip: {
+                    formatter: function() {
+                        return '<b>' + this.series.name + '</b>: ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                    }
+                },
                 plotOptions: {
                     series: {
                         stacking: 'normal',
                         dataLabels: {
                             enabled: true,
+                            formatter: function() {
+                                return Highcharts.numberFormat(this.y, 0, ',', '.');
+                            }
                         },
                     },
                 },
@@ -267,12 +305,18 @@
                     }
                 },
                 title: {
-                    text: 'CAPEX',
+                    text: 'CAPEX (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
                     align: 'left'
                 },
                 subtitle: {
                     text: '',
                     align: 'left'
+                },
+                tooltip: {
+                    formatter: function() {
+                        return '<b>' + this.series.name + '</b>: ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                    }
                 },
                 plotOptions: {
                     series: {
@@ -316,12 +360,18 @@
                     }
                 },
                 title: {
-                    text: 'OPEX',
+                    text: 'OPEX (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
                     align: 'left'
                 },
                 subtitle: {
                     text: '',
                     align: 'left'
+                },
+                tooltip: {
+                    formatter: function() {
+                        return '<b>' + this.series.name + '</b>: ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                    }
                 },
                 plotOptions: {
                     series: {
@@ -365,12 +415,18 @@
                     }
                 },
                 title: {
-                    text: 'TOTAL',
+                    text: 'TOTAL (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
                     align: 'left'
                 },
                 subtitle: {
                     text: '',
                     align: 'left'
+                },
+                tooltip: {
+                    formatter: function() {
+                        return '<b>' + this.series.name + '</b>: ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                    }
                 },
                 plotOptions: {
                     series: {
