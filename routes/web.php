@@ -193,6 +193,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/project', 'index')->name('project.index');
         Route::post('/project', 'store')->name('project.store');
         Route::get('/project/{uuid}/edit', 'edit')->name('project.edit');
+        Route::get('/project/{uuid}/show', 'show')->name('project.show');
         Route::put('/project', 'update')->name('project.update');
         Route::delete('/project', 'destroy')->name('project.delete');
     });

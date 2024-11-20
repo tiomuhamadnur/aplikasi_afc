@@ -79,6 +79,8 @@
                                 <label for="status">Status</label>
                                 <select class="tom-select-class" name="status" id="status" required>
                                     <option value="" disabled selected>- select status -</option>
+                                    <option value="Planned" @if ($budget_absorption->status == 'Planned') selected @endif>Planned
+                                    </option>
                                     <option value="Realisasi Kegiatan" @if ($budget_absorption->status == 'Realisasi Kegiatan') selected @endif>
                                         Realisasi Kegiatan</option>
                                     <option value="Realisasi Pembayaran" @if ($budget_absorption->status == 'Realisasi Pembayaran') selected @endif>
@@ -86,7 +88,7 @@
                                 </select>
                             </div>
                             <div class="form-group d-flex justify-content-end">
-                                <a href="{{ route('budget-absorption.index') }}" type="button"
+                                <a href="{{ route('project.show', $budget_absorption->project->uuid) }}" type="button"
                                     class="btn btn-secondary">Cancel</a>
                                 <button type="submit" form="editForm" class="btn btn-primary">Update</button>
                             </div>

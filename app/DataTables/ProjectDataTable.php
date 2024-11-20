@@ -17,6 +17,7 @@ use Yajra\DataTables\Services\DataTable;
 
 class ProjectDataTable extends DataTable
 {
+    protected $hari_ini;
     protected $start_period;
     protected $end_period;
 
@@ -36,6 +37,15 @@ class ProjectDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+        ->addColumn('detail', function($item) {
+            $showRoute = route('project.show', $item->uuid);
+            $showButton = "<button type='button' class='btn btn-gradient-primary btn-rounded btn-icon'
+                    onclick=\"window.location.href='{$showRoute}'\" title='Show'>
+                <i class='text-white mdi mdi-eye'></i>
+                </button>";
+
+            return $showButton;
+        })
         ->addColumn('#', function($item) {
             $editRoute = route('project.edit', $item->uuid);
 
@@ -67,14 +77,22 @@ class ProjectDataTable extends DataTable
         ->addColumn('updated_at', function($item) {
             return Carbon::parse($item->updated_at)->format('Y-m-d H:i:s');
         })
-        ->rawColumns(['updated_at', '#']);
+        ->rawColumns(['detail', 'updated_at', '#']);
     }
 
     public function query(Project $model): QueryBuilder
     {
         $query = $model->with(['fund_source', 'fund_source.fund', 'perusahaan', 'departemen', 'user', 'status_budgeting'])
                     ->where('departemen_id', auth()->user()->relasi_struktur->departemen_id)
+                    ->whereRelation('fund_source', 'start_period', '<=', $this->hari_ini)
+                    ->whereRelation('fund_source', 'end_period', '>=', $this->hari_ini)
                     ->newQuery();
+
+        if($this->start_period != null && $this->end_period != null)
+        {
+            $query->whereDate('start_period', '<=', $this->start_period);
+            $query->whereDate('end_period', '>=', $this->end_period);
+        }
 
         return $query;
     }
@@ -88,7 +106,7 @@ class ProjectDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([5, 'desc'])
+                    ->orderBy([6, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -105,6 +123,11 @@ class ProjectDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('detail')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
             Column::make('fund_source.fund.code')->title('Fund'),
             Column::make('fund_source.fund.type')->title('Type'),
             Column::computed('rka')->title('RKA Budget'),
