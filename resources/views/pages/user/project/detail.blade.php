@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Budget Absorption</title>
+    <title>Detail Project</title>
 @endsection
 
 @section('content')
@@ -10,13 +10,17 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Budget Absorption</h4>
+                        <h4 class="card-title">Project {{ $project->name ?? null }}</h4>
                         <div class="btn-group my-2">
+                            <button type='button' class='btn btn-outline-primary btn-rounded btn-icon'
+                                onclick="window.location.href='{{ route('project.index') }}'" title='Back'>
+                                <i class='mdi mdi-arrow-left'></i>
+                            </button>
                             <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#success-modal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
@@ -27,6 +31,11 @@
                             <button type="button" title="Export to Excel" data-bs-toggle="modal"
                                 data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
+                            </button>
+                            <button type="button" title="Show all activity"
+                                onclick="location.href='{{ route('budget-absorption.index') }}'"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
+                                <i class="mdi mdi-file-tree"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
@@ -54,13 +63,10 @@
                         <div class="form-group">
                             <label for="project_id">Project</label>
                             <select class="tom-select-class" name="project_id" id="project_id" required>
-                                <option value="" disabled selected>- select project -</option>
-                                @foreach ($project as $item)
-                                    <option value="{{ $item->id }}">
-                                        {{ $item->name ?? '-' }} ({{ $item->fund_source->fund->name ?? '-' }} -
-                                        {{ $item->fund_source->fund->code ?? '-' }})
-                                    </option>
-                                @endforeach
+                                <option value="{{ $project->id }}">
+                                    {{ $project->name ?? '-' }} ({{ $project->fund_source->fund->name ?? '-' }} -
+                                    {{ $project->fund_source->fund->code ?? '-' }})
+                                </option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -118,84 +124,6 @@
     </div>
     <!-- End Add Modal -->
 
-
-    <!-- Filter Modal -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="filterForm" action="{{ route('budget-absorption.index') }}" method="GET"
-                        class="forms-sample">
-                        @csrf
-                        @method('GET')
-                        <div class="form-group">
-                            <label for="fund_id">Fund</label>
-                            <select class="tom-select-class" name="fund_id" id="fund_id">
-                                <option value="" selected disabled>- select fund -</option>
-                                @foreach ($fund as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $fund_id ?? null) selected @endif>
-                                        {{ $item->code }} - {{ $item->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="project_id">Project</label>
-                            <select class="tom-select-class" name="project_id" id="project_id">
-                                <option value="" selected disabled>- select project -</option>
-                                @foreach ($project as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $project_id ?? null) selected @endif>
-                                        {{ $item->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="departemen_id">Department</label>
-                            <select class="tom-select-class" name="departemen_id" id="departemen_id">
-                                <option value="" selected disabled>- select department -</option>
-                                @foreach ($departemen as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $departemen_id ?? null) selected @endif>
-                                        {{ $item->name }} ({{ $item->code }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="type">Type</label>
-                            <select class="tom-select-class" name="type" id="type">
-                                <option value="" selected disabled>- select type -</option>
-                                <option value="capex" @selected($type === 'capex')>Capex</option>
-                                <option value="opex" @selected($type === 'opex')>Opex</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="start_date">Period</label>
-                            <div class="input-group">
-                                <input type="text" id="start_date" onfocus="(this.type='date')"
-                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
-                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
-                                <input type="text" id="end_date" onfocus="(this.type='date')"
-                                    onblur="(this.type='text')" class="form-control" placeholder="End Date"
-                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <a href="{{ route('budget-absorption.index') }}" class="btn btn-gradient-warning">Reset</a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Filter Modal -->
-
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -205,8 +133,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="deleteForm" action="{{ route('budget-absorption.delete') }}" method="POST"
-                        class="forms-sample">
+                    <form id="deleteForm" action="{{ route('project.delete') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('delete')
                         <input type="text" name="id" id="id_delete" hidden>

@@ -103,7 +103,7 @@ class BudgetAbsorptionController extends Controller
             ]);
         }
 
-        return redirect()->route('budget-absorption.index')->withNotify('Data berhasil ditambahkan');
+        return redirect()->route('project.show', $project->uuid)->withNotify('Data berhasil ditambahkan');
     }
 
     public function edit(string $uuid)
@@ -169,7 +169,7 @@ class BudgetAbsorptionController extends Controller
             ]);
         }
 
-        return redirect()->route('budget-absorption.index')->withNotify('Data berhasil diperbaharui');
+        return redirect()->route('project.show', $project->uuid)->withNotify('Data berhasil diperbaharui');
     }
 
     public function check_fund_source_budget($fund_source_id, $value)
