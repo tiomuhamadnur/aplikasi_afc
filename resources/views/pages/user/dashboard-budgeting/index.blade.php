@@ -34,6 +34,20 @@
             </div>
         </div>
         <div class="row">
+            <div class="form-group">
+                <label for="">Evaluate by Date</label>
+                <div class="input-group">
+                    <input type="text" id="start_date" onfocus="(this.type='date')" onblur="(this.type='text')"
+                        class="form-control" placeholder="Start Date" name="start_date" autocomplete="off"
+                        value="{{ $start_date ?? null }}">
+                    <input type="text" id="end_date" onfocus="(this.type='date')" onblur="(this.type='text')"
+                        class="form-control" placeholder="End Date" name="end_date" autocomplete="off"
+                        value="{{ $end_date ?? null }}">
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
                     <div class="card-body">

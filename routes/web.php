@@ -189,6 +189,21 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/trans-workorder-functional-location', 'destroy')->name('trans-workorder-functional-location.delete');
     });
 
+    Route::controller(FundController::class)->group(function () {
+        Route::get('/fund', 'index')->name('fund.index');
+        Route::post('/fund', 'store')->name('fund.store');
+        Route::put('/fund', 'update')->name('fund.update');
+        Route::delete('/fund', 'destroy')->name('fund.delete');
+    });
+
+    Route::controller(FundSourceController::class)->group(function () {
+        Route::get('/fund-source', 'index')->name('fund-source.index');
+        Route::post('/fund-source', 'store')->name('fund-source.store');
+        Route::get('/fund-source/{uuid}/edit', 'edit')->name('fund-source.edit');
+        Route::put('/fund-source', 'update')->name('fund-source.update');
+        Route::delete('/fund-source', 'destroy')->name('fund-source.delete');
+    });
+
     Route::controller(ProjectController::class)->group(function () {
         Route::get('/project', 'index')->name('project.index');
         Route::post('/project', 'store')->name('project.store');
@@ -458,21 +473,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/parameter/{uuid}/edit', 'edit')->name('parameter.edit');
             Route::put('/parameter', 'update')->name('parameter.update');
             Route::delete('/parameter', 'destroy')->name('parameter.delete');
-        });
-
-        Route::controller(FundController::class)->group(function () {
-            Route::get('/fund', 'index')->name('fund.index');
-            Route::post('/fund', 'store')->name('fund.store');
-            Route::put('/fund', 'update')->name('fund.update');
-            Route::delete('/fund', 'destroy')->name('fund.delete');
-        });
-
-        Route::controller(FundSourceController::class)->group(function () {
-            Route::get('/fund-source', 'index')->name('fund-source.index');
-            Route::post('/fund-source', 'store')->name('fund-source.store');
-            Route::get('/fund-source/{uuid}/edit', 'edit')->name('fund-source.edit');
-            Route::put('/fund-source', 'update')->name('fund-source.update');
-            Route::delete('/fund-source', 'destroy')->name('fund-source.delete');
         });
 
         Route::controller(BarangController::class)->group(function () {
