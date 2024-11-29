@@ -80,7 +80,7 @@ class BudgetAbsorptionController extends Controller
         $result = $this->check_fund_source_budget($project->fund_source_id, $request->value);
         if($result['value'] < 0)
         {
-            return redirect()->route('budget-absorption.index')->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
+            return redirect()->route('project.show', $project->uuid)->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
         }
 
         $budget_absorption = BudgetAbsorption::updateOrCreate($data, $data);
@@ -142,7 +142,7 @@ class BudgetAbsorptionController extends Controller
         $result = $this->check_fund_source_budget($project->fund_source_id, $request->value);
         if(($result['value'] + $data->value) < 0)
         {
-            return redirect()->route('budget-absorption.index')->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
+            return redirect()->route('project.show', $project->uuid)->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
         }
 
         $data->update($rawData);
