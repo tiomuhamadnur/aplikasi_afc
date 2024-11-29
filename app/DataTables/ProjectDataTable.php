@@ -83,7 +83,7 @@ class ProjectDataTable extends DataTable
     public function query(Project $model): QueryBuilder
     {
         $query = $model->with(['fund_source', 'fund_source.fund', 'perusahaan', 'departemen', 'user', 'status_budgeting'])
-                    ->where('departemen_id', auth()->user()->relasi_struktur->departemen_id)
+                    // ->where('departemen_id', auth()->user()->relasi_struktur->departemen_id)
                     ->whereRelation('fund_source', 'start_period', '<=', $this->hari_ini)
                     ->whereRelation('fund_source', 'end_period', '>=', $this->hari_ini)
                     ->newQuery();
