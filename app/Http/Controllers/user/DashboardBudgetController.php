@@ -15,7 +15,7 @@ use Laraindo\RupiahFormat;
 
 class DashboardBudgetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $sekarang = Carbon::now();
         $today = $sekarang->isoFormat('dddd, D MMM Y - HH:mm:ss') . ' WIB';
@@ -103,14 +103,15 @@ class DashboardBudgetController extends Controller
 
 
         // TIAP DEPARTEMEN
+        // Ambil ID departemen yang terkait dengan divisi
         $departemen_id = RelasiStruktur::where('divisi_id', $divisi_id)
-                    ->pluck('departemen_id')
-                    ->unique()
-                    ->toArray();
+            ->pluck('departemen_id')
+            ->unique()
+            ->toArray();
 
         $departments = Departemen::whereIn('id', $departemen_id)
-                    ->select('id', 'code', 'uuid')
-                    ->get();
+            ->select('id', 'code', 'uuid')
+            ->get();
 
         // Buat array categoriesDepartemen dengan nama dan URL masing-masing
         $categoriesDepartemen = $departments->map(function ($departemen) {
@@ -120,7 +121,7 @@ class DashboardBudgetController extends Controller
             ];
         })->toArray();
 
-        // Data untuk series, nilai random dalam miliaran
+        // Data untuk series
         $seriesData = [
             'Realisasi Kegiatan' => [],
             'Realisasi Pembayaran' => [],
@@ -130,27 +131,39 @@ class DashboardBudgetController extends Controller
 
         foreach ($departments as $department) {
             $kegiatan = BudgetAbsorption::where('status', 'Realisasi Kegiatan')
-                                    ->whereRelation('project.departemen', 'id', '=', $department->id)
-                                    ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                                    ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
-                                    ->sum('value');
+                ->whereRelation('project.departemen', 'id', $department->id)
+                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
+                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->sum('value');
+
             $pembayaran = BudgetAbsorption::where('status', 'Realisasi Pembayaran')
-                                    ->whereRelation('project.departemen', 'id', '=', $department->id)
-                                    ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                                    ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
-                                    ->sum('value');
+                ->whereRelation('project.departemen', 'id', $department->id)
+                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
+                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->sum('value');
+
             $dept_planned = BudgetAbsorption::where('status', 'Planned')
-                                    ->whereRelation('project.departemen', 'id', '=', $department->id)
-                                    ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                                    ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
-                                    ->sum('value');
-            $fund_source_ids = BudgetAbsorption::whereRelation('project.departemen', 'id', '=', $department->id)->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)->pluck('id')->toArray();
-            $total = FundSource::whereIn('id', $fund_source_ids)->sum('balance');
+                ->whereRelation('project.departemen', 'id', $department->id)
+                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
+                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->sum('value');
+
+            // Ambil ID sumber dana dari BudgetAbsorption
+            $fund_source_ids = BudgetAbsorption::whereRelation('project.departemen', 'id', $department->id)
+                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
+                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->get() // Ambil seluruh data
+                ->pluck('project.fund_source.id') // Akses relasi nested
+                ->unique()
+                ->toArray();
+
+            // Hitung total balance dari sumber dana
+            $total_balance_fund = FundSource::whereIn('id', $fund_source_ids)->sum('balance');
 
             $seriesData['Realisasi Kegiatan'][] = $kegiatan;
             $seriesData['Realisasi Pembayaran'][] = $pembayaran;
             $seriesData['Proyeksi'][] = $dept_planned;
-            $seriesData['Sisa'][] = $total - ($kegiatan + $pembayaran + $dept_planned);
+            $seriesData['Sisa'][] = $total_balance_fund - ($kegiatan + $pembayaran + $dept_planned);
         }
 
         // Format data series untuk Highcharts
