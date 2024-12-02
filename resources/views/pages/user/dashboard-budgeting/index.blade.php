@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        {{-- <div class="row">
             <div class="form-group">
                 <label for="">Evaluate by Date</label>
                 <div class="input-group">
@@ -46,7 +46,7 @@
                     <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card bg-gradient-info card-img-holder text-white">
@@ -149,6 +149,8 @@
             // SETIAP DEPARTEMEN
             const categoriesDepartemen = @json($categoriesDepartemen);
             const seriesData = @json($series);
+            console.log(seriesData);
+
 
             const minHeightTiapDepartemenGraph = 400;
             const extraHeightPerCategory = 40;
