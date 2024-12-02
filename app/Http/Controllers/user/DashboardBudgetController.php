@@ -160,10 +160,10 @@ class DashboardBudgetController extends Controller
             // Hitung total balance dari sumber dana
             $total_balance_fund = FundSource::whereIn('id', $fund_source_ids)->sum('balance');
 
-            $seriesData['Realisasi Kegiatan'][] = $kegiatan;
-            $seriesData['Realisasi Pembayaran'][] = $pembayaran;
-            $seriesData['Proyeksi'][] = $dept_planned;
-            $seriesData['Sisa'][] = $total_balance_fund - ($kegiatan + $pembayaran + $dept_planned);
+            $seriesData['Realisasi Kegiatan'][] = intval($kegiatan);
+            $seriesData['Realisasi Pembayaran'][] = intval($pembayaran);
+            $seriesData['Proyeksi'][] = intval($dept_planned);
+            $seriesData['Sisa'][] = intval($total_balance_fund - ($kegiatan + $pembayaran + $dept_planned));
         }
 
         // Format data series untuk Highcharts
