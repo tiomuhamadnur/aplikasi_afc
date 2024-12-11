@@ -90,7 +90,7 @@ class FundSourceDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([6, 'desc'])
+                    ->orderBy([7, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -107,6 +107,11 @@ class FundSourceDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
             Column::make('fund.code')->title('Fund Code'),
             Column::make('fund.type')->title('Type'),
             Column::make('fund.name')->title('Fund Name'),
@@ -117,11 +122,6 @@ class FundSourceDataTable extends DataTable
             Column::make('end_period')->title('End Period'),
             Column::make('user.name')->title('Updated By'),
             Column::computed('updated_at')->title('Updated At'),
-            Column::computed('#')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(60)
-                    ->addClass('text-center'),
         ];
     }
 
