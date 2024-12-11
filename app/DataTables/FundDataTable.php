@@ -54,7 +54,7 @@ class FundDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([0, 'desc'])
+                    ->orderBy([1, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -71,16 +71,16 @@ class FundDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
             Column::make('code')->title('Code'),
             Column::make('name')->title('Name'),
             Column::make('type')->title('Type'),
             Column::make('description')->title('Description'),
             Column::make('divisi.code')->title('Division'),
-            Column::computed('#')
-                ->exportable(false)
-                ->printable(false)
-                ->width(60)
-                ->addClass('text-center'),
         ];
     }
 

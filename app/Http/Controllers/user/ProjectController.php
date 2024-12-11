@@ -6,6 +6,7 @@ use App\DataTables\BudgetAbsorptionDataTable;
 use App\DataTables\ProjectDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Departemen;
+use App\Models\Fund;
 use App\Models\FundSource;
 use App\Models\Perusahaan;
 use App\Models\Project;
@@ -18,14 +19,14 @@ class ProjectController extends Controller
 {
     public function index(ProjectDataTable $dataTable, Request $request)
     {
-        $request->validate([
-            'start_period' => 'date|nullable',
-            'end_period' => 'date|nullable',
-        ]);
+        $fund_source_id = $request->fund_source_id ?? null;
+        $project_id = $request->project_id ?? null;
+        $departemen_id = $request->departemen_id ?? null;
+        $type = $request->type ?? null;
+        $hari_ini = Carbon::now();
+        $start_date = $request->start_date ?? $hari_ini->clone()->startOfYear()->toDateString();
+        $end_date = $request->end_date ?? $hari_ini->toDateString();
 
-        $start_period = $request->start_period ?? null;
-        $end_period = $request->end_period ?? $start_period;
-        $hari_ini = Carbon::now()->toDateString();
 
         $fund_source = FundSource::all();
         $relasi_struktur = RelasiStruktur::all();
@@ -35,14 +36,22 @@ class ProjectController extends Controller
 
         return $dataTable->with([
             'hari_ini' => $hari_ini,
-            'start_period' => $start_period,
-            'end_period' => $end_period,
+            'fund_source_id' => $fund_source_id,
+            'departemen_id' => $departemen_id,
+            'type' => $type,
+            'start_period' => $start_date,
+            'end_period' => $end_date,
         ])->render('pages.user.project.index', compact([
             'fund_source',
             'relasi_struktur',
             'departemen',
             'perusahaan',
             'status_budgeting',
+            'fund_source_id',
+            'departemen_id',
+            'type',
+            'start_date',
+            'end_date',
         ]));
     }
 
