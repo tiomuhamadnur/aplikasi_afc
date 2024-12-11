@@ -133,7 +133,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="deleteForm" action="{{ route('project.delete') }}" method="POST" class="forms-sample">
+                    <form id="deleteForm" action="{{ route('budget-absorption.delete') }}" method="POST"
+                        class="forms-sample">
                         @csrf
                         @method('delete')
                         <input type="text" name="id" id="id_delete" hidden>

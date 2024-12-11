@@ -18,6 +18,9 @@ use Yajra\DataTables\Services\DataTable;
 class ProjectDataTable extends DataTable
 {
     protected $hari_ini;
+    protected $fund_source_id;
+    protected $departemen_id;
+    protected $type;
     protected $start_period;
     protected $end_period;
 
@@ -84,15 +87,40 @@ class ProjectDataTable extends DataTable
     {
         $query = $model->with(['fund_source', 'fund_source.fund', 'perusahaan', 'departemen', 'user', 'status_budgeting'])
                     // ->where('departemen_id', auth()->user()->relasi_struktur->departemen_id)
-                    ->whereRelation('fund_source', 'start_period', '<=', $this->hari_ini)
-                    ->whereRelation('fund_source', 'end_period', '>=', $this->hari_ini)
+                    // ->whereRelation('fund_source', 'start_period', '<=', $this->hari_ini)
+                    // ->whereRelation('fund_source', 'end_period', '>=', $this->hari_ini)
                     ->newQuery();
 
-        if($this->start_period != null && $this->end_period != null)
+        // Fund Source
+        if($this->fund_source_id != null)
         {
-            $query->whereDate('start_period', '<=', $this->start_period);
-            $query->whereDate('end_period', '>=', $this->end_period);
+            $query->whereRelation('fund_source', 'id', '=', $this->fund_source_id);
         }
+
+        // Departemen
+        if($this->departemen_id != null)
+        {
+            $query->whereRelation('departemen', 'id', '=', $this->departemen_id);
+        }
+
+        // Type
+        if($this->type != null)
+        {
+            $query->whereRelation('fund_source.fund', 'type', '=', $this->type);
+        }
+
+        // Date
+        if ($this->start_period != null && $this->end_period != null) {
+            $query->where(function ($query) {
+                $query->whereBetween('start_period', [$this->start_period, $this->end_period])
+                    ->orWhereBetween('end_period', [$this->start_period, $this->end_period])
+                    ->orWhere(function ($query) {
+                        $query->where('start_period', '<=', $this->start_period)
+                            ->where('end_period', '>=', $this->end_period);
+                    });
+            });
+        }
+
 
         return $query;
     }
