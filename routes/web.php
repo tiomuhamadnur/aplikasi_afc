@@ -215,6 +215,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::controller(BudgetAbsorptionController::class)->group(function () {
         Route::get('/budget-absorption', 'index')->name('budget-absorption.index');
+        Route::get('/budget-absorption/project/{uuid}/show', 'show')->name('budget-absorption.by_project.show');
         Route::post('/budget-absorption', 'store')->name('budget-absorption.store');
         Route::get('/budget-absorption/{uuid}/edit', 'edit')->name('budget-absorption.edit');
         Route::put('/budget-absorption', 'update')->name('budget-absorption.update');
