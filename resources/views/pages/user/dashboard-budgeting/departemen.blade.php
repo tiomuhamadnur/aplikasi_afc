@@ -6,23 +6,9 @@
 
 @section('content')
     <div class="content-wrapper">
-        <div class="page-header">
-            <h3 class="page-title">
-                <span class="page-title-icon bg-gradient-primary text-white me-2">
-                    <i class="mdi mdi-home"></i>
-                </span> Dashboard Budgeting
-            </h3>
-            <nav aria-label="breadcrumb">
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
-                    </li>
-                </ul>
-            </nav>
-        </div>
         <div class="row">
             <div class="col-md-12 stretch-card grid-margin">
-                <div class="card bg-gradient-primary card-img-holder text-white">
+                <div class="card mrt-dark-grey card-img-holder text-white">
                     <div class="card-body p-1 text-center">
                         <h3>
                             Departemen {{ $departemen->code ?? 'N/A' }}
@@ -34,8 +20,9 @@
         </div>
         <div class="row">
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card mrt-orange card-img-holder text-white">
                     <div class="card-body">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Anggaran
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
@@ -46,8 +33,9 @@
                 </div>
             </div>
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card mrt-blue card-img-holder text-white">
                     <div class="card-body">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Penyerapan <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
                         <h3 class="mb-3">{{ $used_balance }}</h3>
@@ -57,8 +45,9 @@
                 </div>
             </div>
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-warning card-img-holder text-white">
+                <div class="card mrt-green card-img-holder text-white">
                     <div class="card-body">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Proyeksi
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
@@ -69,8 +58,9 @@
                 </div>
             </div>
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card mrt-grey card-img-holder text-white">
                     <div class="card-body">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Sisa
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
@@ -116,14 +106,18 @@
             Highcharts.setOptions({
                 lang: {
                     numericSymbols: ['rb', 'jt', 'M', 'T']
-                }
+                },
+                thousandsSep: '.',
             });
 
+            const colors = ['#88BFF8', '#0053B2', '#43B53A', '#A3AAB1'];
+
+            
             // SETIAP FUND
             // Data categories
             const categoriesFund = @json($categoriesFund);
             const seriesFund = @json($seriesFund);
-
+            const namesFund = @json($namesFund);
 
             const minChartHeight = 400; // Tinggi minimum
             const additionalHeightPerCategory = 40; // Tinggi tambahan per kategori
@@ -137,12 +131,27 @@
                 chart: {
                     type: 'bar',
                 },
+                colors: colors,
                 title: {
-                    text: 'Penyerapan Anggaran Tiap Fund (Dept. {{ $departemen->code }})',
+                    text: 'Penyerapan Anggaran Tiap Fund (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
                     align: 'left',
                 },
                 xAxis: {
                     categories: categoriesFund,
+                    labels: {
+                        formatter: function() {
+                            return '<span title="' + namesFund[this.pos] + '">' + this.value + '</span>';
+                        },
+                        useHTML: true,  // Memastikan HTML digunakan untuk menampilkan nama fund saat dihover
+                    },
+                    tooltip: {
+                        // Menggunakan pointFormatter untuk menampilkan tooltip yang lebih terstruktur
+                        pointFormatter: function() {
+                            return '<div style="padding: 5px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px; font-size: 14px;">' +
+                                '<b>' + namesFund[this.index] + '</b>' +
+                                '</div>';
+                        },
+                    },
                 },
                 yAxis: {
                     title: {
@@ -151,7 +160,7 @@
                     stackLabels: {
                         enabled: true,
                         formatter: function() {
-                            return Highcharts.numberFormat(this.total, 0, ',', '.');
+                            return 'Rp. ' + Highcharts.numberFormat(this.total, 0, ',', '.');
                         },
                     },
                 },
@@ -162,7 +171,7 @@
                 },
                 tooltip: {
                     formatter: function() {
-                        return '<b>' + this.series.name + '</b>: ' +
+                        return '<b>' + this.series.name + '</b>: Rp. ' +
                             Highcharts.numberFormat(this.y, 0, ',', '.');
                     }
                 },
@@ -172,13 +181,14 @@
                         dataLabels: {
                             enabled: true,
                             formatter: function() {
-                                return Highcharts.numberFormat(this.y, 0, ',', '.');
+                                return 'Rp. ' + Highcharts.numberFormat(this.y, 0, ',', '.');
                             }
                         },
                     },
                 },
                 series: seriesFund,
             });
+
 
 
             // CAPEX
@@ -191,8 +201,9 @@
                         alpha: 45
                     }
                 },
+                colors: colors, // Menambahkan warna khusus
                 title: {
-                    text: 'CAPEX (Dept. {{ $departemen->code }})',
+                    text: 'CAPEX (Dept. {{ $departemen->code }})', // Konten tetap, hanya format chart yang berubah
                     align: 'left'
                 },
                 subtitle: {
@@ -201,32 +212,33 @@
                 },
                 tooltip: {
                     formatter: function() {
-                        return '<b>' + this.series.name + '</b>: ' +
-                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                        return '<b>' + this.point.name + '</b>: Rp. ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.') +
+                            ' (' + Highcharts.numberFormat(this.percentage, 2, ',', '.') + '%)';
                     }
                 },
                 plotOptions: {
-                    series: {
+                    pie: {
                         allowPointSelect: true,
                         cursor: 'pointer',
-                        dataLabels: [{
+                        dataLabels: {
                             enabled: true,
-                            distance: 20
-                        }, {
-                            enabled: true,
-                            distance: -40,
-                            format: '{point.percentage:.1f}%',
+                            distance: 20, // Jarak label dari chart
+                            format: '{point.percentage:.2f}%', // Tampilkan persentase
                             style: {
                                 fontSize: '1.2em',
-                                textOutline: 'none',
-                                opacity: 0.7
-                            },
-                            filter: {
-                                operator: '>',
-                                property: 'percentage',
-                                value: 10
+                                textOutline: 'none'
                             }
-                        }]
+                        },
+                        showInLegend: true // Menampilkan legend di bawah chart
+                    }
+                },
+                legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal',
+                    itemStyle: {
+                        fontSize: '1em'
                     }
                 },
                 series: [{
@@ -246,8 +258,9 @@
                         alpha: 45
                     }
                 },
+                colors: colors, // Menambahkan warna khusus
                 title: {
-                    text: 'OPEX (Dept. {{ $departemen->code }})',
+                    text: 'OPEX (Dept. {{ $departemen->code }})', // Konten tetap, hanya format chart yang berubah
                     align: 'left'
                 },
                 subtitle: {
@@ -256,32 +269,33 @@
                 },
                 tooltip: {
                     formatter: function() {
-                        return '<b>' + this.series.name + '</b>: ' +
-                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                        return '<b>' + this.point.name + '</b>: Rp. ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.') +
+                            ' (' + Highcharts.numberFormat(this.percentage, 2, ',', '.') + '%)';
                     }
                 },
                 plotOptions: {
-                    series: {
+                    pie: {
                         allowPointSelect: true,
                         cursor: 'pointer',
-                        dataLabels: [{
+                        dataLabels: {
                             enabled: true,
-                            distance: 20
-                        }, {
-                            enabled: true,
-                            distance: -40,
-                            format: '{point.percentage:.1f}%',
+                            distance: 20, // Jarak label dari chart
+                            format: '{point.percentage:.2f}%', // Tampilkan persentase
                             style: {
                                 fontSize: '1.2em',
-                                textOutline: 'none',
-                                opacity: 0.7
-                            },
-                            filter: {
-                                operator: '>',
-                                property: 'percentage',
-                                value: 10
+                                textOutline: 'none'
                             }
-                        }]
+                        },
+                        showInLegend: true // Menampilkan legend di bawah chart
+                    }
+                },
+                legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal',
+                    itemStyle: {
+                        fontSize: '1em'
                     }
                 },
                 series: [{
@@ -301,8 +315,9 @@
                         alpha: 45
                     }
                 },
+                colors: colors, // Menambahkan warna khusus
                 title: {
-                    text: 'TOTAL (Dept. {{ $departemen->code }})',
+                    text: 'TOTAL (Dept. {{ $departemen->code }})', // Konten tetap, hanya format chart yang berubah
                     align: 'left'
                 },
                 subtitle: {
@@ -311,32 +326,33 @@
                 },
                 tooltip: {
                     formatter: function() {
-                        return '<b>' + this.series.name + '</b>: ' +
-                            Highcharts.numberFormat(this.y, 0, ',', '.');
+                        return '<b>' + this.point.name + '</b>: Rp. ' +
+                            Highcharts.numberFormat(this.y, 0, ',', '.') +
+                            ' (' + Highcharts.numberFormat(this.percentage, 2, ',', '.') + '%)';
                     }
                 },
                 plotOptions: {
-                    series: {
+                    pie: {
                         allowPointSelect: true,
                         cursor: 'pointer',
-                        dataLabels: [{
+                        dataLabels: {
                             enabled: true,
-                            distance: 20
-                        }, {
-                            enabled: true,
-                            distance: -40,
-                            format: '{point.percentage:.1f}%',
+                            distance: 20, // Jarak label dari chart
+                            format: '{point.percentage:.2f}%', // Tampilkan persentase
                             style: {
                                 fontSize: '1.2em',
-                                textOutline: 'none',
-                                opacity: 0.7
-                            },
-                            filter: {
-                                operator: '>',
-                                property: 'percentage',
-                                value: 10
+                                textOutline: 'none'
                             }
-                        }]
+                        },
+                        showInLegend: true // Menampilkan legend di bawah chart
+                    }
+                },
+                legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal',
+                    itemStyle: {
+                        fontSize: '1em'
                     }
                 },
                 series: [{
@@ -344,6 +360,7 @@
                     data: seriesCapexOpexTotal
                 }]
             });
+
         });
     </script>
 @endsection

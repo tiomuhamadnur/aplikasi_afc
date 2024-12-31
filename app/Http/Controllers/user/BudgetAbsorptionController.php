@@ -172,6 +172,29 @@ class BudgetAbsorptionController extends Controller
         return redirect()->route('project.show', $project->uuid)->withNotify('Data berhasil diperbaharui');
     }
 
+    public function show(string $uuid, BudgetAbsorptionDataTable $dataTable, Request $request)
+    {
+        $project = Project::where('uuid', $uuid)->firstOrFail();
+
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+
+        $start_date = $request->start_date ?? null;
+        $end_date = $request->end_date ?? $start_date;
+
+        return $dataTable->with([
+            'project_id' => $project->id,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ])->render('pages.user.budget-absorption.by_project', compact([
+            'project',
+            'start_date',
+            'end_date',
+        ]));
+    }
+
     public function check_fund_source_budget($fund_source_id, $value)
     {
         $fund_source = FundSource::findOrFail($fund_source_id);
@@ -193,6 +216,6 @@ class BudgetAbsorptionController extends Controller
         $data = BudgetAbsorption::findOrFail($request->id);
         $data->delete();
 
-        return redirect()->route('budget-absorption.index')->withNotify('Data berhasil dihapus');
+        return redirect()->route('budget-absorption.by_project.show', $data->project->uuid)->withNotify('Data berhasil dihapus');
     }
 }

@@ -116,7 +116,7 @@ class DashboardBudgetController extends Controller
         // Buat array categoriesDepartemen dengan nama dan URL masing-masing
         $categoriesDepartemen = $departments->map(function ($departemen) {
             return [
-                'name' => $departemen->code,
+                'name' => 'Dept. ' . $departemen->code,
                 'url' => route('dashboard-budget.departemen', ['departemen_uuid' => $departemen->uuid]),
             ];
         })->toArray();
@@ -189,6 +189,7 @@ class DashboardBudgetController extends Controller
                     ->get();
 
         $categoriesFund = [];
+        $namesFund = [];
         $realisasiKegiatan = [];
         $realisasiPembayaran = [];
         $proyeksiFund = []; // Placeholder untuk proyeksi
@@ -196,6 +197,7 @@ class DashboardBudgetController extends Controller
 
         foreach ($funds as $fund) {
             $categoriesFund[] = $fund->code; // Gunakan kode Fund sebagai kategori
+            $namesFund[] = $fund->name;
 
             // Menghitung total balance untuk Fund
             $totalBalance = $fund->fund_source->sum('balance');
@@ -268,6 +270,7 @@ class DashboardBudgetController extends Controller
             'seriesCapex' => $seriesCapex,
             'seriesCapexOpexTotal' => $seriesCapexOpexTotal,
             'categoriesFund' => $categoriesFund,
+            'namesFund' => $namesFund,
             'seriesFund' => $seriesFund,
         ]);
     }
@@ -377,13 +380,15 @@ class DashboardBudgetController extends Controller
         ->get();
 
         $categoriesFund = [];
+        $namesFund = [];
         $realisasiKegiatan = [];
         $realisasiPembayaran = [];
         $proyeksiFund = []; // Placeholder untuk proyeksi
         $sisa = [];
 
         foreach ($funds as $fund) {
-            $categoriesFund[] = $fund->code; // Gunakan kode Fund sebagai kategori
+            $categoriesFund[] = $fund->code;
+            $namesFund[] = $fund->name;
 
             // Menghitung total balance untuk Fund
             $totalBalance = $fund->fund_source->sum('balance');
@@ -454,6 +459,7 @@ class DashboardBudgetController extends Controller
             'seriesCapex' => $seriesCapex,
             'seriesCapexOpexTotal' => $seriesCapexOpexTotal,
             'categoriesFund' => $categoriesFund,
+            'namesFund' => $namesFund,
             'seriesFund' => $seriesFund,
         ]);
     }

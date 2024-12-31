@@ -41,7 +41,7 @@ class ProjectDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
         ->addColumn('detail', function($item) {
-            $showRoute = route('project.show', $item->uuid);
+            $showRoute = route('budget-absorption.by_project.show', $item->uuid);
             $showButton = "<button type='button' class='btn btn-gradient-primary btn-rounded btn-icon'
                     onclick=\"window.location.href='{$showRoute}'\" title='Show'>
                 <i class='text-white mdi mdi-eye'></i>

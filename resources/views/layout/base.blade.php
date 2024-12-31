@@ -21,6 +21,27 @@
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
+    <style>
+        .mrt-blue {
+            background-color: #0053B2;
+        }
+
+        .mrt-green {
+            background-color: #43B53A;
+        }
+
+        .mrt-orange {
+            background-color: #FF834E;
+        }
+
+        .mrt-grey {
+            background-color: #A3AAB1;
+        }
+
+        .mrt-dark-grey {
+            background-color: #474747;
+        }
+    </style>
 </head>
 
 <body>
