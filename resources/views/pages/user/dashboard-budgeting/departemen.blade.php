@@ -13,7 +13,10 @@
                         <h3>
                             Departemen {{ $departemen->code ?? 'N/A' }}
                         </h3>
-                        <h4>Update: {{ $today }}</h4>
+                        <h4>{{ $today }} <button data-bs-toggle="modal" data-bs-target="#evaluasiModal" class="bg-gradient-primary text-white" title="Pilih tanggal evaluasi">
+                            <i class="mdi mdi-calendar"></i>
+                            </button>
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -93,6 +96,41 @@
             </div>
         </div>
     </div>
+
+    <!-- Evaluasi Modal -->
+    <div class="modal fade" id="evaluasiModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Evaluasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="evaluasiForm" action="{{ route('dashboard-budget.departemen') }}" method="GET"
+                        class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <input type="text" name="departemen_uuid" value="{{ $departemen->uuid }}" hidden>
+                            <label for="start_date">Pilih Periode</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" placeholder="Start Date"
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
+                                <input type="date" class="form-control" placeholder="End Date"
+                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('dashboard-budget.departemen', ['departemen_uuid' => $departemen->uuid]) }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="evaluasiForm" class="btn btn-gradient-primary">Evaluate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Evaluasi Modal -->
 @endsection
 
 @section('javascript')
@@ -112,7 +150,7 @@
 
             const colors = ['#88BFF8', '#0053B2', '#43B53A', '#A3AAB1'];
 
-            
+
             // SETIAP FUND
             // Data categories
             const categoriesFund = @json($categoriesFund);

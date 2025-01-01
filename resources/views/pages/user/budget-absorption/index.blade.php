@@ -174,6 +174,15 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="tom-select-class" name="status" id="status">
+                                <option value="" selected disabled>- select status -</option>
+                                <option value="Planned" @if($status == 'Planned') selected @endif>Planned</option>
+                                <option value="Realisasi Kegiatan" @if($status == 'Realisasi Kegiatan') selected @endif>Realisasi Kegiatan</option>
+                                <option value="Realisasi Pembayaran" @if($status == 'Realisasi Pembayaran') selected @endif>Realisasi Pembayaran</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="start_date">Period</label>
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"

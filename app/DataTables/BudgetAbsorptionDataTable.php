@@ -20,6 +20,7 @@ class BudgetAbsorptionDataTable extends DataTable
     protected $project_id;
     protected $departemen_id;
     protected $type;
+    protected $status;
     protected $start_date;
     protected $end_date;
 
@@ -104,12 +105,17 @@ class BudgetAbsorptionDataTable extends DataTable
 
         if($this->departemen_id != null)
         {
-            $query->where('departemen_id', $this->departemen_id);
+            $query->whereRelation('project.departemen', 'id', '=', $this->departemen_id);
         }
 
         if($this->type != null)
         {
             $query->whereRelation('project.fund_source.fund', 'type', '=', $this->type);
+        }
+
+        if($this->status != null)
+        {
+            $query->where('status', $this->status);
         }
 
         if($this->start_date != null && $this->end_date != null)
@@ -129,7 +135,7 @@ class BudgetAbsorptionDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([7, 'desc'])
+                    ->orderBy([13, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -158,7 +164,7 @@ class BudgetAbsorptionDataTable extends DataTable
             Column::make('name')->title('Activity Name'),
             // Column::make('description')->title('Description'),
             Column::computed('value')->title('Activity Value'),
-            Column::make('activity_date')->title('Activity Date'),
+            Column::make('activity_date')->sortable(true)->title('Activity Date'),
             Column::make('paid_date')->title('Paid Date'),
             Column::make('po_number_sap')->title('PO Number SAP'),
             Column::make('project.departemen.code')->title('Department'),
