@@ -9,6 +9,7 @@ use App\Models\Departemen;
 use App\Models\Fund;
 use App\Models\FundSource;
 use App\Models\Project;
+use App\Models\StatusBudgeting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,7 @@ class BudgetAbsorptionController extends Controller
         $project_id = $request->project_id ?? null;
         $departemen_id = $request->departemen_id ?? null;
         $type = $request->type ?? null;
+        $status = $request->status ?? null;
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
 
@@ -34,6 +36,7 @@ class BudgetAbsorptionController extends Controller
             'project_id' => $project_id,
             'departemen_id' => $departemen_id,
             'type' => $type,
+            'status' => $status,
             'start_date' => $start_date,
             'end_date' => $end_date,
         ])->render('pages.user.budget-absorption.index', compact([
@@ -44,6 +47,7 @@ class BudgetAbsorptionController extends Controller
             'project_id',
             'departemen_id',
             'type',
+            'status',
             'start_date',
             'end_date',
         ]));

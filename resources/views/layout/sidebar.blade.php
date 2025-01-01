@@ -52,9 +52,9 @@
                             Source</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('project.index') }}">Projects</a>
                     </li>
-                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ route('budget-absorption.index') }}">Budget
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('budget-absorption.index') }}">Budget
                             Absorption</a>
-                    </li> --}}
+                    </li>
                     <li class="nav-item"> <a class="nav-link" href="{{ route('dashboard-budget.index') }}">Dashboard
                             Divisi</a>
                     </li>

@@ -17,28 +17,52 @@ class DashboardBudgetController extends Controller
 {
     public function index(Request $request)
     {
-        $sekarang = Carbon::now();
-        $today = $sekarang->isoFormat('dddd, D MMM Y - HH:mm:ss') . ' WIB';
-        $hari_ini = $sekarang->toDateString();
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        if ($request->start_date && $request->end_date) {
+            $startYear = Carbon::parse($request->start_date)->year;
+            $endYear = Carbon::parse($request->end_date)->year;
+
+            if ($startYear !== $endYear) {
+                return redirect()->back()->withNotifyerror('Tanggal evaluasi harus di tahun yang sama');
+            }
+        }
+
+        $end_date = $request->end_date;
+
+        $sekarang = $end_date ? Carbon::parse($end_date) : Carbon::now();
+        $year = $sekarang->isoFormat('Y');
+
+
+        $start_date = $request->start_date ?? Carbon::createFromDate($year)->startOfYear();
+        $mulai = Carbon::parse($start_date)->isoFormat('D MMM Y');
+        $akhir = $sekarang->isoFormat('D MMM Y');
+
+        $today = $mulai . ' - ' . $akhir;
+
+        $range = [$start_date, $end_date];
         $divisi_id = auth()->user()->relasi_struktur->divisi_id;
 
         // BALANCE TOTAL
         $balance_total = FundSource::whereRelation('fund.divisi', 'id', '=', $divisi_id)
-                        ->whereDate('start_period', '<=', $hari_ini)
-                        ->whereDate('end_period', '>=', $hari_ini)
+                        ->whereYear('start_period',  $year)
+                        ->whereYear('end_period', $year)
                         ->get();
 
         $total_balance = $balance_total->sum('balance');
 
         $used_balance = BudgetAbsorption::whereRelation('project.fund_source.fund.divisi', 'id', '=', $divisi_id)
-                        ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                        ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                        ->whereBetween('activity_date', $range)
+                        ->whereBetween('paid_date', $range)
                         ->whereIn('status', ['Realisasi Kegiatan', 'Realisasi Pembayaran'])
                         ->sum('value');
 
         $planned_balance = BudgetAbsorption::whereRelation('project.fund_source.fund.divisi', 'id', '=', $divisi_id)
-                        ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                        ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                        ->whereBetween('activity_date', $range)
+                        ->whereBetween('paid_date', $range)
                         ->where('status', 'Planned')
                         ->sum('value');
 
@@ -48,8 +72,8 @@ class DashboardBudgetController extends Controller
         // OPEX & CAPEX
         $opex = BudgetAbsorption::whereRelation('project.fund_source.fund.divisi', 'id', '=', $divisi_id)
                         ->whereRelation('project.fund_source.fund', 'type', '=', 'opex')
-                        ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                        ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                        ->whereBetween('activity_date', $range)
+                        ->whereBetween('paid_date', $range)
                         ->get();
 
         $balance_opex = $balance_total->filter(function ($item) {
@@ -71,8 +95,8 @@ class DashboardBudgetController extends Controller
 
         $capex = BudgetAbsorption::whereRelation('project.fund_source.fund.divisi', 'id', '=', $divisi_id)
                         ->whereRelation('project.fund_source.fund', 'type', '=', 'capex')
-                        ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                        ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                        ->whereBetween('activity_date', $range)
+                        ->whereBetween('paid_date', $range)
                         ->get();
 
         $balance_capex = $balance_total->filter(function ($item) {
@@ -132,26 +156,26 @@ class DashboardBudgetController extends Controller
         foreach ($departments as $department) {
             $kegiatan = BudgetAbsorption::where('status', 'Realisasi Kegiatan')
                 ->whereRelation('project.departemen', 'id', $department->id)
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->sum('value');
 
             $pembayaran = BudgetAbsorption::where('status', 'Realisasi Pembayaran')
                 ->whereRelation('project.departemen', 'id', $department->id)
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->sum('value');
 
             $dept_planned = BudgetAbsorption::where('status', 'Planned')
                 ->whereRelation('project.departemen', 'id', $department->id)
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->sum('value');
 
             // Ambil ID sumber dana dari BudgetAbsorption
             $fund_source_ids = BudgetAbsorption::whereRelation('project.departemen', 'id', $department->id)
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->get() // Ambil seluruh data
                 ->pluck('project.fund_source.id') // Akses relasi nested
                 ->unique()
@@ -178,15 +202,19 @@ class DashboardBudgetController extends Controller
 
         // TIAP FUND
         $funds = Fund::with([
-                        'fund_source.project.budget_absorption' => function ($query) use ($hari_ini) {
-                            $query->whereHas('project.fund_source', function ($q) use ($hari_ini) {
-                                $q->where('start_period', '<=', $hari_ini)
-                                        ->where('end_period', '>=', $hari_ini);
-                            });
-                        }
-                    ])
-                    ->whereRelation('divisi', 'id', '=', $divisi_id)
-                    ->get();
+            'fund_source.project.budget_absorption' => function ($query) use ($year) {
+                $query->whereHas('project.fund_source', function ($q) use ($year) {
+                    $q->whereYear('start_period',  $year)
+                    ->whereYear('end_period', $year);
+                });
+            }
+        ])
+        ->whereHas('fund_source', function ($query) use ($year) {
+            $query->whereYear('start_period', $year)
+                ->whereYear('end_period', $year);
+        })
+        ->whereRelation('divisi', 'id', '=', $divisi_id)
+        ->get();
 
         $categoriesFund = [];
         $namesFund = [];
@@ -257,9 +285,10 @@ class DashboardBudgetController extends Controller
             ],
         ];
 
-
         return view('pages.user.dashboard-budgeting.index', [
             'today' => $today,
+            'start_date' => Carbon::parse($start_date)->isoFormat('YYYY-MM-DD'),
+            'end_date' => $sekarang->isoFormat('YYYY-MM-DD'),
             'total_balance' => RupiahFormat::currency($total_balance),
             'used_balance' => RupiahFormat::currency($used_balance),
             'planned_balance' => RupiahFormat::currency($planned_balance),
@@ -277,11 +306,33 @@ class DashboardBudgetController extends Controller
 
     public function departemen(Request $request)
     {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        if ($request->start_date && $request->end_date) {
+            $startYear = Carbon::parse($request->start_date)->year;
+            $endYear = Carbon::parse($request->end_date)->year;
+
+            if ($startYear !== $endYear) {
+                return redirect()->back()->withNotifyerror('Tanggal evaluasi harus di tahun yang sama');
+            }
+        }
+
         $departemen = Departemen::where('uuid', $request->departemen_uuid)->firstOrFail();
         $departemen_id = $departemen->id;
-        $sekarang = Carbon::now();
-        $today = $sekarang->isoFormat('dddd, D MMM Y - HH:mm:ss') . ' WIB';
-        $hari_ini = $sekarang->toDateString();
+
+        $end_date = $request->end_date;
+        $sekarang = $end_date ? Carbon::parse($end_date) : Carbon::now();
+        $year = $sekarang->isoFormat('Y');
+        $start_date = $request->start_date ?? Carbon::createFromDate($year)->startOfYear();
+        $mulai = Carbon::parse($start_date)->isoFormat('D MMM Y');
+        $akhir = $sekarang->isoFormat('D MMM Y');
+        $today = $mulai . ' - ' . $akhir;
+        $range = [$start_date, $end_date];
+
+        // $hari_ini = $sekarang->toDateString();
 
         // BALANCE TOTAL
         $fund_source_ids = Project::where('departemen_id', $departemen_id)
@@ -289,21 +340,21 @@ class DashboardBudgetController extends Controller
                 ->toArray();
 
         $balance_total = FundSource::whereIn('id', $fund_source_ids)
-                ->whereDate('start_period', '<=', $hari_ini)
-                ->whereDate('end_period', '>=', $hari_ini)
+                ->whereYear('start_period',  $year)
+                ->whereYear('end_period',  $year)
                 ->get();
 
         $total_balance = $balance_total->sum('balance');
 
         $used_balance = BudgetAbsorption::whereRelation('project.departemen', 'id', '=', $departemen_id)
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->whereIn('status', ['Realisasi Kegiatan', 'Realisasi Pembayaran'])
                 ->sum('value');
 
         $planned_balance = BudgetAbsorption::whereRelation('project.departemen', 'id', '=', $departemen_id)
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->where('status', 'Planned')
                 ->sum('value');
 
@@ -313,8 +364,8 @@ class DashboardBudgetController extends Controller
         // OPEX & CAPEX
         $opex = BudgetAbsorption::whereRelation('project.departemen', 'id', '=', $departemen_id)
                 ->whereRelation('project.fund_source.fund', 'type', '=', 'opex')
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->get();
 
         $balance_opex = $balance_total->filter(function ($item) {
@@ -336,8 +387,8 @@ class DashboardBudgetController extends Controller
 
         $capex = BudgetAbsorption::whereRelation('project.departemen', 'id', '=', $departemen_id)
                 ->whereRelation('project.fund_source.fund', 'type', '=', 'capex')
-                ->whereRelation('project.fund_source', 'start_period', '<=', $hari_ini)
-                ->whereRelation('project.fund_source', 'end_period', '>=', $hari_ini)
+                ->whereBetween('activity_date', $range)
+                ->whereBetween('paid_date', $range)
                 ->get();
 
         $balance_capex = $balance_total->filter(function ($item) {
@@ -369,15 +420,20 @@ class DashboardBudgetController extends Controller
 
         // TIAP FUND
         $funds = Fund::with([
-            'fund_source.project.budget_absorption' => function ($query) use ($hari_ini) {
-                $query->whereHas('project.fund_source', function ($q) use ($hari_ini) {
-                    $q->where('start_period', '<=', $hari_ini)
-                        ->where('end_period', '>=', $hari_ini);
+            'fund_source.project.budget_absorption' => function ($query) use ($year) {
+                $query->whereHas('project.fund_source', function ($q) use ($year) {
+                    $q->whereYear('start_period', $year)
+                    ->whereYear('end_period', $year);
                 });
             }
         ])
+        ->whereRelation('fund_source', function ($query) use ($year) {
+            $query->whereYear('start_period', $year)
+                ->whereYear('end_period', $year);
+        })
         ->whereRelation('fund_source.project.departemen', 'id', '=', $departemen_id)
         ->get();
+
 
         $categoriesFund = [];
         $namesFund = [];
@@ -450,6 +506,8 @@ class DashboardBudgetController extends Controller
 
         return view('pages.user.dashboard-budgeting.departemen', [
             'today' => $today,
+            'start_date' => Carbon::parse($start_date)->isoFormat('YYYY-MM-DD'),
+            'end_date' => $sekarang->isoFormat('YYYY-MM-DD'),
             'departemen' => $departemen,
             'total_balance' => RupiahFormat::currency($total_balance),
             'used_balance' => RupiahFormat::currency($used_balance),
