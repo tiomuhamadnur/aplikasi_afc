@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Helpers\WhatsAppHelper;
+use App\Http\Controllers\mail\ExpiringPermitMailController;
+use App\Mail\ExpiringPermitMail;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class MonitoringPermit extends Model
@@ -103,6 +106,58 @@ class MonitoringPermit extends Model
 
         }
     }
+
+
+    public static function notifyExpiringPermitsByEmail()
+    {
+        $today = Carbon::today();
+        $hari_notifikasi = 2;
+        $jabatan_id_notifikasi = 6;
+        $startDate = $today->copy()->addDays(1);
+        $endDate = $today->copy()->addDays($hari_notifikasi);
+
+        $departemen_ids = Departemen::distinct()->pluck('id')->toArray();
+        $results = [];
+
+        foreach ($departemen_ids as $departemen_id) {
+            // Hitung jumlah permits yang akan expired
+            $jumlah = self::query()
+                ->where('departemen_id', $departemen_id)
+                ->whereBetween('tanggal_expired', [$startDate, $endDate])
+                ->where('status', 'active')
+                ->count();
+
+            if ($jumlah > 0) {
+                $departemen = Departemen::find($departemen_id)->name;
+                $url = route('monitoring-permit.index', [
+                    'start_date' => $startDate->toDateString(),
+                    'end_date' => $endDate->toDateString(),
+                ]);
+
+                // Ambil semua user yang relevan
+                $users = User::whereRelation('relasi_struktur.departemen', 'id', '=', $departemen_id)
+                    ->whereRelation('jabatan', 'id', '=', $jabatan_id_notifikasi)
+                    ->with(['relasi_struktur.seksi', 'gender'])
+                    ->get();
+
+                foreach ($users as $user) {
+                    $results[] = [
+                        'gender' => $user->gender->id == 1 ? "Bapak" : "Ibu",
+                        'name' => $user->name,
+                        'departemen' => $departemen,
+                        'seksi' => $user->relasi_struktur->seksi->name ?? null,
+                        'jumlah' => $jumlah,
+                        'url' => $url,
+                        'no_hp' => $user->no_hp,
+                        'email' => $user->email,
+                    ];
+                }
+            }
+        }
+
+        return $results;
+    }
+
 
 
 
