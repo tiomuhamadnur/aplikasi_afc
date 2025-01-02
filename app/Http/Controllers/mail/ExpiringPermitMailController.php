@@ -17,6 +17,7 @@ class ExpiringPermitMailController extends Controller
     {
         MonitoringPermit::updateStatus();
         $data = $this->get_data();
+        // dd($data);
 
         foreach($data as $item) {
             $mailData = [
@@ -29,7 +30,11 @@ class ExpiringPermitMailController extends Controller
             Mail::to($item['email'])->send(new ExpiringPermitMail($mailData));
         }
 
-        return response()->json(['message' => 'Permit status updated successfully']);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Permit status updated successfully',
+            'data' => $data,
+        ]);
     }
 
     public function get_data()
