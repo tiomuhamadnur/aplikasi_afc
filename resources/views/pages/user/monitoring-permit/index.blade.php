@@ -52,7 +52,9 @@
                             <select class="form-control form-control-lg" name="tipe_permit_id">
                                 <option value="" selected disabled>- pilih tipe permit -</option>
                                 @foreach ($tipe_permit as $item)
-                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
+                                    <option value="{{ $item->id }}" @if($item->id == $tipe_permit_id) selected @endif>
+                                        {{ $item->code }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -61,7 +63,8 @@
                             <select class="form-control form-control-lg" name="tipe_pekerjaan_id">
                                 <option value="" selected disabled>- pilih tipe pekerjaan -</option>
                                 @foreach ($tipe_pekerjaan as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->code }})
+                                    <option value="{{ $item->id }}" @if($item->id == $tipe_pekerjaan_id) selected @endif>
+                                        {{ $item->name }} ({{ $item->code }})
                                     </option>
                                 @endforeach
                             </select>
@@ -71,8 +74,10 @@
                             <select class="form-control form-control-lg" name="relasi_area_id">
                                 <option value="" selected disabled>- pilih area -</option>
                                 @foreach ($area as $item)
-                                    <option value="{{ $item->id }}">{{ $item->lokasi->name }} -
-                                        {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}</option>
+                                    <option value="{{ $item->id }}" @if($item->id == $relasi_area_id) selected @endif>
+                                        {{ $item->lokasi->name }} -
+                                        {{ $item->sub_lokasi->name }} - {{ $item->detail_lokasi->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -80,8 +85,8 @@
                             <label for="">Status</label>
                             <select class="form-control form-control-lg" name="status">
                                 <option value="" selected disabled>- pilih status -</option>
-                                <option value="active">Active</option>
-                                <option value="expired">Expired</option>
+                                <option value="active" @if($status == 'active') selected @endif>Active</option>
+                                <option value="expired" @if($status == 'expired') selected @endif>Expired</option>
                             </select>
                         </div>
                         <div class="form-group">

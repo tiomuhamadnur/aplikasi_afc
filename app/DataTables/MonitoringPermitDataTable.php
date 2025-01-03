@@ -58,11 +58,10 @@ class MonitoringPermitDataTable extends DataTable
                     <i class='mdi mdi-delete'></i>
                 </button>";
 
-                $editButton = "<a href='{$editRoute}' title='Edit'>
-                    <button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'>
-                        <i class='text-white mdi mdi-lead-pencil'></i>
-                    </button>
-                </a>";
+                $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                    onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                    <i class='text-white mdi mdi-lead-pencil'></i>
+                </button>";
 
                 return $editButton . $deleteModal;
             })
@@ -78,7 +77,9 @@ class MonitoringPermitDataTable extends DataTable
             'tipe_pekerjaan',
             'departemen',
             'relasi_area.sub_lokasi'
-            ])->where('departemen_id', $departemen_id)->newQuery();
+        ])->where('departemen_id', $departemen_id)
+        ->orderBy('tanggal_expired', 'asc')
+        ->newQuery();
 
         // Filter
         if($this->relasi_area_id != null)
@@ -118,7 +119,7 @@ class MonitoringPermitDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([1, 'asc'])
+                    // ->orderBy([3, 'asc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -135,30 +136,41 @@ class MonitoringPermitDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('tipe_permit.code')->title('Tipe Permit'),
-            Column::make('tanggal_expired')->title('Tanggal Expired'),
-            Column::computed('sisa_hari')
-                    ->exportable(true)
-                    ->printable(true)
-                    ->width(20)
-                    ->addClass('text-center')
-                    ->searchable(true),
-            Column::make('nomor')->title('Nomor'),
-            Column::make('name')->title('Nama Pekerjaan'),
-            Column::make('departemen.code')->title('Departemen'),
-            Column::make('relasi_area.sub_lokasi.name')->title('Area'),
-            Column::computed('status')
-                    ->exportable(true)
-                    ->printable(true)
-                    ->width(20)
-                    ->addClass('text-center')
-                    ->searchable(true),
-            Column::make('tipe_pekerjaan.code')->title('Tipe Pekerjaan'),
             Column::computed('#')
                     ->exportable(false)
                     ->printable(false)
                     ->width(30)
+                    ->sortable(false)
                     ->addClass('text-center'),
+            Column::make('tipe_permit.code')
+                    ->title('Tipe Permit')
+                    ->sortable(false),
+            Column::make('tanggal_expired')
+                    ->title('Tanggal Expired')
+                    ->sortable(false),
+            Column::computed('sisa_hari')
+                    ->addClass('text-center')
+                    ->searchable(true)
+                    ->sortable(false),
+            Column::computed('status')
+                    ->addClass('text-center')
+                    ->searchable(true)
+                    ->sortable(false),
+            Column::make('nomor')
+                    ->title('Nomor')
+                    ->sortable(false),
+            Column::make('name')
+                    ->title('Nama Pekerjaan')
+                    ->sortable(false),
+            Column::make('departemen.code')
+                    ->title('Departemen')
+                    ->sortable(false),
+            Column::make('relasi_area.sub_lokasi.name')
+                    ->title('Area')
+                    ->sortable(false),
+            Column::make('tipe_pekerjaan.code')
+                    ->title('Tipe Pekerjaan')
+                    ->sortable(false),
         ];
     }
 

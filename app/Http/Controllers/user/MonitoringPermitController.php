@@ -28,7 +28,7 @@ class MonitoringPermitController extends Controller
         $tipe_permit_id = $request->tipe_permit_id ?? null;
         $tipe_pekerjaan_id = $request->tipe_pekerjaan_id ?? null;
         $relasi_area_id = $request->relasi_area_id ?? null;
-        $status = $request->status ?? null;
+        $status = $request->status ?? 'active';
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
 
@@ -48,23 +48,14 @@ class MonitoringPermitController extends Controller
             'area',
             'tipe_permit',
             'tipe_pekerjaan',
+            'tipe_permit_id',
+            'tipe_pekerjaan_id',
+            'relasi_area_id',
+            'status',
+            'start_date',
+            'end_date',
         ]));
     }
-
-    // public function index()
-    // {
-    //     $monitoring_permit = MonitoringPermit::where('departemen_id', auth()->user()->relasi_struktur->departemen->id)->get();
-    //     $area = RelasiArea::all();
-    //     $tipe_permit = TipePermit::all();
-    //     $tipe_pekerjaan = TipePekerjaan::all();
-
-    //     return view('pages.user.monitoring-permit.index', compact([
-    //         'monitoring_permit',
-    //         'area',
-    //         'tipe_permit',
-    //         'tipe_pekerjaan',
-    //     ]));
-    // }
 
     public function filter(Request $request)
     {
@@ -159,7 +150,7 @@ class MonitoringPermitController extends Controller
             'user_id' => auth()->user()->id,
         ]));
 
-        return redirect()->route('monitoring-permit.index');
+        return redirect()->route('monitoring-permit.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function show(string $id)
@@ -214,7 +205,7 @@ class MonitoringPermitController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
-        return redirect()->route('monitoring-permit.index');
+        return redirect()->route('monitoring-permit.index')->withNotify('Data berhasil diubah');
     }
 
     public function destroy(Request $request)
@@ -226,6 +217,6 @@ class MonitoringPermitController extends Controller
         $data = MonitoringPermit::findOrFail($request->id);
         $data->delete();
 
-        return redirect()->route('monitoring-permit.index');
+        return redirect()->route('monitoring-permit.index')->withNotify('Data berhasil dihapus');
     }
 }
