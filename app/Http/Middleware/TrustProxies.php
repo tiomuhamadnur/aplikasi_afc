@@ -25,15 +25,4 @@ class TrustProxies extends Middleware
         Request::HEADER_X_FORWARDED_PORT |
         Request::HEADER_X_FORWARDED_PROTO |
         Request::HEADER_X_FORWARDED_AWS_ELB;
-
-
-    public function handle(Request $request, \Closure $next)
-    {
-        // Force HTTPS hanya di production
-        if (app()->environment('production') && !$request->isSecure()) {
-            return redirect()->secure($request->getRequestUri());
-        }
-
-        return $next($request);
-    }
 }
