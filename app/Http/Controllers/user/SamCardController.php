@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\SamCardImport;
 use App\Models\RelasiArea;
 use App\Models\SamCard;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,14 +18,26 @@ use Illuminate\Support\Facades\Storage;
 
 class SamCardController extends Controller
 {
-    public function index(SamCardDataTable $dataTable)
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
     {
-        return $dataTable->render('pages.user.sam-card.index');
+        $this->imageUploadService = $imageUploadService;
     }
 
-    public function create()
+    public function index(SamCardDataTable $dataTable, Request $request)
     {
-        //
+        $request->validate([
+            'status' => 'nullable|string|in:ready,used',
+        ]);
+
+        $status = $request->status ?? null;
+
+        return $dataTable->with([
+            'status' => $status,
+        ])->render('pages.user.sam-card.index', compact([
+            'status'
+        ]));
     }
 
     public function store(Request $request)
@@ -40,7 +53,7 @@ class SamCardController extends Controller
 
         $status = 'ready';
 
-        $data = SamCard::create([
+        $rawData = [
             'uid' => $request->uid,
             'mid' => $request->mid,
             'tid' => $request->tid,
@@ -48,26 +61,25 @@ class SamCardController extends Controller
             'mc' => $request->mc,
             'status' => $status,
             'alokasi' => $request->alokasi,
-        ]);
+        ];
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        $data = SamCard::updateOrCreate($rawData, $rawData);
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/sam-card/';
-            $destinationPath = public_path('storage/'. $detailPath);
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/sam-card/', // Path untuk photo
+                300
+            );
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
+            }
 
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         return redirect()->route('sam-card.index')->withNotify('Data berhasil ditambahkan');
@@ -147,7 +159,7 @@ class SamCardController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             "id" => 'required|numeric',
             "uid" => 'required',
             "mid" => 'required',
@@ -155,43 +167,30 @@ class SamCardController extends Controller
             "pin" => 'required',
             "mc" => 'required',
             "status" => 'required',
+        ]);
+
+        $request->validate([
             'photo' => 'file|image',
         ]);
 
         $data = SamCard::findOrFail($request->id);
-        $data->update([
-            'uid' => $request->uid,
-            'mid' => $request->mid,
-            'tid' => $request->tid,
-            'pin' => $request->pin,
-            'mc' => $request->mc,
-            'status' => $request->status,
-            'alokasi' => $request->alokasi,
-        ]);
+        $data->update($rawData);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/sam-card/', // Path untuk photo
+                300
+            );
 
-            $dataPhoto = $data->photo;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
             }
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/sam-card/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         return redirect()->route('sam-card.index')->withNotify('Data berhasil diperbaharui.');

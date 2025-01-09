@@ -19,6 +19,7 @@
         "league/flysystem-ftp": "3.0",
         "livewire/livewire": "3.0",
         "maatwebsite/excel": "^3.1",
+        "mchev/banhammer": "^2.3",
         "opcodesio/log-viewer": "^3.10",
         "pusher/pusher-php-server": "^7.2",
         "symfony/process": "^6.4",

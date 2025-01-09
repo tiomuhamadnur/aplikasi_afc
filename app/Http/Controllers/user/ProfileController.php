@@ -4,35 +4,23 @@ namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     public function index()
     {
         return view('pages.user.profile.index');
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
     }
 
     public function update(Request $request)
@@ -45,65 +33,45 @@ class ProfileController extends Controller
 
         $data = User::findOrFail(auth()->user()->id);
 
+        // Update nomor HP
         $data->update([
             'no_hp' => $request->no_hp,
         ]);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/profile/', // Path untuk photo
+                300
+            );
 
-            $dataPhoto = $data->photo;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
             }
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/profile/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
-        if ($request->hasFile('ttd') && $request->ttd != '') {
-            $image = Image::make($request->file('ttd'));
+        // Update tanda tangan (ttd) jika ada
+        if ($request->hasFile('ttd')) {
+            $ttdPath = $this->imageUploadService->uploadPhoto(
+                $request->file('ttd'),
+                'photo/ttd/', // Path untuk ttd
+                300
+            );
 
-            $dataPhoto = $data->ttd;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+            // Hapus file lama
+            if ($data->ttd) {
+                Storage::delete($data->ttd);
             }
 
-            $imageName = time().'-'.$request->file('ttd')->getClientOriginalName();
-            $detailPath = 'photo/ttd/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "ttd" => $photo,
-            ]);
+            // Update path ttd di database
+            $data->update(['ttd' => $ttdPath]);
         }
 
         return redirect()->route('profile.index')->withNotify('Data Profil berhasil diupdate');
-    }
-
-    public function destroy(string $id)
-    {
-        //
     }
 }

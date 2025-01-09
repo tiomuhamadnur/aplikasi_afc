@@ -15,6 +15,21 @@ use Yajra\DataTables\Services\DataTable;
 
 class SamCardDataTable extends DataTable
 {
+    protected $status;
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -57,9 +72,14 @@ class SamCardDataTable extends DataTable
                 ->rawColumns(['status', '#']);
     }
 
-    public function query(SamCard $model, Request $request): QueryBuilder
+    public function query(SamCard $model): QueryBuilder
     {
         $query = $model->newQuery();
+
+        if($this->status != null)
+        {
+            $query->where('status', $this->status);
+        }
 
         return $query;
     }
@@ -72,7 +92,7 @@ class SamCardDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(10)
                     ->lengthMenu([10, 20, 50, 100, 250, 500])
-                    //->dom('Bfrtip')
+                    ->dom('Blfrtip')
                     ->orderBy(1)
                     ->selectStyleSingle()
                     ->buttons([
@@ -90,23 +110,23 @@ class SamCardDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
             Column::make('uid')->title('UID'),
             Column::make('tid')->title('TID'),
             Column::make('mid')->title('MID'),
             Column::make('pin')->title('PIN'),
             Column::make('mc')->title('MC'),
+            Column::make('alokasi')->title('Alokasi'),
             Column::computed('status')
                     ->exportable(false)
                     ->printable(false)
                     ->width(60)
                     ->addClass('text-center')
                     ->searchable(true),
-            Column::make('alokasi')->title('Alokasi'),
-            Column::computed('#')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(60)
-                    ->addClass('text-center'),
         ];
     }
 

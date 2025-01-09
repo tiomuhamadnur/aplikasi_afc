@@ -8,12 +8,20 @@ use App\Models\Equipment;
 use App\Models\RelasiArea;
 use App\Models\SamCard;
 use App\Models\SamCardHistory;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class SamCardHistoryController extends Controller
 {
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     public function index(SamCardHistoryDataTable $dataTable, Request $request)
     {
         $request->validate([
@@ -55,44 +63,36 @@ class SamCardHistoryController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
-        $request->validate([
+        $rawData = $request->validate([
             "sam_card_id" => 'required|numeric',
             'equipment_id' => 'required|numeric',
             "type" => 'required',
             "tanggal" => 'required|date',
             "old_uid" => 'nullable|string',
             "old_sam_card_id" => 'nullable|numeric',
+        ]);
+
+        $request->validate([
             'photo' => 'nullable|file|image',
         ]);
 
-        $data = SamCardHistory::create([
-            "sam_card_id" => $request->sam_card_id,
-            "equipment_id" => $request->equipment_id,
-            "type" => $request->type,
-            "tanggal" => $request->tanggal,
-            "old_uid" => $request->old_uid,
-            "old_sam_card_id" => $request->old_sam_card_id,
-        ]);
+        $data = SamCardHistory::updateOrCreate($rawData, $rawData);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/sam-card-history/', // Path untuk photo
+                300
+            );
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/sam-card-history/';
-            $destinationPath = public_path('storage/'. $detailPath);
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
+            }
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         $sam_card = SamCard::findOrFail($request->sam_card_id);

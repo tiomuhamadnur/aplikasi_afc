@@ -12,37 +12,31 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class UsersDataTable extends DataTable
+class UsersBannedDataTable extends DataTable
 {
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-        ->addColumn('#', function($item) {
-            if (auth()->user()->role_id != 1) {
-                return '';
-            }
+            ->addColumn('#', function($item) {
+                if (auth()->user()->role_id != 1) {
+                    return '';
+                }
 
-            $editRoute = route('user.edit', $item->uuid);
-            $bannedModal = "<button type='button' title='Banned this User'
-                class='btn btn-gradient-danger btn-rounded btn-icon'
-                data-bs-toggle='modal' data-bs-target='#bannedModal'
-                data-uuid='{$item->uuid}'>
-                <i class='mdi mdi-account-remove'></i>
-            </button>";
+                $unbanModal = "<button type='button' title='Unban this User'
+                    class='btn btn-gradient-success btn-rounded btn-icon'
+                    data-bs-toggle='modal' data-bs-target='#unbanModal'
+                    data-uuid='{$item->uuid}'>
+                    <i class='mdi mdi-account-key'></i>
+                </button>";
 
-            $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
-                onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
-                <i class='text-white mdi mdi-lead-pencil'></i>
-            </button>";
-
-            return $editButton . $bannedModal;
-        })
-        ->rawColumns(['#']);
+                return $unbanModal;
+            })
+            ->rawColumns(['#']);
     }
 
     public function query(User $model): QueryBuilder
     {
-        return $model->notBanned()->with([
+        return $model->banned()->with([
             'jabatan',
             'role',
             'tipe_employee',
@@ -56,7 +50,7 @@ class UsersDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('users-table')
+                    ->setTableId('usersbanned-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->pageLength(10)
@@ -100,6 +94,6 @@ class UsersDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Users_' . date('YmdHis');
+        return 'UsersBanned_' . date('YmdHis');
     }
 }

@@ -134,7 +134,7 @@ class BudgetAbsorptionDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    //->dom('Bfrtip')
+                    ->dom('Blfrtip')
                     ->orderBy([13, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([

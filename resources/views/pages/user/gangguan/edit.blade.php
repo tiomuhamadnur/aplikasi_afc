@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Edit Trouble Report</title>
+    <title>Edit Failure Report</title>
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Edit Trouble Report</h4>
+                        <h4 class="card-title">Edit Failure Report</h4>
                         <form id="editForm" action="{{ route('gangguan.update') }}" class="forms-sample mt-4" method="POST"
                             enctype="multipart/form-data">
                             @csrf

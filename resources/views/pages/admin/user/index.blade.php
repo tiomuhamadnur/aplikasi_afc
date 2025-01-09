@@ -19,55 +19,18 @@
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon" data-bs-toggle="modal"
+                            data-bs-target="#exportExcelModal">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
+                        <button type="button" title="List Banned Users" class="btn btn-outline-danger btn-rounded btn-icon" onclick="window.location.href='{{ route('user.banned') }}'">
+                            <i class="mdi mdi-account-remove"></i>
+                        </button>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Nama </th>
-                                        <th> Email </th>
-                                        <th> No HP </th>
-                                        <th> Jabatan </th>
-                                        <th> Struktur </th>
-                                        <th> Role </th>
-                                        <th> Tipe <br> Employee </th>
-                                        <th> Perusahaan </th>
-                                        <th> Aksi </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($user as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->email }}</td>
-                                            <td>{{ $item->no_hp ?? '-' }}</td>
-                                            <td>{{ $item->jabatan->name ?? '-' }}</td>
-                                            <td class="text-wrap">
-                                                Seksi {{ $item->relasi_struktur->seksi->code ?? '-' }} <br>
-                                                Departemen {{ $item->relasi_struktur->departemen->code ?? '-' }} <br>
-                                                Divisi {{ $item->relasi_struktur->divisi->code ?? '-' }} <br>
-                                                Direktorat {{ $item->relasi_struktur->direktorat->code ?? '-' }} <br>
-                                            </td>
-                                            <td>{{ $item->role->name ?? '-' }}</td>
-                                            <td>{{ $item->tipe_employee->name ?? '-' }}</td>
-                                            <td>{{ $item->perusahaan->name ?? '-' }}</td>
-                                            <td>
-                                                <a href="{{ route('user.edit', $item->uuid) }}">
-                                                    <button type="button" title="Edit"
-                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                        <i class="mdi mdi-lead-pencil"></i>
-                                                    </button>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                {{ $dataTable->table() }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -168,4 +131,74 @@
         </div>
     </div>
     <!-- End Add Modal -->
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
+
+    <!-- Banned Modal -->
+    <div class="modal fade" id="bannedModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deleteForm" action="{{ route('user.ban') }}" method="POST" class="forms-sample">
+                        @csrf
+                        @method('delete')
+                        <input type="text" name="uuid" id="uuid_banned" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="deleteForm" class="btn btn-gradient-danger me-2">Banned</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Banned Modal -->
+@endsection
+
+@push('scripts')
+    {{ $dataTable->scripts() }}
+@endpush
+
+@section('javascript')
+    <script>
+        $(document).ready(function() {
+            $('#bannedModal').on('show.bs.modal', function(e) {
+                var uuid = $(e.relatedTarget).data('uuid');
+                $('#uuid_banned').val(uuid);
+            });
+        });
+    </script>
+
+    <script>
+        function exportExcel() {
+            document.getElementById('datatable-excel').click();
+        }
+    </script>
 @endsection

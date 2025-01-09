@@ -44,7 +44,7 @@ class TransaksiTiketDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(100)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    //->dom('Bfrtip')
+                    ->dom('Blfrtip')
                     ->orderBy(1)
                     ->selectStyleSingle()
                     ->buttons([

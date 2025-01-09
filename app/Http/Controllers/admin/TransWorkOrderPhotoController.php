@@ -5,12 +5,20 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\TransWorkOrderPhoto;
 use App\Models\WorkOrder;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class TransWorkOrderPhotoController extends Controller
 {
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     public function store(string $uuid_workorder, Request $request)
     {
         $request->validate([
@@ -20,24 +28,17 @@ class TransWorkOrderPhotoController extends Controller
 
         $work_order = WorkOrder::where('uuid', $uuid_workorder)->firstOrFail();
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
-
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/work-order/documentation/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/work-order/documentation/', // Path untuk photo
+                300
+            );
 
             TransWorkOrderPhoto::create([
                 "work_order_id" => $work_order->id,
-                "photo" => $photo,
+                "photo" => $photoPath,
                 "description" => $request->description,
             ]);
         }
@@ -52,10 +53,8 @@ class TransWorkOrderPhotoController extends Controller
         ]);
 
         $data = TransWorkOrderPhoto::findOrFail($request->id);
-
-        $dataPhoto = $data->photo;
-        if ($dataPhoto != null) {
-            Storage::delete($dataPhoto);
+        if ($data->photo) {
+            Storage::delete($data->photo);
         }
 
         $data->forceDelete();

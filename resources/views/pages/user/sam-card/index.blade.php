@@ -16,7 +16,7 @@
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#success-modal"
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
@@ -99,6 +99,41 @@
         </div>
     </div>
     <!-- End Add Modal -->
+
+    <!-- Add Filter -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('sam-card.index') }}" method="GET"
+                        class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="">Status</label>
+                            <div class="input-group">
+                                <select class="form-control form-control-lg" name="status">
+                                    <option value="" selected disabled>- pilih status -</option>
+                                    <option value="ready">Ready</option>
+                                    <option value="used">Used</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('sam-card.index') }}" class="btn btn-gradient-warning me-2">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary me-2">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Filter -->
 
     <!-- Merry Code Modal -->
     <div class="modal fade" id="samModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

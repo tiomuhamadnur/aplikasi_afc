@@ -7,12 +7,20 @@ use App\Models\Form;
 use App\Models\OptionForm;
 use App\Models\Parameter;
 use App\Models\Satuan;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class ParameterController extends Controller
 {
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     public function index(string $uuid)
     {
         $form = Form::where('uuid', $uuid)->firstOrFail();
@@ -28,14 +36,9 @@ class ParameterController extends Controller
         ]));
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'form_id' => 'required|numeric',
             'name' => 'required|string',
             'code' => 'required|string',
@@ -45,49 +48,33 @@ class ParameterController extends Controller
             'min_value' => 'nullable|numeric',
             'max_value' => 'nullable|numeric',
             'satuan_id' => 'nullable|numeric',
-            'photo_instruction' => 'nullable|file',
             'urutan' => 'required|numeric'
         ]);
 
-        $data = Parameter::create([
-            'form_id' => $request->form_id,
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description,
-            'tipe' => $request->tipe,
-            'option_form_id' => $request->option_form_id,
-            'min_value' => $request->min_value,
-            'max_value' => $request->max_value,
-            'satuan_id' => $request->satuan_id,
-            'urutan' => $request->urutan,
+        $request->validate([
+            'photo_instruction' => 'nullable|file|image',
         ]);
 
-        if ($request->hasFile('photo_instruction') && $request->photo_instruction != '') {
-            $image = Image::make($request->file('photo_instruction'));
+        $data = Parameter::updateOrCreate($rawData, $rawData);
 
-            $imageName = time().'-'.$request->file('photo_instruction')->getClientOriginalName();
-            $detailPath = 'photo/checksheet/';
-            $destinationPath = public_path('storage/'. $detailPath);
+        // Update photo jika ada
+        if ($request->hasFile('photo_instruction')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo_instruction'),
+                'photo/checksheet/', // Path untuk photo
+                400
+            );
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            // Hapus file lama
+            if ($data->photo_instruction) {
+                Storage::delete($data->photo_instruction);
+            }
 
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo_instruction" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo_instruction' => $photoPath]);
         }
 
         return redirect()->back()->withNotify('Data berhasil ditambahkan');
-    }
-
-    public function show(string $id)
-    {
-        //
     }
 
     public function edit(string $uuid)
@@ -105,7 +92,7 @@ class ParameterController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'id' => 'required|numeric',
             'form_id' => 'required|numeric',
             'name' => 'required|string',
@@ -116,47 +103,31 @@ class ParameterController extends Controller
             'min_value' => 'nullable|numeric',
             'max_value' => 'nullable|numeric',
             'satuan_id' => 'nullable|numeric',
-            'photo_instruction' => 'nullable|file',
             'urutan' => 'required|numeric'
         ]);
 
-        $data = Parameter::findOrFail($request->id);
-        $data->update([
-            'form_id' => $request->form_id,
-            'name' => $request->name,
-            'code' => $request->code,
-            'description' => $request->description,
-            'tipe' => $request->tipe,
-            'option_form_id' => $request->option_form_id,
-            'min_value' => $request->min_value,
-            'max_value' => $request->max_value,
-            'satuan_id' => $request->satuan_id,
-            'urutan' => $request->urutan,
+        $request->validate([
+            'photo_instruction' => 'nullable|file|image',
         ]);
 
-        if ($request->hasFile('photo_instruction') && $request->photo_instruction != '') {
-            $image = Image::make($request->file('photo_instruction'));
+        $data = Parameter::findOrFail($request->id);
+        $data->update($rawData);
 
-            $dataPhoto = $data->photo_instruction;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+        // Update photo jika ada
+        if ($request->hasFile('photo_instruction')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo_instruction'),
+                'photo/checksheet/', // Path untuk photo
+                400
+            );
+
+            // Hapus file lama
+            if ($data->photo_instruction) {
+                Storage::delete($data->photo_instruction);
             }
 
-            $imageName = time().'-'.$request->file('photo_instruction')->getClientOriginalName();
-            $detailPath = 'photo/checksheet/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo_instruction" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo_instruction' => $photoPath]);
         }
 
         return redirect()->route('parameter.index', $data->form->uuid)->withNotify('Data berhasil diubah');

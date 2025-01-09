@@ -68,7 +68,7 @@ class ChecksheetDataTable extends DataTable
                     ->setTableId('checksheet-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    //->dom('Bfrtip')
+                    ->dom('Blfrtip')
                     ->orderBy(1)
                     ->selectStyleSingle()
                     ->buttons([]);

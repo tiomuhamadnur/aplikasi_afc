@@ -10,6 +10,7 @@ use App\Models\Fund;
 use App\Models\FundSource;
 use App\Models\Project;
 use App\Models\StatusBudgeting;
+use App\Services\FileUploadService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,13 @@ use Laraindo\RupiahFormat;
 
 class BudgetAbsorptionController extends Controller
 {
+    protected $fileUploadService;
+
+    public function __construct(FileUploadService $fileUploadService)
+    {
+        $this->fileUploadService = $fileUploadService;
+    }
+
     public function index(BudgetAbsorptionDataTable $dataTable, Request $request)
     {
         $project = Project::all();
@@ -53,11 +61,6 @@ class BudgetAbsorptionController extends Controller
         ]));
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -82,6 +85,7 @@ class BudgetAbsorptionController extends Controller
         $data['termin'] = $termin;
 
         $result = $this->check_fund_source_budget($project->fund_source_id, $request->value);
+
         if($result['value'] < 0)
         {
             return redirect()->route('project.show', $project->uuid)->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
@@ -89,22 +93,15 @@ class BudgetAbsorptionController extends Controller
 
         $budget_absorption = BudgetAbsorption::updateOrCreate($data, $data);
 
-        if ($request->hasFile('attachment') && $request->attachment != '') {
-            $imageName = time().'-'.$request->file('attachment')->getClientOriginalName();
-            $detailPath = 'attachment/budget-absorption/';
-            $destinationPath = public_path('storage/'. $detailPath);
+        // Handle file attachment using FileUploadService
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $this->fileUploadService->uploadFile(
+                $request->file('attachment'),
+                'attachment/budget-absorption/'
+            );
 
-            if(!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-
-            $request->file('attachment')->move($destinationPath, $imageName);
-
-            $attachment = $detailPath.$imageName;
-
-            $budget_absorption->update([
-                "attachment" => $attachment,
-            ]);
+            // Update attachment path in the database
+            $budget_absorption->update(['attachment' => $attachmentPath]);
         }
 
         return redirect()->route('project.show', $project->uuid)->withNotify('Data berhasil ditambahkan');
@@ -151,26 +148,20 @@ class BudgetAbsorptionController extends Controller
 
         $data->update($rawData);
 
-        if ($request->hasFile('attachment') && $request->attachment != '') {
-            $imageName = time().'-'.$request->file('attachment')->getClientOriginalName();
-            $detailPath = 'attachment/budget-absorption/';
-            $destinationPath = public_path('storage/'. $detailPath);
+        // Handle file attachment using FileUploadService
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $this->fileUploadService->uploadFile(
+                $request->file('attachment'),
+                'attachment/budget-absorption/'
+            );
 
-            if(!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-
+            // Delete attachment lama
             if ($data->attachment != null) {
                 Storage::delete($data->attachment);
             }
 
-            $request->file('attachment')->move($destinationPath, $imageName);
-
-            $attachment = $detailPath.$imageName;
-
-            $data->update([
-                "attachment" => $attachment,
-            ]);
+            // Update attachment path in the database
+            $data->update(['attachment' => $attachmentPath]);
         }
 
         return redirect()->route('project.show', $project->uuid)->withNotify('Data berhasil diperbaharui');

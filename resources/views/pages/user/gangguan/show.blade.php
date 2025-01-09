@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Detail Trouble Report</title>
+    <title>Detail Failure Report</title>
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Detail Trouble Report</h4>
+                        <h4 class="card-title">Detail Failure Report</h4>
                         <a href="{{ route('gangguan.index') }}" title="Back" class="btn btn-gradient-primary btn-rounded">
                             <i class="mdi mdi-arrow-left"></i> Back
                         </a>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\DataTables\UsersBannedDataTable;
+use App\DataTables\UsersDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Gender;
 use App\Models\Jabatan;
@@ -15,9 +17,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(UsersDataTable $dataTable)
     {
-        $user = User::all();
         $gender = Gender::all();
         $perusahaan = Perusahaan::all();
         $role = Role::all();
@@ -25,8 +26,7 @@ class UserController extends Controller
         $tipe_employee = TipeEmployee::all();
         $relasi_struktur = RelasiStruktur::all();
 
-        return view('pages.admin.user.index', compact([
-            'user',
+        return $dataTable->render('pages.admin.user.index', compact([
             'perusahaan',
             'role',
             'gender',
@@ -34,6 +34,11 @@ class UserController extends Controller
             'tipe_employee',
             'relasi_struktur',
         ]));
+    }
+
+    public function banned_user(UsersBannedDataTable $dataTable)
+    {
+        return $dataTable->render('pages.admin.user.banned_user');
     }
 
     public function create()
@@ -129,8 +134,27 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
-    public function destroy(Request $request)
+    public function ban(Request $request)
     {
-        //
+        $request->validate([
+            'uuid' => 'required|string'
+        ]);
+
+        $user = User::where('uuid', $request->uuid)->firstOrFail();
+        $user->ban();
+
+        return redirect()->route('user.index')->withNotify('User berhasil di-banned');
+    }
+
+    public function unban(Request $request)
+    {
+        $request->validate([
+            'uuid' => 'required|string'
+        ]);
+
+        $user = User::where('uuid', $request->uuid)->firstOrFail();
+        $user->unban();
+
+        return redirect()->route('user.banned')->withNotify('User berhasil di-unbanned');
     }
 }

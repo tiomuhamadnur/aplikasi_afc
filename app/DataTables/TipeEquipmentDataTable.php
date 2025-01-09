@@ -51,7 +51,7 @@ class TipeEquipmentDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(50)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    //->dom('Bfrtip')
+                    ->dom('Blfrtip')
                     ->orderBy([0, 'ASC'])
                     ->selectStyleSingle()
                     ->buttons([

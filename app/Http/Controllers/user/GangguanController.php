@@ -18,6 +18,7 @@ use App\Models\TipeEquipment;
 use App\Models\TransaksiBarang;
 use App\Models\TransGangguanRemedy;
 use App\Models\User;
+use App\Services\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -25,6 +26,13 @@ use Illuminate\Support\Facades\Storage;
 
 class GangguanController extends Controller
 {
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     public function index(GangguanDataTable $dataTable, Request $request)
     {
         $request->validate([
@@ -168,44 +176,38 @@ class GangguanController extends Controller
             'date' => $data->response_date,
         ]);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/gangguan/', // Path untuk photo
+                300
+            );
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/gangguan/';
-            $destinationPath = public_path('storage/'. $detailPath);
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
+            }
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
-        if ($request->hasFile('photo_after') && $request->photo != '') {
-            $image = Image::make($request->file('photo_after'));
+        // Update photo after jika ada
+        if ($request->hasFile('photo_after')) {
+            $photoAfterPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo_after'),
+                'photo/gangguan/', // Path untuk photo
+                300
+            );
 
-            $imageName = time().'-'.$request->file('photo_after')->getClientOriginalName();
-            $detailPath = 'photo/gangguan/';
-            $destinationPath = public_path('storage/'. $detailPath);
+            // Hapus file lama
+            if ($data->photo_after) {
+                Storage::delete($data->photo_after);
+            }
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo_after" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo_after' => $photoAfterPath]);
         }
 
         return redirect()->route('gangguan.index')->withNotify('Data berhasil ditambahkan');
@@ -299,54 +301,38 @@ class GangguanController extends Controller
 
         $data->update($raw_data);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/gangguan/', // Path untuk photo
+                300
+            );
 
-            $dataPhoto = $data->photo;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
             }
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/gangguan/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
-        if ($request->hasFile('photo_after') && $request->photo != '') {
-            $image = Image::make($request->file('photo_after'));
+        // Update photo after jika ada
+        if ($request->hasFile('photo_after')) {
+            $photoAfterPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo_after'),
+                'photo/gangguan/', // Path untuk photo
+                300
+            );
 
-            $dataPhoto = $data->photo_after;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+            // Hapus file lama
+            if ($data->photo_after) {
+                Storage::delete($data->photo_after);
             }
 
-            $imageName = time().'-'.$request->file('photo_after')->getClientOriginalName();
-            $detailPath = 'photo/gangguan/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $data->update([
-                "photo_after" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo_after' => $photoAfterPath]);
         }
 
         return redirect()->route('gangguan.index')->withNotify('Data berhasil diubah');

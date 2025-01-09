@@ -11,6 +11,7 @@ use App\Models\RelasiArea;
 use App\Models\RelasiStruktur;
 use App\Models\Satuan;
 use App\Models\TipeBarang;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -18,23 +19,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class BarangController extends Controller
 {
-    // public function index()
-    // {
-    //     $barang = Barang::all();
+    protected $imageUploadService;
 
-    //     $area = RelasiArea::orderBy('lokasi_id', 'ASC')->orderBy('sub_lokasi_id', 'ASC')->orderBy('detail_lokasi_id', 'ASC')->get();
-    //     $tipe_barang = TipeBarang::orderBy('name', 'ASC')->get();
-    //     $satuan = Satuan::orderBy('name', 'ASC')->get();
-    //     $struktur = RelasiStruktur::all();
-
-    //     return view('pages.admin.barang.index', compact([
-    //         'barang',
-    //         'area',
-    //         'tipe_barang',
-    //         'satuan',
-    //         'struktur',
-    //     ]));
-    // }
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
 
     public function index(BarangDataTable $dataTable)
     {
@@ -53,14 +43,9 @@ class BarangController extends Controller
         ]));
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'name' => 'required',
             'spesifikasi' => 'required',
             'material_number' => 'nullable|numeric',
@@ -70,39 +55,29 @@ class BarangController extends Controller
             'relasi_struktur_id' => 'required|numeric',
             'tipe_barang_id' => 'required|numeric',
             'satuan_id' => 'required|numeric',
-            'photo' => 'image',
         ]);
 
-        $barang = Barang::create([
-            "name" => $request->name,
-            "spesifikasi" => $request->spesifikasi,
-            "material_number" => $request->material_number,
-            "serial_number" => $request->serial_number,
-            "tipe_barang_id" => $request->tipe_barang_id,
-            "satuan_id" => $request->satuan_id,
-            "relasi_area_id" => $request->relasi_area_id,
-            "relasi_struktur_id" => $request->relasi_struktur_id,
-            "deskripsi" => $request->deskripsi,
+        $request->validate([
+            'photo' => 'nullable|image|file',
         ]);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        $data = Barang::updateOrCreate($rawData, $rawData);
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/barang/';
-            $destinationPath = public_path('storage/'. $detailPath);
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/barang/', // Path untuk photo
+                300
+            );
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
+            }
 
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $barang->update([
-                "photo" => $photo,
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         return redirect()->route('barang.index')->withNotify('Data berhasil ditambahkan');
@@ -146,7 +121,7 @@ class BarangController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'id' => 'required|numeric',
             'name' => 'required',
             'spesifikasi' => 'required',
@@ -157,45 +132,30 @@ class BarangController extends Controller
             'relasi_struktur_id' => 'required|numeric',
             'tipe_barang_id' => 'required|numeric',
             'satuan_id' => 'required|numeric',
-            'photo' => 'file|image',
         ]);
 
-        $barang = Barang::findOrFail($request->id);
-        $barang->update([
-            "name" => $request->name,
-            "spesifikasi" => $request->spesifikasi,
-            "material_number" => $request->material_number,
-            "serial_number" => $request->serial_number,
-            "tipe_barang_id" => $request->tipe_barang_id,
-            "satuan_id" => $request->satuan_id,
-            "relasi_area_id" => $request->relasi_area_id,
-            "relasi_struktur_id" => $request->relasi_struktur_id,
-            "deskripsi" => $request->deskripsi,
+        $request->validate([
+            'photo' => 'nullable|file|image',
         ]);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $dataPhoto = $barang->photo;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+        $data = Barang::findOrFail($request->id);
+        $data->update($rawData);
+
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/barang/', // Path untuk photo
+                300
+            );
+
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
             }
 
-            $image = Image::make($request->file('photo'));
-
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/barang/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $barang->update([
-                'photo' => $photo
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         return redirect()->route('barang.index')->withNotify('Data berhasil diubah');

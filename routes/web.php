@@ -89,7 +89,7 @@ Route::get('/', function () {
     return redirect()->route('dashboard.index');
 })->middleware('auth');
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'checkBanned']], function () {
     // ALL USER
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard.index');
@@ -241,10 +241,12 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::controller(UserController::class)->group(function () {
             Route::get('/user', 'index')->name('user.index');
+            Route::get('/banned-user', 'banned_user')->name('user.banned');
             Route::post('/user', 'store')->name('user.store');
             Route::get('/user/{uuid}/edit', 'edit')->name('user.edit');
             Route::put('/user', 'update')->name('user.update');
-            Route::delete('/user', 'destroy')->name('user.delete');
+            Route::delete('/user/ban', 'ban')->name('user.ban');
+            Route::delete('/user/unban', 'unban')->name('user.unban');
         });
 
         Route::controller(SubLokasiController::class)->group(function () {

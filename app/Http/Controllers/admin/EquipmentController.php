@@ -11,6 +11,7 @@ use App\Models\FunctionalLocation;
 use App\Models\RelasiArea;
 use App\Models\RelasiStruktur;
 use App\Models\TipeEquipment;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -18,6 +19,13 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EquipmentController extends Controller
 {
+    protected $imageUploadService;
+
+    public function __construct(ImageUploadService $imageUploadService)
+    {
+        $this->imageUploadService = $imageUploadService;
+    }
+
     public function index(EquipmentDataTable $dataTable)
     {
         $tipe_equipment = TipeEquipment::all();
@@ -44,7 +52,7 @@ class EquipmentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'name' => 'required',
             'code' => 'required',
             'equipment_number' => 'nullable|numeric',
@@ -54,42 +62,30 @@ class EquipmentController extends Controller
             'functional_location_id' => 'required|numeric',
             'parent_id' => 'nullable|numeric',
             'arah_id' => 'nullable|numeric',
-            'photo' => 'image',
             'deskripsi' => 'nullable',
         ]);
 
-
-        $equipment = Equipment::create([
-            "name" => $request->name,
-            "code" => $request->code,
-            "equipment_number" => $request->equipment_number,
-            "tipe_equipment_id" => $request->tipe_equipment_id,
-            "relasi_area_id" => $request->relasi_area_id,
-            "relasi_struktur_id" => $request->relasi_struktur_id,
-            "functional_location_id" => $request->functional_location_id,
-            "parent_id" => $request->parent_id,
-            "arah_id" => $request->arah_id,
-            "deskripsi" => $request->deskripsi,
+        $request->validate([
+            'photo' => 'image',
         ]);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $image = Image::make($request->file('photo'));
+        $data = Equipment::updateOrCreate($rawData, $rawData);
 
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/equipment/';
-            $destinationPath = public_path('storage/'. $detailPath);
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/equipment/', // Path untuk photo
+                300
+            );
 
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
+            }
 
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $equipment->update([
-                'photo' => $photo
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         return redirect()->route('equipment.index')->withNotify('Data berhasil ditambahkan');
@@ -97,7 +93,6 @@ class EquipmentController extends Controller
 
     public function import(Request $request)
     {
-        // dd($request);
         $request->validate([
             'relasi_struktur_id' => 'required|numeric',
             'file' => 'required|file|mimes:xls,xlsx',
@@ -137,7 +132,7 @@ class EquipmentController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'id' => 'required|numeric',
             'name' => 'required',
             'code' => 'required',
@@ -148,50 +143,33 @@ class EquipmentController extends Controller
             'functional_location_id' => 'required|numeric',
             'parent_id' => 'nullable|numeric',
             'arah_id' => 'nullable|numeric',
-            'photo' => 'image',
             'deskripsi' => 'nullable',
             'status' => 'required',
         ]);
 
-        $equipment = Equipment::findOrFail($request->id);
-
-        $equipment->update([
-            "name" => $request->name,
-            "code" => $request->code,
-            "equipment_number" => $request->equipment_number,
-            "tipe_equipment_id" => $request->tipe_equipment_id,
-            "relasi_area_id" => $request->relasi_area_id,
-            "relasi_struktur_id" => $request->relasi_struktur_id,
-            "functional_location_id" => $request->functional_location_id,
-            "parent_id" => $request->parent_id,
-            "arah_id" => $request->arah_id,
-            "deskripsi" => $request->deskripsi,
-            "status" => $request->status,
+        $request->validate([
+            'photo' => 'nullable|image|file',
         ]);
 
-        if ($request->hasFile('photo') && $request->photo != '') {
-            $dataPhoto = $equipment->photo;
-            if ($dataPhoto != null) {
-                Storage::delete($dataPhoto);
+        $data = Equipment::findOrFail($request->id);
+
+        $data->update($rawData);
+
+        // Update photo jika ada
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $request->file('photo'),
+                'photo/equipment/', // Path untuk photo
+                300
+            );
+
+            // Hapus file lama
+            if ($data->photo) {
+                Storage::delete($data->photo);
             }
 
-            $image = Image::make($request->file('photo'));
-
-            $imageName = time().'-'.$request->file('photo')->getClientOriginalName();
-            $detailPath = 'photo/equipment/';
-            $destinationPath = public_path('storage/'. $detailPath);
-
-            $image->resize(null, 500, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            $image->save($destinationPath.$imageName);
-
-            $photo = $detailPath.$imageName;
-
-            $equipment->update([
-                'photo' => $photo
-            ]);
+            // Update path photo di database
+            $data->update(['photo' => $photoPath]);
         }
 
         return redirect()->route('equipment.index')->withNotify('Data berhasil diubah');

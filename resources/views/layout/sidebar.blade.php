@@ -22,7 +22,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('gangguan.index') }}">
-                <span class="menu-title">Trouble Report</span>
+                <span class="menu-title">Failure Report</span>
                 <i class="mdi mdi-receipt menu-icon"></i>
             </a>
         </li>

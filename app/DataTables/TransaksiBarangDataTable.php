@@ -116,8 +116,8 @@ class TransaksiBarangDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    //->dom('Bfrtip')
-                    ->orderBy([0, 'desc'])
+                    ->dom('Blfrtip')
+                    ->orderBy([1, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -134,9 +134,14 @@ class TransaksiBarangDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('tanggal')->title('Tanggal'),
+            Column::computed('#')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
+            Column::make('tanggal')->title('Date'),
             Column::computed('ticket_number')
-                    ->title('Ticket Gangguan')
+                    ->title('Ticket Failure')
                     ->exportable(true)
                     ->printable(false)
                     ->searchable(true)
@@ -156,11 +161,6 @@ class TransaksiBarangDataTable extends DataTable
             Column::make('equipment.code')->title('Equipment ID'),
             Column::make('equipment.relasi_area.sub_lokasi.name')->title('Location'),
             Column::make('user.name')->title('Updated by'),
-            Column::computed('#')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(60)
-                    ->addClass('text-center'),
         ];
     }
 
