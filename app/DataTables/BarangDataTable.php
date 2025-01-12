@@ -89,9 +89,9 @@ class BarangDataTable extends DataTable
                     ->setTableId('barang-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(50)
+                    ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    ->dom('Blfrtip')
+                    ->dom('frtiplB')
                     ->orderBy([0, 'asc'])
                     ->selectStyleSingle()
                     ->buttons([]);

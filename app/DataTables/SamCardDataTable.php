@@ -92,7 +92,7 @@ class SamCardDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(10)
                     ->lengthMenu([10, 20, 50, 100, 250, 500])
-                    ->dom('Blfrtip')
+                    ->dom('frtiplB')
                     ->orderBy(1)
                     ->selectStyleSingle()
                     ->buttons([

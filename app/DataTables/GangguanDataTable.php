@@ -24,6 +24,7 @@ class GangguanDataTable extends DataTable
     protected $start_date;
     protected $end_date;
     protected $is_changed;
+    protected $is_downtime;
 
 
     public function with(array|string $key, mixed $value = null): static
@@ -93,6 +94,9 @@ class GangguanDataTable extends DataTable
             ->addColumn('is_changed', function($item) {
                 return $item->is_changed ? 'Yes' : 'No';
             })
+            ->addColumn('is_downtime', function($item) {
+                return $item->is_downtime ? 'Yes' : 'No';
+            })
             ->addColumn('fun_loc', function($item) {
                 return $item->equipment->functional_location->code ?? '';
             })
@@ -135,7 +139,7 @@ class GangguanDataTable extends DataTable
 
                 return $showButton . $createWorkOrderButton . $editButton . $deleteModal;
             })
-            ->rawColumns(['status', 'classification', 'remedy','action_by', 'photo', 'is_changed', 'fun_loc', '#']);
+            ->rawColumns(['status', 'classification', 'remedy','action_by', 'photo', 'is_changed', 'is_downtime', 'fun_loc', '#']);
     }
 
     public function query(Gangguan $model): QueryBuilder
@@ -191,6 +195,11 @@ class GangguanDataTable extends DataTable
             $query->where('is_changed', $this->is_changed);
         }
 
+        if($this->is_downtime != null)
+        {
+            $query->where('is_downtime', $this->is_downtime);
+        }
+
         return $query;
     }
 
@@ -202,7 +211,7 @@ class GangguanDataTable extends DataTable
                     ->minifiedAjax()
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    ->dom('Blfrtip')
+                    ->dom('frtiplB')
                     ->orderBy([14, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
@@ -273,6 +282,13 @@ class GangguanDataTable extends DataTable
                     ->searchable(true),
             Column::computed('is_changed')
                     ->title('Changed Sparepart?')
+                    ->exportable(true)
+                    ->printable(true)
+                    ->width(30)
+                    ->searchable(true)
+                    ->addClass('text-center'),
+            Column::computed('is_downtime')
+                    ->title('Downtime?')
                     ->exportable(true)
                     ->printable(true)
                     ->width(30)

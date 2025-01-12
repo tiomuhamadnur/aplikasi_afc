@@ -45,6 +45,7 @@ class GangguanController extends Controller
             'start_date' => 'date|nullable',
             'end_date' => 'date|nullable',
             'is_changed' => 'numeric|nullable',
+            'is_downtime' => 'numeric|nullable',
         ]);
 
         $area_id = $request->area_id ?? null;
@@ -53,10 +54,10 @@ class GangguanController extends Controller
         $tipe_equipment_id = $request->tipe_equipment_id ?? null;
         $classification_id = $request->classification_id ?? null;
         $status_id = $request->status_id ?? null;
-        // $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
         $is_changed = $request->is_changed ?? null;
+        $is_downtime = $request->is_downtime ?? null;
 
         $equipment = Equipment::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
         $barang = Barang::all();
@@ -78,6 +79,7 @@ class GangguanController extends Controller
             'start_date' => $start_date,
             'end_date' => $end_date,
             'is_changed' => $is_changed,
+            'is_downtime' => $is_downtime,
         ])->render('pages.user.gangguan.index', compact([
             'equipment',
             'tipe_equipment',
@@ -96,6 +98,7 @@ class GangguanController extends Controller
             'start_date',
             'end_date',
             'is_changed',
+            'is_downtime',
         ]));
     }
 
@@ -130,6 +133,7 @@ class GangguanController extends Controller
             'remark' => 'nullable|string',
             'status_id' => 'required|numeric',
             'is_changed' => 'boolean|required',
+            'is_downtime' => 'boolean|required',
         ]);
 
         $request->validate([
@@ -268,6 +272,7 @@ class GangguanController extends Controller
             'remark' => 'nullable|string',
             'status_id' => 'required|numeric',
             'is_changed' => 'boolean|required',
+            'is_downtime' => 'boolean|required',
         ]);
 
         $request->validate([

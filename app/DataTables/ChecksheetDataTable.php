@@ -68,10 +68,21 @@ class ChecksheetDataTable extends DataTable
                     ->setTableId('checksheet-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->dom('Blfrtip')
-                    ->orderBy(1)
+                    ->pageLength(10)
+                    ->lengthMenu([10, 50, 100, 250, 500, 1000])
+                    ->dom('frtiplB')
+                    ->orderBy([0, 'ASC'])
                     ->selectStyleSingle()
-                    ->buttons([]);
+                    ->buttons([
+                        [
+                            'extend' => 'excel',
+                            'text' => 'Export to Excel',
+                            'attr' => [
+                                'id' => 'datatable-excel',
+                                'style' => 'display: none;',
+                            ],
+                        ]
+                    ]);
     }
 
     public function getColumns(): array

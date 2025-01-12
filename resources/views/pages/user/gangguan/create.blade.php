@@ -39,6 +39,14 @@
                                 <input type="datetime-local" class="form-control" id="report_date" name="report_date"
                                     autocomplete="off" required>
                             </div>
+                            <div class="form-group">
+                                <label for="is_downtime">Apakah terjadi Downtime?</label>
+                                <select class="form-control form-control-lg" name="is_downtime" id="is_downtime" required>
+                                    <option value="" selected disabled>- pilih keterangan -</option>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
                             @livewire('form-gangguan')
                             <div id="problemOtherContainer" class="form-group" style="display: none">
                                 <label for="problem_other">Problem (P) Other</label>
@@ -84,14 +92,14 @@
                                     <img class="img-thumbnail" id="previewImage" src="#" alt="Tidak ada photo"
                                         style="max-width: 250px; max-height: 250px; display: none;">
                                 </div>
-                                <input type="file" class="form-control" id="photo" name="photo" autocomplete="off"
-                                    placeholder="input photo" accept="image/*">
+                                <input type="file" class="form-control" id="photo" name="photo"
+                                    autocomplete="off" placeholder="input photo" accept="image/*">
                             </div>
                             <div class="form-group">
                                 <label for="photo_after">Photo After <span class="text-info">(optional)</span></label>
                                 <div class="text-left">
-                                    <img class="img-thumbnail" id="previewImageAfter" src="#" alt="Tidak ada photo"
-                                        style="max-width: 250px; max-height: 250px; display: none;">
+                                    <img class="img-thumbnail" id="previewImageAfter" src="#"
+                                        alt="Tidak ada photo" style="max-width: 250px; max-height: 250px; display: none;">
                                 </div>
                                 <input type="file" class="form-control" id="photo_after" name="photo_after"
                                     autocomplete="off" placeholder="input photo" accept="image/*">

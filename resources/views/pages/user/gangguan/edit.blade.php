@@ -28,6 +28,14 @@
                                     autocomplete="off" required value="{{ $gangguan->report_date }}">
                             </div>
                             <div class="form-group">
+                                <label for="is_downtime">Apakah terjadi Downtime?</label>
+                                <select class="form-control form-control-lg" name="is_downtime" id="is_downtime" required>
+                                    <option value="" selected disabled>- pilih keterangan -</option>
+                                    <option value="0" @if($gangguan->is_downtime == 0) selected @endif>No</option>
+                                    <option value="1" @if($gangguan->is_downtime == 1) selected @endif>Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="equipment_id">Equipment</label>
                                 <select class="tom-select-class" id="equipment_id" name="equipment_id" required>
                                     <option value="" selected disabled>- pilih equipment -</option>

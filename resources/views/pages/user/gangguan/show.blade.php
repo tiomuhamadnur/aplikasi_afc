@@ -150,6 +150,16 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Downtime?</td>
+                                        <td>
+                                            @if ($gangguan->is_downtime == 1)
+                                                Yes
+                                            @else
+                                                No
+                                            @endif
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

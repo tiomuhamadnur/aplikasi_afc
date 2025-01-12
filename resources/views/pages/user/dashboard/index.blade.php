@@ -8,9 +8,9 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card mrt-orange card-img-holder text-white">
                     <div class="card-body">
-                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Failure Report
                             <i class="mdi mdi-receipt mdi-24px float-right"></i>
                         </h4>
@@ -21,9 +21,9 @@
                 </div>
             </div>
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card mrt-blue card-img-holder text-white">
                     <div class="card-body">
-                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Log Sparepart <i
                                 class="mdi mdi-repeat mdi-24px float-right"></i>
                         </h4>
@@ -34,14 +34,14 @@
                 </div>
             </div>
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-warning card-img-holder text-white">
+                <div class="card mrt-green card-img-holder text-white">
                     <div class="card-body">
-                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">SAM Card
                             <i class="mdi mdi-key-variant mdi-24px float-right"></i>
                         </h4>
                         <div class="mb-3">
-                            <span class="badge badge-gradient-success">
+                            <span class="badge badge-gradient-primary">
                                 <h5>Ready: {{ $samcard['ready'] ?? 'N/A' }}</h5>
                             </span>
                             <span class="badge badge-gradient-danger">
@@ -54,17 +54,17 @@
                 </div>
             </div>
             <div class="col-md-3 stretch-card grid-margin">
-                <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card mrt-grey card-img-holder text-white">
                     <div class="card-body">
-                        <img src="assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Work Order
                             <i class="mdi mdi-briefcase mdi-24px float-right"></i>
                         </h4>
                         <h2 class="mb-3">
-                            <span class="badge badge-gradient-success">
+                            <span class="badge badge-gradient-primary">
                                 <h5>PM: {{ $work_order['PM'] ?? 0 }}</h5>
                             </span>
-                            <span class="badge badge-gradient-primary">
+                            <span class="badge badge-gradient-danger">
                                 <h5>CM: {{ $work_order['CM'] ?? 0 }}</h5>
                             </span>
                         </h2>
@@ -157,166 +157,6 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="row">
-            <div class="col-md-7 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Project Status</h4>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Name </th>
-                                        <th> Due Date </th>
-                                        <th> Progress </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td> 1 </td>
-                                        <td> Herman Beck </td>
-                                        <td> May 15, 2015 </td>
-                                        <td>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-success" role="progressbar"
-                                                    style="width: 25%" aria-valuenow="25" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td> 2 </td>
-                                        <td> Messsy Adam </td>
-                                        <td> Jul 01, 2015 </td>
-                                        <td>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-danger" role="progressbar"
-                                                    style="width: 75%" aria-valuenow="75" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td> 3 </td>
-                                        <td> John Richards </td>
-                                        <td> Apr 12, 2015 </td>
-                                        <td>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-warning" role="progressbar"
-                                                    style="width: 90%" aria-valuenow="90" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td> 4 </td>
-                                        <td> Peter Meggik </td>
-                                        <td> May 15, 2015 </td>
-                                        <td>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-primary" role="progressbar"
-                                                    style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td> 5 </td>
-                                        <td> Edward </td>
-                                        <td> May 03, 2015 </td>
-                                        <td>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-danger" role="progressbar"
-                                                    style="width: 35%" aria-valuenow="35" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td> 5 </td>
-                                        <td> Ronald </td>
-                                        <td> Jun 05, 2015 </td>
-                                        <td>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info" role="progressbar"
-                                                    style="width: 65%" aria-valuenow="65" aria-valuemin="0"
-                                                    aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title text-white">Todo</h4>
-                        <div class="add-items d-flex">
-                            <input type="text" class="form-control todo-list-input"
-                                placeholder="What do you need to do today?">
-                            <button class="add btn btn-gradient-primary font-weight-bold todo-list-add-btn"
-                                id="add-task">Add</button>
-                        </div>
-                        <div class="list-wrapper">
-                            <ul class="d-flex flex-column-reverse todo-list todo-list-custom">
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox"> Meeting with Alisa
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li class="completed">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox" checked> Call John
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox"> Create invoice
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox"> Print Statements
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li class="completed">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox" checked> Prepare for
-                                            presentation </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox"> Pick up kids from
-                                            school </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
     </div>
 @endsection
 
@@ -328,6 +168,8 @@
     <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const colors = ['#88BFF8', '#0053B2', '#43B53A', '#A3AAB1'];
+
             Highcharts.chart('trendGangguanGraph', {
                 chart: {
                     type: 'column'
@@ -348,11 +190,11 @@
                 },
                 series: [{
                     name: 'Open',
-                    color: 'red',
+                    color: '#0053B2',
                     data: [2, 3, 5, 1, 2, 4, 3, 1, 5, 7, 3, 4]
                 }, {
                     name: 'Closed',
-                    color: 'green',
+                    color: '#43B53A',
                     data: [5, 7, 3, 2, 3, 5, 1, 2, 4, 3, 2, 1]
                 }]
             });
@@ -405,11 +247,11 @@
                 },
                 series: [{
                     name: 'Jumlah Gangguan',
-                    colors: ['red', 'green', 'yellow', 'blue'],
+                    colors: colors,
                     data: [
+                        ['Monitoring', monitoring],
                         ['Open', open],
                         ['Closed', closed],
-                        ['Monitoring', monitoring],
                         ['Pending', pending],
                     ]
                 }]
@@ -457,7 +299,7 @@
                 },
                 series: [{
                     name: 'Sparepart',
-                    color: 'blue',
+                    color: '#43B53A',
                     data: {!! json_encode(
                         array_map(function ($item) {
                             return ['y' => $item['trend_gangguan'], 'url' => $item['url_trend_gangguan']];
@@ -465,7 +307,7 @@
                     ) !!}
                 }, {
                     name: 'SAM Card',
-                    color: 'green',
+                    color: '#0053B2',
                     data: {!! json_encode(
                         array_map(function ($item) {
                             return ['y' => $item['trend_sam_card'], 'url' => $item['url_trend_sam_card']];

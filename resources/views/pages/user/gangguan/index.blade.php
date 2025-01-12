@@ -30,10 +30,6 @@
                         <a href="{{ route('gangguan.create') }}" class="btn btn-gradient-primary btn-rounded">Make
                             Request</a>
                         <div class="btn-group my-2">
-                            {{-- <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#addModal">
-                                <i class="mdi mdi-plus-circle"></i>
-                            </button> --}}
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
@@ -287,6 +283,18 @@
                         <div class="form-group">
                             <label for="is_changed">Is Changed Sparepart?</label>
                             <select class="tom-select-class" name="is_changed" id="is_changed">
+                                <option value="" selected disabled>- pilih keterangan -</option>
+                                <option value="1">
+                                    Yes
+                                </option>
+                                <option value="0">
+                                    No
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_downtime">Is Downtime?</label>
+                            <select class="tom-select-class" name="is_downtime" id="is_downtime">
                                 <option value="" selected disabled>- pilih keterangan -</option>
                                 <option value="1">
                                     Yes

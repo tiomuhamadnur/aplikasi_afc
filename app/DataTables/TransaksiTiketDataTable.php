@@ -42,9 +42,9 @@ class TransaksiTiketDataTable extends DataTable
                     ->setTableId('transaksitiket-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->pageLength(100)
+                    ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
-                    ->dom('Blfrtip')
+                    ->dom('frtiplB')
                     ->orderBy(1)
                     ->selectStyleSingle()
                     ->buttons([
