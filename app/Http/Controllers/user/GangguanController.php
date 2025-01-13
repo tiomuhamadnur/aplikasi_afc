@@ -65,7 +65,9 @@ class GangguanController extends Controller
         $category = Category::all();
         $classification = Classification::all();
         $tipe_equipment = TipeEquipment::all();
-        $area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
+        $area = RelasiArea::where('lokasi_id', 2)
+                        ->get()
+                        ->unique('sub_lokasi_id');
         $problem = Problem::all();
 
 
@@ -123,9 +125,9 @@ class GangguanController extends Controller
             'equipment_id' => 'required|numeric',
             'category_id' => 'required|numeric',
             'problem_id' => 'nullable|numeric',
-            'problem_other' => 'nullable|string',
+            'problem_other' => 'required|string',
             'cause_id' => 'nullable|numeric',
-            'cause_other' => 'nullable|string',
+            'cause_other' => 'required|string',
             'response_date' => 'required|date',
             'solved_user_id' => 'required|numeric',
             'solved_date' => 'required|date',
@@ -139,16 +141,16 @@ class GangguanController extends Controller
         $request->validate([
             'photo' => 'file|image',
             'photo_after' => 'file|image',
-            'barang_ids' => 'array',
-            'qty' => 'array',
+            // 'barang_ids' => 'array',
+            // 'qty' => 'array',
             'remedy_id' => 'nullable|numeric',
-            'remedy_other' => 'nullable|string',
+            'remedy_other' => 'required|string',
         ]);
 
-        if ($raw_data['problem_id'] == 0 && $raw_data['cause_id'] == 0) {
-            $raw_data['problem_id'] = null;
-            $raw_data['cause_id'] = null;
-        }
+        // if ($raw_data['problem_id'] == 0 && $raw_data['cause_id'] == 0) {
+        //     $raw_data['problem_id'] = null;
+        //     $raw_data['cause_id'] = null;
+        // }
 
         if($request->report_date && $request->response_date && $request->solved_date)
         {
@@ -262,9 +264,9 @@ class GangguanController extends Controller
             'equipment_id' => 'required|numeric',
             'category_id' => 'required|numeric',
             'problem_id' => 'nullable|numeric',
-            'problem_other' => 'nullable|string',
+            'problem_other' => 'required|string',
             'cause_id' => 'nullable|numeric',
-            'cause_other' => 'nullable|string',
+            'cause_other' => 'required|string',
             'response_date' => 'required|date',
             'solved_user_id' => 'required|numeric',
             'solved_date' => 'required|date',
@@ -280,12 +282,12 @@ class GangguanController extends Controller
             'photo' => 'file|image',
             'photo_after' => 'file|image',
             'remedy_id' => 'nullable|numeric',
-            'remedy_other' => 'nullable|string',
+            'remedy_other' => 'required|string',
         ]);
 
-        if ($raw_data['problem_id'] == 0) {
-            $raw_data['problem_id'] = null;
-        }
+        // if ($raw_data['problem_id'] == 0) {
+        //     $raw_data['problem_id'] = null;
+        // }
 
         if($request->report_date && $request->response_date && $request->solved_date)
         {
@@ -305,6 +307,19 @@ class GangguanController extends Controller
         $data = Gangguan::findOrFail($request->id);
 
         $data->update($raw_data);
+
+        TransGangguanRemedy::updateOrCreate([
+            'gangguan_id' => $data->id,
+            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
+            'user_id' => $request->solved_user_id,
+            'date' => $data->response_date,
+        ],[
+            'gangguan_id' => $data->id,
+            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
+            'remedy_other' => $request->remedy_other,
+            'user_id' => $request->solved_user_id,
+            'date' => $data->response_date,
+        ]);
 
         // Update photo jika ada
         if ($request->hasFile('photo')) {

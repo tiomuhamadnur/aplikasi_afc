@@ -212,7 +212,7 @@ class GangguanDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     ->dom('frtiplB')
-                    ->orderBy([14, 'desc'])
+                    ->orderBy([12, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -242,10 +242,10 @@ class GangguanDataTable extends DataTable
                     ->searchable(true),
             Column::make('equipment.tipe_equipment.code')->title('Equipment Type'),
             Column::make('equipment.code')->title('Equipment ID'),
-            Column::make('problem.name')->title('Problem (P)'),
-            Column::make('problem_other')->title('Problem Other'),
-            Column::make('cause.name')->title('Cause (C)'),
-            Column::make('cause_other')->title('Cause Other'),
+            // Column::make('problem.name')->title('Problem (P)'),
+            Column::make('problem_other')->title('Problem (P)'),
+            // Column::make('cause.name')->title('Cause (C)'),
+            Column::make('cause_other')->title('Cause (C)'),
             Column::computed('remedy')
                     ->title('Remedy (R)')
                     ->exportable(true)

@@ -70,7 +70,7 @@
                                         <td>
                                             {{ $gangguan->problem->name ?? '' }}
                                             <br>
-                                            Other : {{ $gangguan->problem_other ?? '-' }}
+                                            {{ $gangguan->problem_other ?? '-' }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -78,7 +78,7 @@
                                         <td>
                                             {{ $gangguan->cause->name ?? '' }}
                                             <br>
-                                            Other : {{ $gangguan->cause_other ?? '-' }}
+                                            {{ $gangguan->cause_other ?? '-' }}
                                         </td>
                                     </tr>
                                     <tr>

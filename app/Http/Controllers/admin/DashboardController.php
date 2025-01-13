@@ -92,10 +92,11 @@ class DashboardController extends Controller
         $bulan_name = Carbon::create()->month($bulan)->format('F');
 
         $stasiun_id = RelasiArea::where('lokasi_id', 2)
-                                ->select('id')
-                                ->distinct('sub_lokasi_id')
-                                ->pluck('id')
-                                ->toArray();
+                            ->select('id', 'sub_lokasi_id')
+                            ->get()
+                            ->unique('sub_lokasi_id')
+                            ->pluck('id')
+                            ->toArray();
 
         $stasiun_name = [];
         foreach($stasiun_id as $id)
@@ -141,7 +142,9 @@ class DashboardController extends Controller
         $tipe_eq_id = $request->tipe_equipment_id;
         $bulan_name = Carbon::create()->month($bulan)->format('F');
 
-        $relasi_area = RelasiArea::where('lokasi_id', 2)->distinct('sub_lokasi_id')->get();
+        $relasi_area = RelasiArea::where('lokasi_id', 2)
+                                ->get()
+                                ->unique('sub_lokasi_id');
         $tipe_equipment_code = TipeEquipment::pluck('code')->toArray();
         $tipe_equipment_id = TipeEquipment::pluck('id')->toArray();
         $tipe_equipment = $tipe_eq_id ? TipeEquipment::findOrFail($tipe_eq_id) : TipeEquipment::first();

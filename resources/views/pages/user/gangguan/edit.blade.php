@@ -29,7 +29,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="is_downtime">Apakah terjadi Downtime?</label>
-                                <select class="form-control form-control-lg" name="is_downtime" id="is_downtime" required>
+                                <select class="tom-select-class" name="is_downtime" id="is_downtime" required>
                                     <option value="" selected disabled>- pilih keterangan -</option>
                                     <option value="0" @if($gangguan->is_downtime == 0) selected @endif>No</option>
                                     <option value="1" @if($gangguan->is_downtime == 1) selected @endif>Yes</option>
@@ -59,7 +59,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="problem_id">Problem (P)</label>
                                 <select class="tom-select-class" name="problem_id" id="problem_id">
                                     <option value="" selected disabled>- pilih problem -</option>
@@ -97,7 +97,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="form-group">
                                 <label for="classification_id">Classification</label>
                                 <select class="tom-select-class" name="classification_id" id="classification_id" required>
@@ -111,24 +111,24 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="problem_other">Problem (P) Other</label>
+                                <label for="problem_other">Problem (P)</label>
                                 <input type="text" class="form-control" id="problem_other" name="problem_other"
-                                    autocomplete="off" placeholder="input other problem"
-                                    value="{{ $gangguan->problem_other }}">
+                                    autocomplete="off" placeholder="input problem"
+                                    value="{{ $gangguan->problem_other }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="cause_other">Cause (C) Other</label>
+                                <label for="cause_other">Cause (C)</label>
                                 <input type="text" class="form-control" id="cause_other" name="cause_other"
-                                    autocomplete="off" placeholder="input other cause"
-                                    value="{{ $gangguan->cause_other }}">
+                                    autocomplete="off" placeholder="input cause"
+                                    value="{{ $gangguan->cause_other }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="remedy_other">Remedy (R) Other</label>
+                                <label for="remedy_other">Remedy (R)</label>
                                 @if ($gangguan->trans_gangguan_remedy)
                                     @foreach ($gangguan->trans_gangguan_remedy as $remedy)
                                         <input type="text" class="form-control" id="remedy_other" name="remedy_other"
-                                            autocomplete="off" placeholder="input other remedy"
-                                            value="{{ $remedy->remedy_other }}">
+                                            autocomplete="off" placeholder="input remedy"
+                                            value="{{ $remedy->remedy_other }}" required>
                                     @endforeach
                                 @endif
                             </div>
@@ -216,24 +216,6 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            const problemSelect = document.getElementById('problem_id');
-            const problemOtherContainer = document.getElementById('problemOtherContainer');
-            const problemOtherInput = document.getElementById('problem_other');
-
-            problemSelect.addEventListener('change', function() {
-                if (problemSelect.value === '0') {
-                    // Jika problem_id bernilai null (selected value is empty)
-                    problemOtherContainer.style.display = 'block';
-                    problemOtherInput.setAttribute('required', 'required');
-                } else {
-                    // Jika problem_id tidak bernilai null
-                    problemOtherContainer.style.display = 'none';
-                    problemOtherInput.removeAttribute('required');
-                    problemOtherInput.value = ''; // Mengosongkan input jika disembunyikan
-                }
-            });
-
-
             const imageInput = document.getElementById('photo');
             const previewImage = document.getElementById('previewImage');
 

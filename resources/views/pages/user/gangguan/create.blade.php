@@ -48,20 +48,35 @@
                                 </select>
                             </div>
                             @livewire('form-gangguan')
-                            <div id="problemOtherContainer" class="form-group" style="display: none">
-                                <label for="problem_other">Problem (P) Other</label>
+                            {{-- <div id="problemOtherContainer" class="form-group" style="display: none">
+                                <label for="problem_other">Problem (P)</label>
                                 <input type="text" class="form-control" id="problem_other" name="problem_other"
-                                    autocomplete="off" placeholder="input problem other">
+                                    autocomplete="off" placeholder="input problem">
                             </div>
                             <div id="causeOtherContainer" class="form-group" style="display: none">
-                                <label for="cause_other">Cause (C) Other</label>
+                                <label for="cause_other">Cause (C)</label>
                                 <input type="text" class="form-control" id="cause_other" name="cause_other"
-                                    autocomplete="off" placeholder="input other cause">
+                                    autocomplete="off" placeholder="input cause">
                             </div>
                             <div id="remedyOtherContainer" class="form-group" style="display: none">
-                                <label for="remedy_other">Remedy (R) Other</label>
+                                <label for="remedy_other">Remedy (R)</label>
                                 <input type="text" class="form-control" id="remedy_other" name="remedy_other"
-                                    autocomplete="off" placeholder="input other remedy">
+                                    autocomplete="off" placeholder="input remedy">
+                            </div> --}}
+                            <div class="form-group">
+                                <label for="problem_other">Problem (P)</label>
+                                <input type="text" class="form-control" id="problem_other" name="problem_other"
+                                    autocomplete="off" placeholder="input problem" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cause_other">Cause (C)</label>
+                                <input type="text" class="form-control" id="cause_other" name="cause_other"
+                                    autocomplete="off" placeholder="input cause" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="remedy_other">Remedy (R)</label>
+                                <input type="text" class="form-control" id="remedy_other" name="remedy_other"
+                                    autocomplete="off" placeholder="input remedy" required>
                             </div>
                             <div class="form-group">
                                 <label for="response_date">Action Date</label>
@@ -167,63 +182,6 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
-            const problemSelect = document.getElementById('problem_id');
-            const problemOtherContainer = document.getElementById('problemOtherContainer');
-            const problemOtherInput = document.getElementById('problem_other');
-
-            problemSelect.addEventListener('change', function() {
-                if (problemSelect.value === '0') {
-                    // Jika problem_id bernilai null (selected value is empty)
-                    problemOtherContainer.style.display = 'block';
-                    problemOtherInput.setAttribute('required', 'required');
-                } else {
-                    // Jika problem_id tidak bernilai null
-                    problemOtherContainer.style.display = 'none';
-                    problemOtherInput.removeAttribute('required');
-                    problemOtherInput.value = ''; // Mengosongkan input jika disembunyikan
-                }
-            });
-
-
-
-
-            const causeSelect = document.getElementById('cause_id');
-            const causeOtherContainer = document.getElementById('causeOtherContainer');
-            const causeOtherInput = document.getElementById('cause_other');
-
-            causeSelect.addEventListener('change', function() {
-                if (causeSelect.value === '0') {
-                    // Jika problem_id bernilai null (selected value is empty)
-                    causeOtherContainer.style.display = 'block';
-                    causeOtherInput.setAttribute('required', 'required');
-                } else {
-                    // Jika problem_id tidak bernilai null
-                    causeOtherContainer.style.display = 'none';
-                    causeOtherInput.removeAttribute('required');
-                    causeOtherInput.value = ''; // Mengosongkan input jika disembunyikan
-                }
-            });
-
-
-
-            const remedySelect = document.getElementById('remedy_id');
-            const remedyOtherContainer = document.getElementById('remedyOtherContainer');
-            const remedyOtherInput = document.getElementById('remedy_other');
-
-            remedySelect.addEventListener('change', function() {
-                if (remedySelect.value === '0') {
-                    // Jika problem_id bernilai null (selected value is empty)
-                    remedyOtherContainer.style.display = 'block';
-                    remedyOtherInput.setAttribute('required', 'required');
-                } else {
-                    // Jika problem_id tidak bernilai null
-                    remedyOtherContainer.style.display = 'none';
-                    remedyOtherInput.removeAttribute('required');
-                    remedyOtherInput.value = ''; // Mengosongkan input jika disembunyikan
-                }
-            });
-
-
             const imageInput = document.getElementById('photo');
             const previewImage = document.getElementById('previewImage');
 

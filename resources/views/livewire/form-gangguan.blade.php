@@ -44,7 +44,7 @@
             @endforeach
         </select>
     </div>
-    <div class="form-group">
+    {{-- <div class="form-group">
         <label for="problem_id">Problem (P)</label>
         <select class="form-control form-control-lg" name="problem_id" id="problem_id" wire:model.live='problem_id'
             required>
@@ -81,7 +81,7 @@
                 </option>
             @endforeach
         </select>
-    </div>
+    </div> --}}
     <div class="form-group">
         <label for="classification_id">Classification</label>
         <select class="form-control form-control-lg" name="classification_id" id="classification_id" required>
