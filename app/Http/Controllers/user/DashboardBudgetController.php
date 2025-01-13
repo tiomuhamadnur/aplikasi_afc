@@ -43,7 +43,7 @@ class DashboardBudgetController extends Controller
 
         $today = $mulai . ' - ' . $akhir;
 
-        $range = [$start_date, $end_date];
+        $range = [$start_date, $sekarang];
         $divisi_id = auth()->user()->relasi_struktur->divisi_id;
 
         // BALANCE TOTAL

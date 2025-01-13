@@ -17,10 +17,42 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departemen_id = auth()->user()->relasi_struktur->departemen->id;
-        $permit = MonitoringPermit::where('departemen_id', $departemen_id)->count();
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        if ($request->start_date && $request->end_date) {
+            $startYear = Carbon::parse($request->start_date)->year;
+            $endYear = Carbon::parse($request->end_date)->year;
+
+            if ($startYear !== $endYear) {
+                return redirect()->back()->withNotifyerror('Tanggal evaluasi harus di tahun yang sama');
+            }
+        }
+
+        $end_date = $request->end_date;
+        $start_date = $request->start_date;
+
+        $sekarang = $end_date ? Carbon::parse($end_date) : Carbon::now();
+        $year = $sekarang->year;
+        $start_date = $start_date ? Carbon::parse($start_date) : Carbon::create($sekarang->year, 1, 1)->startOfDay();
+
+        // Format untuk ditampilkan
+        $mulai = $start_date->isoFormat('D MMM Y');
+        $akhir = $sekarang->isoFormat('D MMM Y');
+        $today = "$mulai - $akhir";
+
+        // Range dalam format datetime untuk query
+        $range = [
+            $start_date->startOfDay()->format('Y-m-d H:i:s'),
+            $sekarang->endOfDay()->format('Y-m-d H:i:s'),
+        ];
+
+
+        $permit = MonitoringPermit::where('departemen_id', auth()->user()->relasi_struktur->departemen->id)->count();
 
         $samcard_ready = SamCard::where('status', 'ready')->count();
         $samcard_used = SamCard::where('status', 'used')->count();
@@ -29,30 +61,32 @@ class DashboardController extends Controller
             'used' => $samcard_used
         ];
 
-        $tahun = Carbon::now()->year;
-
-        $wo = WorkOrder::whereYear('date', $tahun)->where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
+        $wo = WorkOrder::whereBetween('date', $range)
+                        ->where('relasi_struktur_id', auth()->user()->relasi_struktur_id)
+                        ->get();
         $work_order = [
             'PM' => $wo->where('tipe_pekerjaan_id', 1)->count(),
             'CM' => $wo->where('tipe_pekerjaan_id', 2)->count()
         ];
 
-        $gangguan = Gangguan::whereYear('report_date', $tahun)->count();
+        $gangguan = Gangguan::whereBetween('report_date', $range)->count();
         $latest_gangguan = Gangguan::latest()->take(5)->orderBy('report_date', 'DESC')->get();
-        $transaksi_barang = TransaksiBarang::whereYear('tanggal', $tahun)->count();
+        $transaksi_barang = TransaksiBarang::whereBetween('tanggal', $range)->count();
 
         $bulan = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         $bulan_name = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
         $availability = [];
         $trend_gangguan = [];
+        $trend_sparepart = [];
         $trend_sam_card = [];
 
         foreach($bulan as $i)
         {
             $availability[] = rand(90, 99);
-            $trend_gangguan[] = TransaksiBarang::whereYear('tanggal', $tahun)->whereMonth('tanggal', $i)->count();
-            $trend_sam_card[] = SamCardHistory::whereYear('tanggal', $tahun)->whereMonth('tanggal', $i)->count();
+            $trend_gangguan[] = Gangguan::whereYear('report_date', $year)->whereMonth('report_date', $i)->count();
+            $trend_sparepart[] = TransaksiBarang::whereYear('tanggal', $year)->whereMonth('tanggal', $i)->count();
+            $trend_sam_card[] = SamCardHistory::whereYear('tanggal', $year)->whereMonth('tanggal', $i)->count();
         }
 
         $data = [];
@@ -60,24 +94,54 @@ class DashboardController extends Controller
             $data[] = [
                 'bulan' => $bulan_name[$i],
                 'availability' => $availability[$i],
-                'url' => route('dashboard.availability.bulan', ['y' => $tahun, 'm' => $b]),
+                'url' => route('dashboard.availability.bulan', ['y' => $year, 'm' => $b]),
                 'trend_gangguan' => $trend_gangguan[$i],
-                'url_trend_gangguan' => route('transaksi-barang.trend.monthly', ['y' => $tahun, 'm' => $b]),
+                'url_trend_gangguan' => route('gangguan.trend.monthly', ['y' => $year, 'm' => $b]),
+                'trend_sparepart' => $trend_sparepart[$i],
+                'url_trend_sparepart' => route('transaksi-barang.trend.monthly', ['y' => $year, 'm' => $b]),
                 'trend_sam_card' => $trend_sam_card[$i],
-                'url_trend_sam_card' => route('sam-history.index', ['start_date' => Carbon::create($tahun, $b)->startOfMonth()->toDateString(), 'end_date' => Carbon::create($tahun, $b)->endOfMonth()->toDateString()]),
+                'url_trend_sam_card' => route('sam-history.index', ['start_date' => Carbon::create($year, $b)->startOfMonth()->toDateString(), 'end_date' => Carbon::create($year, $b)->endOfMonth()->toDateString()]),
             ];
         }
 
-        return view('pages.user.dashboard.index', compact([
-            'tahun',
-            'permit',
-            'samcard',
-            'work_order',
-            'gangguan',
-            'latest_gangguan',
-            'transaksi_barang',
-            'data'
-        ]));
+        $statusCounts = Gangguan::whereBetween('report_date', $range)
+                        ->get()
+                        ->groupBy('status_id')
+                        ->map(fn($group) => $group->count());
+
+        $gangguanByStatus = [
+            ['Open', $statusCounts->get(1, 0)],
+            ['Closed', $statusCounts->get(2, 0)],
+            ['Monitoring', $statusCounts->get(3, 0)],
+            ['Pending', $statusCounts->get(4, 0)],
+        ];
+
+        $klasifikasiCounts = Gangguan::whereBetween('report_date', $range)
+                        ->get()
+                        ->groupBy('classification_id')
+                        ->map(fn($group) => $group->count());
+
+        $gangguanByKlasifikasi = [
+            ['Low', $klasifikasiCounts->get(1, 0)],
+            ['Medium', $klasifikasiCounts->get(2, 0)],
+            ['High', $klasifikasiCounts->get(3, 0)],
+        ];
+
+        return view('pages.user.dashboard.index', [
+            'today' => $today,
+            'start_date' => Carbon::parse($start_date)->isoFormat('YYYY-MM-DD'),
+            'end_date' => $sekarang->isoFormat('YYYY-MM-DD'),
+            'year' => $year,
+            'permit' => $permit,
+            'samcard' => $samcard,
+            'work_order' => $work_order,
+            'gangguan' => $gangguan,
+            'gangguanByStatus' => $gangguanByStatus,
+            'gangguanByKlasifikasi' => $gangguanByKlasifikasi,
+            'latest_gangguan' => $latest_gangguan,
+            'transaksi_barang' => $transaksi_barang,
+            'data' => $data
+        ]);
     }
 
     public function availability_bulan(Request $request)

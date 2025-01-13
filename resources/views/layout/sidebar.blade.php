@@ -91,7 +91,7 @@
                     aria-controls="sam-card">
                     <span class="menu-title">SAM Card</span>
                     <i class="menu-arrow"></i>
-                    <i class="mdi mdi mdi-credit-card-scan menu-icon"></i>
+                    <i class="mdi mdi-credit-card-scan menu-icon"></i>
                 </a>
                 <div class="collapse" id="sam-card">
                     <ul class="nav flex-column sub-menu">

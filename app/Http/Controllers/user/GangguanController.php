@@ -108,7 +108,16 @@ class GangguanController extends Controller
     {
         $barang = Barang::all();
         $status = Status::all();
-        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->orderBy('name', 'ASC')->get();
+
+        $userQuery = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)
+                        ->notBanned()
+                        ->orderBy('name', 'ASC');
+
+        if (auth()->user()->role_id != 1 || auth()->user()->tipe_employee_id != 1) {
+            $userQuery->where('id', auth()->user()->id); // Hanya user terkait
+        }
+
+        $user = $userQuery->get();
 
         return view('pages.user.gangguan.create', compact([
             'barang',
@@ -368,5 +377,48 @@ class GangguanController extends Controller
         $data->delete();
 
         return redirect()->route('gangguan.index')->withNotify('Data berhasil dihapus');
+    }
+
+    public function trend_monthly(Request $request)
+    {
+        $request->validate([
+            'y' => ['required', 'integer', 'digits:4', 'min:1900'],
+            'm' => ['required', 'integer', 'min:1', 'max:12'],
+        ]);
+
+        $tahun = $request->y;
+        $bulan = $request->m;
+        $bulan_name = Carbon::create()->month($bulan)->format('F');
+
+        $tanggal = [];
+
+        $startDate = Carbon::createFromDate($tahun, $bulan, 1);
+        $endDate = $startDate->copy()->endOfMonth();
+
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $tanggal[] = $date->format('Y-m-d');
+        }
+
+        $gangguan = [];
+        foreach($tanggal as $i)
+        {
+            $gangguan[] = Gangguan::whereDate('report_date', $i)->count();
+        }
+
+        $data = [];
+        foreach ($tanggal as $i => $tgl) {
+            $data[] = [
+                'tanggal' => $tgl,
+                'gangguan' => $gangguan[$i],
+                'url' => route('gangguan.index', ['start_date' => $tgl, 'end_date' => $tgl])
+            ];
+        }
+
+        return view('pages.user.gangguan.chart.daily', compact([
+            'tahun',
+            'bulan',
+            'bulan_name',
+            'data'
+        ]));
     }
 }

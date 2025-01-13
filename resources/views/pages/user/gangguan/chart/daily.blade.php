@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Trend Pergantian Sparepart</title>
+    <title>Trend Gangguan</title>
 @endsection
 
 @section('content')
@@ -10,13 +10,18 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Trend Pergantian Sparepart</h4>
+                        <h4 class="card-title">Data Trend Gangguan</h4>
                         <div class="btn-group my-2">
                             <a href="{{ route('dashboard.index') }}" title="Back" class="btn btn-gradient-primary btn-rounded">
                                 <i class="mdi mdi-arrow-left"></i> Back
                             </a>
                         </div>
-                        <div id="trendDailySparepartGraph"></div>
+                        <div class="row">
+                            <div class="col-md-12 grid-margin stretch-card">
+                                <div class="card" id="trendDailyGangguanGraph">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -30,9 +35,10 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script>
-        Highcharts.chart('trendDailySparepartGraph', {
+        Highcharts.chart('trendDailyGangguanGraph', {
             chart: {
-                type: 'column'
+                type: 'column',
+                height: window.innerHeight * 0.6 // 60% dari tinggi layar
             },
             plotOptions: {
                 series: {
@@ -57,7 +63,7 @@
                 }
             },
             title: {
-                text: 'Trend Pergantian Sparepart {{ $bulan_name ?? '-' }} {{ $tahun ?? '-' }}',
+                text: 'Trend Gangguan {{ $bulan_name ?? '-' }} {{ $tahun ?? '-' }}',
                 align: 'left',
                 margin: 50
             },
@@ -66,15 +72,15 @@
             },
             yAxis: {
                 title: {
-                    text: 'Jumlah'
+                    text: 'Jumlah Gangguan'
                 }
             },
             series: [{
-                name: 'Sparepart',
+                name: 'Gangguan',
                 color: '#0053B2',
                 data: {!! json_encode(
                     array_map(function ($item) {
-                        return ['y' => $item['sparepart'], 'url' => $item['url']];
+                        return ['y' => $item['gangguan'], 'url' => $item['url']];
                     }, $data),
                 ) !!}
             }],

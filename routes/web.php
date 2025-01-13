@@ -125,6 +125,7 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
         Route::delete('/gangguan', 'destroy')->name('gangguan.delete');
 
         Route::get('/gangguan/filter', 'filter')->name('gangguan.filter');
+        Route::get('/gangguan/trend/monthly', 'trend_monthly')->name('gangguan.trend.monthly');
     });
 
     Route::controller(ChecksheetController::class)->group(function () {

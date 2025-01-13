@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Gangguan;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Request;
 use Yajra\DataTables\EloquentDataTable;
@@ -185,9 +186,11 @@ class GangguanDataTable extends DataTable
             $query->where('status_id', $this->status_id);
         }
 
-        if($this->start_date != null && $this->end_date != null)
-        {
-            $query->whereBetween('report_date', [$this->start_date, $this->end_date]);
+        if ($this->start_date != null && $this->end_date != null) {
+            $start = Carbon::parse($this->start_date)->startOfDay()->format('Y-m-d H:i:s');
+            $end = Carbon::parse($this->end_date)->endOfDay()->format('Y-m-d H:i:s');
+
+            $query->whereBetween('report_date', [$start, $end]);
         }
 
         if($this->is_changed != null)
