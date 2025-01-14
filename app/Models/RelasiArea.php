@@ -31,7 +31,7 @@ class RelasiArea extends Model
 
     public function sub_lokasi()
     {
-        return $this->belongsTo(SubLokasi::class);
+        return $this->belongsTo(SubLokasi::class, 'sub_lokasi_id');
     }
 
     public function detail_lokasi()

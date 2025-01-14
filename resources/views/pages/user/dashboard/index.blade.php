@@ -96,27 +96,33 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 grid-margin stretch-card">
+            <div class="col-md-3 grid-margin stretch-card">
+                <div class="card" id="klasifikasiGangguanGraph">
+                </div>
+            </div>
+            <div class="col-md-3 grid-margin stretch-card">
+                <div class="card" id="severityGangguanGraph">
+                </div>
+            </div>
+            <div class="col-md-3 grid-margin stretch-card">
+                <div class="card" id="areaGangguanGraph">
+                </div>
+            </div>
+            <div class="col-md-3 grid-margin stretch-card">
+                <div class="card" id="tipePerangkatGangguanGraph">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 grid-margin stretch-card">
                 <div class="card" id="trendGangguanGraph">
                 </div>
             </div>
             <div class="col-md-4 grid-margin stretch-card">
-                <div class="card" id="klasifikasiGangguanGraph">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-8 grid-margin stretch-card">
                 <div class="card" id="trendSparepartGraph">
                 </div>
             </div>
             <div class="col-md-4 grid-margin stretch-card">
-                <div class="card" id="severityGangguanGraph">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 grid-margin">
                 <div class="card" id="availabilityTotalGraph">
                 </div>
             </div>
@@ -213,9 +219,50 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const colors = ['#0053B2', '#43B53A', '#88BFF8', '#A3AAB1'];
+
+            // BY AREA
+            const gangguanByArea = @json($gangguanByArea);
+            Highcharts.chart('areaGangguanGraph', {
+                colorAxis: {
+                    minColor: '#FFFFFF',
+                    maxColor: '#0053B2',
+                },
+                series: [{
+                    type: 'treemap',
+                    layoutAlgorithm: 'squarified',
+                    clip: false,
+                    data: gangguanByArea
+                }],
+                title: {
+                    text: 'Area Gangguan',
+                    align: 'left',
+                }
+            });
+
+            // BY TIPE
+            const gangguanByTipe = @json($gangguanByTipe);
+            Highcharts.chart('tipePerangkatGangguanGraph', {
+                colorAxis: {
+                    minColor: '#FFFFFF',
+                    maxColor: '#43B53A',
+                },
+                series: [{
+                    type: 'treemap',
+                    layoutAlgorithm: 'squarified',
+                    clip: false,
+                    data: gangguanByTipe
+                }],
+                title: {
+                    text: 'Tipe Equipment Gangguan',
+                    align: 'left',
+                }
+            });
 
             // BY MONTH
             Highcharts.chart('trendGangguanGraph', {
@@ -245,9 +292,8 @@
                     }
                 },
                 title: {
-                    text: 'Trend Gangguan',
+                    text: 'Trend Gangguan Bulanan',
                     align: 'left',
-                    margin: 50
                 },
                 xAxis: {
                     categories: {!! json_encode(array_column($data, 'bulan')) !!}
@@ -257,14 +303,9 @@
                         text: 'Jumlah Gangguan'
                     }
                 },
-                legend: {
-                    backgroundColor: '#FCFFC5',
-                    borderColor: '#C98657',
-                    borderWidth: 1
-                },
                 series: [{
                     name: 'Gangguan',
-                    color: '#cb6ce6',
+                    color: '#FF834E',
                     data: {!! json_encode(
                         array_map(function ($item) {
                             return ['y' => $item['trend_gangguan'], 'url' => $item['url_trend_gangguan']];
@@ -284,7 +325,7 @@
                     }
                 },
                 title: {
-                    text: 'Distribusi Status Gangguan',
+                    text: 'Status Gangguan',
                     align: 'left'
                 },
                 subtitle: {
@@ -306,14 +347,6 @@
                         },
                         showInLegend: true // Menampilkan legend di bawah chart
                     }
-                },
-                legend: {
-                    align: 'center',
-                    verticalAlign: 'bottom',
-                    layout: 'horizontal',
-                    backgroundColor: '#FCFFC5',
-                    borderColor: '#C98657',
-                    borderWidth: 1
                 },
                 series: [{
                     name: 'Jumlah Gangguan',
@@ -333,7 +366,7 @@
                     }
                 },
                 title: {
-                    text: 'Distribusi Klasifikasi Gangguan',
+                    text: 'Klasifikasi Gangguan',
                     align: 'left'
                 },
                 subtitle: {
@@ -355,14 +388,6 @@
                         },
                         showInLegend: true // Menampilkan legend di bawah chart
                     }
-                },
-                legend: {
-                    align: 'center',
-                    verticalAlign: 'bottom',
-                    layout: 'horizontal',
-                    backgroundColor: '#FCFFC5',
-                    borderColor: '#C98657',
-                    borderWidth: 1
                 },
                 series: [{
                     name: 'Jumlah Gangguan',
@@ -399,9 +424,8 @@
                     }
                 },
                 title: {
-                    text: 'Trend Pergantian Sparepart & SAM Card',
+                    text: 'Trend Penggantian Sparepart & SAM Card',
                     align: 'left',
-                    margin: 50
                 },
                 xAxis: {
                     categories: {!! json_encode(array_column($data, 'bulan')) !!}
@@ -428,14 +452,9 @@
                         }, $data),
                     ) !!}
                 }],
-                legend: {
-                    backgroundColor: '#FCFFC5',
-                    borderColor: '#C98657',
-                    borderWidth: 1
-                },
             });
 
-
+            // AVAILABILITY
             Highcharts.chart('availabilityTotalGraph', {
                 chart: {
                     type: 'column'
@@ -453,7 +472,9 @@
                         },
                         dataLabels: {
                             enabled: true,
-                            format: '{y}%',
+                            formatter: function() {
+                                return this.y.toFixed(3) + '%'; // Membatasi 2 angka di belakang koma
+                            },
                             style: {
                                 fontSize: '13px',
                                 fontWeight: 'bold',
@@ -463,7 +484,7 @@
                     }
                 },
                 title: {
-                    text: 'Total Availability Ticketing System Tahun {{ $year ?? '-' }} (Dummy)',
+                    text: 'Total Availability Ticketing System Tahun {{ $year ?? '-' }}',
                     align: 'left',
                     margin: 50
                 },
@@ -473,6 +494,11 @@
                 yAxis: {
                     title: {
                         text: 'Availability (%)'
+                    },
+                },
+                tooltip: {
+                    formatter: function() {
+                        return `<br/>Availability: <b>${this.y.toFixed(3)}%</b>`;
                     }
                 },
                 series: [{
@@ -484,11 +510,6 @@
                         }, $data),
                     ) !!}
                 }],
-                legend: {
-                    backgroundColor: '#FCFFC5',
-                    borderColor: '#C98657',
-                    borderWidth: 1
-                },
             });
 
         });

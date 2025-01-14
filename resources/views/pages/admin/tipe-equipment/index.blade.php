@@ -26,40 +26,6 @@
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Nama </th>
-                                        <th> Code </th>
-                                        <th> Aksi </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($tipe_equipment as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->code }}</td>
-                                            <td>
-                                                <button type="button" title="Edit"
-                                                    class="btn btn-gradient-warning btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-code="{{ $item->code }}">
-                                                    <i class="mdi mdi-lead-pencil"></i>
-                                                </button>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                    data-id="{{ $item->id }}">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -88,6 +54,11 @@
                             <label for="code">Code</label>
                             <input type="text" class="form-control" id="code" name="code" placeholder="Code"
                                 autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="operation_time">Operation Time in 24h (in Hour)</label>
+                            <input type="number" class="form-control" id="operation_time" name="operation_time" placeholder="Input operation time in Hour"
+                                autocomplete="off" required min="1" max="24">
                         </div>
                     </form>
                 </div>
@@ -122,6 +93,11 @@
                             <label for="code">Code</label>
                             <input type="text" class="form-control" id="code_edit" name="code" placeholder="Code"
                                 autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="operation_time">Operation Time in 24h (in Hour)</label>
+                            <input type="number" class="form-control" id="operation_time_edit" name="operation_time" placeholder="Input operation time in Hour"
+                                autocomplete="off" required min="1" max="24">
                         </div>
                     </form>
                 </div>
@@ -196,10 +172,12 @@
                 var id = $(e.relatedTarget).data('id');
                 var name = $(e.relatedTarget).data('name');
                 var code = $(e.relatedTarget).data('code');
+                var operation_time = $(e.relatedTarget).data('operation_time');
 
                 $('#id_edit').val(id);
                 $('#name_edit').val(name);
                 $('#code_edit').val(code);
+                $('#operation_time_edit').val(operation_time);
             });
 
             $('#deleteModal').on('show.bs.modal', function(e) {

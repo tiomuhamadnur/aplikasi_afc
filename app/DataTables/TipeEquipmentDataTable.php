@@ -28,7 +28,7 @@ class TipeEquipmentDataTable extends DataTable
                 $editButton = "<button type='button' title='Edit'
                         class='btn btn-gradient-warning btn-rounded btn-icon'
                         data-bs-toggle='modal' data-bs-target='#editModal'
-                        data-id='{$item->id}' data-name='{$item->name}' data-code='{$item->code}'>
+                        data-id='{$item->id}' data-name='{$item->name}' data-code='{$item->code}' data-operation_time='{$item->operation_time}'>
                         <i class='mdi mdi-lead-pencil'></i>
                     </button>";
 
@@ -72,6 +72,7 @@ class TipeEquipmentDataTable extends DataTable
             Column::make('id')->title('ID'),
             Column::make('name')->title('Name'),
             Column::make('code')->title('Code'),
+            Column::make('operation_time')->title('Operation Time (hour)'),
             Column::computed('#')
                 ->exportable(false)
                 ->printable(false)

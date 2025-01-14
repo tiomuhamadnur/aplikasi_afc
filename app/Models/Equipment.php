@@ -26,7 +26,7 @@ class Equipment extends Model
 
     public function relasi_area()
     {
-        return $this->belongsTo(RelasiArea::class);
+        return $this->belongsTo(RelasiArea::class, 'relasi_area_id');
     }
 
     public function relasi_struktur()

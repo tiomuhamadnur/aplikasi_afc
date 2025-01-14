@@ -10,7 +10,6 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Trend Gangguan</h4>
                         <div class="btn-group my-2">
                             <a href="{{ route('dashboard.index') }}" title="Back" class="btn btn-gradient-primary btn-rounded">
                                 <i class="mdi mdi-arrow-left"></i> Back

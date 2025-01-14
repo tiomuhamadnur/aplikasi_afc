@@ -21,17 +21,15 @@ class TipeEquipmentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rawData = $request->validate([
             'name' => 'required',
             'code' => 'required',
+            'operation_time' => 'required|numeric|min:1|max:24',
         ]);
 
-        TipeEquipment::create(([
-            'name' => $request->name,
-            'code' => $request->code,
-        ]));
+        TipeEquipment::updateOrCreate($rawData, $rawData);
 
-        return redirect()->route('tipe-equipment.index');
+        return redirect()->route('tipe-equipment.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function show(string $id)
@@ -46,20 +44,18 @@ class TipeEquipmentController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'id' => 'required',
+        $rawData = $request->validate([
+            'id' => 'required|numeric',
             'name' => 'required',
             'code' => 'required',
+            'operation_time' => 'required|numeric|min:1|max:24',
         ]);
 
         $data = TipeEquipment::findOrFail($request->id);
 
-        $data->update([
-            'name' => $request->name,
-            'code' => $request->code,
-        ]);
+        $data->update($rawData);
 
-        return redirect()->route('tipe-equipment.index');
+        return redirect()->route('tipe-equipment.index')->withNotify('Data berhasil diubah');
     }
 
     public function destroy(Request $request)
@@ -71,6 +67,6 @@ class TipeEquipmentController extends Controller
         $data = TipeEquipment::findOrFail($request->id);
         $data->delete();
 
-        return redirect()->route('tipe-equipment.index');
+        return redirect()->route('tipe-equipment.index')->withNotify('Data berhasil dihapus');
     }
 }
