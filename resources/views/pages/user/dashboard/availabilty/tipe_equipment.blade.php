@@ -11,7 +11,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="btn-group my-2">
-                            <a href="{{ url()->previous() }}" title="Back" class="btn btn-gradient-primary btn-rounded">
+                            <a href="{{ route('dashboard.index') }}" title="Back" class="btn btn-gradient-primary btn-rounded">
                                 <i class="mdi mdi-arrow-left"></i> Back
                             </a>
                         </div>
