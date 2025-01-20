@@ -572,11 +572,5 @@ Route::get('/send-event', function () {
 });
 
 Route::get('/chat', function () {
-    $hex = '0D706E893B3B20';
-    $decimal = hexdec($hex);
-    $hex2 = "1100000002595905";
-    $decimal2 = hexdec($hex2);
-
-    dd($decimal, $decimal2);
     return view('welcome');
 });
