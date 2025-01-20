@@ -14,6 +14,7 @@
         "intervention/image": "2.6",
         "laravel/framework": "^10.10",
         "laravel/octane": "^2.4",
+        "laravel/reverb": "^1.4",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.5",
