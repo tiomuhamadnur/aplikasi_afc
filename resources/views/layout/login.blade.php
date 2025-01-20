@@ -33,7 +33,8 @@
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
-    <script src="{{ asset('build/assets/app-CRZtVRV0.js') }}"></script>
+    {{-- <script src="{{ asset('build/assets/app-CRZtVRV0.js') }}"></script> --}}
+    @vite('resources/js/app.js')
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <script src="{{ asset('assets/vendors/chart.js/Chart.min.js') }}"></script>

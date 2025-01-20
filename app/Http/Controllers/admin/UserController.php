@@ -75,7 +75,7 @@ class UserController extends Controller
             'relasi_struktur_id' => $request->relasi_struktur_id,
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->withNotify('Data berhasil ditambahkan');
     }
 
     public function show(string $id)
@@ -131,7 +131,7 @@ class UserController extends Controller
             'relasi_struktur_id' => $request->relasi_struktur_id,
         ]);
 
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->withNotify('Data berhasil diubah');
     }
 
     public function ban(Request $request)

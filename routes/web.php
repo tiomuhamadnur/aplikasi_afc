@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\HelloEvent;
+use App\Events\MessageSent;
 use App\Http\Controllers\admin\ApprovalController;
 use App\Http\Controllers\admin\ArahController;
 use App\Http\Controllers\admin\AssetController;
@@ -61,6 +63,7 @@ use App\Http\Controllers\user\SamCardController;
 use App\Http\Controllers\user\SamCardHistoryController;
 use App\Http\Controllers\user\TransaksiBarangController;
 use App\Http\Controllers\user\TransaksiTiketController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -555,4 +558,24 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
 Route::controller(MonitoringEquipmentController::class)->group(function () {
     Route::get('/monitoring-equipment/store', 'store')->name('monitoring-equipment.store');
     Route::get('/client-monitoring-equipment', 'client_index')->name('client.monitoring-equipment.index');
+});
+
+
+Route::get('/send-message', function (Request $request) {
+    $message = $request->query('message'); // Ambil data dari query string
+    broadcast(new MessageSent($message))->toOthers();
+    return response()->json(['success' => true, 'message' => $message]);
+});
+
+Route::get('/send-event', function () {
+    $data = [
+        'name' => 'Tio Muhamad Nur',
+        'email' => 'tiomuhamadnur@gmail.com',
+        'phone' => '087723704469',
+    ];
+    broadcast(new HelloEvent($data));
+});
+
+Route::get('/chat', function () {
+    return view('welcome');
 });

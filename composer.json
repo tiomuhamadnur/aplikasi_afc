@@ -9,6 +9,7 @@
         "afrizalmy/laraindo": "^1.0",
         "barryvdh/laravel-dompdf": "^2.2",
         "barryvdh/laravel-snappy": "^1.0",
+        "beyondcode/laravel-websockets": "^1.14",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "2.6",
         "laravel/framework": "^10.10",
