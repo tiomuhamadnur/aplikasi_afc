@@ -144,7 +144,6 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
         Route::get('/work-order/create', 'create')->name('work-order.create');
         Route::get('/work-order/create-from-gangguan/{uuid}', 'create_from_gangguan')->name('work-order.create.from-gangguan');
 
-
         Route::post('/work-order', 'store')->name('work-order.store');
         Route::post('/work-order/{uuid}/store-from-gangguan', 'store_from_gangguan')->name('work-order.store.from-gangguan');
         Route::get('/work-order/{uuid}/edit', 'edit')->name('work-order.edit');
@@ -230,9 +229,6 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
         Route::get('/monitoring-budget', 'index')->name('dashboard-budget.index');
         Route::get('/monitoring-budget/department', 'departemen')->name('dashboard-budget.departemen');
     });
-
-
-
 
     // ADMIN & ORGANIK
     Route::group(['middleware' => ['admin', 'organik']], function () {
@@ -560,7 +556,6 @@ Route::controller(MonitoringEquipmentController::class)->group(function () {
     Route::get('/client-monitoring-equipment', 'client_index')->name('client.monitoring-equipment.index');
 });
 
-
 Route::get('/send-message', function (Request $request) {
     $message = $request->query('message'); // Ambil data dari query string
     broadcast(new MessageSent($message))->toOthers();
@@ -577,5 +572,11 @@ Route::get('/send-event', function () {
 });
 
 Route::get('/chat', function () {
+    $hex = '0D706E893B3B20';
+    $decimal = hexdec($hex);
+    $hex2 = "1100000002595905";
+    $decimal2 = hexdec($hex2);
+
+    dd($decimal, $decimal2);
     return view('welcome');
 });
