@@ -40,16 +40,26 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bolder">Classification</td>
-                                        <td>{{ $gangguan->classification->name ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
                                         <td class="fw-bolder">Report By</td>
                                         <td>{{ $gangguan->report_by }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bolder">Report Date</td>
                                         <td>{{ $gangguan->report_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Is Downtime?</td>
+                                        <td>
+                                            @if ($gangguan->is_downtime == 1)
+                                                Yes
+                                            @else
+                                                No
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Classification</td>
+                                        <td>{{ $gangguan->classification->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bolder">Location</td>
@@ -85,11 +95,18 @@
                                         <td class="fw-bolder">Remedy (R)</td>
                                         <td>
                                             @foreach ($gangguan->trans_gangguan_remedy as $item)
-                                                {{ $loop->iteration }}. {{ $item->remedy->name ?? $item->remedy_other }}
-                                                ------- (by: {{ $item->user->name ?? '-' }} {{ $item->date }})
+                                                {{ $item->remedy->name ?? $item->remedy_other }}
                                                 <br>
                                             @endforeach
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Action Date</td>
+                                        <td>{{ $gangguan->response_date ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bolder">Action By</td>
+                                        <td>{{ $gangguan->solved_user->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bolder">Solved Date</td>
@@ -141,19 +158,9 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bolder">Penggantian Sparepart?</td>
+                                        <td class="fw-bolder">Is changed Sparepart?</td>
                                         <td>
                                             @if ($gangguan->is_changed == 1)
-                                                Yes
-                                            @else
-                                                No
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bolder">Downtime?</td>
-                                        <td>
-                                            @if ($gangguan->is_downtime == 1)
                                                 Yes
                                             @else
                                                 No

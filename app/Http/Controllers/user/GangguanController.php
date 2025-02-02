@@ -54,7 +54,7 @@ class GangguanController extends Controller
         $tipe_equipment_id = $request->tipe_equipment_id ?? null;
         $classification_id = $request->classification_id ?? null;
         $status_id = $request->status_id ?? null;
-        $start_date = $request->start_date ?? null;
+        $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
         $end_date = $request->end_date ?? $start_date;
         $is_changed = $request->is_changed ?? null;
         $is_downtime = $request->is_downtime ?? null;
@@ -113,7 +113,7 @@ class GangguanController extends Controller
                         ->notBanned()
                         ->orderBy('name', 'ASC');
 
-        if (auth()->user()->role_id != 1 || auth()->user()->tipe_employee_id != 1) {
+        if (auth()->user()->role_id == 3) {
             $userQuery->where('id', auth()->user()->id); // Hanya user terkait
         }
 
@@ -180,15 +180,16 @@ class GangguanController extends Controller
 
         TransGangguanRemedy::updateOrCreate([
             'gangguan_id' => $data->id,
-            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
-            'user_id' => $request->solved_user_id,
-            'date' => $data->response_date,
+            // 'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
+            'remedy_other' => $request->remedy_other,
+            // 'user_id' => $request->solved_user_id,
+            // 'date' => $data->response_date,
         ],[
             'gangguan_id' => $data->id,
-            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
+            // 'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
             'remedy_other' => $request->remedy_other,
-            'user_id' => $request->solved_user_id,
-            'date' => $data->response_date,
+            // 'user_id' => $request->solved_user_id,
+            // 'date' => $data->response_date,
         ]);
 
         // Update photo jika ada
@@ -290,8 +291,8 @@ class GangguanController extends Controller
             'id' => 'required|numeric',
             'photo' => 'file|image',
             'photo_after' => 'file|image',
-            'remedy_id' => 'nullable|numeric',
-            'remedy_other' => 'required|string',
+            // 'remedy_id' => 'nullable|numeric',
+            // 'remedy_other' => 'required|string',
         ]);
 
         // if ($raw_data['problem_id'] == 0) {
@@ -316,19 +317,6 @@ class GangguanController extends Controller
         $data = Gangguan::findOrFail($request->id);
 
         $data->update($raw_data);
-
-        TransGangguanRemedy::updateOrCreate([
-            'gangguan_id' => $data->id,
-            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
-            'user_id' => $request->solved_user_id,
-            'date' => $data->response_date,
-        ],[
-            'gangguan_id' => $data->id,
-            'remedy_id' => $request->remedy_id < 1 ? null : $request->remedy_id,
-            'remedy_other' => $request->remedy_other,
-            'user_id' => $request->solved_user_id,
-            'date' => $data->response_date,
-        ]);
 
         // Update photo jika ada
         if ($request->hasFile('photo')) {

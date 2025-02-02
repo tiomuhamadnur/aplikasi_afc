@@ -65,18 +65,15 @@
                             </div> --}}
                             <div class="form-group">
                                 <label for="problem_other">Problem (P)</label>
-                                <input type="text" class="form-control" id="problem_other" name="problem_other"
-                                    autocomplete="off" placeholder="input problem" required>
+                                <textarea class="form-control" name="problem_other" id="problem_other" rows="4" placeholder="input detail problem" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="cause_other">Cause (C)</label>
-                                <input type="text" class="form-control" id="cause_other" name="cause_other"
-                                    autocomplete="off" placeholder="input cause" required>
+                                <textarea class="form-control" name="cause_other" id="cause_other" rows="4" placeholder="input detail cause" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="remedy_other">Remedy (R)</label>
-                                <input type="text" class="form-control" id="remedy_other" name="remedy_other"
-                                    autocomplete="off" placeholder="input remedy" required>
+                                <textarea class="form-control" name="remedy_other" id="remedy_other" rows="4" placeholder="input detail remedy" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="response_date">Action Date</label>

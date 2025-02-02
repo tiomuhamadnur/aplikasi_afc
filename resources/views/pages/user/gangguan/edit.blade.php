@@ -31,8 +31,8 @@
                                 <label for="is_downtime">Apakah terjadi Downtime?</label>
                                 <select class="tom-select-class" name="is_downtime" id="is_downtime" required>
                                     <option value="" selected disabled>- pilih keterangan -</option>
-                                    <option value="0" @if($gangguan->is_downtime == 0) selected @endif>No</option>
-                                    <option value="1" @if($gangguan->is_downtime == 1) selected @endif>Yes</option>
+                                    <option value="0" @if ($gangguan->is_downtime == 0) selected @endif>No</option>
+                                    <option value="1" @if ($gangguan->is_downtime == 1) selected @endif>Yes</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -112,31 +112,51 @@
                             </div>
                             <div class="form-group">
                                 <label for="problem_other">Problem (P)</label>
-                                <input type="text" class="form-control" id="problem_other" name="problem_other"
-                                    autocomplete="off" placeholder="input problem"
-                                    value="{{ $gangguan->problem_other }}" required>
+                                <textarea class="form-control" name="problem_other" id="problem_other" rows="4" placeholder="input detail problem"
+                                    required>{{ $gangguan->problem_other }}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="cause_other">Cause (C)</label>
-                                <input type="text" class="form-control" id="cause_other" name="cause_other"
-                                    autocomplete="off" placeholder="input cause"
-                                    value="{{ $gangguan->cause_other }}" required>
+                                <textarea class="form-control" name="cause_other" id="cause_other" rows="4" placeholder="input detail cause"
+                                    required>{{ $gangguan->cause_other }}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="remedy_other">Remedy (R)</label>
-                                @if ($gangguan->trans_gangguan_remedy)
-                                    @foreach ($gangguan->trans_gangguan_remedy as $remedy)
-                                        <input type="text" class="form-control" id="remedy_other" name="remedy_other"
-                                            autocomplete="off" placeholder="input remedy"
-                                            value="{{ $remedy->remedy_other }}" required>
-                                    @endforeach
-                                @endif
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <th>No</th>
+                                        <th>Remedy (R)</th>
+                                        <th>#</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($gangguan->trans_gangguan_remedy as $item)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $item->remedy_other }}</td>
+                                                <td>
+                                                    <button type='button' title='Edit'
+                                                        class='btn btn-gradient-warning btn-rounded btn-icon'
+                                                        data-bs-toggle='modal' data-bs-target='#editModal'
+                                                        data-uuid='{{ $item->uuid }}'
+                                                        data-remedy_other='{{ $item->remedy_other }}'>
+                                                        <i class='mdi mdi-lead-pencil'></i>
+                                                    </button>
+                                                    <button type='button' title='Delete'
+                                                        class='btn btn-gradient-danger btn-rounded btn-icon'
+                                                        data-bs-toggle='modal' data-bs-target='#deleteModal'
+                                                        data-uuid='{{ $item->uuid }}' data-route='{{ route('trans-gangguan-remedy.delete') }}'>
+                                                        <i class='mdi mdi-delete'></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="form-group">
                                 <label for="response_date">Action Date</label>
-                                <input type="datetime-local" class="form-control" id="response_date"
-                                    name="response_date" autocomplete="off" required
-                                    value="{{ $gangguan->response_date }}">
+                                <input type="datetime-local" class="form-control" id="response_date" name="response_date"
+                                    autocomplete="off" required value="{{ $gangguan->response_date }}">
                             </div>
                             <div class="form-group">
                                 <label for="solved_user_id">Action By</label>
@@ -211,6 +231,59 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Edit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRemedyForm" action="{{ route('trans-gangguan-remedy.update') }}"
+                        method="POST" class="forms-sample">
+                        @csrf
+                        @method('PUT')
+                        <input type="text" name="uuid" id="uuid_edit" value="" hidden>
+                        <div class="form-group">
+                            <label for="other_remedy">Remedy (R)</label>
+                            <textarea class="form-control" name="remedy_other" id="remedy_other_edit" rows="4" placeholder="input detail remedy" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="editRemedyForm" class="btn btn-gradient-primary me-2">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Modal -->
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deleteRemedyForm" action="#" method="POST" class="forms-sample">
+                        @csrf
+                        @method('delete')
+                        <input type="text" name="uuid" id="uuid_delete" value="" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="deleteRemedyForm" class="btn btn-gradient-danger me-2">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Delete Modal -->
 @endsection
 
 @section('javascript')
@@ -250,6 +323,22 @@
 
                     reader.readAsDataURL(selectedFile);
                 }
+            });
+
+            $('#editModal').on('show.bs.modal', function(e) {
+                var uuid = $(e.relatedTarget).data('uuid');
+                var remedy_other = $(e.relatedTarget).data('remedy_other');
+
+                $('#uuid_edit').val(uuid);
+                $('#remedy_other_edit').val(remedy_other);
+            });
+
+            $('#deleteModal').on('show.bs.modal', function(e) {
+                var uuid = $(e.relatedTarget).data('uuid');
+                var route = $(e.relatedTarget).data('route');
+
+                $('#uuid_delete').val(uuid);
+                $('#deleteRemedyForm').attr('action', route);
             });
         });
     </script>

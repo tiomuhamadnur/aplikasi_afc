@@ -85,12 +85,7 @@ class GangguanDataTable extends DataTable
                 return '';
             })
             ->addColumn('action_by', function($item) {
-                if ($item->trans_gangguan_remedy->isNotEmpty()) {
-                    return $item->trans_gangguan_remedy->map(function($transRemedy) {
-                        return $transRemedy->user ? $transRemedy->user->name : '';
-                    })->implode('<br>');
-                }
-                return '';
+                return $item->solved_user->name;
             })
             ->addColumn('is_changed', function($item) {
                 return $item->is_changed ? 'Yes' : 'No';
@@ -215,7 +210,7 @@ class GangguanDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     ->dom('frtiplB')
-                    ->orderBy([12, 'desc'])
+                    ->orderBy([2, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -243,6 +238,7 @@ class GangguanDataTable extends DataTable
                     ->printable(true)
                     ->addClass('text-center')
                     ->searchable(true),
+            Column::make('report_date')->title('Report Date'),
             Column::make('equipment.tipe_equipment.code')->title('Equipment Type'),
             Column::make('equipment.code')->title('Equipment ID'),
             // Column::make('problem.name')->title('Problem (P)'),
@@ -268,7 +264,6 @@ class GangguanDataTable extends DataTable
                     ->exportable(true)
                     ->printable(true)
                     ->searchable(true),
-            Column::make('report_date')->title('Report Date'),
             Column::make('response_date')->title('Action Date'),
             Column::make('solved_date')->title('Solved Date'),
             Column::computed('status')
@@ -312,6 +307,6 @@ class GangguanDataTable extends DataTable
 
     protected function filename(): string
     {
-        return date('Ymd') . '_Data Gangguan';
+        return date('Ymd') . '_Data Failure Report';
     }
 }

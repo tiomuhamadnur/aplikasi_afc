@@ -63,6 +63,7 @@ use App\Http\Controllers\user\SamCardController;
 use App\Http\Controllers\user\SamCardHistoryController;
 use App\Http\Controllers\user\TransaksiBarangController;
 use App\Http\Controllers\user\TransaksiTiketController;
+use App\Http\Controllers\user\TransGangguanRemedyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -129,6 +130,11 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
 
         Route::get('/gangguan/filter', 'filter')->name('gangguan.filter');
         Route::get('/gangguan/trend/monthly', 'trend_monthly')->name('gangguan.trend.monthly');
+    });
+
+    Route::controller(TransGangguanRemedyController::class)->group(function () {
+        Route::put('/trans-gangguan-remedy', 'update')->name('trans-gangguan-remedy.update');
+        Route::delete('/trans-gangguan-remedy', 'destroy')->name('trans-gangguan-remedy.delete');
     });
 
     Route::controller(ChecksheetController::class)->group(function () {
