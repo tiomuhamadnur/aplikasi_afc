@@ -176,7 +176,7 @@ class GangguanController extends Controller
             $raw_data['total_time'] = $total_time;
         }
 
-        $data = Gangguan::create($raw_data);
+        $data = Gangguan::updateOrCreate($raw_data, $raw_data);
 
         TransGangguanRemedy::updateOrCreate([
             'gangguan_id' => $data->id,
