@@ -1,5 +1,6 @@
 import './bootstrap';
 import 'laravel-datatables-vite';
+import 'jstree';
 
 import TomSelect from 'tom-select/dist/js/tom-select.complete.js';
 import 'tom-select/dist/css/tom-select.default.css';
