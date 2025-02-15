@@ -97,7 +97,10 @@ class TransaksiBarangDataTable extends DataTable
 
         if($this->start_date != null && $this->end_date != null)
         {
-            $query->whereBetween('tanggal', [$this->start_date, $this->end_date]);
+            $clean_start_date = explode('?', $this->start_date)[0];
+            $clean_end_date = explode('?', $this->end_date)[0];
+
+            $query->whereBetween('tanggal', [$clean_start_date, $clean_end_date]);
         }
 
         if($this->tipe_equipment_id != null)

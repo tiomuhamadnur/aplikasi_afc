@@ -182,8 +182,11 @@ class GangguanDataTable extends DataTable
         }
 
         if ($this->start_date != null && $this->end_date != null) {
-            $start = Carbon::parse($this->start_date)->startOfDay()->format('Y-m-d H:i:s');
-            $end = Carbon::parse($this->end_date)->endOfDay()->format('Y-m-d H:i:s');
+            $clean_start_date = explode('?', $this->start_date)[0];
+            $clean_end_date = explode('?', $this->end_date)[0];
+
+            $start = Carbon::parse($clean_start_date)->startOfDay()->format('Y-m-d H:i:s');
+            $end = Carbon::parse($clean_end_date)->endOfDay()->format('Y-m-d H:i:s');
 
             $query->whereBetween('report_date', [$start, $end]);
         }

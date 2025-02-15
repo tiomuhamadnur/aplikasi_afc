@@ -49,7 +49,7 @@
                         @method('GET')
                         <div class="form-group">
                             <label for="">Tipe Permit</label>
-                            <select class="form-control form-control-lg" name="tipe_permit_id">
+                            <select class="tom-select-class" name="tipe_permit_id">
                                 <option value="" selected disabled>- pilih tipe permit -</option>
                                 @foreach ($tipe_permit as $item)
                                     <option value="{{ $item->id }}" @if($item->id == $tipe_permit_id) selected @endif>
@@ -60,7 +60,7 @@
                         </div>
                         <div class="form-group">
                             <label for="">Tipe Pekerjaan</label>
-                            <select class="form-control form-control-lg" name="tipe_pekerjaan_id">
+                            <select class="tom-select-class" name="tipe_pekerjaan_id">
                                 <option value="" selected disabled>- pilih tipe pekerjaan -</option>
                                 @foreach ($tipe_pekerjaan as $item)
                                     <option value="{{ $item->id }}" @if($item->id == $tipe_pekerjaan_id) selected @endif>
@@ -71,7 +71,7 @@
                         </div>
                         <div class="form-group">
                             <label for="">Area</label>
-                            <select class="form-control form-control-lg" name="relasi_area_id">
+                            <select class="tom-select-class" name="relasi_area_id">
                                 <option value="" selected disabled>- pilih area -</option>
                                 @foreach ($area as $item)
                                     <option value="{{ $item->id }}" @if($item->id == $relasi_area_id) selected @endif>
@@ -83,7 +83,7 @@
                         </div>
                         <div class="form-group">
                             <label for="">Status</label>
-                            <select class="form-control form-control-lg" name="status">
+                            <select class="tom-select-class" name="status">
                                 <option value="" selected disabled>- pilih status -</option>
                                 <option value="active" @if($status == 'active') selected @endif>Active</option>
                                 <option value="expired" @if($status == 'expired') selected @endif>Expired</option>

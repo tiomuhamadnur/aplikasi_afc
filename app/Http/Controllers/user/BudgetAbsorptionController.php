@@ -27,6 +27,16 @@ class BudgetAbsorptionController extends Controller
 
     public function index(BudgetAbsorptionDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'fund_id' => 'nullable',
+            'project_id' => 'nullable',
+            'departemen_id' => 'nullable',
+            'type' => 'nullable',
+            'status' => 'nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
+        ]);
+
         $project = Project::all();
         $fund = Fund::all();
         $departemen = Departemen::all();

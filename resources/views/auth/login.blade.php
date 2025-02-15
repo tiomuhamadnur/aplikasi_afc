@@ -32,11 +32,11 @@
                             <input id="password" type="password" placeholder="input password"
                                 class="form-control @error('password') is-invalid @enderror" name="password" required
                                 autocomplete="current-password">
-                            <span class="float-end my-2">
-                                <a href="javascript:;" data-bs-toggle='modal' data-bs-target='#forgetPasswordModal'>Forget
+                            <h6 class="float-end my-2">
+                                <a class="text-dark" href="javascript:;" data-bs-toggle='modal' data-bs-target='#forgetPasswordModal'>Forget
                                     Password?
                                 </a>
-                                </span>
+                            </h6>
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

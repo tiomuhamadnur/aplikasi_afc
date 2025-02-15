@@ -18,7 +18,8 @@
                             </a>
                         @endif
                         <div class="btn-group my-2">
-                            <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
                             <button type="button" title="Export Excel" data-bs-toggle="modal"
@@ -58,6 +59,63 @@
         </div>
     </div>
     <!-- End Export Excel Modal -->
+
+    <!-- Add Filter -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('work-order.index') }}" method="GET" class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="tipe_pekerjaan_id">Tipe Pekerjaan</label>
+                            <select class="tom-select-class" name="tipe_pekerjaan_id" id="tipe_pekerjaan_id">
+                                <option value="" selected disabled>- pilih tipe pekerjaan -</option>
+                                @foreach ($tipe_pekerjaan as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $tipe_pekerjaan_id) selected @endif>
+                                        {{ $item->code }} ({{ $item->name }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status_id">Status</label>
+                            <select class="tom-select-class" name="status_id" id="status_id">
+                                <option value="" selected disabled>- pilih status -</option>
+                                @foreach ($status as $item)
+                                    <option value="{{ $item->id }}" @if ($item->id == $status_id) selected @endif>
+                                        {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Tanggal</label>
+                            <div class="input-group">
+                                <input type="text" id="start_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
+                                <input type="text" id="end_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="End Date"
+                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('work-order.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Filter -->
 
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

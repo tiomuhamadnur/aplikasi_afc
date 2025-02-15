@@ -17,12 +17,12 @@ class MonitoringPermitController extends Controller
     public function index(MonitoringPermitDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'tipe_permit_id' => 'numeric|nullable',
-            'tipe_pekerjaan_id' => 'numeric|nullable',
-            'relasi_area_id' => 'numeric|nullable',
-            'status' => 'string|nullable',
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
+            'tipe_permit_id' => 'nullable',
+            'tipe_pekerjaan_id' => 'nullable',
+            'relasi_area_id' => 'nullable',
+            'status' => 'nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
         ]);
 
         $tipe_permit_id = $request->tipe_permit_id ?? null;

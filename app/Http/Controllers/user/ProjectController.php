@@ -19,13 +19,21 @@ class ProjectController extends Controller
 {
     public function index(ProjectDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'fund_source_id' => 'nullable',
+            'project_id' => 'nullable',
+            'departemen_id' => 'nullable',
+            'type' => 'nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
+        ]);
+
         $fund_source_id = $request->fund_source_id ?? null;
         $project_id = $request->project_id ?? null;
         $departemen_id = $request->departemen_id ?? null;
         $type = $request->type ?? null;
-        $hari_ini = Carbon::now();
-        $start_date = $request->start_date ?? $hari_ini->clone()->startOfYear()->toDateString();
-        $end_date = $request->end_date ?? $hari_ini->toDateString();
+        $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
+        $end_date = $request->end_date ?? $start_date;
 
 
         $fund_source = FundSource::all();
@@ -35,7 +43,6 @@ class ProjectController extends Controller
         $status_budgeting = StatusBudgeting::all();
 
         return $dataTable->with([
-            'hari_ini' => $hari_ini,
             'fund_source_id' => $fund_source_id,
             'departemen_id' => $departemen_id,
             'type' => $type,

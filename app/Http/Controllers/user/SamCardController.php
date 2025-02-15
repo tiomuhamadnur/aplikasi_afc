@@ -28,7 +28,7 @@ class SamCardController extends Controller
     public function index(SamCardDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'status' => 'nullable|string|in:ready,used',
+            'status' => 'nullable',
         ]);
 
         $status = $request->status ?? null;

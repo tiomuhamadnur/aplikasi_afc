@@ -106,7 +106,7 @@
                         @method('GET')
                         <div class="form-group">
                             <label for="tipe_equipment_id">Tipe Equipment</label>
-                            <select class="form-control form-control-lg" name="tipe_equipment_id" id="tipe_equipment_id">
+                            <select class="tom-select-class" name="tipe_equipment_id" id="tipe_equipment_id">
                                 <option value="" selected disabled>- pilih tipe equipment -</option>
                                 @foreach ($tipe_equipment as $item)
                                     <option value="{{ $item->id }}" @if ($item->id == $tipe_equipment_id) selected @endif>

@@ -29,9 +29,9 @@ class EquipmentController extends Controller
     public function index(EquipmentDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'tipe_equipment_id' => 'numeric|nullable',
-            'sub_lokasi_id' => 'numeric|nullable',
-            'departemen_id' => 'numeric|nullable',
+            'tipe_equipment_id' => 'nullable',
+            'sub_lokasi_id' => 'nullable',
+            'departemen_id' => 'nullable',
         ]);
 
         $tipe_equipment_id = $request->tipe_equipment_id ?? null;
@@ -65,7 +65,10 @@ class EquipmentController extends Controller
             'struktur',
             'arah',
             'functional_location',
-            'equipment'
+            'equipment',
+            'tipe_equipment_id',
+            'sub_lokasi_id',
+            'departemen_id',
         ]));
     }
 

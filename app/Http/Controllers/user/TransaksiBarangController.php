@@ -18,13 +18,13 @@ class TransaksiBarangController extends Controller
     public function index(TransaksiBarangDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
-            'tipe_equipment_id' => 'numeric|nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
+            'tipe_equipment_id' => 'nullable',
         ]);
 
-        $start_date = $request->start_date ?? null;
-        $end_date = $request->end_date ?? $request->start_date;
+        $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
+        $end_date = $request->end_date ?? $start_date;
         $tipe_equipment_id = $request->tipe_equipment_id ?? null;
 
         $barang = Barang::all();

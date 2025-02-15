@@ -30,7 +30,33 @@ class WorkOrderController extends Controller
 {
     public function index(WorkOrderDataTable $dataTable, Request $request)
     {
-        return $dataTable->render('pages.user.work-order.index');
+        $request->validate([
+            'tipe_pekerjaan_id' => 'nullable',
+            'status_id' => 'nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
+        ]);
+
+        $status_id = $request->status_id ?? null;
+        $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
+        $end_date = $request->end_date ?? $start_date;
+        $tipe_pekerjaan_id = $request->tipe_pekerjaan_id;
+        $tipe_pekerjaan = TipePekerjaan::all();
+        $status = Status::all();
+
+        return $dataTable->with([
+            'tipe_pekerjaan_id' => $tipe_pekerjaan_id,
+            'status_id' => $status_id,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ])->render('pages.user.work-order.index', compact([
+            'tipe_pekerjaan_id',
+            'status_id',
+            'start_date',
+            'end_date',
+            'tipe_pekerjaan',
+            'status',
+        ]));
     }
 
     public function create()

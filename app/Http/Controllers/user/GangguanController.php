@@ -36,16 +36,16 @@ class GangguanController extends Controller
     public function index(GangguanDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'area_id' => 'numeric|nullable',
-            'category_id' => 'numeric|nullable',
-            'equipment_id' => 'numeric|nullable',
-            'tipe_equipment_id' => 'numeric|nullable',
-            'classification_id' => 'numeric|nullable',
-            'status_id' => 'numeric|nullable',
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
-            'is_changed' => 'numeric|nullable',
-            'is_downtime' => 'numeric|nullable',
+            'area_id' => 'nullable',
+            'category_id' => 'nullable',
+            'equipment_id' => 'nullable',
+            'tipe_equipment_id' => 'nullable',
+            'classification_id' => 'nullable',
+            'status_id' => 'nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
+            'is_changed' => 'nullable',
+            'is_downtime' => 'nullable',
         ]);
 
         $area_id = $request->area_id ?? null;

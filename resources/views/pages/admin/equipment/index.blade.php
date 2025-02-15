@@ -173,7 +173,8 @@
                             <select class="tom-select-class" id="tipe_equipment_id" name="tipe_equipment_id">
                                 <option value="" selected disabled>- pilih tipe equipment -</option>
                                 @foreach ($tipe_equipment as $item)
-                                    <option value="{{ $item->id }}">{{ $item->code }}
+                                    <option value="{{ $item->id }}" @if($item->id == $tipe_equipment_id) selected @endif>
+                                        {{ $item->code }}
                                     </option>
                                 @endforeach
                             </select>
@@ -183,7 +184,9 @@
                             <select class="tom-select-class" id="sub_lokasi_id" name="sub_lokasi_id">
                                 <option value="" selected disabled>- pilih location -</option>
                                 @foreach ($sub_lokasi as $item)
-                                    <option value="{{ $item->sub_lokasi->id }}">{{ $item->sub_lokasi->name }}</option>
+                                    <option value="{{ $item->sub_lokasi->id }}" @if($item->sub_lokasi->id == $sub_lokasi_id) selected @endif>
+                                        {{ $item->sub_lokasi->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -192,7 +195,8 @@
                             <select class="tom-select-class" id="departemen_id" name="departemen_id">
                                 <option value="" selected disabled>- pilih departemen owner -</option>
                                 @foreach ($departement as $item)
-                                    <option value="{{ $item->departemen->id }}">Departemen {{ $item->departemen->code }}
+                                    <option value="{{ $item->departemen->id }}" @if($item->departemen->id == $departemen_id) selected @endif>
+                                        Departemen {{ $item->departemen->code }}
                                     </option>
                                 @endforeach
                             </select>

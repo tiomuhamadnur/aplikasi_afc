@@ -17,7 +17,6 @@ use Yajra\DataTables\Services\DataTable;
 
 class ProjectDataTable extends DataTable
 {
-    protected $hari_ini;
     protected $fund_source_id;
     protected $departemen_id;
     protected $type;

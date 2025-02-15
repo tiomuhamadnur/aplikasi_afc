@@ -115,13 +115,11 @@
                         @method('GET')
                         <div class="form-group">
                             <label for="">Status</label>
-                            <div class="input-group">
-                                <select class="form-control form-control-lg" name="status">
-                                    <option value="" selected disabled>- pilih status -</option>
-                                    <option value="ready">Ready</option>
-                                    <option value="used">Used</option>
-                                </select>
-                            </div>
+                            <select class="tom-select-class" name="status">
+                                <option value="" selected disabled>- pilih status -</option>
+                                <option value="ready" @if($status = 'ready') selected @endif>Ready</option>
+                                <option value="used" @if($status = 'used') selected @endif>Used</option>
+                            </select>
                         </div>
                     </form>
                 </div>

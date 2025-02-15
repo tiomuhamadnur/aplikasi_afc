@@ -25,8 +25,8 @@ class SamCardHistoryController extends Controller
     public function index(SamCardHistoryDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
+            'start_date' => 'nullable',
+            'end_date' => 'nullable',
         ]);
 
         $start_date = $request->start_date ?? null;
@@ -42,7 +42,9 @@ class SamCardHistoryController extends Controller
         ])->render('pages.user.sam-card-history.index', compact([
             'sam_card',
             'area',
-            'pg'
+            'pg',
+            'start_date',
+            'end_date',
         ]));
     }
 

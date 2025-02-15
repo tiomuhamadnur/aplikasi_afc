@@ -15,6 +15,25 @@ use Yajra\DataTables\Services\DataTable;
 
 class WorkOrderDataTable extends DataTable
 {
+    protected $tipe_pekerjaan_id;
+    protected $status_id;
+    protected $start_date;
+    protected $end_date;
+
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -64,6 +83,23 @@ class WorkOrderDataTable extends DataTable
             'status',
             'user',
             ])->newQuery();
+
+        if($this->status_id != null)
+        {
+            $query->where('status_id', $this->status_id);
+        }
+
+        if($this->tipe_pekerjaan_id != null)
+        {
+            $query->where('tipe_pekerjaan_id', $this->tipe_pekerjaan_id);
+        }
+
+        if ($this->start_date != null && $this->end_date != null) {
+            $clean_start_date = explode('?', $this->start_date)[0];
+            $clean_end_date = explode('?', $this->end_date)[0];
+
+            $query->whereBetween('date', [$clean_start_date, $clean_end_date]);
+        }
 
         return $query;
     }
