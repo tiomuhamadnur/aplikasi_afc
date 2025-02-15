@@ -12,8 +12,8 @@
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
-    @vite('resources/css/app.css')
-    @vite('resources/sass/app.scss')
+    {{-- @vite('resources/css/app.css')
+    @vite('resources/sass/app.scss') --}}
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <!-- End plugin css for this page -->
@@ -24,6 +24,10 @@
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
+
+    <!-- Build CSS -->
+    <link rel="stylesheet" href="{{ asset('build/assets/build-css1.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/build-css2.css') }}">
 
     <style>
         .mrt-blue {
@@ -81,7 +85,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    @vite(['resources/js/app.js'])
+    {{-- @vite(['resources/js/app.js']) --}}
 
     <!-- Build JS -->
     <script src="{{ asset('build/assets/build-js1.js') }}"></script>

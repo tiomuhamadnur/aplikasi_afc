@@ -27,7 +27,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Data Failure Report</h4>
-                        <a href="{{ route('gangguan.create') }}" class="btn btn-gradient-primary btn-rounded">Make
+                        <a href="{{ route('gangguan.create') }}" class="btn btn-gradient-primary btn-rounded">Create
                             Request</a>
                         <div class="btn-group my-2">
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"

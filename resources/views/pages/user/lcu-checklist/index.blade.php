@@ -29,7 +29,7 @@
                         <h4 class="card-title">Data LCU Checklist</h4>
                         <button type="button" title="Make Request" data-bs-toggle="modal" data-bs-target="#addModal"
                             class="btn btn-gradient-primary btn-rounded">
-                            Make Request
+                            Create Record
                         </button>
                         <div class="btn-group my-2">
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
