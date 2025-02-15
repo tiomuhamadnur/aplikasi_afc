@@ -25,6 +25,10 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
 
+    <!-- Build CSS -->
+    <link rel="stylesheet" href="{{ asset('build/assets/build-css1.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/build-css2.css') }}">
+
     <style>
         .mrt-blue {
             background-color: #0053B2;
@@ -82,6 +86,11 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @vite(['resources/js/app.js'])
+
+    <!-- Build JS -->
+    <script src="{{ asset('build/assets/build-js1.js') }}"></script>
+    <script src="{{ asset('build/assets/build-js2.js') }}"></script>
+
     {{-- <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script> --}}
     <!-- endinject -->
     <!-- Plugin js for this page -->
