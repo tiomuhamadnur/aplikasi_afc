@@ -54,6 +54,7 @@ use App\Http\Controllers\user\BudgetAbsorptionController;
 use App\Http\Controllers\user\ChecksheetController;
 use App\Http\Controllers\user\DashboardBudgetController;
 use App\Http\Controllers\user\GangguanController;
+use App\Http\Controllers\user\LCUChecklistController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringEquipmentController;
 use App\Http\Controllers\user\MonitoringPermitController;
@@ -93,7 +94,7 @@ Route::get('/', function () {
     return redirect()->route('dashboard.index');
 })->middleware('auth');
 
-Route::group(['middleware' => ['auth', 'checkBanned']], function () {
+Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], function () {
     // ALL USER
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard.index');
@@ -105,6 +106,7 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'index')->name('profile.index');
         Route::put('/profile', 'update')->name('profile.update');
+        Route::put('/profile/change-password', 'change_password')->name('profile.change_password');
     });
 
     Route::controller(TransaksiBarangController::class)->group(function () {
@@ -164,6 +166,13 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
         Route::delete('/work-order', 'destroy')->name('work-order.delete');
 
         Route::get('/work-order/export/{uuid}/pdf', 'pdf')->name('work-order.export.pdf');
+    });
+
+    Route::controller(LCUChecklistController::class)->group(function () {
+        Route::get('/lcu-checklist', 'index')->name('lcu-checklist.index');
+        Route::post('/lcu-checklist', 'store')->name('lcu-checklist.store');
+        Route::put('/lcu-checklist', 'update')->name('lcu-checklist.update');
+        Route::delete('/lcu-checklist', 'destroy')->name('lcu-checklist.delete');
     });
 
     Route::controller(TransWorkOrderEquipmentController::class)->group(function () {
@@ -251,6 +260,7 @@ Route::group(['middleware' => ['auth', 'checkBanned']], function () {
             Route::post('/user', 'store')->name('user.store');
             Route::get('/user/{uuid}/edit', 'edit')->name('user.edit');
             Route::put('/user', 'update')->name('user.update');
+            Route::put('/user/change-password', 'change_password')->name('user.change_password');
             Route::delete('/user/ban', 'ban')->name('user.ban');
             Route::delete('/user/unban', 'unban')->name('user.unban');
         });

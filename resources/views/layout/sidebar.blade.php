@@ -26,19 +26,25 @@
                 <i class="mdi mdi-receipt menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('lcu-checklist.index') }}">
+                <span class="menu-title">LCU Checklist</span>
+                <i class="mdi mdi-receipt menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('work-order.index') }}">
+                <span class="menu-title">Work Order</span>
+                <i class="mdi mdi-briefcase menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
+                <span class="menu-title">Log Sparepart</span>
+                <i class="mdi mdi-repeat menu-icon"></i>
+            </a>
+        </li>
         @if (auth()->user()->role->id != 3)
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('work-order.index') }}">
-                    <span class="menu-title">Work Order</span>
-                    <i class="mdi mdi-briefcase menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('transaksi-barang.index') }}">
-                    <span class="menu-title">Log Sparepart</span>
-                    <i class="mdi mdi-repeat menu-icon"></i>
-                </a>
-            </li>
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#budgeting" aria-expanded="false"
                     aria-controls="budgeting">

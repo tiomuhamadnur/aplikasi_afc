@@ -70,8 +70,8 @@
                                                     HP</label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" id="exampleInputMobile"
-                                                        placeholder="Mobile number" name="no_hp"
-                                                        value="{{ auth()->user()->no_hp ?? '-' }}" required>
+                                                        placeholder="Mobile number"
+                                                        value="{{ auth()->user()->no_hp ?? '-' }}" required disabled>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
@@ -150,33 +150,45 @@
                             <div class="col-md-6 grid-margin stretch-card">
                                 <div class="card border">
                                     <div class="card-body">
-                                        <h4 class="card-title">Form Change Password (on development)</h4>
+                                        <h4 class="card-title">Form Change Password</h4>
                                         <p class="card-description"> Silahkan isi untuk mengubah password akun anda </p>
-                                        <form class="forms-sample">
+                                        <form class="forms-sample" action="{{ route('profile.change_password') }}"
+                                            method="POST">
+                                            @method('put')
+                                            @csrf
                                             <div class="form-group row">
-                                                <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Old
+                                                <label for="current_password" class="col-sm-3 col-form-label">Old
                                                     Password</label>
                                                 <div class="col-sm-9">
-                                                    <input type="password" class="form-control"
-                                                        id="exampleInputPassword2" placeholder="Input Old Password">
+                                                    <input type="password" class="form-control" id="current_password"
+                                                        name="current_password" placeholder="Input Old Password" required>
                                                 </div>
+                                                @error('current_password')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
                                             </div>
                                             <div class="form-group row">
-                                                <label for="exampleInputPassword2" class="col-sm-3 col-form-label">New
+                                                <label for="password" class="col-sm-3 col-form-label">New
                                                     Password</label>
                                                 <div class="col-sm-9">
-                                                    <input type="password" class="form-control"
-                                                        id="exampleInputPassword2" placeholder="Input New Password">
+                                                    <input type="password" class="form-control" id="password"
+                                                        name="password" placeholder="Input New Password" required>
                                                 </div>
+                                                @error('password')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
                                             </div>
                                             <div class="form-group row">
-                                                <label for="exampleInputConfirmPassword2"
-                                                    class="col-sm-3 col-form-label">Re
+                                                <label for="password_confirmation" class="col-sm-3 col-form-label">Re
                                                     New Password</label>
                                                 <div class="col-sm-9">
                                                     <input type="password" class="form-control"
-                                                        id="exampleInputConfirmPassword2"
-                                                        placeholder="Konfirmasi New Password">
+                                                        id="password_confirmation" name="password_confirmation"
+                                                        placeholder="Konfirmasi New Password" required>
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>

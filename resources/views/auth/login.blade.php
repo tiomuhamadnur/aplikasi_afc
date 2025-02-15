@@ -32,7 +32,11 @@
                             <input id="password" type="password" placeholder="input password"
                                 class="form-control @error('password') is-invalid @enderror" name="password" required
                                 autocomplete="current-password">
-
+                            <span class="float-end my-2">
+                                <a href="javascript:;" data-bs-toggle='modal' data-bs-target='#forgetPasswordModal'>Forget
+                                    Password?
+                                </a>
+                                </span>
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -50,4 +54,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Forget Password Modal -->
+    <div class="modal fade" id="forgetPasswordModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center">Silahkan hubungi admin untuk reset password</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Forget Password Modal -->
 @endsection

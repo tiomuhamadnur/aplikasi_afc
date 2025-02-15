@@ -19,12 +19,13 @@
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon" data-bs-toggle="modal"
-                            data-bs-target="#exportExcelModal">
+                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon"
+                                data-bs-toggle="modal" data-bs-target="#exportExcelModal">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
-                        <button type="button" title="List Banned Users" class="btn btn-outline-danger btn-rounded btn-icon" onclick="window.location.href='{{ route('user.banned') }}'">
+                        <button type="button" title="List Banned Users" class="btn btn-outline-danger btn-rounded btn-icon"
+                            onclick="window.location.href='{{ route('user.banned') }}'">
                             <i class="mdi mdi-account-remove"></i>
                         </button>
                         <div class="table-responsive">
@@ -180,6 +181,32 @@
         </div>
     </div>
     <!-- End Banned Modal -->
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center">Password user ini akan kembali default menjadi:</p>
+                    <h5 class="text-center"><b>user123</b></h5>
+                    <form id="changePasswordForm" action="{{ route('user.change_password') }}" method="POST" class="forms-sample">
+                        @csrf
+                        @method('put')
+                        <input type="text" name="uuid" id="uuid_change_password" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="changePasswordForm" class="btn btn-gradient-primary me-2">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Change Password Modal -->
 @endsection
 
 @push('scripts')
@@ -192,6 +219,11 @@
             $('#bannedModal').on('show.bs.modal', function(e) {
                 var uuid = $(e.relatedTarget).data('uuid');
                 $('#uuid_banned').val(uuid);
+            });
+
+            $('#changePasswordModal').on('show.bs.modal', function(e) {
+                var uuid = $(e.relatedTarget).data('uuid');
+                $('#uuid_change_password').val(uuid);
             });
         });
     </script>

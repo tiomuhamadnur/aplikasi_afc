@@ -40,7 +40,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="tipe_barang_id">Tipe Barang</label>
-                                <select class="form-control form-control-lg" id="tipe_barang_id" name="tipe_barang_id"
+                                <select class="tom-select-class" id="tipe_barang_id" name="tipe_barang_id"
                                     required>
                                     <option value="" selected disabled>- pilih tipe barang -</option>
                                     @if ($barang->tipe_barang_id != null)
@@ -61,7 +61,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="relasi_struktur_id">Owner</label>
-                                <select class="form-control form-control-lg" id="relasi_struktur_id"
+                                <select class="tom-select-class" id="relasi_struktur_id"
                                     name="relasi_struktur_id" required>
                                     <option value="" selected disabled>- pilih owner -</option>
                                     @if ($barang->relasi_struktur_id != null)
@@ -84,7 +84,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="satuan_id">Satuan</label>
-                                <select class="form-control form-control-lg" id="satuan_id" name="satuan_id" required>
+                                <select class="tom-select-class" id="satuan_id" name="satuan_id" required>
                                     <option value="" selected disabled>- pilih satuan -</option>
                                     @if ($barang->satuan_id != null)
                                         @foreach ($satuan as $item)
@@ -104,7 +104,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="relasi_area_id">Area</label>
-                                <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id"
+                                <select class="tom-select-class" id="relasi_area_id" name="relasi_area_id"
                                     required>
                                     <option value="" selected disabled>- pilih area spesifik -</option>
                                     @if ($barang->relasi_area_id != null)

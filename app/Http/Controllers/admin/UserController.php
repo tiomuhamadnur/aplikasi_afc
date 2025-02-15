@@ -146,6 +146,21 @@ class UserController extends Controller
         return redirect()->route('user.index')->withNotify('User berhasil di-banned');
     }
 
+    public function change_password(Request $request)
+    {
+        $request->validate([
+            'uuid' => 'required|string'
+        ]);
+
+        $user = User::where('uuid', $request->uuid)->firstOrFail();
+        $default_password = "user123";
+        $user->update([
+            'password' => Hash::make($default_password),
+        ]);
+
+        return redirect()->route('user.index')->withNotify('Password user ' . $user->name . ' berhasil diubah default menjadi ' . $default_password);
+    }
+
     public function unban(Request $request)
     {
         $request->validate([

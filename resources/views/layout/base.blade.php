@@ -6,14 +6,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     @env('production')
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     @endenv
     @yield('title-head')
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
-    {{-- <link rel="stylesheet" href="{{ asset('build/assets/app-C3sVekwB.css') }}">
-    <link rel="stylesheet" href="{{ asset('build/assets/app-Cq57AiTD.css') }}"> --}}
     @vite('resources/css/app.css')
     @vite('resources/sass/app.scss')
     <!-- endinject -->
@@ -80,9 +78,10 @@
     {{-- Script --}}
     <!-- container-scroller -->
     <!-- plugins:js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    {{-- <script src="{{ asset('build/assets/app-C6MCKak-.js') }}"></script> --}}
-    @vite('resources/js/app.js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @vite(['resources/js/app.js'])
     {{-- <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script> --}}
     <!-- endinject -->
     <!-- Plugin js for this page -->
@@ -98,23 +97,23 @@
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
     <!-- End custom js for this page -->
 
     @stack('scripts')
     @yield('javascript')
     <script>
         @if (session('notify'))
-            swal("Yeheeey!", "{{ session('notify') ?? '-' }}", "success");
+            swal("Yeheeey!", {!! json_encode(session('notify')) !!}, "success");
         @elseif (session('notifyerror'))
-            swal("Ooopss!", "{{ session('notifyerror') ?? '-' }}", "error");
+            swal("Ooopss!", {!! json_encode(session('notifyerror')) !!}, "error");
         @elseif ($errors->any())
             @php
-                $messageError = implode('<br>', $errors->all());
+                $messageError = implode("\n", $errors->all());
             @endphp
-            swal("Ooopss!", "{{ $messageError }}", "error");
+            swal("Ooopss!", {!! json_encode($messageError) !!}, "error");
         @endif
     </script>
+
 </body>
 
 </html>

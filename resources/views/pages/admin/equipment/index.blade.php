@@ -16,7 +16,8 @@
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
                             <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
@@ -154,6 +155,59 @@
         </div>
     </div>
     <!-- End Add Modal -->
+
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Add</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('equipment.index') }}" method="GET" class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="tipe_equipment_id">Tipe Equipment</label>
+                            <select class="tom-select-class" id="tipe_equipment_id" name="tipe_equipment_id">
+                                <option value="" selected disabled>- pilih tipe equipment -</option>
+                                @foreach ($tipe_equipment as $item)
+                                    <option value="{{ $item->id }}">{{ $item->code }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub_lokasi_id">Location</label>
+                            <select class="tom-select-class" id="sub_lokasi_id" name="sub_lokasi_id">
+                                <option value="" selected disabled>- pilih location -</option>
+                                @foreach ($sub_lokasi as $item)
+                                    <option value="{{ $item->sub_lokasi->id }}">{{ $item->sub_lokasi->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="departemen_id">Departement Owner</label>
+                            <select class="tom-select-class" id="departemen_id" name="departemen_id">
+                                <option value="" selected disabled>- pilih departemen owner -</option>
+                                @foreach ($departement as $item)
+                                    <option value="{{ $item->departemen->id }}">Departemen {{ $item->departemen->code }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('equipment.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary me-2">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Filter Modal -->
 
     <!-- Import Modal -->
     <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -293,7 +347,7 @@
                     <form id="deleteForm" action="{{ route('equipment.delete') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('delete')
-                        <input type="text" name="id" id="id_delete" hidden>
+                        <input type="hidden" name="id" id="id_delete">
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -337,52 +391,54 @@
 
 @section('javascript')
     <script>
-        const imageInput = document.getElementById('photo');
-        const previewImage = document.getElementById('previewImage');
+        $(document).ready(function() {
+            const imageInput = document.getElementById('photo');
+            const previewImage = document.getElementById('previewImage');
 
-        imageInput.addEventListener('change', function(event) {
-            const selectedFile = event.target.files[0];
+            imageInput.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
 
-            if (selectedFile) {
-                const reader = new FileReader();
+                if (selectedFile) {
+                    const reader = new FileReader();
 
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(selectedFile);
                 }
+            });
 
-                reader.readAsDataURL(selectedFile);
-            }
-        });
+            $('#photoModal').on('show.bs.modal', function(e) {
+                var photo = $(e.relatedTarget).data('photo');
+                var name = $(e.relatedTarget).data('name');
+                var code = $(e.relatedTarget).data('code');
+                var equipment_number = $(e.relatedTarget).data('equipment_number');
+                var tipe_equipment = $(e.relatedTarget).data('tipe_equipment');
+                var lokasi = $(e.relatedTarget).data('lokasi');
+                var arah = $(e.relatedTarget).data('arah');
+                var struktur = $(e.relatedTarget).data('struktur');
+                var deskripsi = $(e.relatedTarget).data('deskripsi');
+                var status = $(e.relatedTarget).data('status');
 
-        $('#photoModal').on('show.bs.modal', function(e) {
-            var photo = $(e.relatedTarget).data('photo');
-            var name = $(e.relatedTarget).data('name');
-            var code = $(e.relatedTarget).data('code');
-            var equipment_number = $(e.relatedTarget).data('equipment_number');
-            var tipe_equipment = $(e.relatedTarget).data('tipe_equipment');
-            var lokasi = $(e.relatedTarget).data('lokasi');
-            var arah = $(e.relatedTarget).data('arah');
-            var struktur = $(e.relatedTarget).data('struktur');
-            var deskripsi = $(e.relatedTarget).data('deskripsi');
-            var status = $(e.relatedTarget).data('status');
+                document.getElementById("photo_modal").src = photo;
+                document.getElementById("name_modal").innerText = name;
+                document.getElementById("code_modal").innerText = code;
+                document.getElementById("equipment_number_modal").innerText = equipment_number;
+                document.getElementById("tipe_equipment_modal").innerText = tipe_equipment;
+                document.getElementById("lokasi_modal").innerText = lokasi;
+                document.getElementById("arah_modal").innerText = arah;
+                document.getElementById("struktur_modal").innerText = struktur;
+                document.getElementById("deskripsi_modal").innerText = deskripsi;
+                document.getElementById("status_modal").innerText = status;
+            });
 
-            document.getElementById("photo_modal").src = photo;
-            document.getElementById("name_modal").innerText = name;
-            document.getElementById("code_modal").innerText = code;
-            document.getElementById("equipment_number_modal").innerText = equipment_number;
-            document.getElementById("tipe_equipment_modal").innerText = tipe_equipment;
-            document.getElementById("lokasi_modal").innerText = lokasi;
-            document.getElementById("arah_modal").innerText = arah;
-            document.getElementById("struktur_modal").innerText = struktur;
-            document.getElementById("deskripsi_modal").innerText = deskripsi;
-            document.getElementById("status_modal").innerText = status;
-        });
+            $('#deleteModal').on('show.bs.modal', function(e) {
+                var id = $(e.relatedTarget).data('id');
 
-        $('#deleteModal').on('show.bs.modal', function(e) {
-            var id = $(e.relatedTarget).data('id');
-
-            $('#id_delete').val(id);
+                $('#id_delete').val(id);
+            });
         });
     </script>
 

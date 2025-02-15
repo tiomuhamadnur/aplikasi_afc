@@ -14,16 +14,16 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-C0D4cCoQ.js",
+    "file": "assets/app-CDJIXg6E.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-Cq57AiTD.css"
+      "assets/app-X4wBLXPg.css"
     ]
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-C3sVekwB.css",
+    "file": "assets/app-BiDeBBJN.css",
     "src": "resources/sass/app.scss",
     "isEntry": true
   }

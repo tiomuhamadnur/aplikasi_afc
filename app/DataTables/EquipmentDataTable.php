@@ -15,6 +15,24 @@ use Yajra\DataTables\Services\DataTable;
 
 class EquipmentDataTable extends DataTable
 {
+    protected $tipe_equipment_id;
+    protected $sub_lokasi_id;
+    protected $departemen_id;
+
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -62,18 +80,18 @@ class EquipmentDataTable extends DataTable
         })
         ->addColumn('#', function($item) {
             $editRoute = route('equipment.edit', $item->uuid);
+
+            $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                <i class='text-white mdi mdi-lead-pencil'></i>
+            </button>";
+
             $deleteModal = "<button type='button' title='Delete'
                 class='btn btn-gradient-danger btn-rounded btn-icon'
                 data-bs-toggle='modal' data-bs-target='#deleteModal'
                 data-id='{$item->id}'>
                 <i class='mdi mdi-delete'></i>
             </button>";
-
-            $editButton = "<a href='{$editRoute}'>
-                <button type='button' title='Edit' class='btn btn-gradient-warning btn-rounded btn-icon'>
-                    <i class='mdi mdi-lead-pencil'></i>
-                </button>
-            </a>";
 
             return $editButton . $deleteModal;
         })
@@ -82,13 +100,28 @@ class EquipmentDataTable extends DataTable
 
     public function query(Equipment $model): QueryBuilder
     {
-        // $query = $model->with(['tipe_equipment', 'relasi_area.sub_lokasi', 'functional_location', 'parent'])->newQuery();
         $query = $model->with([
                 'tipe_equipment',
                 'relasi_area.sub_lokasi',
                 'functional_location',
                 'parent',
             ])->newQuery();
+
+        // Filter
+        if($this->tipe_equipment_id != null)
+        {
+            $query->where('tipe_equipment_id', $this->tipe_equipment_id);
+        }
+
+        if($this->sub_lokasi_id != null)
+        {
+            $query->whereRelation('relasi_area.sub_lokasi', 'id', '=', $this->sub_lokasi_id);
+        }
+
+        if($this->departemen_id != null)
+        {
+            $query->whereRelation('relasi_struktur.departemen', 'id', '=', $this->departemen_id);
+        }
 
         return $query;
     }

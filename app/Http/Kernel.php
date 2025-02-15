@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\admin::class,
         'organik' => \App\Http\Middleware\organik::class,
         'checkBanned' => \App\Http\Middleware\CheckBanned::class,
+        'CheckPassword' => \App\Http\Middleware\CheckPassword::class,
     ];
 }

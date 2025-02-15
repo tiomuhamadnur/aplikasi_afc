@@ -49,18 +49,18 @@ class BarangDataTable extends DataTable
         })
         ->addColumn('action', function($item) {
             $editRoute = route('barang.edit', $item->uuid);
+
+            $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                <i class='text-white mdi mdi-lead-pencil'></i>
+            </button>";
+
             $deleteModal = "<button type='button' title='Delete'
                 class='btn btn-gradient-danger btn-rounded btn-icon'
                 data-bs-toggle='modal' data-bs-target='#deleteModal'
                 data-id='{$item->id}'>
                 <i class='mdi mdi-delete'></i>
             </button>";
-
-            $editButton = "<a href='{$editRoute}'>
-                <button type='button' title='Edit' class='btn btn-gradient-warning btn-rounded btn-icon'>
-                    <i class='mdi mdi-lead-pencil'></i>
-                </button>
-            </a>";
 
             return $editButton . $deleteModal;
         })

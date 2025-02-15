@@ -35,7 +35,14 @@ class UsersDataTable extends DataTable
                 <i class='text-white mdi mdi-lead-pencil'></i>
             </button>";
 
-            return $editButton . $bannedModal;
+            $changePasswordModal = "<button type='button' title='Reset Password'
+                class='btn btn-gradient-primary btn-rounded btn-icon'
+                data-bs-toggle='modal' data-bs-target='#changePasswordModal'
+                data-uuid='{$item->uuid}'>
+                <i class='mdi mdi-account-key'></i>
+            </button>";
+
+            return $editButton . $bannedModal . $changePasswordModal;
         })
         ->rawColumns(['#']);
     }

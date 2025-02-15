@@ -49,8 +49,22 @@
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/todolist.js') }}"></script>
     <!-- End custom js for this page -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     @yield('javascript')
+
+    <script>
+        @if (session('notify'))
+            swal("Yeheeey!", {!! json_encode(session('notify')) !!}, "success");
+        @elseif (session('notifyerror'))
+            swal("Ooopss!", {!! json_encode(session('notifyerror')) !!}, "error");
+        @elseif ($errors->any())
+            @php
+                $messageError = implode("\n", $errors->all());
+            @endphp
+            swal("Ooopss!", {!! json_encode($messageError) !!}, "error");
+        @endif
+    </script>
 </body>
 
 </html>

@@ -26,18 +26,42 @@ class EquipmentController extends Controller
         $this->imageUploadService = $imageUploadService;
     }
 
-    public function index(EquipmentDataTable $dataTable)
+    public function index(EquipmentDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'tipe_equipment_id' => 'numeric|nullable',
+            'sub_lokasi_id' => 'numeric|nullable',
+            'departemen_id' => 'numeric|nullable',
+        ]);
+
+        $tipe_equipment_id = $request->tipe_equipment_id ?? null;
+        $sub_lokasi_id = $request->sub_lokasi_id ?? null;
+        $departemen_id = $request->departemen_id ?? null;
+
         $tipe_equipment = TipeEquipment::all();
         $area = RelasiArea::all();
         $struktur = RelasiStruktur::all();
         $arah = Arah::all();
         $functional_location = FunctionalLocation::all();
         $equipment = Equipment::all();
+        $sub_lokasi = RelasiArea::where('lokasi_id', 2)
+                ->orderBy('sub_lokasi_id', 'ASC')
+                ->get()
+                ->unique('sub_lokasi_id');
 
-        return $dataTable->render('pages.admin.equipment.index', compact([
+        $departement = RelasiStruktur::orderBy('departemen_id', 'ASC')
+                ->get()
+                ->unique('departemen_id');
+
+        return $dataTable->with([
+            'tipe_equipment_id' => $tipe_equipment_id,
+            'sub_lokasi_id' => $sub_lokasi_id,
+            'departemen_id' => $departemen_id,
+        ])->render('pages.admin.equipment.index', compact([
             'tipe_equipment',
             'area',
+            'sub_lokasi',
+            'departement',
             'struktur',
             'arah',
             'functional_location',

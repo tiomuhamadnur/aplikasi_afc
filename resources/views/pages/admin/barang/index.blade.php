@@ -26,63 +26,6 @@
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-bordered table-responsive">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center"> # </th>
-                                        <th class="text-center"> Material <br> Number </th>
-                                        <th class="text-center"> Nama </th>
-                                        <th class="text-center"> Tipe Barang </th>
-                                        <th class="text-center"> Lokasi </th>
-                                        <th class="text-center"> Detail </th>
-                                        <th class="text-center"> Aksi </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($barang as $item)
-                                        <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td class="text-center">{{ $item->material_number ?? '-' }}</td>
-                                            <td class="text-wrap">{{ $item->name ?? '-' }}</td>
-                                            <td class="text-center">{{ $item->tipe_barang->name ?? '-' }}</td>
-                                            <td class="text-center">
-                                                {{ $item->relasi_area->lokasi->name ?? '-' }} <br>
-                                                {{ $item->relasi_area->sub_lokasi->name ?? '-' }} <br>
-                                                {{ $item->relasi_area->detail_lokasi->name ?? '-' }}
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" title="Show"
-                                                    class="btn btn-gradient-success btn-rounded btn-icon"
-                                                    data-bs-toggle="modal" data-bs-target="#photoModal"
-                                                    data-photo='{{ asset('storage/' . $item->photo) }}'
-                                                    data-name="{{ $item->name ?? '-' }}"
-                                                    data-spesifikasi="{{ $item->spesifikasi ?? '-' }}"
-                                                    data-material_number="{{ $item->material_number ?? '-' }}"
-                                                    data-serial_number="{{ $item->serial_number ?? '-' }}"
-                                                    data-tipe_barang="{{ $item->tipe_barang->name ?? '-' }}"
-                                                    data-lokasi="{{ $item->relasi_area->lokasi->name ?? '#' }} - {{ $item->relasi_area->sub_lokasi->name ?? '#' }} - {{ $item->relasi_area->detail_lokasi->name ?? '#' }}"
-                                                    data-owner="{{ $item->relasi_struktur->divisi->name ?? '#' }} - {{ $item->relasi_struktur->departemen->name ?? '#' }} - {{ $item->relasi_struktur->seksi->name ?? '#' }}"
-                                                    data-satuan="{{ $item->satuan->code ?? '-' }}"
-                                                    data-deskripsi="{{ $item->deskripsi ?? '-' }}">
-                                                    <i class="mdi mdi-eye"></i>
-                                                </button>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="{{ route('barang.edit', $item->uuid) }}">
-                                                    <button type="button" title="Edit"
-                                                        class="btn btn-gradient-warning btn-rounded btn-icon">
-                                                        <i class="mdi mdi-lead-pencil"></i>
-                                                    </button>
-                                                </a>
-                                                <button type="button" title="Delete"
-                                                    class="btn btn-gradient-danger btn-rounded btn-icon">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -125,7 +68,7 @@
                         </div>
                         <div class="form-group">
                             <label for="tipe_barang_id">Tipe Barang</label>
-                            <select class="form-control form-control-lg" id="tipe_barang_id" name="tipe_barang_id" required>
+                            <select class="tom-select-class" id="tipe_barang_id" name="tipe_barang_id" required>
                                 <option value="" selected disabled>- pilih tipe barang -</option>
                                 @foreach ($tipe_barang as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -134,7 +77,7 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_struktur_id">Owner</label>
-                            <select class="form-control form-control-lg" id="relasi_struktur_id" name="relasi_struktur_id"
+                            <select class="tom-select-class" id="relasi_struktur_id" name="relasi_struktur_id"
                                 required>
                                 <option value="" selected disabled>- pilih owner -</option>
                                 @foreach ($struktur as $item)
@@ -145,7 +88,7 @@
                         </div>
                         <div class="form-group">
                             <label for="satuan_id">Satuan</label>
-                            <select class="form-control form-control-lg" id="satuan_id" name="satuan_id" required>
+                            <select class="tom-select-class" id="satuan_id" name="satuan_id" required>
                                 <option value="" selected disabled>- pilih satuan -</option>
                                 @foreach ($satuan as $item)
                                     <option value="{{ $item->id }}">{{ $item->code }}</option>
@@ -154,7 +97,7 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_area_id">Area</label>
-                            <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id"
+                            <select class="tom-select-class" id="relasi_area_id" name="relasi_area_id"
                                 required>
                                 <option value="" selected disabled>- pilih area spesifik -</option>
                                 @foreach ($area as $item)
@@ -345,52 +288,54 @@
 
 @section('javascript')
     <script>
-        const imageInput = document.getElementById('photo');
-        const previewImage = document.getElementById('previewImage');
+        $(document).ready(function() {
+            const imageInput = document.getElementById('photo');
+            const previewImage = document.getElementById('previewImage');
 
-        imageInput.addEventListener('change', function(event) {
-            const selectedFile = event.target.files[0];
+            imageInput.addEventListener('change', function(event) {
+                const selectedFile = event.target.files[0];
 
-            if (selectedFile) {
-                const reader = new FileReader();
+                if (selectedFile) {
+                    const reader = new FileReader();
 
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(selectedFile);
                 }
+            });
 
-                reader.readAsDataURL(selectedFile);
-            }
-        });
+            $('#photoModal').on('show.bs.modal', function(e) {
+                var photo = $(e.relatedTarget).data('photo');
+                var name = $(e.relatedTarget).data('name');
+                var spesifikasi = $(e.relatedTarget).data('spesifikasi');
+                var material_number = $(e.relatedTarget).data('material_number');
+                var serial_number = $(e.relatedTarget).data('serial_number');
+                var tipe_barang = $(e.relatedTarget).data('tipe_barang');
+                var lokasi = $(e.relatedTarget).data('lokasi');
+                var owner = $(e.relatedTarget).data('owner');
+                var satuan = $(e.relatedTarget).data('satuan');
+                var deskripsi = $(e.relatedTarget).data('deskripsi');
 
-        $('#photoModal').on('show.bs.modal', function(e) {
-            var photo = $(e.relatedTarget).data('photo');
-            var name = $(e.relatedTarget).data('name');
-            var spesifikasi = $(e.relatedTarget).data('spesifikasi');
-            var material_number = $(e.relatedTarget).data('material_number');
-            var serial_number = $(e.relatedTarget).data('serial_number');
-            var tipe_barang = $(e.relatedTarget).data('tipe_barang');
-            var lokasi = $(e.relatedTarget).data('lokasi');
-            var owner = $(e.relatedTarget).data('owner');
-            var satuan = $(e.relatedTarget).data('satuan');
-            var deskripsi = $(e.relatedTarget).data('deskripsi');
+                document.getElementById("photo_modal").src = photo;
+                document.getElementById("name_modal").innerText = name;
+                document.getElementById("spesifikasi_modal").innerText = spesifikasi;
+                document.getElementById("material_number_modal").innerText = material_number;
+                document.getElementById("serial_number_modal").innerText = serial_number;
+                document.getElementById("tipe_barang_modal").innerText = tipe_barang;
+                document.getElementById("lokasi_modal").innerText = lokasi;
+                document.getElementById("owner_modal").innerText = owner;
+                document.getElementById("satuan_modal").innerText = satuan;
+                document.getElementById("deskripsi_modal").innerText = deskripsi;
+            });
 
-            document.getElementById("photo_modal").src = photo;
-            document.getElementById("name_modal").innerText = name;
-            document.getElementById("spesifikasi_modal").innerText = spesifikasi;
-            document.getElementById("material_number_modal").innerText = material_number;
-            document.getElementById("serial_number_modal").innerText = serial_number;
-            document.getElementById("tipe_barang_modal").innerText = tipe_barang;
-            document.getElementById("lokasi_modal").innerText = lokasi;
-            document.getElementById("owner_modal").innerText = owner;
-            document.getElementById("satuan_modal").innerText = satuan;
-            document.getElementById("deskripsi_modal").innerText = deskripsi;
-        });
+            $('#deleteModal').on('show.bs.modal', function(e) {
+                var id = $(e.relatedTarget).data('id');
 
-        $('#deleteModal').on('show.bs.modal', function(e) {
-            var id = $(e.relatedTarget).data('id');
-
-            $('#id_delete').val(id);
+                $('#id_delete').val(id);
+            });
         });
     </script>
 @endsection
