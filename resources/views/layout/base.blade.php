@@ -25,10 +25,6 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
 
-    <!-- Build CSS -->
-    <link rel="stylesheet" href="{{ asset('build/assets/build-css1.css') }}">
-    <link rel="stylesheet" href="{{ asset('build/assets/build-css2.css') }}">
-
     <style>
         .mrt-blue {
             background-color: #0053B2;
