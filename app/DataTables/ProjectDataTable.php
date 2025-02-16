@@ -22,6 +22,7 @@ class ProjectDataTable extends DataTable
     protected $type;
     protected $start_period;
     protected $end_period;
+    protected $year;
 
     public function with(array|string $key, mixed $value = null): static
     {
@@ -106,6 +107,12 @@ class ProjectDataTable extends DataTable
         if($this->type != null)
         {
             $query->whereRelation('fund_source.fund', 'type', '=', $this->type);
+        }
+
+        // Year
+        if($this->year != null)
+        {
+            $query->whereYear('start_period', $this->year);
         }
 
         // Date

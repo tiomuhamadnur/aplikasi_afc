@@ -427,10 +427,10 @@
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"
                                     onblur="(this.type='text')" class="form-control" placeholder="Start Date"
-                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}" required>
                                 <input type="text" id="end_date" onfocus="(this.type='date')"
                                     onblur="(this.type='text')" class="form-control" placeholder="End Date"
-                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
+                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}" required>
                             </div>
                         </div>
                     </form>

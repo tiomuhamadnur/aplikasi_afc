@@ -63,7 +63,7 @@ class WorkOrderController extends Controller
     {
         $tipe_pekerjaan = TipePekerjaan::all();
         $status = Status::where('id', 1)->get();
-        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
+        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->notBanned()->orderBy('name', 'ASC')->get();
         $classification = Classification::all();
 
         $barang = Barang::all();
@@ -90,7 +90,7 @@ class WorkOrderController extends Controller
 
         $tipe_pekerjaan = TipePekerjaan::all();
         $status = Status::where('id', 1)->get();
-        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->get();
+        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->notBanned()->orderBy('name', 'ASC')->get();
         $classification = Classification::all();
 
         $barang = Barang::all();

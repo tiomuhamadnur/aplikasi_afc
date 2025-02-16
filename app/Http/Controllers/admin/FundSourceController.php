@@ -11,23 +11,43 @@ use Illuminate\Http\Request;
 
 class FundSourceController extends Controller
 {
+    protected array $years;
+
+    public function __construct()
+    {
+        $this->years = $this->getYears();
+    }
+
+    private function getYears(): array
+    {
+        $currentYear = date('Y');
+        $startYear = $currentYear - 10;
+        $endYear = $currentYear + 10;
+
+        return range($endYear, $startYear);
+    }
+
     public function index(FundSourceDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'start_period' => 'date|nullable',
-            'end_period' => 'date|nullable',
+            'year' => 'nullable',
+            'fund_id' => 'nullable'
         ]);
 
-        $start_period = $request->start_period ?? null;
-        $end_period = $request->end_period ?? $start_period;
+        $this_year = $request->year ?? date('Y');
+        $fund_id = $request->fund_id ?? null;
 
         $fund = Fund::all();
+        $years = $this->years;
 
         return $dataTable->with([
-            'start_period' => $start_period,
-            'end_period' => $end_period,
+            'year' => $this_year,
+            'fund_id' => $fund_id,
         ])->render('pages.admin.fund-source.index', compact([
             'fund',
+            'years',
+            'this_year',
+            'fund_id',
         ]));
     }
 
@@ -41,8 +61,7 @@ class FundSourceController extends Controller
         $data = $request->validate([
             'fund_id' => 'required|numeric',
             'balance' => 'required|numeric|min:0',
-            'start_period' => 'required|date',
-            'end_period' => 'required|date',
+            'year' => 'required|integer|digits:4|min:2000|max:' . date('Y') + 10,
         ]);
 
         $data['user_id'] = auth()->user()->id;
@@ -75,8 +94,7 @@ class FundSourceController extends Controller
         $rawData = $request->validate([
             'fund_id' => 'required|numeric',
             'balance' => 'required|numeric|min:0',
-            'start_period' => 'required|date',
-            'end_period' => 'required|date',
+            'year' => 'required|integer|digits:4|min:2000',
         ]);
 
         $rawData['user_id'] = auth()->user()->id;

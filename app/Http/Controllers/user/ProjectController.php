@@ -17,6 +17,22 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
+    protected array $years;
+
+    public function __construct()
+    {
+        $this->years = $this->getYears();
+    }
+
+    private function getYears(): array
+    {
+        $currentYear = date('Y');
+        $startYear = $currentYear - 10;
+        $endYear = $currentYear + 10;
+
+        return range($endYear, $startYear);
+    }
+
     public function index(ProjectDataTable $dataTable, Request $request)
     {
         $request->validate([
@@ -26,21 +42,24 @@ class ProjectController extends Controller
             'type' => 'nullable',
             'start_date' => 'nullable',
             'end_date' => 'nullable',
+            'year' => 'nullable',
         ]);
 
         $fund_source_id = $request->fund_source_id ?? null;
         $project_id = $request->project_id ?? null;
         $departemen_id = $request->departemen_id ?? null;
         $type = $request->type ?? null;
-        $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
+        $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
+        $this_year = $request->year ?? date('Y');
 
 
-        $fund_source = FundSource::all();
+        $fund_source = FundSource::orderBy('year', 'DESC')->orderBy('created_at', 'DESC')->get();
         $relasi_struktur = RelasiStruktur::all();
         $departemen = Departemen::all();
         $perusahaan = Perusahaan::all();
         $status_budgeting = StatusBudgeting::all();
+        $years = $this->years;
 
         return $dataTable->with([
             'fund_source_id' => $fund_source_id,
@@ -48,6 +67,7 @@ class ProjectController extends Controller
             'type' => $type,
             'start_period' => $start_date,
             'end_period' => $end_date,
+            'year' => $this_year,
         ])->render('pages.user.project.index', compact([
             'fund_source',
             'relasi_struktur',
@@ -59,6 +79,8 @@ class ProjectController extends Controller
             'type',
             'start_date',
             'end_date',
+            'years',
+            'this_year',
         ]));
     }
 

@@ -47,35 +47,34 @@
                         @method('POST')
                         <div class="form-group">
                             <label for="code">Code</label>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="Code"
+                            <input type="text" class="form-control" id="code" name="code" placeholder="input code"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name"
+                            <input type="text" class="form-control" id="name" name="name" placeholder="input name"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="type">Type</label>
-                            <select class="form-control form-control-lg" name="type" id="type" required>
+                            <select class="tom-select-class" name="type" id="type" required>
                                 <option value="">- select type -</option>
                                 <option value="opex">Opex</option>
                                 <option value="capex">Capex</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="description">Description</label>
-                            <input type="text" class="form-control" id="description" name="description"
-                                placeholder="Description" autocomplete="off" required>
-                        </div>
-                        <div class="form-group">
                             <label for="divisi_id">Division</label>
-                            <select class="form-control form-control-lg" name="divisi_id" id="divisi_id" required>
+                            <select class="tom-select-class" name="divisi_id" id="divisi_id" required>
                                 <option value="">- select division -</option>
                                 @foreach ($divisi as $item)
                                     <option value="{{ $item->id }}">{{ $item->code }} ({{ $item->name }})</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" name="description" id="description" rows="3" required placeholder="input description"></textarea>
                         </div>
                     </form>
                 </div>

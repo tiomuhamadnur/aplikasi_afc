@@ -12,6 +12,7 @@ use App\Models\Project;
 use App\Models\StatusBudgeting;
 use App\Services\FileUploadService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Laraindo\RupiahFormat;
@@ -37,38 +38,29 @@ class BudgetAbsorptionController extends Controller
             'end_date' => 'nullable',
         ]);
 
-        $project = Project::all();
-        $fund = Fund::all();
-        $departemen = Departemen::all();
-
         $fund_id = $request->fund_id ?? null;
         $project_id = $request->project_id ?? null;
         $departemen_id = $request->departemen_id ?? null;
         $type = $request->type ?? null;
         $status = $request->status ?? null;
-        $start_date = $request->start_date ?? null;
-        $end_date = $request->end_date ?? $start_date;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
 
-        return $dataTable->with([
-            'fund_id' => $fund_id,
-            'project_id' => $project_id,
-            'departemen_id' => $departemen_id,
-            'type' => $type,
-            'status' => $status,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-        ])->render('pages.user.budget-absorption.index', compact([
-            'project',
-            'fund',
-            'departemen',
-            'fund_id',
-            'project_id',
-            'departemen_id',
-            'type',
-            'status',
-            'start_date',
-            'end_date',
-        ]));
+        $project = Project::all();
+        $fund = Fund::all();
+        $departemen = Departemen::all();
+
+        return $dataTable
+            ->with([
+                'fund_id' => $fund_id,
+                'project_id' => $project_id,
+                'departemen_id' => $departemen_id,
+                'type' => $type,
+                'status' => $status,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+            ])
+            ->render('pages.user.budget-absorption.index', compact(['project', 'fund', 'departemen', 'fund_id', 'project_id', 'departemen_id', 'type', 'status', 'start_date', 'end_date']));
     }
 
     public function store(Request $request)
@@ -96,19 +88,17 @@ class BudgetAbsorptionController extends Controller
 
         $result = $this->check_fund_source_budget($project->fund_source_id, $request->value);
 
-        if($result['value'] < 0)
-        {
-            return redirect()->route('project.show', $project->uuid)->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
+        if ($result['value'] < 0) {
+            return redirect()
+                ->route('project.show', $project->uuid)
+                ->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
         }
 
         $budget_absorption = BudgetAbsorption::updateOrCreate($data, $data);
 
         // Handle file attachment using FileUploadService
         if ($request->hasFile('attachment')) {
-            $attachmentPath = $this->fileUploadService->uploadFile(
-                $request->file('attachment'),
-                'attachment/budget-absorption/'
-            );
+            $attachmentPath = $this->fileUploadService->uploadFile($request->file('attachment'), 'attachment/budget-absorption/');
 
             // Update attachment path in the database
             $budget_absorption->update(['attachment' => $attachmentPath]);
@@ -122,10 +112,7 @@ class BudgetAbsorptionController extends Controller
         $budget_absorption = BudgetAbsorption::where('uuid', $uuid)->firstOrFail();
         $project = Project::all();
 
-        return view('pages.user.budget-absorption.edit', compact([
-            'budget_absorption',
-            'project'
-        ]));
+        return view('pages.user.budget-absorption.edit', compact(['budget_absorption', 'project']));
     }
 
     public function update(Request $request)
@@ -151,19 +138,17 @@ class BudgetAbsorptionController extends Controller
         $project = Project::findOrFail($request->project_id);
 
         $result = $this->check_fund_source_budget($project->fund_source_id, $request->value);
-        if(($result['value'] + $data->value) < 0)
-        {
-            return redirect()->route('project.show', $project->uuid)->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
+        if ($result['value'] + $data->value < 0) {
+            return redirect()
+                ->route('project.show', $project->uuid)
+                ->withNotifyerror('Nilai budget activity ini melebihi sisa budget Fund ' . $project->fund_source->fund->code . ', tersisa ' . RupiahFormat::currency($result['remaining_budget']));
         }
 
         $data->update($rawData);
 
         // Handle file attachment using FileUploadService
         if ($request->hasFile('attachment')) {
-            $attachmentPath = $this->fileUploadService->uploadFile(
-                $request->file('attachment'),
-                'attachment/budget-absorption/'
-            );
+            $attachmentPath = $this->fileUploadService->uploadFile($request->file('attachment'), 'attachment/budget-absorption/');
 
             // Delete attachment lama
             if ($data->attachment != null) {
@@ -189,15 +174,13 @@ class BudgetAbsorptionController extends Controller
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
 
-        return $dataTable->with([
-            'project_id' => $project->id,
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-        ])->render('pages.user.budget-absorption.by_project', compact([
-            'project',
-            'start_date',
-            'end_date',
-        ]));
+        return $dataTable
+            ->with([
+                'project_id' => $project->id,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+            ])
+            ->render('pages.user.budget-absorption.by_project', compact(['project', 'start_date', 'end_date']));
     }
 
     public function check_fund_source_budget($fund_source_id, $value)

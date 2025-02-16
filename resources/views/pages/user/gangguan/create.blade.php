@@ -31,12 +31,12 @@
                             @method('POST')
                             <div class="form-group">
                                 <label for="report_by">Report By</label>
-                                <input type="text" class="form-control" id="report_by" name="report_by"
+                                <input type="text" class="form-control form-control-lg" id="report_by" name="report_by"
                                     autocomplete="off" required placeholder="input report by">
                             </div>
                             <div class="form-group">
                                 <label for="report_date">Report Date</label>
-                                <input type="datetime-local" class="form-control" id="report_date" name="report_date"
+                                <input type="datetime-local" class="form-control form-control-lg" id="report_date" name="report_date"
                                     autocomplete="off" required>
                             </div>
                             <div class="form-group">
@@ -77,7 +77,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="response_date">Action Date</label>
-                                <input type="datetime-local" class="form-control" id="response_date" name="response_date"
+                                <input type="datetime-local" class="form-control form-control-lg" id="response_date" name="response_date"
                                     autocomplete="off" required>
                             </div>
                             <div class="form-group">
@@ -95,7 +95,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="solved_date">Solved Date</label>
-                                <input type="datetime-local" class="form-control" id="solved_date" name="solved_date"
+                                <input type="datetime-local" class="form-control form-control-lg" id="solved_date" name="solved_date"
                                     autocomplete="off" required>
                             </div>
                             <div class="form-group">

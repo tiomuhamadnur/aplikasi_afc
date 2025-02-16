@@ -226,6 +226,17 @@
                         @csrf
                         @method('GET')
                         <div class="form-group">
+                            <label for="">Tanggal</label>
+                            <div class="input-group">
+                                <input type="text" id="start_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
+                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}" required>
+                                <input type="text" id="end_date" onfocus="(this.type='date')"
+                                    onblur="(this.type='text')" class="form-control" placeholder="End Date"
+                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="area_id">Lokasi</label>
                             <select class="tom-select-class" name="area_id" id="area_id">
                                 <option value="" selected disabled>- pilih lokasi -</option>
@@ -274,7 +285,7 @@
                             <select class="tom-select-class" name="status_id" id="status_id">
                                 <option value="" selected disabled>- pilih status -</option>
                                 @foreach ($status as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $status_id) selected @endif>
+                                    <option value="{{ $item->id }}" @if($item->id == $status_id) selected @endif>
                                         {{ $item->name }}
                                     </option>
                                 @endforeach
@@ -284,36 +295,17 @@
                             <label for="is_changed">Is Changed Sparepart?</label>
                             <select class="tom-select-class" name="is_changed" id="is_changed">
                                 <option value="" selected disabled>- pilih keterangan -</option>
-                                <option value="1">
-                                    Yes
-                                </option>
-                                <option value="0">
-                                    No
-                                </option>
+                                <option value="1" @if($is_changed == "1") selected @endif>Yes</option>
+                                <option value="0" @if($is_changed == "0") selected @endif>No</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="is_downtime">Is Downtime?</label>
                             <select class="tom-select-class" name="is_downtime" id="is_downtime">
                                 <option value="" selected disabled>- pilih keterangan -</option>
-                                <option value="1">
-                                    Yes
-                                </option>
-                                <option value="0">
-                                    No
-                                </option>
+                                <option value="1" @if($is_downtime == "1") selected @endif>Yes</option>
+                                <option value="0" @if($is_downtime == "0") selected @endif>No</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="">Tanggal</label>
-                            <div class="input-group">
-                                <input type="text" id="start_date" onfocus="(this.type='date')"
-                                    onblur="(this.type='text')" class="form-control" placeholder="Start Date"
-                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
-                                <input type="text" id="end_date" onfocus="(this.type='date')"
-                                    onblur="(this.type='text')" class="form-control" placeholder="End Date"
-                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
-                            </div>
                         </div>
                     </form>
                 </div>

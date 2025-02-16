@@ -250,7 +250,7 @@ class GangguanController extends Controller
         $cause = Cause::all();
         $remedies = Remedy::all();
         $remedy_id = TransGangguanRemedy::where('gangguan_id', $gangguan->id)->first()->remedy_id;
-        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->orderBy('name', 'ASC')->get();
+        $user = User::where('relasi_struktur_id', auth()->user()->relasi_struktur_id)->notBanned()->orderBy('name', 'ASC')->get();
 
         return view('pages.user.gangguan.edit', compact([
             'gangguan',

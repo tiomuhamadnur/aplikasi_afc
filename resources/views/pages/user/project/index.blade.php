@@ -67,7 +67,7 @@
                                 <option value="" disabled selected>- select fund source -</option>
                                 @foreach ($fund_source as $item)
                                     <option value="{{ $item->id }}">
-                                        {{ $item->fund->code ?? '-' }} {{ $item->fund->name ?? '-' }}
+                                        Tahun {{ $item->year ?? '-' }} - {{ $item->fund->code ?? '-' }} - {{ $item->fund->name ?? '-' }}
                                     </option>
                                 @endforeach
                             </select>
@@ -142,7 +142,7 @@
                                 <option value="" selected disabled>- select fund source -</option>
                                 @foreach ($fund_source as $item)
                                     <option value="{{ $item->id }}" @if ($item->id == $fund_source_id ?? null) selected @endif>
-                                        {{ $item->fund->code }} - {{ $item->fund->name }} (RKA: @currency($item->balance))
+                                        Tahun {{ $item->year ?? '-' }} - {{ $item->fund->code }} - {{ $item->fund->name }} (RKA: @currency($item->balance))
                                     </option>
                                 @endforeach
                             </select>
@@ -166,7 +166,7 @@
                                 <option value="opex" @selected($type === 'opex')>Opex</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="start_date">Period</label>
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"
@@ -176,6 +176,17 @@
                                     onblur="(this.type='text')" class="form-control" placeholder="End Date"
                                     name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
                             </div>
+                        </div> --}}
+                        <div class="form-group">
+                            <label for="year">Year</label>
+                            <select class="tom-select-class" name="year" id="year" required>
+                                <option value="" disabled selected>- select year -</option>
+                                @foreach ($years as $year)
+                                    <option value="{{ $year }}" @if($year == $this_year) selected @endif>
+                                        {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </form>
                 </div>

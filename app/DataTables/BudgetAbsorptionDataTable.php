@@ -76,10 +76,7 @@ class BudgetAbsorptionDataTable extends DataTable
         ->addColumn('value', function($item) {
             return RupiahFormat::currency($item->value);
         })
-        ->addColumn('updated_at', function($item) {
-            return Carbon::parse($item->updated_at)->format('Y-m-d H:i:s');
-        })
-        ->rawColumns(['', 'updated_at', '#']);
+        ->rawColumns(['#']);
     }
 
     public function query(BudgetAbsorption $model): QueryBuilder
@@ -171,7 +168,7 @@ class BudgetAbsorptionDataTable extends DataTable
             Column::make('status')->title('Status'),
             // Column::make('termin')->title('Termin'),
             Column::make('user.name')->title('Updated By'),
-            Column::computed('updated_at')->title('Updated At'),
+            Column::make('updated_at')->title('Updated At'),
         ];
     }
 

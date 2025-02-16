@@ -57,7 +57,7 @@
                                 <option value="" disabled selected>- select project -</option>
                                 @foreach ($project as $item)
                                     <option value="{{ $item->id }}">
-                                        {{ $item->name ?? '-' }} ({{ $item->fund_source->fund->name ?? '-' }} -
+                                        Tahun {{ $item->fund_source->year ?? '-' }} - {{ $item->name ?? '-' }} - ({{ $item->fund_source->fund->name ?? '-' }} -
                                         {{ $item->fund_source->fund->code ?? '-' }})
                                     </option>
                                 @endforeach
@@ -94,7 +94,7 @@
                                 name="po_number_sap" placeholder="input PO number SAP" autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <label for="attachment">Attachment Document</label>
+                            <label for="attachment">Attachment Document <span class="text-info">(optional)</span></label>
                             <input type="file" class="form-control" id="attachment" name="attachment"
                                 accept="application/pdf">
                         </div>
@@ -137,7 +137,7 @@
                             <select class="tom-select-class" name="fund_id" id="fund_id">
                                 <option value="" selected disabled>- select fund -</option>
                                 @foreach ($fund as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $fund_id ?? null) selected @endif>
+                                    <option value="{{ $item->id }}" @selected($item->id == $fund_id ?? null)>
                                         {{ $item->code }} - {{ $item->name }}
                                     </option>
                                 @endforeach
@@ -148,8 +148,9 @@
                             <select class="tom-select-class" name="project_id" id="project_id">
                                 <option value="" selected disabled>- select project -</option>
                                 @foreach ($project as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $project_id ?? null) selected @endif>
-                                        {{ $item->name }}
+                                    <option value="{{ $item->id }}" @selected($item->id == $project_id ?? null)>
+                                        Tahun {{ $item->fund_source->year ?? '-' }} - {{ $item->name ?? '-' }} - ({{ $item->fund_source->fund->name ?? '-' }} -
+                                        {{ $item->fund_source->fund->code ?? '-' }})
                                     </option>
                                 @endforeach
                             </select>
@@ -159,8 +160,8 @@
                             <select class="tom-select-class" name="departemen_id" id="departemen_id">
                                 <option value="" selected disabled>- select department -</option>
                                 @foreach ($departemen as $item)
-                                    <option value="{{ $item->id }}" @if ($item->id == $departemen_id ?? null) selected @endif>
-                                        {{ $item->name }} ({{ $item->code }})
+                                    <option value="{{ $item->id }}" @selected($item->id == $departemen_id ?? null)>
+                                        {{ $item->code }} - ({{ $item->name }})
                                     </option>
                                 @endforeach
                             </select>
@@ -177,13 +178,13 @@
                             <label for="status">Status</label>
                             <select class="tom-select-class" name="status" id="status">
                                 <option value="" selected disabled>- select status -</option>
-                                <option value="Planned" @if($status == 'Planned') selected @endif>Planned</option>
-                                <option value="Realisasi Kegiatan" @if($status == 'Realisasi Kegiatan') selected @endif>Realisasi Kegiatan</option>
-                                <option value="Realisasi Pembayaran" @if($status == 'Realisasi Pembayaran') selected @endif>Realisasi Pembayaran</option>
+                                <option value="Planned" @selected($status === 'Planned')>Planned</option>
+                                <option value="Realisasi Kegiatan" @selected($status === 'Realisasi Kegiatan')>Realisasi Kegiatan</option>
+                                <option value="Realisasi Pembayaran" @selected($status === 'Realisasi Pembayaran')>Realisasi Pembayaran</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="start_date">Period</label>
+                            <label for="start_date">Activity Period</label>
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"
                                     onblur="(this.type='text')" class="form-control" placeholder="Start Date"

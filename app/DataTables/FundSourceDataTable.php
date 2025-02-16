@@ -17,8 +17,8 @@ use Yajra\DataTables\Services\DataTable;
 
 class FundSourceDataTable extends DataTable
 {
-    protected $start_period;
-    protected $end_period;
+    protected $year;
+    protected $fund_id;
 
     public function with(array|string $key, mixed $value = null): static
     {
@@ -37,12 +37,15 @@ class FundSourceDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
         ->addColumn('#', function($item) {
-            $editRoute = route('fund-source.edit', $item->uuid);
-
-            $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
-                    onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
-                    <i class='text-white mdi mdi-lead-pencil'></i>
-                </button>";
+            $editModal = "<button type='button' title='Edit'
+                class='btn btn-gradient-warning btn-rounded btn-icon'
+                data-bs-toggle='modal' data-bs-target='#editModal'
+                data-id='{$item->id}'
+                data-fund_id='{$item->fund_id}'
+                data-balance='{$item->balance}'
+                data-year='{$item->year}'>
+                <i class='mdi mdi-lead-pencil'></i>
+            </button>";
 
             $deleteModal = "<button type='button' title='Delete'
                 class='btn btn-gradient-danger btn-rounded btn-icon'
@@ -51,7 +54,7 @@ class FundSourceDataTable extends DataTable
                 <i class='mdi mdi-delete'></i>
             </button>";
 
-            return $editButton . $deleteModal;
+            return $editModal . $deleteModal;
         })
         ->addColumn('balance', function($item) {
             return RupiahFormat::currency($item->balance ?? null);
@@ -65,10 +68,7 @@ class FundSourceDataTable extends DataTable
             $sum_value_absorption = BudgetAbsorption::whereRelation('project.fund_source',  'id', '=', $item->id)->sum('value');
             return RupiahFormat::currency($balance - $sum_value_absorption);
         })
-        ->addColumn('updated_at', function($item) {
-            return Carbon::parse($item->updated_at)->format('Y-m-d H:i:s');
-        })
-        ->rawColumns(['updated_at', '#']);
+        ->rawColumns(['#']);
     }
 
     public function query(FundSource $model): QueryBuilder
@@ -77,6 +77,17 @@ class FundSourceDataTable extends DataTable
             'fund',
             'user'
             ])->newQuery();
+
+        // Filter
+        if($this->year != null)
+        {
+            $query->where('year', $this->year);
+        }
+
+        if($this->fund_id != null)
+        {
+            $query->where('fund_id', $this->fund_id);
+        }
 
         return $query;
     }
@@ -90,7 +101,7 @@ class FundSourceDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     ->dom('frtiplB')
-                    ->orderBy([10, 'desc'])
+                    ->orderBy([9, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -118,10 +129,11 @@ class FundSourceDataTable extends DataTable
             Column::computed('balance')->title('Total Balance'),
             Column::computed('used_balance')->title('Used Balance'),
             Column::computed('remaining_balance')->title('Remaining Balance'),
-            Column::make('start_period')->title('Start Period'),
-            Column::make('end_period')->title('End Period'),
-            Column::make('user.name')->title('Updated By'),
-            Column::computed('updated_at')->title('Updated At'),
+            // Column::make('start_period')->title('Start Period'),
+            // Column::make('end_period')->title('End Period'),
+            Column::make('year')->title('Year'),
+            Column::make('user.name')->sortable(false)->title('Updated By'),
+            Column::make('updated_at')->sortable(true)->title('Updated At'),
         ];
     }
 
