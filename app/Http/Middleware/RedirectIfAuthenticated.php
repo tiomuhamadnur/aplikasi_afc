@@ -17,9 +17,9 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
-        if (env('APP_ENV') !== 'local' && !$request->secure()) {
-            return redirect()->secure($request->getRequestUri());
-        }
+        // if (env('APP_ENV') !== 'local' && !$request->secure()) {
+        //     return redirect()->secure($request->getRequestUri());
+        // }
 
         $guards = empty($guards) ? [null] : $guards;
 
