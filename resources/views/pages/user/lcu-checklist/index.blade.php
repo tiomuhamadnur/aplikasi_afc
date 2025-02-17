@@ -75,7 +75,7 @@
                         </div>
                         <div class="form-group">
                             <label for="functional_location_id">Location</label>
-                            <select class="form-control form-control-lg" id="functional_location_id" name="functional_location_id"
+                            <select class="tom-select-class" id="functional_location_id" name="functional_location_id"
                                 required>
                                 <option value="" selected disabled>- select location -</option>
                                 @foreach ($functional_location as $item)
@@ -87,7 +87,7 @@
                         </div>
                         <div class="form-group">
                             <label for="mks_status">MKS Status?</label>
-                            <select class="form-control form-control-lg" id="mks_status" name="mks_status" required>
+                            <select class="tom-select-class" id="mks_status" name="mks_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="form-group">
                             <label for="lighting_status">Lighting Status?</label>
-                            <select class="form-control form-control-lg" id="lighting_status" name="lighting_status" required>
+                            <select class="tom-select-class" id="lighting_status" name="lighting_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -103,7 +103,7 @@
                         </div>
                         <div class="form-group">
                             <label for="cctv_status">CCTV Status?</label>
-                            <select class="form-control form-control-lg" id="cctv_status" name="cctv_status" required>
+                            <select class="tom-select-class" id="cctv_status" name="cctv_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -111,7 +111,7 @@
                         </div>
                         <div class="form-group">
                             <label for="ac_status">AC Status?</label>
-                            <select class="form-control form-control-lg" id="ac_status" name="ac_status" required>
+                            <select class="tom-select-class" id="ac_status" name="ac_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -119,7 +119,7 @@
                         </div>
                         <div class="form-group">
                             <label for="room_cleanliness">Kebersihan ruangan?</label>
-                            <select class="form-control form-control-lg" id="room_cleanliness" name="room_cleanliness" required>
+                            <select class="tom-select-class" id="room_cleanliness" name="room_cleanliness" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -127,7 +127,7 @@
                         </div>
                         <div class="form-group">
                             <label for="server_status">Server Status?</label>
-                            <select class="form-control form-control-lg" id="server_status" name="server_status" required>
+                            <select class="tom-select-class" id="server_status" name="server_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -135,7 +135,7 @@
                         </div>
                         <div class="form-group">
                             <label for="server_alert">Server Alert?</label>
-                            <select class="form-control form-control-lg" id="server_alert" name="server_alert" required>
+                            <select class="tom-select-class" id="server_alert" name="server_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -143,7 +143,7 @@
                         </div>
                         <div class="form-group">
                             <label for="switch_status">Switch Status?</label>
-                            <select class="form-control form-control-lg" id="switch_status" name="switch_status" required>
+                            <select class="tom-select-class" id="switch_status" name="switch_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -151,7 +151,7 @@
                         </div>
                         <div class="form-group">
                             <label for="switch_alert">Switch Alert?</label>
-                            <select class="form-control form-control-lg" id="switch_alert" name="switch_alert" required>
+                            <select class="tom-select-class" id="switch_alert" name="switch_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -159,7 +159,7 @@
                         </div>
                         <div class="form-group">
                             <label for="ups_status">UPS Status?</label>
-                            <select class="form-control form-control-lg" id="ups_status" name="ups_status" required>
+                            <select class="tom-select-class" id="ups_status" name="ups_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -167,7 +167,7 @@
                         </div>
                         <div class="form-group">
                             <label for="ups_alert">UPS Alert?</label>
-                            <select class="form-control form-control-lg" id="ups_alert" name="ups_alert" required>
+                            <select class="tom-select-class" id="ups_alert" name="ups_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -175,7 +175,7 @@
                         </div>
                         <div class="form-group">
                             <label for="cable_status">Cable Status?</label>
-                            <select class="form-control form-control-lg" id="cable_status" name="cable_status" required>
+                            <select class="tom-select-class" id="cable_status" name="cable_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
                                 <option value="0">NOT OK</option>
@@ -244,7 +244,7 @@
                         <input type="number" id="id_edit" name="id" hidden>
                         <div class="form-group">
                             <label for="user_id">Checked by</label>
-                            <select class="form-control form-control-lg" name="user_id" id="user_id_edit">
+                            <select class="tom-select-class" name="user_id" id="user_id_edit">
                                 <option value="">- select option -</option>
                                 @foreach ($user as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>

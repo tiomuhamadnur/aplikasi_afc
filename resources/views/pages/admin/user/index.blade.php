@@ -68,7 +68,7 @@
                         </div>
                         <div class="form-group">
                             <label for="gender_id">Gender</label>
-                            <select class="form-control form-control-lg" name="gender_id" id="gender_id">
+                            <select class="tom-select-class" name="gender_id" id="gender_id">
                                 <option value="" selected disabled>- pilih gender -</option>
                                 @foreach ($gender as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -77,7 +77,7 @@
                         </div>
                         <div class="form-group">
                             <label for="tipe_employee_id">Tipe Employee</label>
-                            <select class="form-control form-control-lg" name="tipe_employee_id" id="tipe_employee_id">
+                            <select class="tom-select-class" name="tipe_employee_id" id="tipe_employee_id">
                                 <option value="" selected disabled>- pilih tipe employee -</option>
                                 @foreach ($tipe_employee as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="form-group">
                             <label for="perusahaan_id">Perusahaan</label>
-                            <select class="form-control form-control-lg" name="perusahaan_id" id="perusahaan_id">
+                            <select class="tom-select-class" name="perusahaan_id" id="perusahaan_id">
                                 <option value="" selected disabled>- pilih perusahaan -</option>
                                 @foreach ($perusahaan as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="form-group">
                             <label for="relasi_struktur_id">Struktur</label>
-                            <select class="form-control form-control-lg" name="relasi_struktur_id" id="relasi_struktur_id">
+                            <select class="tom-select-class" name="relasi_struktur_id" id="relasi_struktur_id">
                                 <option value="" selected disabled>- pilih struktur -</option>
                                 @foreach ($relasi_struktur as $item)
                                     <option value="{{ $item->id }}">{{ $item->seksi->name }} -
@@ -106,7 +106,7 @@
                         </div>
                         <div class="form-group">
                             <label for="jabatan_id">Jabatan</label>
-                            <select class="form-control form-control-lg" name="jabatan_id" id="jabatan_id">
+                            <select class="tom-select-class" name="jabatan_id" id="jabatan_id">
                                 <option value="" selected disabled>- pilih jabatan -</option>
                                 @foreach ($jabatan as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -115,7 +115,7 @@
                         </div>
                         <div class="form-group">
                             <label for="role_id">Role</label>
-                            <select class="form-control form-control-lg" name="role_id" id="role_id">
+                            <select class="tom-select-class" name="role_id" id="role_id">
                                 <option value="" selected disabled>- pilih role -</option>
                                 @foreach ($role as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>

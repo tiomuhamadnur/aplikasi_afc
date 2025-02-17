@@ -110,10 +110,7 @@ class LCUChecklistDataTable extends DataTable
         $query = $model->with(['user', 'functional_location'])->newQuery();
 
         if ($this->start_date != null && $this->end_date != null) {
-            $start = Carbon::parse($this->start_date)->startOfDay()->format('Y-m-d H:i:s');
-            $end = Carbon::parse($this->end_date)->endOfDay()->format('Y-m-d H:i:s');
-
-            $query->whereBetween('date', [$start, $end]);
+            $query->whereBetween('date', [$this->start_date, $this->end_date]);
         }
 
         return $query;
