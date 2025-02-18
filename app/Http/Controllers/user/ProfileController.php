@@ -29,17 +29,11 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            // 'no_hp' => 'numeric|required',
             'photo' => 'file|image|nullable',
             'ttd' => 'file|image|nullable',
         ]);
 
         $data = User::findOrFail(auth()->user()->id);
-
-        // Update nomor HP
-        $data->update([
-            'no_hp' => $request->no_hp,
-        ]);
 
         // Update photo jika ada
         if ($request->hasFile('photo')) {
