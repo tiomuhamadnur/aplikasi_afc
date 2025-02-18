@@ -29,7 +29,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'no_hp' => 'numeric|required',
+            // 'no_hp' => 'numeric|required',
             'photo' => 'file|image|nullable',
             'ttd' => 'file|image|nullable',
         ]);
