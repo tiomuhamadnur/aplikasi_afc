@@ -20,10 +20,6 @@
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#importModal">
-                                <i class="mdi mdi-file-import"></i>
-                            </button>
                             <button type="button" title="Export to Excel" data-bs-toggle="modal"
                                 data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
@@ -52,7 +48,7 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="name">Project Name</label>
+                            <label for="name" class="required">Project Name</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="input project name" autocomplete="off" required>
                         </div>
@@ -62,7 +58,7 @@
                                 placeholder="input project description" autocomplete="off" required>
                         </div> --}}
                         <div class="form-group">
-                            <label for="fund_source_id">Fund Source</label>
+                            <label for="fund_source_id" class="required">Fund Source</label>
                             <select class="tom-select-class" name="fund_source_id" id="fund_source_id" required>
                                 <option value="" disabled selected>- select fund source -</option>
                                 @foreach ($fund_source as $item)
@@ -73,17 +69,17 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="start_period">Start Period</label>
+                            <label for="start_period" class="required">Start Period</label>
                             <input type="date" class="form-control" id="start_period" name="start_period"
                                 placeholder="Start Period" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="end_period">End Period</label>
+                            <label for="end_period" class="required">End Period</label>
                             <input type="date" class="form-control" id="end_period" name="end_period"
                                 placeholder="End Period" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="departemen_id">Project Owner</label>
+                            <label for="departemen_id" class="required">Project Owner</label>
                             <select class="tom-select-class" name="departemen_id" id="departemen_id" required>
                                 <option value="" disabled selected>- select project owner -</option>
                                 @foreach ($departemen as $item)
@@ -94,7 +90,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="perusahaan_id">Company</label>
+                            <label for="perusahaan_id" class="required">Company</label>
                             <select class="tom-select-class" name="perusahaan_id" id="perusahaan_id" required>
                                 <option value="" disabled selected>- select company -</option>
                                 @foreach ($perusahaan as $item)
@@ -105,7 +101,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="status_budgeting_id">Status</label>
+                            <label for="status_budgeting_id" class="required">Status</label>
                             <select class="tom-select-class" name="status_budgeting_id" id="status_budgeting_id" required>
                                 <option value="" disabled selected>- select status -</option>
                                 @foreach ($status_budgeting as $item)
@@ -178,7 +174,7 @@
                             </div>
                         </div> --}}
                         <div class="form-group">
-                            <label for="year">Year</label>
+                            <label for="year" class="required">Year</label>
                             <select class="tom-select-class" name="year" id="year" required>
                                 <option value="" disabled selected>- select year -</option>
                                 @foreach ($years as $year)

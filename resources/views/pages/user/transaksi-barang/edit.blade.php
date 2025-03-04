@@ -16,7 +16,7 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $transaksi_barang->id }}" required hidden>
                             <div class="form-group">
-                                <label for="barang_id">Material</label>
+                                <label for="barang_id" class="required">Material</label>
                                 <select class="tom-select-class" id="barang_id" name="barang_id" required>
                                     <option value="" selected disabled>- pilih material -</option>
                                     @foreach ($barang as $item)
@@ -29,13 +29,13 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="qty">Quantity</label>
+                                <label for="qty" class="required">Quantity</label>
                                 <input type="number" min="1" class="form-control" id="qty" name="qty"
                                     autocomplete="off" placeholder="jumlah material" value="{{ $transaksi_barang->qty }}"
                                     required>
                             </div>
                             <div class="form-group">
-                                <label for="equipment_id">Equipment</label>
+                                <label for="equipment_id" class="required">Equipment</label>
                                 <select class="tom-select-class" id="equipment_id" name="equipment_id" required>
                                     <option value="" selected disabled>- pilih equipment -</option>
                                     @foreach ($equipment as $item)
@@ -48,7 +48,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="tanggal">Tanggal</label>
+                                <label for="tanggal" class="required">Tanggal</label>
                                 <input type="date" class="form-control" id="tanggal" name="tanggal" autocomplete="off"
                                     value="{{ $transaksi_barang->tanggal }}" required>
                             </div>

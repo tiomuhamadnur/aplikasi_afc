@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -26,6 +28,8 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = '/dashboard';
+    protected $maxAttempts = 3;
+    protected $decayMinutes = 1;
 
     /**
      * Create a new controller instance.
@@ -35,5 +39,12 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    protected function credentials(Request $request)
+    {
+        app(LoginRequest::class);
+
+        return $request->only('email', 'password');
     }
 }

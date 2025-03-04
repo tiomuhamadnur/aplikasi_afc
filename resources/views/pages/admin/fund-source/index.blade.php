@@ -47,7 +47,7 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="year">Year</label>
+                            <label for="year" class="required">Year</label>
                             <select class="tom-select-class" name="year" id="year" required>
                                 <option value="" disabled selected>- select year -</option>
                                 @foreach ($years as $year)
@@ -59,7 +59,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="fund_id">Fund</label>
+                            <label for="fund_id" class="required">Fund</label>
                             <select class="tom-select-class" name="fund_id" id="fund_id" required>
                                 <option value="" disabled selected>- select fund -</option>
                                 @foreach ($fund as $item)
@@ -69,7 +69,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="balance">Balance (IDR)</label>
+                            <label for="balance" class="required">Balance (IDR)</label>
                             <input type="number" min="0" class="form-control" id="balance" name="balance"
                                 placeholder="Input Balance" autocomplete="off" required>
                         </div>
@@ -98,7 +98,7 @@
                         @method('PUT')
                         <input type="hidden" name="id" id="id_edit">
                         <div class="form-group">
-                            <label for="year">Year</label>
+                            <label for="year" class="required">Year</label>
                             <select class="form-control form-control-lg" name="year" id="year_edit" required>
                                 <option value="" disabled selected>- select year -</option>
                                 @foreach ($years as $year)
@@ -109,7 +109,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="fund_id">Fund</label>
+                            <label for="fund_id" class="required">Fund</label>
                             <select class="form-control form-control-lg" name="fund_id" id="fund_id_edit" required>
                                 <option value="" disabled selected>- select fund -</option>
                                 @foreach ($fund as $item)
@@ -119,7 +119,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="balance">Balance (IDR)</label>
+                            <label for="balance" class="required">Balance (IDR)</label>
                             <input type="number" min="0" class="form-control" id="balance_edit" name="balance"
                                 placeholder="Input Balance" autocomplete="off" required>
                         </div>

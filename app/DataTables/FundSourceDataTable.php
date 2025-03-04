@@ -37,9 +37,9 @@ class FundSourceDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
         ->addColumn('#', function($item) {
-            $editModal = "<button type='button' title='Edit'
+            $editButton = "<button type='button' title='Edit'
                 class='btn btn-gradient-warning btn-rounded btn-icon'
-                data-bs-toggle='modal' data-bs-target='#editModal'
+                data-bs-toggle='Buttonmodal' data-bs-target='#editButtonModal'
                 data-id='{$item->id}'
                 data-fund_id='{$item->fund_id}'
                 data-balance='{$item->balance}'
@@ -47,14 +47,18 @@ class FundSourceDataTable extends DataTable
                 <i class='mdi mdi-lead-pencil'></i>
             </button>";
 
-            $deleteModal = "<button type='button' title='Delete'
+            if (auth()->user()->role_id == 2) {
+                return $editButton;
+            }
+
+            $deleteButton = "<button type='button' title='Delete'
                 class='btn btn-gradient-danger btn-rounded btn-icon'
                 data-bs-toggle='modal' data-bs-target='#deleteModal'
                 data-id='{$item->id}'>
                 <i class='mdi mdi-delete'></i>
             </button>";
 
-            return $editModal . $deleteModal;
+            return $editButton . $deleteButton;
         })
         ->addColumn('balance', function($item) {
             return RupiahFormat::currency($item->balance ?? null);

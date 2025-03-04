@@ -112,7 +112,7 @@
                         @method('GET')
                         <div class="form-group">
                             <input type="text" name="departemen_uuid" value="{{ $departemen->uuid }}" hidden>
-                            <label for="start_date">Pilih Periode</label>
+                            <label for="start_date" class="required">Pilih Periode</label>
                             <div class="input-group">
                                 <input type="date" class="form-control" placeholder="Start Date"
                                     name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">

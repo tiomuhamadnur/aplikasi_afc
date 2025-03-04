@@ -12,17 +12,19 @@
                     <div class="card-body">
                         <h4 class="card-title">Data Sam Card</h4>
                         <div class="btn-group my-2">
-                            <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#addModal">
-                                <i class="mdi mdi-plus-circle"></i>
-                            </button>
+                            @if (auth()->user()->role_id == 1)
+                                <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
+                                    data-bs-toggle="modal" data-bs-target="#addModal">
+                                    <i class="mdi mdi-plus-circle"></i>
+                                </button>
+                                <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
+                                    data-bs-toggle="modal" data-bs-target="#importModal">
+                                    <i class="mdi mdi-file-import"></i>
+                                </button>
+                            @endif
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
-                            </button>
-                            <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#importModal">
-                                <i class="mdi mdi-file-import"></i>
                             </button>
                             <button type="button" title="Export to Excel" data-bs-toggle="modal"
                                 data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
@@ -52,34 +54,34 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="uid">UID</label>
-                            <input type="text" class="form-control" id="uid" name="uid" placeholder="UID"
+                            <label for="uid" class="required">UID</label>
+                            <input type="text" class="form-control" id="uid" name="uid" placeholder="Input UID"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="mid">MID</label>
-                            <input type="text" class="form-control" id="mid" name="mid" placeholder="MID"
+                            <label for="mid" class="required">MID</label>
+                            <input type="text" class="form-control" id="mid" name="mid" placeholder="Input MID"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="tid">TID</label>
-                            <input type="text" class="form-control" id="tid" name="tid" placeholder="TID"
+                            <label for="tid" class="required">TID</label>
+                            <input type="text" class="form-control" id="tid" name="tid" placeholder="Input TID"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="pin">PIN</label>
-                            <input type="text" class="form-control" id="pin" name="pin" placeholder="PIN"
+                            <label for="pin" class="required">PIN</label>
+                            <input type="text" class="form-control" id="pin" name="pin" placeholder="Input PIN"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="mc">Merry Code</label>
+                            <label for="mc" class="required">Merry Code</label>
                             <input type="text" class="form-control" id="mc" name="mc"
-                                placeholder="Merry Code" autocomplete="off" required>
+                                placeholder="Input Merry Code" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="alokasi">Alokasi <span class="text-info">(opsional)</span></label>
-                            <input type="text" class="form-control" id="alokasi" name="alokasi" placeholder="Alokasi"
-                                autocomplete="off">
+                            <label for="alokasi">Alokasi Stasiun <span class="text-info">(opsional)</span></label>
+                            <input type="text" class="form-control" id="alokasi" name="alokasi"
+                                placeholder="Input Alokasi Stasiun" autocomplete="off">
                         </div>
                         <div class="form-group">
                             <label for="photo">Photo <span class="text-info">(opsional)</span></label>
@@ -109,16 +111,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="filterForm" action="{{ route('sam-card.index') }}" method="GET"
-                        class="forms-sample">
+                    <form id="filterForm" action="{{ route('sam-card.index') }}" method="GET" class="forms-sample">
                         @csrf
                         @method('GET')
                         <div class="form-group">
                             <label for="">Status</label>
                             <select class="tom-select-class" name="status">
                                 <option value="" selected disabled>- pilih status -</option>
-                                <option value="ready" @if($status = 'ready') selected @endif>Ready</option>
-                                <option value="used" @if($status = 'used') selected @endif>Used</option>
+                                <option value="ready" @selected($status == 'ready')>Ready</option>
+                                <option value="used" @selected($status == 'used')>Used</option>
                             </select>
                         </div>
                     </form>

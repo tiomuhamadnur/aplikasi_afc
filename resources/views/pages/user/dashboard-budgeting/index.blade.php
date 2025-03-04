@@ -119,7 +119,7 @@
                         @csrf
                         @method('GET')
                         <div class="form-group">
-                            <label for="start_date">Pilih Periode</label>
+                            <label for="start_date" class="required">Pilih Periode</label>
                             <div class="input-group">
                                 <input type="date" class="form-control" placeholder="Start Date"
                                     name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">

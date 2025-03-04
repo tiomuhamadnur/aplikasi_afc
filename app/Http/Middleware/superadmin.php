@@ -6,11 +6,11 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class admin
+class superadmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->role->id == 3){
+        if (auth()->user()->role->id != 1){
             return redirect()->route('dashboard.index')->withNotifyerror('You are unauthorized to access this resources');
         }
 

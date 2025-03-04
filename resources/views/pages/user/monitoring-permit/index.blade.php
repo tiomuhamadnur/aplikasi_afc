@@ -82,7 +82,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="">Status</label>
+                            <label for="" class="required">Status</label>
                             <select class="tom-select-class" name="status">
                                 <option value="" selected disabled>- pilih status -</option>
                                 <option value="active" @if($status == 'active') selected @endif>Active</option>
@@ -126,14 +126,14 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="departemen">Departemen</label>
+                            <label for="departemen" class="required">Departemen</label>
                             <input type="text" class="form-control" id="departemen" placeholder="Departemen"
                                 autocomplete="off" value="{{ auth()->user()->relasi_struktur->departemen->name }}"
                                 disabled>
                         </div>
                         <div class="form-group">
-                            <label for="tipe_permit_id">Tipe Permit</label>
-                            <select class="form-control form-control-lg" id="tipe_permit_id" name="tipe_permit_id"
+                            <label for="tipe_permit_id" class="required">Tipe Permit</label>
+                            <select class="tom-select-class" id="tipe_permit_id" name="tipe_permit_id"
                                 required>
                                 <option value="" selected disabled>- pilih tipe permit -</option>
                                 @foreach ($tipe_permit as $item)
@@ -142,8 +142,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="tipe_pekerjaan_id">Tipe Pekerjaan</label>
-                            <select class="form-control form-control-lg" id="tipe_pekerjaan_id" name="tipe_pekerjaan_id"
+                            <label for="tipe_pekerjaan_id" class="required">Tipe Pekerjaan</label>
+                            <select class="tom-select-class" id="tipe_pekerjaan_id" name="tipe_pekerjaan_id"
                                 required>
                                 <option value="" selected disabled>- pilih tipe pekerjaan -</option>
                                 @foreach ($tipe_pekerjaan as $item)
@@ -153,23 +153,23 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="nomor">Nomor</label>
+                            <label for="nomor" class="required">Nomor Permit</label>
                             <input type="text" class="form-control" id="nomor" name="nomor"
-                                placeholder="Nomor" autocomplete="off" required>
+                                placeholder="Input Nomor" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="name">Nama Pekerjaan</label>
+                            <label for="name" class="required">Nama Pekerjaan</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="Nama Pekerjaan" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="tanggal_expired">Tanggal Expired</label>
+                            <label for="tanggal_expired" class="required">Tanggal Expired</label>
                             <input type="date" class="form-control" id="tanggal_expired" name="tanggal_expired"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="relasi_area_id">Area <span class="text-info">(opsional)</span></label>
-                            <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id">
+                            <select class="tom-select-class" id="relasi_area_id" name="relasi_area_id">
                                 <option value="" selected disabled>- pilih area spesifik -</option>
                                 @foreach ($area as $item)
                                     <option value="{{ $item->id }}">{{ $item->lokasi->name }} -

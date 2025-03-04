@@ -16,7 +16,7 @@
                             @csrf
                             @method('POST')
                             <div class="form-group">
-                                <label for="sam_card_id">SAM Card</label>
+                                <label for="sam_card_id" class="required">SAM Card</label>
                                 <input type="text" name="sam_card_id" value="{{ $sam_card->id }}" hidden>
                                 <select class="tom-select-class">
                                     <option selected disabled>
@@ -26,7 +26,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="equipment_id">PG ID</label>
+                                <label for="equipment_id" class="required">PG ID</label>
                                 <select name="equipment_id" id="equipment_id" class="tom-select-class" required>
                                     <option value="" selected disabled>- pilih PG ID -</option>
                                     @foreach ($pg as $item)
@@ -37,7 +37,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="type">Type</label>
+                                <label for="type" class="required">Type</label>
                                 <select name="type" id="type" class="tom-select-class" required>
                                     <option value="">- pilih type -</option>
                                     <option value="entry">Entry</option>
@@ -45,7 +45,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="tanggal">Tanggal</label>
+                                <label for="tanggal" class="required">Tanggal</label>
                                 <input type="date" class="form-control" name="tanggal" id="tanggal"
                                     placeholder="input tanggal" required>
                             </div>
@@ -65,7 +65,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="photo">Photo Old SAM Card</label>
+                                <label for="photo" class="required">Photo Old SAM Card</label>
                                 <div class="text-center">
                                     <img class="img-thumbnail" id="previewImage" src="#" alt="Preview"
                                         style="max-width: 250px; max-height: 250px; display: none;">

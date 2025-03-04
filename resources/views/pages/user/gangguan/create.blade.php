@@ -30,17 +30,17 @@
                             @csrf
                             @method('POST')
                             <div class="form-group">
-                                <label for="report_by">Report By</label>
+                                <label for="report_by" class="required">Report By</label>
                                 <input type="text" class="form-control form-control-lg" id="report_by" name="report_by"
                                     autocomplete="off" required placeholder="input report by">
                             </div>
                             <div class="form-group">
-                                <label for="report_date">Report Date</label>
+                                <label for="report_date" class="required">Report Date</label>
                                 <input type="datetime-local" class="form-control form-control-lg" id="report_date" name="report_date"
                                     autocomplete="off" required>
                             </div>
                             <div class="form-group">
-                                <label for="is_downtime">Apakah terjadi Downtime?</label>
+                                <label for="is_downtime" class="required">Apakah terjadi Downtime?</label>
                                 <select class="form-control form-control-lg" name="is_downtime" id="is_downtime" required>
                                     <option value="" selected disabled>- pilih keterangan -</option>
                                     <option value="0">No</option>
@@ -64,24 +64,24 @@
                                     autocomplete="off" placeholder="input remedy">
                             </div> --}}
                             <div class="form-group">
-                                <label for="problem_other">Problem (P)</label>
+                                <label for="problem_other" class="required">Problem (P)</label>
                                 <textarea class="form-control" name="problem_other" id="problem_other" rows="4" placeholder="input detail problem" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="cause_other">Cause (C)</label>
+                                <label for="cause_other" class="required">Cause (C)</label>
                                 <textarea class="form-control" name="cause_other" id="cause_other" rows="4" placeholder="input detail cause" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="remedy_other">Remedy (R)</label>
+                                <label for="remedy_other" class="required">Remedy (R)</label>
                                 <textarea class="form-control" name="remedy_other" id="remedy_other" rows="4" placeholder="input detail remedy" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="response_date">Action Date</label>
+                                <label for="response_date" class="required">Action Date</label>
                                 <input type="datetime-local" class="form-control form-control-lg" id="response_date" name="response_date"
                                     autocomplete="off" required>
                             </div>
                             <div class="form-group">
-                                <label for="solved_user_id">Action By</label>
+                                <label for="solved_user_id" class="required">Action By</label>
                                 <select class="form-control form-control-lg" name="solved_user_id" id="solved_user_id"
                                     required>
                                     <option value="" selected disabled>- pilih user -</option>
@@ -94,7 +94,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="solved_date">Solved Date</label>
+                                <label for="solved_date" class="required">Solved Date</label>
                                 <input type="datetime-local" class="form-control form-control-lg" id="solved_date" name="solved_date"
                                     autocomplete="off" required>
                             </div>
@@ -117,7 +117,7 @@
                                     autocomplete="off" placeholder="input photo" accept="image/*">
                             </div>
                             <div class="form-group">
-                                <label for="status_id">Status</label>
+                                <label for="status_id" class="required">Status</label>
                                 <select class="form-control form-control-lg" name="status_id" id="status_id" required>
                                     <option value="" selected disabled>- pilih status -</option>
                                     @foreach ($status as $item)
@@ -132,7 +132,7 @@
                                 <textarea class="form-control" name="remark" id="remark" rows="4" placeholder="input remark (optional)"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="is_changed">Ada pergantian Sparepart?</label>
+                                <label for="is_changed" class="required">Ada pergantian Sparepart?</label>
                                 <select class="form-control form-control-lg" name="is_changed" id="is_changed" required>
                                     <option value="" selected disabled>- pilih keterangan -</option>
                                     <option value="0">No</option>

@@ -52,23 +52,23 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name"
+                            <label for="name" class="required">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Input Name"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                            <label for="email" class="required">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Input Email"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="no_hp">No HP</label>
-                            <input type="text" class="form-control" id="no_hp" name="no_hp" placeholder="No HP"
+                            <label for="no_hp" class="required">No HP</label>
+                            <input type="text" class="form-control" id="no_hp" name="no_hp" placeholder="Input No HP"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="gender_id">Gender</label>
-                            <select class="tom-select-class" name="gender_id" id="gender_id">
+                            <label for="gender_id" class="required">Gender</label>
+                            <select class="tom-select-class" name="gender_id" id="gender_id" required>
                                 <option value="" selected disabled>- pilih gender -</option>
                                 @foreach ($gender as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -76,8 +76,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="tipe_employee_id">Tipe Employee</label>
-                            <select class="tom-select-class" name="tipe_employee_id" id="tipe_employee_id">
+                            <label for="tipe_employee_id" class="required">Tipe Employee</label>
+                            <select class="tom-select-class" name="tipe_employee_id" id="tipe_employee_id" required>
                                 <option value="" selected disabled>- pilih tipe employee -</option>
                                 @foreach ($tipe_employee as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -85,8 +85,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="perusahaan_id">Perusahaan</label>
-                            <select class="tom-select-class" name="perusahaan_id" id="perusahaan_id">
+                            <label for="perusahaan_id" class="required">Perusahaan</label>
+                            <select class="tom-select-class" name="perusahaan_id" id="perusahaan_id" required>
                                 <option value="" selected disabled>- pilih perusahaan -</option>
                                 @foreach ($perusahaan as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -94,8 +94,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="relasi_struktur_id">Struktur</label>
-                            <select class="tom-select-class" name="relasi_struktur_id" id="relasi_struktur_id">
+                            <label for="relasi_struktur_id" class="required">Struktur</label>
+                            <select class="tom-select-class" name="relasi_struktur_id" id="relasi_struktur_id" required>
                                 <option value="" selected disabled>- pilih struktur -</option>
                                 @foreach ($relasi_struktur as $item)
                                     <option value="{{ $item->id }}">{{ $item->seksi->name }} -
@@ -105,8 +105,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="jabatan_id">Jabatan</label>
-                            <select class="tom-select-class" name="jabatan_id" id="jabatan_id">
+                            <label for="jabatan_id" class="required">Jabatan</label>
+                            <select class="tom-select-class" name="jabatan_id" id="jabatan_id" required>
                                 <option value="" selected disabled>- pilih jabatan -</option>
                                 @foreach ($jabatan as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -114,8 +114,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="role_id">Role</label>
-                            <select class="tom-select-class" name="role_id" id="role_id">
+                            <label for="role_id" class="required">Role</label>
+                            <select class="tom-select-class" name="role_id" id="role_id" required>
                                 <option value="" selected disabled>- pilih role -</option>
                                 @foreach ($role as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>

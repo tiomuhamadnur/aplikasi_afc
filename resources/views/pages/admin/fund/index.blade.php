@@ -46,17 +46,17 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="code">Code</label>
+                            <label for="code" class="required">Code</label>
                             <input type="text" class="form-control" id="code" name="code" placeholder="input code"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name" class="required">Name</label>
                             <input type="text" class="form-control" id="name" name="name" placeholder="input name"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="type">Type</label>
+                            <label for="type" class="required">Type</label>
                             <select class="tom-select-class" name="type" id="type" required>
                                 <option value="">- select type -</option>
                                 <option value="opex">Opex</option>
@@ -64,7 +64,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="divisi_id">Division</label>
+                            <label for="divisi_id" class="required">Division</label>
                             <select class="tom-select-class" name="divisi_id" id="divisi_id" required>
                                 <option value="">- select division -</option>
                                 @foreach ($divisi as $item)
@@ -73,7 +73,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="description">Description</label>
+                            <label for="description" class="required">Description</label>
                             <textarea class="form-control" name="description" id="description" rows="3" required placeholder="input description"></textarea>
                         </div>
                     </form>
@@ -101,17 +101,17 @@
                         @method('PUT')
                         <input type="text" name="id" id="id_edit" hidden>
                         <div class="form-group">
-                            <label for="code">Code</label>
+                            <label for="code" class="required">Code</label>
                             <input type="text" class="form-control" id="code_edit" name="code" placeholder="Code"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name" class="required">Name</label>
                             <input type="text" class="form-control" id="name_edit" name="name" placeholder="Name"
                                 autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="type_edit">Type</label>
+                            <label for="type_edit" class="required">Type</label>
                             <select class="form-control form-control-lg" name="type" id="type_edit" required>
                                 <option value="">- select type -</option>
                                 <option value="opex">Opex</option>
@@ -119,12 +119,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="description">Description</label>
+                            <label for="description" class="required">Description</label>
                             <input type="text" class="form-control" id="description_edit" name="description"
                                 placeholder="Description" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="divisi_id_edit">Division</label>
+                            <label for="divisi_id_edit" class="required">Division</label>
                             <select class="form-control form-control-lg" name="divisi_id" id="divisi_id_edit" required>
                                 <option value="">- select division -</option>
                                 @foreach ($divisi as $item)

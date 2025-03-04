@@ -33,7 +33,8 @@
                                 class="form-control @error('password') is-invalid @enderror" name="password" required
                                 autocomplete="current-password">
                             <h6 class="float-end my-2">
-                                <a class="text-dark" href="javascript:;" data-bs-toggle='modal' data-bs-target='#forgetPasswordModal'>Forget
+                                <a class="text-dark" href="javascript:;" data-bs-toggle='modal'
+                                    data-bs-target='#forgetPasswordModal'>Forget
                                     Password?
                                 </a>
                             </h6>
@@ -43,7 +44,25 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="mt-3">
+
+                        <div class="form-group">
+                            <div class="btn-group mb-1">
+                                <img src="{{ captcha_src('math') }}" alt="captcha">
+                                <input id="captcha" type="text"
+                                    class="form-control @error('captcha') is-invalid @enderror" style="width: 100%"
+                                    name="captcha" placeholder="captcha" required>
+                            </div>
+                            <h6 class="float-end my-2">
+                                <a class="text-dark" href="javascript:;" onclick="refreshCaptcha()">
+                                    Refresh Captcha
+                                </a>
+                            </h6>
+                            @error('captcha')
+                                <span class="invalid-feedback" role="alert">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mt-5">
                             <button class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn"
                                 type="submit">
                                 SIGN IN
@@ -73,4 +92,16 @@
         </div>
     </div>
     <!-- End Forget Password Modal -->
+@endsection
+
+@section('javascript')
+    <script>
+        function refreshCaptcha() {
+            fetch('{{ route("captcha.refresh") }}')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('img[alt="captcha"]').src = data.captcha;
+                });
+        }
+    </script>
 @endsection

@@ -157,7 +157,7 @@
                                             @method('put')
                                             @csrf
                                             <div class="form-group row">
-                                                <label for="current_password" class="col-sm-3 col-form-label">Old
+                                                <label for="current_password" class="col-sm-3 col-form-label required">Old
                                                     Password</label>
                                                 <div class="col-sm-9">
                                                     <input type="password" class="form-control" id="current_password"
@@ -170,7 +170,7 @@
                                                 @enderror
                                             </div>
                                             <div class="form-group row">
-                                                <label for="password" class="col-sm-3 col-form-label">New
+                                                <label for="password" class="col-sm-3 col-form-label required">New
                                                     Password</label>
                                                 <div class="col-sm-9">
                                                     <input type="password" class="form-control" id="password"
@@ -183,7 +183,7 @@
                                                 @enderror
                                             </div>
                                             <div class="form-group row">
-                                                <label for="password_confirmation" class="col-sm-3 col-form-label">Re
+                                                <label for="password_confirmation" class="col-sm-3 col-form-label required">Re
                                                     New Password</label>
                                                 <div class="col-sm-9">
                                                     <input type="password" class="form-control"

@@ -16,13 +16,13 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $monitoring_permit->id }}" hidden>
                             <div class="form-group">
-                                <label for="departemen">Departemen</label>
+                                <label for="departemen" class="required">Departemen</label>
                                 <input type="text" class="form-control" id="departemen" placeholder="Departemen"
                                     value="{{ $monitoring_permit->departemen->name }}" autocomplete="off" disabled>
                             </div>
                             <div class="form-group">
-                                <label for="tipe_permit_id">Tipe Permit</label>
-                                <select class="form-control form-control-lg" id="tipe_permit_id" name="tipe_permit_id"
+                                <label for="tipe_permit_id" class="required">Tipe Permit</label>
+                                <select class="tom-select-class" id="tipe_permit_id" name="tipe_permit_id"
                                     required>
                                     <option value="" selected disabled>- pilih tipe permit -</option>
                                     @foreach ($tipe_permit as $item)
@@ -32,8 +32,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="tipe_pekerjaan_id">Tipe Pekerjaan</label>
-                                <select class="form-control form-control-lg" id="tipe_pekerjaan_id" name="tipe_pekerjaan_id"
+                                <label for="tipe_pekerjaan_id" class="required">Tipe Pekerjaan</label>
+                                <select class="tom-select-class" id="tipe_pekerjaan_id" name="tipe_pekerjaan_id"
                                     required>
                                     <option value="" selected disabled>- pilih tipe pekerjaan -</option>
                                     @foreach ($tipe_pekerjaan as $item)
@@ -45,12 +45,12 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="nomor">Nomor</label>
+                                <label for="nomor" class="required">Nomor Permit</label>
                                 <input type="text" class="form-control" id="nomor" name="nomor" placeholder="Nomor"
                                     value="{{ $monitoring_permit->nomor }}" autocomplete="off" required>
                             </div>
                             <div class="form-group">
-                                <label for="name">Nama Pekerjaan</label>
+                                <label for="name" class="required">Nama Pekerjaan</label>
                                 <input type="text" class="form-control" id="name" name="name"
                                     placeholder="Nama Pekerjaan" value="{{ $monitoring_permit->name }}" autocomplete="off"
                                     required>
@@ -62,7 +62,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="relasi_area_id">Area <span class="text-info">(opsional)</span></label>
-                                <select class="form-control form-control-lg" id="relasi_area_id" name="relasi_area_id">
+                                <select class="tom-select-class" id="relasi_area_id" name="relasi_area_id">
                                     <option value="" selected disabled>- pilih area spesifik -</option>
                                     <option value="{{ null }}">Tidak ada area</option>
                                     @if ($monitoring_permit->relasi_area_id != null)

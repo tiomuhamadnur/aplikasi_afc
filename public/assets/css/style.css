@@ -14453,4 +14453,10 @@ dl {
     }
   }
 
+label.required::after {
+    content: " *";
+    color: red;
+}
+
+
 /*# sourceMappingURL=style.css.map */

@@ -51,16 +51,21 @@ class MonitoringPermitDataTable extends DataTable
             })
             ->addColumn('#', function($item) {
                 $editRoute = route('monitoring-permit.edit', $item->uuid);
+
+                $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
+                    onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
+                    <i class='text-white mdi mdi-lead-pencil'></i>
+                </button>";
+
+                if (auth()->user()->role_id == 2) {
+                    return $editButton;
+                }
+
                 $deleteModal = "<button type='button' title='Delete'
                     class='btn btn-gradient-danger btn-rounded btn-icon'
                     data-bs-toggle='modal' data-bs-target='#deleteModal'
                     data-id='{$item->id}'>
                     <i class='mdi mdi-delete'></i>
-                </button>";
-
-                $editButton = "<button type='button' class='btn btn-gradient-warning btn-rounded btn-icon'
-                    onclick=\"window.location.href='{$editRoute}'\" title='Edit'>
-                    <i class='text-white mdi mdi-lead-pencil'></i>
                 </button>";
 
                 return $editButton . $deleteModal;

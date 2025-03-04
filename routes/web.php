@@ -94,6 +94,10 @@ Route::get('/', function () {
     return redirect()->route('dashboard.index');
 })->middleware('auth');
 
+Route::get('/refresh-captcha', function () {
+    return response()->json(['captcha' => captcha_src('math')]);
+})->name('captcha.refresh');
+
 Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], function () {
     // ALL USER
     Route::controller(DashboardController::class)->group(function () {
@@ -139,35 +143,6 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
         Route::delete('/trans-gangguan-remedy', 'destroy')->name('trans-gangguan-remedy.delete');
     });
 
-    Route::controller(ChecksheetController::class)->group(function () {
-        Route::get('/checksheet/create', 'create')->name('checksheet.create');
-        Route::post('/checksheet', 'store')->name('checksheet.store');
-        Route::get('/checksheet/history', 'history')->name('checksheet.history');
-        Route::get('/checksheet/trend', 'trend')->name('checksheet.trend');
-        Route::put('/checksheet/history', 'export_excel')->name('checksheet.history.export.excel');
-    });
-
-    Route::controller(WorkOrderController::class)->group(function () {
-        Route::get('/work-order', 'index')->name('work-order.index');
-        Route::get('/work-order/create', 'create')->name('work-order.create');
-        Route::get('/work-order/create-from-gangguan/{uuid}', 'create_from_gangguan')->name('work-order.create.from-gangguan');
-
-        Route::post('/work-order', 'store')->name('work-order.store');
-        Route::post('/work-order/{uuid}/store-from-gangguan', 'store_from_gangguan')->name('work-order.store.from-gangguan');
-        Route::get('/work-order/{uuid}/edit', 'edit')->name('work-order.edit');
-        Route::get('/work-order/{uuid}/detail/work-order', 'detail')->name('work-order.detail');
-        Route::get('/work-order/{uuid}/equipment', 'equipment')->name('work-order.equipment');
-        Route::put('/work-order', 'update')->name('work-order.update');
-        Route::put('/work-order/note/{uuid}', 'update_note')->name('work-order.note.update');
-        Route::put('/work-order/time/{uuid}', 'update_time')->name('work-order.time.update');
-        Route::put('/work-order/approve/{uuid}', 'approve')->name('work-order.approve');
-        Route::put('/work-order/reject/{uuid}', 'reject')->name('work-order.reject');
-        Route::put('/work-order/revise/{uuid}', 'revise')->name('work-order.revise');
-        Route::delete('/work-order', 'destroy')->name('work-order.delete');
-
-        Route::get('/work-order/export/{uuid}/pdf', 'pdf')->name('work-order.export.pdf');
-    });
-
     Route::controller(LCUChecklistController::class)->group(function () {
         Route::get('/lcu-checklist', 'index')->name('lcu-checklist.index');
         Route::post('/lcu-checklist', 'store')->name('lcu-checklist.store');
@@ -175,77 +150,125 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
         Route::delete('/lcu-checklist', 'destroy')->name('lcu-checklist.delete');
     });
 
-    Route::controller(TransWorkOrderEquipmentController::class)->group(function () {
-        Route::post('/trans-workorder-equipment/{uuid_workorder}', 'store')->name('trans-workorder-equipment.store');
-        Route::delete('/trans-workorder-equipment', 'destroy')->name('trans-workorder-equipment.delete');
+    // ADMIN & SUPERADMIN
+    Route::group(['middleware' => ['admin']], function () {
+        Route::controller(WorkOrderController::class)->group(function () {
+            Route::get('/work-order', 'index')->name('work-order.index');
+            Route::get('/work-order/create', 'create')->name('work-order.create');
+            Route::get('/work-order/create-from-gangguan/{uuid}', 'create_from_gangguan')->name('work-order.create.from-gangguan');
+
+            Route::post('/work-order', 'store')->name('work-order.store');
+            Route::post('/work-order/{uuid}/store-from-gangguan', 'store_from_gangguan')->name('work-order.store.from-gangguan');
+            Route::get('/work-order/{uuid}/edit', 'edit')->name('work-order.edit');
+            Route::get('/work-order/{uuid}/detail/work-order', 'detail')->name('work-order.detail');
+            Route::get('/work-order/{uuid}/equipment', 'equipment')->name('work-order.equipment');
+            Route::put('/work-order', 'update')->name('work-order.update');
+            Route::put('/work-order/note/{uuid}', 'update_note')->name('work-order.note.update');
+            Route::put('/work-order/time/{uuid}', 'update_time')->name('work-order.time.update');
+            Route::put('/work-order/approve/{uuid}', 'approve')->name('work-order.approve');
+            Route::put('/work-order/reject/{uuid}', 'reject')->name('work-order.reject');
+            Route::put('/work-order/revise/{uuid}', 'revise')->name('work-order.revise');
+            Route::delete('/work-order', 'destroy')->name('work-order.delete');
+
+            Route::get('/work-order/export/{uuid}/pdf', 'pdf')->name('work-order.export.pdf');
+        });
+
+        Route::controller(TransWorkOrderEquipmentController::class)->group(function () {
+            Route::post('/trans-workorder-equipment/{uuid_workorder}', 'store')->name('trans-workorder-equipment.store');
+            Route::delete('/trans-workorder-equipment', 'destroy')->name('trans-workorder-equipment.delete');
+        });
+
+        Route::controller(TransWorkOrderTasklistController::class)->group(function () {
+            Route::post('/trans-workorder-tasklist/{uuid_workorder}', 'store')->name('trans-workorder-tasklist.store');
+            Route::put('/trans-workorder-tasklist', 'update')->name('trans-workorder-tasklist.update');
+            Route::put('/trans-workorder-tasklist/actual-duration', 'update_actual_duration')->name('trans-workorder-tasklist.update-actual-duration');
+            Route::delete('/trans-workorder-tasklist', 'destroy')->name('trans-workorder-tasklist.delete');
+        });
+
+        Route::controller(TransWorkOrderBarangController::class)->group(function () {
+            Route::post('/trans-workorder-barang/{uuid_workorder}', 'store')->name('trans-workorder-barang.store');
+            Route::delete('/trans-workorder-barang', 'destroy')->name('trans-workorder-barang.delete');
+        });
+
+        Route::controller(TransWorkOrderUserController::class)->group(function () {
+            Route::post('/trans-workorder-user/{uuid_workorder}', 'store')->name('trans-workorder-user.store');
+            Route::delete('/trans-workorder-user', 'destroy')->name('trans-workorder-user.delete');
+        });
+
+        Route::controller(TransWorkOrderPhotoController::class)->group(function () {
+            Route::post('/trans-workorder-photo/{uuid_workorder}', 'store')->name('trans-workorder-photo.store');
+            Route::delete('/trans-workorder-photo', 'destroy')->name('trans-workorder-photo.delete');
+        });
+
+        Route::controller(TransWorkOrderFunctionalLocationController::class)->group(function () {
+            Route::post('/trans-workorder-functional-location/{uuid_workorder}', 'store')->name('trans-workorder-functional-location.store');
+            Route::delete('/trans-workorder-functional-location', 'destroy')->name('trans-workorder-functional-location.delete');
+        });
+
+        Route::controller(FundController::class)->group(function () {
+            Route::get('/fund', 'index')->name('fund.index');
+            Route::post('/fund', 'store')->name('fund.store');
+            Route::put('/fund', 'update')->name('fund.update');
+            Route::delete('/fund', 'destroy')->name('fund.delete');
+        });
+
+        Route::controller(FundSourceController::class)->group(function () {
+            Route::get('/fund-source', 'index')->name('fund-source.index');
+            Route::post('/fund-source', 'store')->name('fund-source.store');
+            Route::get('/fund-source/{uuid}/edit', 'edit')->name('fund-source.edit');
+            Route::put('/fund-source', 'update')->name('fund-source.update');
+            Route::delete('/fund-source', 'destroy')->name('fund-source.delete');
+        });
+
+        Route::controller(ProjectController::class)->group(function () {
+            Route::get('/project', 'index')->name('project.index');
+            Route::post('/project', 'store')->name('project.store');
+            Route::get('/project/{uuid}/edit', 'edit')->name('project.edit');
+            Route::get('/project/{uuid}/show', 'show')->name('project.show');
+            Route::put('/project', 'update')->name('project.update');
+            Route::delete('/project', 'destroy')->name('project.delete');
+        });
+
+        Route::controller(BudgetAbsorptionController::class)->group(function () {
+            Route::get('/budget-absorption', 'index')->name('budget-absorption.index');
+            Route::get('/budget-absorption/project/{uuid}/show', 'show')->name('budget-absorption.by_project.show');
+            Route::post('/budget-absorption', 'store')->name('budget-absorption.store');
+            Route::get('/budget-absorption/{uuid}/edit', 'edit')->name('budget-absorption.edit');
+            Route::put('/budget-absorption', 'update')->name('budget-absorption.update');
+            Route::delete('/budget-absorption', 'destroy')->name('budget-absorption.delete');
+        });
+
+        Route::controller(DashboardBudgetController::class)->group(function () {
+            Route::get('/monitoring-budget', 'index')->name('dashboard-budget.index');
+            Route::get('/monitoring-budget/department', 'departemen')->name('dashboard-budget.departemen');
+        });
+
+        Route::controller(MonitoringPermitController::class)->group(function () {
+            Route::get('/monitoring-permit', 'index')->name('monitoring-permit.index');
+            Route::post('/monitoring-permit', 'store')->name('monitoring-permit.store');
+            Route::get('/monitoring-permit/{uuid}/edit', 'edit')->name('monitoring-permit.edit');
+            Route::put('/monitoring-permit', 'update')->name('monitoring-permit.update');
+            Route::delete('/monitoring-permit', 'destroy')->name('monitoring-permit.delete');
+        });
+
+        Route::controller(SamCardController::class)->group(function () {
+            Route::get('/sam-card', 'index')->name('sam-card.index');
+            Route::post('/sam-card', 'store')->name('sam-card.store');
+            Route::post('/sam-card/merry-code', 'merry_code')->name('sam-card.merry-code.store');
+            Route::get('/sam-card/{uuid}/edit', 'edit')->name('sam-card.edit');
+            Route::post('/sam-card/import', 'import')->name('sam-card.import');
+            Route::put('/sam-card', 'update')->name('sam-card.update');
+            Route::delete('/sam-card', 'destroy')->name('sam-card.delete');
+        });
+
+        Route::controller(SamCardHistoryController::class)->group(function () {
+            Route::get('/sam-history', 'index')->name('sam-history.index');
+            Route::post('/sam-history', 'store')->name('sam-history.store');
+            Route::get('/sam-history/{uuid}/create', 'create')->name('sam-history.create');
+        });
     });
 
-    Route::controller(TransWorkOrderTasklistController::class)->group(function () {
-        Route::post('/trans-workorder-tasklist/{uuid_workorder}', 'store')->name('trans-workorder-tasklist.store');
-        Route::put('/trans-workorder-tasklist', 'update')->name('trans-workorder-tasklist.update');
-        Route::put('/trans-workorder-tasklist/actual-duration', 'update_actual_duration')->name('trans-workorder-tasklist.update-actual-duration');
-        Route::delete('/trans-workorder-tasklist', 'destroy')->name('trans-workorder-tasklist.delete');
-    });
-
-    Route::controller(TransWorkOrderBarangController::class)->group(function () {
-        Route::post('/trans-workorder-barang/{uuid_workorder}', 'store')->name('trans-workorder-barang.store');
-        Route::delete('/trans-workorder-barang', 'destroy')->name('trans-workorder-barang.delete');
-    });
-
-    Route::controller(TransWorkOrderUserController::class)->group(function () {
-        Route::post('/trans-workorder-user/{uuid_workorder}', 'store')->name('trans-workorder-user.store');
-        Route::delete('/trans-workorder-user', 'destroy')->name('trans-workorder-user.delete');
-    });
-
-    Route::controller(TransWorkOrderPhotoController::class)->group(function () {
-        Route::post('/trans-workorder-photo/{uuid_workorder}', 'store')->name('trans-workorder-photo.store');
-        Route::delete('/trans-workorder-photo', 'destroy')->name('trans-workorder-photo.delete');
-    });
-
-    Route::controller(TransWorkOrderFunctionalLocationController::class)->group(function () {
-        Route::post('/trans-workorder-functional-location/{uuid_workorder}', 'store')->name('trans-workorder-functional-location.store');
-        Route::delete('/trans-workorder-functional-location', 'destroy')->name('trans-workorder-functional-location.delete');
-    });
-
-    Route::controller(FundController::class)->group(function () {
-        Route::get('/fund', 'index')->name('fund.index');
-        Route::post('/fund', 'store')->name('fund.store');
-        Route::put('/fund', 'update')->name('fund.update');
-        Route::delete('/fund', 'destroy')->name('fund.delete');
-    });
-
-    Route::controller(FundSourceController::class)->group(function () {
-        Route::get('/fund-source', 'index')->name('fund-source.index');
-        Route::post('/fund-source', 'store')->name('fund-source.store');
-        Route::get('/fund-source/{uuid}/edit', 'edit')->name('fund-source.edit');
-        Route::put('/fund-source', 'update')->name('fund-source.update');
-        Route::delete('/fund-source', 'destroy')->name('fund-source.delete');
-    });
-
-    Route::controller(ProjectController::class)->group(function () {
-        Route::get('/project', 'index')->name('project.index');
-        Route::post('/project', 'store')->name('project.store');
-        Route::get('/project/{uuid}/edit', 'edit')->name('project.edit');
-        Route::get('/project/{uuid}/show', 'show')->name('project.show');
-        Route::put('/project', 'update')->name('project.update');
-        Route::delete('/project', 'destroy')->name('project.delete');
-    });
-
-    Route::controller(BudgetAbsorptionController::class)->group(function () {
-        Route::get('/budget-absorption', 'index')->name('budget-absorption.index');
-        Route::get('/budget-absorption/project/{uuid}/show', 'show')->name('budget-absorption.by_project.show');
-        Route::post('/budget-absorption', 'store')->name('budget-absorption.store');
-        Route::get('/budget-absorption/{uuid}/edit', 'edit')->name('budget-absorption.edit');
-        Route::put('/budget-absorption', 'update')->name('budget-absorption.update');
-        Route::delete('/budget-absorption', 'destroy')->name('budget-absorption.delete');
-    });
-
-    Route::controller(DashboardBudgetController::class)->group(function () {
-        Route::get('/monitoring-budget', 'index')->name('dashboard-budget.index');
-        Route::get('/monitoring-budget/department', 'departemen')->name('dashboard-budget.departemen');
-    });
-
-    // ADMIN & ORGANIK
+    // SUPERADMIN & ORGANIK
     Route::group(['middleware' => ['admin', 'organik']], function () {
         Route::controller(LokasiController::class)->group(function () {
             Route::get('/lokasi', 'index')->name('lokasi.index');
@@ -523,14 +546,6 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::put('/fun-loc', 'update')->name('fun_loc.update');
         });
 
-        Route::controller(MonitoringPermitController::class)->group(function () {
-            Route::get('/monitoring-permit', 'index')->name('monitoring-permit.index');
-            Route::post('/monitoring-permit', 'store')->name('monitoring-permit.store');
-            Route::get('/monitoring-permit/{uuid}/edit', 'edit')->name('monitoring-permit.edit');
-            Route::put('/monitoring-permit', 'update')->name('monitoring-permit.update');
-            Route::delete('/monitoring-permit', 'destroy')->name('monitoring-permit.delete');
-        });
-
         Route::controller(LogAfcController::class)->group(function () {
             Route::get('/log-afc', 'index')->name('log.index');
             Route::post('/log-afc/import', 'import')->name('log.import');
@@ -544,25 +559,17 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
         });
 
-        Route::controller(SamCardController::class)->group(function () {
-            Route::get('/sam-card', 'index')->name('sam-card.index');
-            Route::post('/sam-card', 'store')->name('sam-card.store');
-            Route::post('/sam-card/merry-code', 'merry_code')->name('sam-card.merry-code.store');
-            Route::get('/sam-card/{uuid}/edit', 'edit')->name('sam-card.edit');
-            Route::post('/sam-card/import', 'import')->name('sam-card.import');
-            Route::put('/sam-card', 'update')->name('sam-card.update');
-            Route::delete('/sam-card', 'destroy')->name('sam-card.delete');
-        });
-
-        Route::controller(SamCardHistoryController::class)->group(function () {
-            Route::get('/sam-history', 'index')->name('sam-history.index');
-            Route::post('/sam-history', 'store')->name('sam-history.store');
-            Route::get('/sam-history/{uuid}/create', 'create')->name('sam-history.create');
-        });
-
         Route::controller(MonitoringEquipmentController::class)->group(function () {
             Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
             Route::delete('/monitoring-equipment', 'destroy')->name('monitoring-equipment.delete');
+        });
+
+        Route::controller(ChecksheetController::class)->group(function () {
+            Route::get('/checksheet/create', 'create')->name('checksheet.create');
+            Route::post('/checksheet', 'store')->name('checksheet.store');
+            Route::get('/checksheet/history', 'history')->name('checksheet.history');
+            Route::get('/checksheet/trend', 'trend')->name('checksheet.trend');
+            Route::put('/checksheet/history', 'export_excel')->name('checksheet.history.export.excel');
         });
     });
 });

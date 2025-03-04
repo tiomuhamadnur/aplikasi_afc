@@ -61,6 +61,10 @@ class BudgetAbsorptionDataTable extends DataTable
                     <i class='text-white mdi mdi-lead-pencil'></i>
                 </button>";
 
+            if (auth()->user()->role_id == 2) {
+                return $attachmentButton . $editButton;
+            }
+
             $deleteModal = "<button type='button' title='Delete'
                 class='btn btn-gradient-danger btn-rounded btn-icon'
                 data-bs-toggle='modal' data-bs-target='#deleteModal'

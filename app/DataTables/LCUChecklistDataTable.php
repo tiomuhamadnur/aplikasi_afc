@@ -42,16 +42,9 @@ class LCUChecklistDataTable extends DataTable
                         <i class='mdi mdi-file-image'></i>
                         </button>";
 
-                if (auth()->user()->role_id != 1) {
+                if (auth()->user()->role_id == 3) {
                     return $buttonPhoto;
                 }
-
-                $deleteModal = "<button type='button' title='Delete'
-                    class='btn btn-gradient-danger btn-rounded btn-icon'
-                    data-bs-toggle='modal' data-bs-target='#deleteModal'
-                    data-id='{$item->id}'>
-                    <i class='mdi mdi-delete'></i>
-                </button>";
 
                 $buttonEdit = "<button type='button' title='Edit'
                     class='btn btn-gradient-warning btn-rounded btn-icon'
@@ -78,6 +71,17 @@ class LCUChecklistDataTable extends DataTable
                     data-functional_location_id='{$item->functional_location_id}'
                     data-remark='{$item->remark}'>
                     <i class='mdi mdi-lead-pencil'></i>
+                </button>";
+
+                if (auth()->user()->role_id == 2) {
+                    return $buttonPhoto . $buttonEdit;
+                }
+
+                $deleteModal = "<button type='button' title='Delete'
+                    class='btn btn-gradient-danger btn-rounded btn-icon'
+                    data-bs-toggle='modal' data-bs-target='#deleteModal'
+                    data-id='{$item->id}'>
+                    <i class='mdi mdi-delete'></i>
                 </button>";
 
                 return $buttonPhoto . $buttonEdit . $deleteModal;

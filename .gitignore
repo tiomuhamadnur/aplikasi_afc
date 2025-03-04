@@ -18,3 +18,7 @@ yarn-error.log
 /.idea
 /.vscode
 /certs
+compose.yaml
+dockercompose-lawas.yaml
+Dockerfile
+worker.dockerfile

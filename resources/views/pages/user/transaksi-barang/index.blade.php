@@ -49,7 +49,7 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="barang_id">Material</label>
+                            <label for="barang_id" class="required">Material</label>
                             <select class="tom-select-class" id="barang_id" name="barang_id" required>
                                 <option value="" selected disabled>- pilih material -</option>
                                 @foreach ($barang as $item)
@@ -60,12 +60,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="qty">Quantity</label>
+                            <label for="qty" class="required">Quantity</label>
                             <input type="number" min="1" class="form-control" id="qty" name="qty"
                                 autocomplete="off" placeholder="jumlah material" required>
                         </div>
                         <div class="form-group">
-                            <label for="equipment_id">Equipment</label>
+                            <label for="equipment_id" class="required">Equipment</label>
                             <select class="tom-select-class" id="equipment_id" name="equipment_id" required>
                                 <option value="" selected disabled>- pilih equipment -</option>
                                 @foreach ($equipment as $item)
@@ -76,7 +76,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="tanggal">Tanggal</label>
+                            <label for="tanggal" class="required">Tanggal</label>
                             <input type="date" class="form-control" id="tanggal" name="tanggal" autocomplete="off"
                                 required>
                         </div>
@@ -105,7 +105,7 @@
                         @csrf
                         @method('GET')
                         <div class="form-group">
-                            <label for="">Tanggal</label>
+                            <label for="" class="required">Tanggal</label>
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"
                                     onblur="(this.type='text')" class="form-control" placeholder="Start Date"

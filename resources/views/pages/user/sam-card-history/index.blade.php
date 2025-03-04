@@ -12,10 +12,12 @@
                     <div class="card-body">
                         <h4 class="card-title">Data Sam Card History</h4>
                         <div class="btn-group my-2">
-                            <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#addModal">
-                                <i class="mdi mdi-plus-circle"></i>
-                            </button>
+                            @if (auth()->user()->role_id == 1)
+                                <button type="button" title="Add" class="btn btn-outline-primary btn-rounded btn-icon"
+                                    data-bs-toggle="modal" data-bs-target="#addModal">
+                                    <i class="mdi mdi-plus-circle"></i>
+                                </button>
+                            @endif
                             <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
@@ -48,7 +50,7 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="sam_card_id">SAM Card</label>
+                            <label for="sam_card_id" class="required">SAM Card</label>
                             <select name="sam_card_id" id="sam_card_id" class="tom-select-class" required>
                                 <option value="" selected disabled>- pilih SAM card -</option>
                                 @foreach ($sam_card as $item)
@@ -58,7 +60,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="equipment_id">PG ID</label>
+                            <label for="equipment_id" class="required">PG ID</label>
                             <select name="equipment_id" id="equipment_id" class="tom-select-class" required>
                                 <option value="" selected disabled>- pilih PG ID -</option>
                                 @foreach ($pg as $item)
@@ -68,7 +70,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="type">Type</label>
+                            <label for="type" class="required">Type</label>
                             <select name="type" id="type" class="tom-select-class" required>
                                 <option value="">- pilih type -</option>
                                 <option value="entry">Entry</option>
@@ -76,7 +78,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="tanggal">Tanggal</label>
+                            <label for="tanggal" class="required">Tanggal</label>
                             <input type="date" class="form-control" name="tanggal" id="tanggal"
                                 placeholder="input tanggal" required>
                         </div>
@@ -96,7 +98,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="photo">Photo Old SAM Card</label>
+                            <label for="photo" class="required">Photo Old SAM Card</label>
                             <div class="text-center">
                                 <img class="img-thumbnail" id="previewImage" src="#" alt="Preview"
                                     style="max-width: 250px; max-height: 250px; display: none;">

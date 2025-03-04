@@ -1,6 +1,6 @@
 <div>
     <div class="form-group">
-        <label for="relasi_area_id">Location</label>
+        <label for="relasi_area_id" class="required">Location</label>
         <select class="form-control form-control-lg" id="relasi_area_id" wire:model.live='relasi_area_id' required>
             <option value="" selected disabled>- pilih location -</option>
             @foreach ($area as $item)
@@ -11,7 +11,7 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="tipe_equipment_id">Equipment Type</label>
+        <label for="tipe_equipment_id" class="required">Equipment Type</label>
         <select class="form-control form-control-lg" id="tipe_equipment_id" wire:model.live='tipe_equipment_id' required>
             <option value="" selected disabled>- pilih equipment type -</option>
             @foreach ($tipe_equipment as $item)
@@ -22,7 +22,7 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="equipment_id">Equipment</label>
+        <label for="equipment_id" class="required">Equipment</label>
         <select class="form-control form-control-lg" id="equipment_id" name="equipment_id" required>
             <option value="" selected disabled>- pilih equipment -</option>
             @foreach ($equipment as $item)
@@ -33,7 +33,7 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="category_id">Category</label>
+        <label for="category_id" class="required">Category</label>
         <select class="form-control form-control-lg" name="category_id" id="category_id" wire:model.live='category_id'
             required>
             <option value="" selected disabled>- pilih category problem -</option>
@@ -83,7 +83,7 @@
         </select>
     </div> --}}
     <div class="form-group">
-        <label for="classification_id">Classification</label>
+        <label for="classification_id" class="required">Classification</label>
         <select class="form-control form-control-lg" name="classification_id" id="classification_id" required>
             <option value="" selected disabled>- pilih classification -</option>
             @foreach ($classification as $item)

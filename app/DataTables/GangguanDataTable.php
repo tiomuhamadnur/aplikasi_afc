@@ -103,7 +103,7 @@ class GangguanDataTable extends DataTable
                     <i class='text-white mdi mdi-eye'></i>
                 </button>";
 
-                if (auth()->user()->role_id != 1) {
+                if (auth()->user()->role_id == 3) {
                     return $showButton;
                 }
 
@@ -124,6 +124,10 @@ class GangguanDataTable extends DataTable
                         onclick=\"window.location.href='{$createWorkOrderRoute}'\" title='Create Work Order'>
                         <i class='text-white mdi mdi-briefcase-upload'></i>
                     </button>";
+                }
+
+                if (auth()->user()->role_id == 2) {
+                    return $showButton . $createWorkOrderButton . $editButton;
                 }
 
                 $deleteModal = "<button type='button' title='Delete'

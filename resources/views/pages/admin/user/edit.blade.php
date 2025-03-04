@@ -16,23 +16,23 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $user->id }}" hidden>
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Name"
+                                <label for="name" class="required">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Input Name"
                                     autocomplete="off" required value="{{ $user->name }}">
                             </div>
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" placeholder="Email" autocomplete="off" required
+                                <label for="email" class="required">Email</label>
+                                <input type="email" class="form-control" placeholder="Input Email" autocomplete="off" required
                                     value="{{ $user->email }}" disabled>
                             </div>
                             <div class="form-group">
-                                <label for="no_hp">No HP</label>
-                                <input type="text" class="form-control" id="no_hp" name="no_hp" placeholder="No HP"
+                                <label for="no_hp" class="required">No HP</label>
+                                <input type="text" class="form-control" id="no_hp" name="no_hp" placeholder="Input No HP"
                                     autocomplete="off" required value="{{ $user->no_hp }}">
                             </div>
                             <div class="form-group">
-                                <label for="gender_id">Gender</label>
-                                <select class="form-control form-control-lg" name="gender_id" id="gender_id" required>
+                                <label for="gender_id" class="required">Gender</label>
+                                <select class="tom-select-class" name="gender_id" id="gender_id" required>
                                     <option value="" selected disabled>- pilih gender -</option>
                                     @if ($user->gender_id != null)
                                         @foreach ($gender as $item)
@@ -51,8 +51,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="tipe_employee_id">Tipe Employee</label>
-                                <select class="form-control form-control-lg" name="tipe_employee_id" id="tipe_employee_id"
+                                <label for="tipe_employee_id" class="required">Tipe Employee</label>
+                                <select class="tom-select-class" name="tipe_employee_id" id="tipe_employee_id"
                                     required>
                                     <option value="" selected disabled>- pilih tipe employee -</option>
                                     @if ($user->tipe_employee_id != null)
@@ -72,8 +72,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="perusahaan_id">Perusahaan</label>
-                                <select class="form-control form-control-lg" name="perusahaan_id" id="perusahaan_id"
+                                <label for="perusahaan_id" class="required">Perusahaan</label>
+                                <select class="tom-select-class" name="perusahaan_id" id="perusahaan_id"
                                     required>
                                     <option value="" selected disabled>- pilih perusahaan -</option>
                                     @if ($user->perusahaan_id != null)
@@ -93,8 +93,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="relasi_struktur_id">Struktur</label>
-                                <select class="form-control form-control-lg" name="relasi_struktur_id"
+                                <label for="relasi_struktur_id" class="required">Struktur</label>
+                                <select class="tom-select-class" name="relasi_struktur_id"
                                     id="relasi_struktur_id" required>
                                     <option value="" selected disabled>- pilih struktur -</option>
                                     @if ($user->relasi_struktur_id != null)
@@ -120,8 +120,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="jabatan_id">Jabatan</label>
-                                <select class="form-control form-control-lg" name="jabatan_id" id="jabatan_id" required>
+                                <label for="jabatan_id" class="required">Jabatan</label>
+                                <select class="tom-select-class" name="jabatan_id" id="jabatan_id" required>
                                     <option value="" selected disabled>- pilih jabatan -</option>
                                     @if ($user->jabatan_id != null)
                                         @foreach ($jabatan as $item)
@@ -140,8 +140,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="role_id">Role</label>
-                                <select class="form-control form-control-lg" name="role_id" id="role_id" required>
+                                <label for="role_id" class="required">Role</label>
+                                <select class="tom-select-class" name="role_id" id="role_id" required>
                                     <option value="" selected disabled>- pilih role -</option>
                                     @if ($user->role_id != null)
                                         @foreach ($role as $item)

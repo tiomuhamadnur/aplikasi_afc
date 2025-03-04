@@ -17,7 +17,7 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $project->id }}" hidden>
                             <div class="form-group">
-                                <label for="name">Project Name</label>
+                                <label for="name" class="required">Project Name</label>
                                 <input type="text" class="form-control" id="name" name="name"
                                     placeholder="input project name" autocomplete="off" required
                                     value="{{ $project->name }}">
@@ -29,7 +29,7 @@
                                     value="{{ $project->description }}">
                             </div> --}}
                             <div class="form-group">
-                                <label for="fund_source_id">Fund Source</label>
+                                <label for="fund_source_id" class="required">Fund Source</label>
                                 <select class="tom-select-class" name="fund_source_id" id="fund_source_id" required>
                                     <option value="" disabled selected>- select fund source -</option>
                                     @foreach ($fund_source as $item)
@@ -41,18 +41,18 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="start_period">Start Period</label>
+                                <label for="start_period" class="required">Start Period</label>
                                 <input type="date" class="form-control" id="start_period" name="start_period"
                                     placeholder="Start Period" autocomplete="off" required
                                     value="{{ $project->start_period }}">
                             </div>
                             <div class="form-group">
-                                <label for="end_period">End Period</label>
+                                <label for="end_period" class="required">End Period</label>
                                 <input type="date" class="form-control" id="end_period" name="end_period"
                                     placeholder="End Period" autocomplete="off" required value="{{ $project->end_period }}">
                             </div>
                             <div class="form-group">
-                                <label for="departemen_id">Project Owner</label>
+                                <label for="departemen_id" class="required">Project Owner</label>
                                 <select class="tom-select-class" name="departemen_id" id="departemen_id" required>
                                     <option value="" disabled selected>- select project owner -</option>
                                     @foreach ($departemen as $item)
@@ -64,7 +64,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="perusahaan_id">Company</label>
+                                <label for="perusahaan_id" class="required">Company</label>
                                 <select class="tom-select-class" name="perusahaan_id" id="perusahaan_id" required>
                                     <option value="" disabled selected>- select company -</option>
                                     @foreach ($perusahaan as $item)
@@ -76,7 +76,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="status_budgeting_id">Status</label>
+                                <label for="status_budgeting_id" class="required">Status</label>
                                 <select class="tom-select-class" name="status_budgeting_id" id="status_budgeting_id"
                                     required>
                                     <option value="" disabled selected>- select status -</option>

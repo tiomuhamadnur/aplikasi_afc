@@ -226,7 +226,7 @@
                         @csrf
                         @method('GET')
                         <div class="form-group">
-                            <label for="">Tanggal</label>
+                            <label for="" class="required">Tanggal</label>
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"
                                     onblur="(this.type='text')" class="form-control" placeholder="Start Date"

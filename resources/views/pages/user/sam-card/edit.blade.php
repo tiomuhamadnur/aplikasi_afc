@@ -17,38 +17,38 @@
                             @method('PUT')
                             <input type="text" name="id" value="{{ $sam_card->id }}" required hidden>
                             <div class="form-group">
-                                <label for="uid">UID</label>
-                                <input type="text" class="form-control" id="uid" name="uid" placeholder="UID"
+                                <label for="uid" class="required">UID</label>
+                                <input type="text" class="form-control" id="uid" name="uid" placeholder="Input UID"
                                     autocomplete="off" value="{{ $sam_card->uid }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="mid">MID</label>
-                                <input type="text" class="form-control" id="mid" name="mid" placeholder="MID"
+                                <label for="mid" class="required">MID</label>
+                                <input type="text" class="form-control" id="mid" name="mid" placeholder="Input MID"
                                     autocomplete="off" value="{{ $sam_card->mid }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="tid">TID</label>
-                                <input type="text" class="form-control" id="tid" name="tid" placeholder="TID"
+                                <label for="tid" class="required">TID</label>
+                                <input type="text" class="form-control" id="tid" name="tid" placeholder="Input TID"
                                     autocomplete="off" value="{{ $sam_card->tid }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="pin">PIN</label>
-                                <input type="text" class="form-control" id="pin" name="pin" placeholder="PIN"
+                                <label for="pin" class="required">PIN</label>
+                                <input type="text" class="form-control" id="pin" name="pin" placeholder="Input PIN"
                                     autocomplete="off" value="{{ $sam_card->pin }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="mc">Marry Code</label>
+                                <label for="mc" class="required">Marry Code</label>
                                 <input type="text" class="form-control" id="mc" name="mc"
-                                    placeholder="Marry Code" autocomplete="off" value="{{ $sam_card->mc }}" required>
+                                    placeholder="Input Marry Code" autocomplete="off" value="{{ $sam_card->mc }}" required>
                             </div>
                             <div class="form-group">
-                                <label for="alokasi">Alokasi <span class="text-info">(opsional)</span></label>
+                                <label for="alokasi">Alokasi Stasiun <span class="text-info">(opsional)</span></label>
                                 <input type="text" class="form-control" id="alokasi" name="alokasi"
-                                    placeholder="Alokasi" value="{{ $sam_card->alokasi }}" autocomplete="off">
+                                    placeholder="Input Alokasi Stasiun" value="{{ $sam_card->alokasi }}" autocomplete="off">
                             </div>
                             <div class="form-group">
-                                <label for="status">Status</label>
-                                <select name="status" id="status" class="form-control form-control-lg" required>
+                                <label for="status" class="required">Status</label>
+                                <select name="status" id="status" class="tom-select-class" required>
                                     <option value="">- pilih status -</option>
                                     <option value="ready" @if ($sam_card->status == 'ready') selected @endif>READY</option>
                                     <option value="used" @if ($sam_card->status == 'used') selected @endif>USED</option>

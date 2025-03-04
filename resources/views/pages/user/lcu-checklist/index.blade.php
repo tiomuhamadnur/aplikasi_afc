@@ -64,17 +64,17 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="user_id">Checked by</label>
+                            <label for="user_id" class="required">Checked by</label>
                             <input type="text" class="form-control" autocomplete="off" placeholder="input checked by"
                                 value="{{ auth()->user()->name }}" disabled>
                         </div>
                         <div class="form-group">
-                            <label for="date">Date</label>
+                            <label for="date" class="required">Date</label>
                             <input type="date" class="form-control" autocomplete="off" value="{{ $today }}"
                                 disabled>
                         </div>
                         <div class="form-group">
-                            <label for="functional_location_id">Location</label>
+                            <label for="functional_location_id" class="required">Location</label>
                             <select class="tom-select-class" id="functional_location_id" name="functional_location_id"
                                 required>
                                 <option value="" selected disabled>- select location -</option>
@@ -86,7 +86,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="mks_status">MKS Status?</label>
+                            <label for="mks_status" class="required">MKS Status?</label>
                             <select class="tom-select-class" id="mks_status" name="mks_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -94,7 +94,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="lighting_status">Lighting Status?</label>
+                            <label for="lighting_status" class="required">Lighting Status?</label>
                             <select class="tom-select-class" id="lighting_status" name="lighting_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -102,7 +102,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="cctv_status">CCTV Status?</label>
+                            <label for="cctv_status" class="required">CCTV Status?</label>
                             <select class="tom-select-class" id="cctv_status" name="cctv_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -110,7 +110,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ac_status">AC Status?</label>
+                            <label for="ac_status" class="required">AC Status?</label>
                             <select class="tom-select-class" id="ac_status" name="ac_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -118,7 +118,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="room_cleanliness">Kebersihan ruangan?</label>
+                            <label for="room_cleanliness" class="required">Kebersihan ruangan?</label>
                             <select class="tom-select-class" id="room_cleanliness" name="room_cleanliness" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -126,7 +126,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="server_status">Server Status?</label>
+                            <label for="server_status" class="required">Server Status?</label>
                             <select class="tom-select-class" id="server_status" name="server_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -134,7 +134,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="server_alert">Server Alert?</label>
+                            <label for="server_alert" class="required">Server Alert?</label>
                             <select class="tom-select-class" id="server_alert" name="server_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -142,7 +142,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="switch_status">Switch Status?</label>
+                            <label for="switch_status" class="required">Switch Status?</label>
                             <select class="tom-select-class" id="switch_status" name="switch_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -150,7 +150,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="switch_alert">Switch Alert?</label>
+                            <label for="switch_alert" class="required">Switch Alert?</label>
                             <select class="tom-select-class" id="switch_alert" name="switch_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -158,7 +158,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ups_status">UPS Status?</label>
+                            <label for="ups_status" class="required">UPS Status?</label>
                             <select class="tom-select-class" id="ups_status" name="ups_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -166,7 +166,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ups_alert">UPS Alert?</label>
+                            <label for="ups_alert" class="required">UPS Alert?</label>
                             <select class="tom-select-class" id="ups_alert" name="ups_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -174,7 +174,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="cable_status">Cable Status?</label>
+                            <label for="cable_status" class="required">Cable Status?</label>
                             <select class="tom-select-class" id="cable_status" name="cable_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -182,13 +182,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="room_temperature">Temperatur Ruangan? (°C)</label>
+                            <label for="room_temperature" class="required">Temperatur Ruangan? (°C)</label>
                             <input type="number" class="form-control" step="0.01" id="room_temperature"
                                 name="room_temperature" autocomplete="off" placeholder="input temperatur ruangan"
                                 min="1" required>
                         </div>
                         <div class="form-group">
-                            <label for="room_temp_photo">Photo Temperatur Ruangan</label>
+                            <label for="room_temp_photo" class="required">Photo Temperatur Ruangan</label>
                             <div class="text-left my-1">
                                 <img class="img-thumbnail" id="previewImageRoom" src="#"
                                     alt="Tidak ada photo temperature room"
@@ -198,13 +198,13 @@
                                 accept="image/*" required>
                         </div>
                         <div class="form-group">
-                            <label for="rack_temperature">Temperatur Rack? (°C)</label>
+                            <label for="rack_temperature" class="required">Temperatur Rack? (°C)</label>
                             <input type="number" class="form-control" step="0.01" id="rack_temperature"
                                 name="rack_temperature" autocomplete="off" placeholder="input temperatur rack"
                                 min="1" required>
                         </div>
                         <div class="form-group">
-                            <label for="rack_temp_photo">Photo Temperatur Rack</label>
+                            <label for="rack_temp_photo" class="required">Photo Temperatur Rack</label>
                             <div class="text-left my-1">
                                 <img class="img-thumbnail" id="previewImageRack" src="#"
                                     alt="Tidak ada photo temperature room"
@@ -214,7 +214,7 @@
                                 accept="image/*" required>
                         </div>
                         <div class="form-group">
-                            <label for="remark">Remarks</label>
+                            <label for="remark">Remarks <span class="text-info">(optional)</span></label>
                             <textarea class="form-control" name="remark" id="remark" rows="4" placeholder="input jika ada catatan"></textarea>
                         </div>
                     </form>
@@ -243,8 +243,8 @@
                         @method('PUT')
                         <input type="number" id="id_edit" name="id" hidden>
                         <div class="form-group">
-                            <label for="user_id">Checked by</label>
-                            <select class="tom-select-class" name="user_id" id="user_id_edit">
+                            <label for="user_id" class="required">Checked by</label>
+                            <select class="form-control form-control-lg" name="user_id" id="user_id_edit">
                                 <option value="">- select option -</option>
                                 @foreach ($user as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -252,11 +252,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="date">Date</label>
+                            <label for="date" class="required">Date</label>
                             <input type="datetime-local" class="form-control" autocomplete="off" id="date_edit" name="date">
                         </div>
                         <div class="form-group">
-                            <label for="functional_location_id_edit">Location</label>
+                            <label for="functional_location_id_edit" class="required">Location</label>
                             <select class="form-control form-control-lg" id="functional_location_id_edit" name="functional_location_id"
                                 required>
                                 <option value="" selected disabled>- select location -</option>
@@ -268,7 +268,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="mks_status_edit">MKS Status?</label>
+                            <label for="mks_status_edit" class="required">MKS Status?</label>
                             <select class="form-control form-control-lg" id="mks_status_edit" name="mks_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -276,7 +276,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="lighting_status_edit">Lighting Status?</label>
+                            <label for="lighting_status_edit" class="required">Lighting Status?</label>
                             <select class="form-control form-control-lg" id="lighting_status_edit" name="lighting_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -284,7 +284,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="cctv_status_edit">CCTV Status?</label>
+                            <label for="cctv_status_edit" class="required">CCTV Status?</label>
                             <select class="form-control form-control-lg" id="cctv_status_edit" name="cctv_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -292,7 +292,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ac_status_edit">AC Status?</label>
+                            <label for="ac_status_edit" class="required">AC Status?</label>
                             <select class="form-control form-control-lg" id="ac_status_edit" name="ac_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -300,7 +300,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="room_cleanliness_edit">Kebersihan ruangan?</label>
+                            <label for="room_cleanliness_edit" class="required">Kebersihan ruangan?</label>
                             <select class="form-control form-control-lg" id="room_cleanliness_edit" name="room_cleanliness" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -308,7 +308,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="server_status_edit">Server Status?</label>
+                            <label for="server_status_edit" class="required">Server Status?</label>
                             <select class="form-control form-control-lg" id="server_status_edit" name="server_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -316,7 +316,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="server_alert_edit">Server Alert?</label>
+                            <label for="server_alert_edit" class="required">Server Alert?</label>
                             <select class="form-control form-control-lg" id="server_alert_edit" name="server_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -324,7 +324,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="switch_status_edit">Switch Status?</label>
+                            <label for="switch_status_edit" class="required">Switch Status?</label>
                             <select class="form-control form-control-lg" id="switch_status_edit" name="switch_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -332,7 +332,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="switch_alert_edit">Switch Alert?</label>
+                            <label for="switch_alert_edit" class="required">Switch Alert?</label>
                             <select class="form-control form-control-lg" id="switch_alert_edit" name="switch_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -340,7 +340,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ups_status_edit">UPS Status?</label>
+                            <label for="ups_status_edit" class="required">UPS Status?</label>
                             <select class="form-control form-control-lg" id="ups_status_edit" name="ups_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -348,7 +348,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ups_alert_edit">UPS Alert?</label>
+                            <label for="ups_alert_edit" class="required">UPS Alert?</label>
                             <select class="form-control form-control-lg" id="ups_alert_edit" name="ups_alert" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -356,7 +356,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="cable_status_edit">Cable Status?</label>
+                            <label for="cable_status_edit" class="required">Cable Status?</label>
                             <select class="form-control form-control-lg" id="cable_status_edit" name="cable_status" required>
                                 <option value="" selected disabled>- select option -</option>
                                 <option value="1">OK</option>
@@ -364,13 +364,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="room_temperature_edit">Temperatur Ruangan? (°C)</label>
+                            <label for="room_temperature_edit" class="required">Temperatur Ruangan? (°C)</label>
                             <input type="number" class="form-control form-control-lg" step="0.01" id="room_temperature_edit"
                                 name="room_temperature" autocomplete="off" placeholder="input temperatur ruangan"
                                 min="1" required>
                         </div>
                         <div class="form-group">
-                            <label for="room_temp_photo_edit">Photo Temperatur Ruangan</label>
+                            <label for="room_temp_photo_edit" class="required">Photo Temperatur Ruangan</label>
                             <div class="text-left my-1">
                                 <img class="img-thumbnail" id="previewImageRoom_edit" src="#"
                                     alt="Tidak ada photo temperature room"
@@ -380,13 +380,13 @@
                                 accept="image/*">
                         </div>
                         <div class="form-group">
-                            <label for="rack_temperature_edit">Temperatur Rack? (°C)</label>
+                            <label for="rack_temperature_edit" class="required">Temperatur Rack? (°C)</label>
                             <input type="number" class="form-control form-control-lg" step="0.01" id="rack_temperature_edit"
                                 name="rack_temperature" autocomplete="off" placeholder="input temperatur rack"
                                 min="1" required>
                         </div>
                         <div class="form-group">
-                            <label for="rack_temp_photo_edit">Photo Temperatur Rack</label>
+                            <label for="rack_temp_photo_edit" class="required">Photo Temperatur Rack</label>
                             <div class="text-left my-1">
                                 <img class="img-thumbnail" id="previewImageRack_edit" src="#"
                                     alt="Tidak ada photo temperature room"
@@ -396,7 +396,7 @@
                                 accept="image/*">
                         </div>
                         <div class="form-group">
-                            <label for="remark">Remarks</label>
+                            <label for="remark">Remarks <span class="text-info">(optional)</span></label>
                             <textarea class="form-control" name="remark" id="remark_edit" rows="4" placeholder="input jika ada catatan"></textarea>
                         </div>
                     </form>
@@ -423,7 +423,7 @@
                         @csrf
                         @method('GET')
                         <div class="form-group">
-                            <label for="">Tanggal</label>
+                            <label for="" class="required">Tanggal</label>
                             <div class="input-group">
                                 <input type="text" id="start_date" onfocus="(this.type='date')"
                                     onblur="(this.type='text')" class="form-control" placeholder="Start Date"
