@@ -579,21 +579,21 @@ Route::controller(MonitoringEquipmentController::class)->group(function () {
     Route::get('/client-monitoring-equipment', 'client_index')->name('client.monitoring-equipment.index');
 });
 
-Route::get('/send-message', function (Request $request) {
-    $message = $request->query('message'); // Ambil data dari query string
-    broadcast(new MessageSent($message))->toOthers();
-    return response()->json(['success' => true, 'message' => $message]);
-});
+// Route::get('/send-message', function (Request $request) {
+//     $message = $request->query('message'); // Ambil data dari query string
+//     broadcast(new MessageSent($message))->toOthers();
+//     return response()->json(['success' => true, 'message' => $message]);
+// });
 
-Route::get('/send-event', function () {
-    $data = [
-        'name' => 'Tio Muhamad Nur',
-        'email' => 'tiomuhamadnur@gmail.com',
-        'phone' => '087723704469',
-    ];
-    broadcast(new HelloEvent($data));
-});
+// Route::get('/send-event', function () {
+//     $data = [
+//         'name' => 'Tio Muhamad Nur',
+//         'email' => 'tiomuhamadnur@gmail.com',
+//         'phone' => '087723704469',
+//     ];
+//     broadcast(new HelloEvent($data));
+// });
 
-Route::get('/chat', function () {
-    return view('welcome');
-});
+// Route::get('/chat', function () {
+//     return view('welcome');
+// });

@@ -10,12 +10,21 @@ use Illuminate\Http\Request;
 
 class FundController extends Controller
 {
-    public function index(FundDataTable $dataTable)
+    public function index(FundDataTable $dataTable, Request $request)
     {
+        $request->validate([
+            'divisi_id' => 'nullable',
+        ]);
+
+        $divisi_id = $request->divisi_id ?? null;
+
         $divisi = Divisi::all();
 
-        return $dataTable->render('pages.admin.fund.index', compact([
-            'divisi'
+        return $dataTable->with([
+            'divisi_id' => $divisi_id,
+        ])->render('pages.admin.fund.index', compact([
+            'divisi',
+            'divisi_id',
         ]));
     }
 

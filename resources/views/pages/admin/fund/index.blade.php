@@ -16,7 +16,8 @@
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#filterModal"
+                                class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
                             <button type="button" title="Export to Excel" data-bs-toggle="modal"
@@ -47,13 +48,13 @@
                         @method('POST')
                         <div class="form-group">
                             <label for="code" class="required">Code</label>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="input code"
-                                autocomplete="off" required>
+                            <input type="text" class="form-control" id="code" name="code"
+                                placeholder="input code" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="name" class="required">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="input name"
-                                autocomplete="off" required>
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="input name" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label for="type" class="required">Type</label>
@@ -74,7 +75,8 @@
                         </div>
                         <div class="form-group">
                             <label for="description" class="required">Description</label>
-                            <textarea class="form-control" name="description" id="description" rows="3" required placeholder="input description"></textarea>
+                            <textarea class="form-control" name="description" id="description" rows="3" required
+                                placeholder="input description"></textarea>
                         </div>
                     </form>
                 </div>
@@ -142,6 +144,41 @@
         </div>
     </div>
     <!-- End Edit Modal -->
+
+    <!-- Add Filter -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="{{ route('fund.index') }}" method="GET" class="forms-sample">
+                        @csrf
+                        @method('GET')
+                        <div class="form-group">
+                            <label for="divisi_id">Division</label>
+                            <select class="tom-select-class" name="divisi_id" id="divisi_id">
+                                <option value="" disabled selected>- select division -</option>
+                                @foreach ($divisi as $item)
+                                    <option value="{{ $item->id }}" @selected($item->id == $divisi_id)>
+                                        {{ $item->code }} ({{ $item->name }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('fund.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="filterForm" class="btn btn-gradient-primary">Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Filter -->
 
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

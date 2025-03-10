@@ -42,6 +42,12 @@
                                     value="{{ $budget_absorption->description }}">
                             </div> --}}
                             <div class="form-group">
+                                <label for="value" class="required">Value (IDR)</label>
+                                <input type="number" min="0" class="form-control" id="value" name="value"
+                                    placeholder="input activity value" autocomplete="off" required
+                                    value="{{ $budget_absorption->value }}">
+                            </div>
+                            <div class="form-group">
                                 <label for="activity_date" class="required">Activity Date</label>
                                 <input type="date" min="0" class="form-control" id="activity_date"
                                     name="activity_date" autocomplete="off" value="{{ $budget_absorption->activity_date }}">
@@ -50,12 +56,6 @@
                                 <label for="paid_date">Paid Date <span class="text-info">(optional)</span></label>
                                 <input type="date" min="0" class="form-control" id="paid_date" name="paid_date"
                                     autocomplete="off" value="{{ $budget_absorption->paid_date }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="value" class="required">Activity Value (IDR)</label>
-                                <input type="number" min="0" class="form-control" id="value" name="value"
-                                    placeholder="input activity value" autocomplete="off" required
-                                    value="{{ $budget_absorption->value }}">
                             </div>
                             <div class="form-group">
                                 <label for="po_number_sap">PO Number SAP <span class="text-info">(optional)</span></label>

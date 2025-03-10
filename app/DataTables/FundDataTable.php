@@ -14,6 +14,21 @@ use Yajra\DataTables\Services\DataTable;
 
 class FundDataTable extends DataTable
 {
+    protected $divisi_id;
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -45,6 +60,12 @@ class FundDataTable extends DataTable
         $query = $model->with([
             'divisi',
         ])->newQuery();
+
+        // Filter
+        if($this->divisi_id != null)
+        {
+            $query->where('divisi_id', $this->divisi_id);
+        }
 
         return $query;
     }
@@ -90,6 +111,6 @@ class FundDataTable extends DataTable
 
     protected function filename(): string
     {
-        return date('Ymd') . '_Data Fund Source';
+        return date('Ymd') . '_Data Fund';
     }
 }

@@ -20,14 +20,14 @@
                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button>
-                            <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#success-modal"
+                            {{-- <button type="button" title="Filter" data-bs-toggle="modal" data-bs-target="#success-modal"
                                 class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-filter"></i>
                             </button>
                             <button type="button" title="Import" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="mdi mdi-file-import"></i>
-                            </button>
+                            </button> --}}
                             <button type="button" title="Export to Excel" data-bs-toggle="modal"
                                 data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
@@ -61,7 +61,7 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="project_id">Project</label>
+                            <label for="project_id" class="required">Project</label>
                             <select class="tom-select-class" name="project_id" id="project_id" required>
                                 <option value="{{ $project->id }}">
                                     {{ $project->name ?? '-' }} ({{ $project->fund_source->fund->name ?? '-' }} -
@@ -70,7 +70,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="name">Activity Name</label>
+                            <label for="name" class="required">Activity Name</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 placeholder="input activity name" autocomplete="off" required>
                         </div>
@@ -80,32 +80,32 @@
                                 placeholder="input project description" autocomplete="off" required>
                         </div> --}}
                         <div class="form-group">
-                            <label for="value">Value (IDR)</label>
+                            <label for="value" class="required">Value (IDR)</label>
                             <input type="number" min="0" class="form-control" id="value" name="value"
                                 placeholder="input activity value" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="activity_date">Activity Date</label>
+                            <label for="activity_date" class="required">Activity Date</label>
                             <input type="date" min="0" class="form-control" id="activity_date"
                                 name="activity_date" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="paid_date">Paid Date</label>
+                            <label for="paid_date">Paid Date <span class="text-info">(optional)</span></label>
                             <input type="date" min="0" class="form-control" id="paid_date" name="paid_date"
                                 autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <label for="po_number_sap">PO Number SAP</label>
+                            <label for="po_number_sap">PO Number SAP <span class="text-info">(optional)</span></label>
                             <input type="number" min="1" class="form-control" id="po_number_sap"
                                 name="po_number_sap" placeholder="input PO number SAP" autocomplete="off">
                         </div>
                         <div class="form-group">
-                            <label for="attachment">Attachment Document</label>
+                            <label for="attachment">Attachment Document <span class="text-info">(optional)</span></label>
                             <input type="file" class="form-control" id="attachment" name="attachment"
                                 accept="application/pdf">
                         </div>
                         <div class="form-group">
-                            <label for="status">Status</label>
+                            <label for="status" class="required">Status</label>
                             <select class="tom-select-class" name="status" id="status" required>
                                 <option value="" disabled selected>- select status -</option>
                                 <option value="Planned">Planned</option>
