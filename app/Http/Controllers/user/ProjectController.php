@@ -40,8 +40,7 @@ class ProjectController extends Controller
             'project_id' => 'nullable',
             'departemen_id' => 'nullable',
             'type' => 'nullable',
-            'start_date' => 'nullable',
-            'end_date' => 'nullable',
+            'status_budgeting_id' => 'nullable',
             'year' => 'nullable',
         ]);
 
@@ -49,12 +48,14 @@ class ProjectController extends Controller
         $project_id = $request->project_id ?? null;
         $departemen_id = $request->departemen_id ?? null;
         $type = $request->type ?? null;
-        $start_date = $request->start_date ?? null;
-        $end_date = $request->end_date ?? $start_date;
+        $status_budgeting_id = $request->status_budgeting_id ?? null;
         $this_year = $request->year ?? date('Y');
 
 
-        $fund_source = FundSource::orderBy('year', 'DESC')->orderBy('created_at', 'DESC')->get();
+        $fund_source = FundSource::where('year', $this_year)
+                    ->orderBy('year', 'DESC')
+                    ->orderBy('created_at', 'DESC')
+                    ->get();
         $relasi_struktur = RelasiStruktur::all();
         $departemen = Departemen::all();
         $perusahaan = Perusahaan::all();
@@ -65,8 +66,7 @@ class ProjectController extends Controller
             'fund_source_id' => $fund_source_id,
             'departemen_id' => $departemen_id,
             'type' => $type,
-            'start_period' => $start_date,
-            'end_period' => $end_date,
+            'status_budgeting_id' => $status_budgeting_id,
             'year' => $this_year,
         ])->render('pages.user.project.index', compact([
             'fund_source',
@@ -77,8 +77,7 @@ class ProjectController extends Controller
             'fund_source_id',
             'departemen_id',
             'type',
-            'start_date',
-            'end_date',
+            'status_budgeting_id',
             'years',
             'this_year',
         ]));
@@ -93,12 +92,13 @@ class ProjectController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            // 'description' => 'required|string',
             'fund_source_id' => 'required|numeric',
-            'start_period' => 'required|date',
-            'end_period' => 'required|date',
+            // 'description' => 'required|string',
+            // 'start_period' => 'required|date',
+            // 'end_period' => 'required|date',
             'departemen_id' => 'required|numeric|min:1',
             'perusahaan_id' => 'required|numeric|min:1',
+            'value' => 'required|numeric|min:1',
             'status_budgeting_id' => 'required|numeric',
         ]);
 
@@ -157,12 +157,13 @@ class ProjectController extends Controller
         $data = Project::findOrFail($request->id);
         $rawData = $request->validate([
             'name' => 'required|string',
-            // 'description' => 'required|string',
             'fund_source_id' => 'required|numeric',
-            'start_period' => 'required|date',
-            'end_period' => 'required|date',
+            // 'description' => 'required|string',
+            // 'start_period' => 'required|date',
+            // 'end_period' => 'required|date',
             'departemen_id' => 'required|numeric|min:1',
             'perusahaan_id' => 'required|numeric|min:1',
+            'value' => 'required|numeric|min:1',
             'status_budgeting_id' => 'required|numeric',
         ]);
 

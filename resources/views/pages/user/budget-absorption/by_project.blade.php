@@ -38,6 +38,25 @@
                                 <i class="mdi mdi-file-tree"></i>
                             </button>
                         </div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bolder">Project Value</td>
+                                    <td>:</td>
+                                    <td>{{ $project_value }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bolder">Absorbed Budget</td>
+                                    <td>:</td>
+                                    <td>{{ $absorbed_budget }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bolder">Remaining Budget</td>
+                                    <td>:</td>
+                                    <td>{{ $remaining_budget }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
                         </div>

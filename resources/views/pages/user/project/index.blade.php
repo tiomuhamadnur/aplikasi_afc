@@ -48,16 +48,6 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="name" class="required">Project Name</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                placeholder="input project name" autocomplete="off" required>
-                        </div>
-                        {{-- <div class="form-group">
-                            <label for="description">Description</label>
-                            <input type="text" class="form-control" id="description" name="description"
-                                placeholder="input project description" autocomplete="off" required>
-                        </div> --}}
-                        <div class="form-group">
                             <label for="fund_source_id" class="required">Fund Source</label>
                             <select class="tom-select-class" name="fund_source_id" id="fund_source_id" required>
                                 <option value="" disabled selected>- select fund source -</option>
@@ -69,6 +59,21 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="name" class="required">Project Name</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="input project name" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="value" class="required">Value (IDR)</label>
+                            <input type="number" class="form-control" id="value" name="value"
+                                placeholder="input project value" min="1" autocomplete="off" required>
+                        </div>
+                        {{-- <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" name="description"
+                                placeholder="input project description" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
                             <label for="start_period" class="required">Start Period</label>
                             <input type="date" class="form-control" id="start_period" name="start_period"
                                 placeholder="Start Period" autocomplete="off" required>
@@ -77,7 +82,7 @@
                             <label for="end_period" class="required">End Period</label>
                             <input type="date" class="form-control" id="end_period" name="end_period"
                                 placeholder="End Period" autocomplete="off" required>
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="departemen_id" class="required">Project Owner</label>
                             <select class="tom-select-class" name="departemen_id" id="departemen_id" required>
@@ -144,7 +149,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="departemen_id">Department</label>
+                            <label for="departemen_id">Project Owner</label>
                             <select class="tom-select-class" name="departemen_id" id="departemen_id">
                                 <option value="" selected disabled>- select department -</option>
                                 @foreach ($departemen as $item)
@@ -160,6 +165,15 @@
                                 <option value="" selected disabled>- select type -</option>
                                 <option value="capex" @selected($type === 'capex')>Capex</option>
                                 <option value="opex" @selected($type === 'opex')>Opex</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status_budgeting_id">Status</label>
+                            <select class="tom-select-class" name="status_budgeting_id" id="status_budgeting_id">
+                                <option value="" selected disabled>- select status -</option>
+                                @foreach ($status_budgeting as $item)
+                                    <option value="{{ $item->id }}" @selected($item->id == $status_budgeting_id)>{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         {{-- <div class="form-group">

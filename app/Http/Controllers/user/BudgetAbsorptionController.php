@@ -109,8 +109,11 @@ class BudgetAbsorptionController extends Controller
 
     public function edit(string $uuid)
     {
+        $this_year = Carbon::now()->year;
         $budget_absorption = BudgetAbsorption::where('uuid', $uuid)->firstOrFail();
-        $project = Project::all();
+        $project = auth()->user()->role_id == 1
+                ? Project::all()
+                : Project::whereRelation('fund_source', 'year', '=', $this_year)->get();
 
         return view('pages.user.budget-absorption.edit', compact(['budget_absorption', 'project']));
     }
@@ -174,13 +177,24 @@ class BudgetAbsorptionController extends Controller
         $start_date = $request->start_date ?? null;
         $end_date = $request->end_date ?? $start_date;
 
+        $project_value = RupiahFormat::currency($project->value);
+        $absorbed_budget = RupiahFormat::currency(BudgetAbsorption::where('project_id',  $project->id)->sum('value'));
+        $remaining_budget = RupiahFormat::currency($project->value - BudgetAbsorption::where('project_id',  $project->id)->sum('value'));
+
         return $dataTable
             ->with([
                 'project_id' => $project->id,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
             ])
-            ->render('pages.user.budget-absorption.by_project', compact(['project', 'start_date', 'end_date']));
+            ->render('pages.user.budget-absorption.by_project', compact([
+                'project',
+                'project_value',
+                'absorbed_budget',
+                'remaining_budget',
+                'start_date',
+                'end_date',
+            ]));
     }
 
     public function check_fund_source_budget($fund_source_id, $value)

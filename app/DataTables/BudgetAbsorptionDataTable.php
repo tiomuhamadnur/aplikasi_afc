@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\BudgetAbsorption;
+use App\Models\Project;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Laraindo\RupiahFormat;
@@ -77,6 +78,10 @@ class BudgetAbsorptionDataTable extends DataTable
         ->addColumn('rka', function($item) {
             return RupiahFormat::currency($item->project->fund_source->balance);
         })
+        ->addColumn('project_value', function($item) {
+            $project_value = Project::findOrFail(  $item->project->id)->value;
+            return RupiahFormat::currency($project_value);
+        })
         ->addColumn('value', function($item) {
             return RupiahFormat::currency($item->value);
         })
@@ -124,7 +129,7 @@ class BudgetAbsorptionDataTable extends DataTable
             $query->whereBetween('activity_date', [$this->start_date, $this->end_date]);
         }
 
-        return $query;
+        return $query->orderBy('activity_date', 'DESC');
     }
 
     public function html(): HtmlBuilder
@@ -136,7 +141,7 @@ class BudgetAbsorptionDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     ->dom('frtiplB')
-                    ->orderBy([13, 'desc'])
+                    // ->orderBy([14, 'desc'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -158,21 +163,22 @@ class BudgetAbsorptionDataTable extends DataTable
                     ->printable(false)
                     ->width(60)
                     ->addClass('text-center'),
-            Column::make('project.fund_source.fund.code')->title('Fund'),
-            Column::make('project.fund_source.fund.type')->title('Type'),
-            Column::computed('rka')->title('RKA Budget'),
-            Column::make('project.name')->title('Project Name'),
-            Column::make('name')->title('Activity Name'),
+            Column::make('project.fund_source.fund.code')->title('Fund')->sortable(false),
+            Column::computed('rka')->title('RKA Budget')->sortable(false),
+            Column::make('project.fund_source.fund.type')->title('Type')->sortable(false),
+            Column::make('project.name')->title('Project Name')->sortable(false),
+            Column::computed('project_value')->title('Project value')->sortable(false),
+            Column::make('name')->title('Activity Name')->sortable(false),
             // Column::make('description')->title('Description'),
-            Column::computed('value')->title('Activity Value'),
-            Column::make('activity_date')->sortable(true)->title('Activity Date'),
-            Column::make('paid_date')->title('Paid Date'),
-            Column::make('po_number_sap')->title('PO Number SAP'),
-            Column::make('project.departemen.code')->title('Department'),
-            Column::make('status')->title('Status'),
+            Column::computed('value')->title('Activity Value')->sortable(false),
+            Column::make('activity_date')->sortable(true)->title('Activity Date')->sortable(false),
+            Column::make('paid_date')->title('Paid Date')->sortable(false),
+            Column::make('po_number_sap')->title('PO Number SAP')->sortable(false),
+            Column::make('project.departemen.code')->title('Department')->sortable(false),
+            Column::make('status')->title('Status')->sortable(false),
             // Column::make('termin')->title('Termin'),
-            Column::make('user.name')->title('Updated By'),
-            Column::make('updated_at')->title('Updated At'),
+            Column::make('user.name')->title('Updated By')->sortable(false),
+            Column::make('updated_at')->title('Updated At')->sortable(false),
         ];
     }
 

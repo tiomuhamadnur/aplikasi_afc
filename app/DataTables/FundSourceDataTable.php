@@ -39,7 +39,7 @@ class FundSourceDataTable extends DataTable
         ->addColumn('#', function($item) {
             $editButton = "<button type='button' title='Edit'
                 class='btn btn-gradient-warning btn-rounded btn-icon'
-                data-bs-toggle='Buttonmodal' data-bs-target='#editButtonModal'
+                data-bs-toggle='modal' data-bs-target='#editModal'
                 data-id='{$item->id}'
                 data-fund_id='{$item->fund_id}'
                 data-balance='{$item->balance}'
@@ -127,15 +127,15 @@ class FundSourceDataTable extends DataTable
                     ->printable(false)
                     ->width(60)
                     ->addClass('text-center'),
-            Column::make('fund.code')->title('Fund Code'),
-            Column::make('fund.type')->title('Type'),
-            Column::make('fund.name')->title('Fund Name'),
+            Column::make('fund.code')->title('Fund Code')->sortable(true),
+            Column::make('fund.type')->title('Type')->sortable(false),
+            Column::make('fund.name')->title('Fund Name')->sortable(false),
             Column::computed('balance')->title('Total Balance'),
             Column::computed('used_balance')->title('Used Balance'),
             Column::computed('remaining_balance')->title('Remaining Balance'),
             // Column::make('start_period')->title('Start Period'),
             // Column::make('end_period')->title('End Period'),
-            Column::make('year')->title('Year'),
+            Column::make('year')->title('Year')->sortable(false),
             Column::make('user.name')->sortable(false)->title('Updated By'),
             Column::make('updated_at')->sortable(true)->title('Updated At'),
         ];

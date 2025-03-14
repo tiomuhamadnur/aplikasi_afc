@@ -23,7 +23,7 @@
                                     @foreach ($project as $item)
                                         <option value="{{ $item->id }}"
                                             @if ($item->id == $budget_absorption->project_id) selected @endif>
-                                            {{ $item->name ?? '-' }} ({{ $item->fund_source->fund->name ?? '-' }} -
+                                            Tahun {{ $item->fund_source->year ?? '-' }} - Project {{ $item->name ?? '-' }} (Fund {{ $item->fund_source->fund->name ?? '-' }} -
                                             {{ $item->fund_source->fund->code ?? '-' }})
                                         </option>
                                     @endforeach
@@ -88,7 +88,7 @@
                                 </select>
                             </div>
                             <div class="form-group d-flex justify-content-end">
-                                <a href="{{ route('project.show', $budget_absorption->project->uuid) }}" type="button"
+                                <a href="{{ route('budget-absorption.by_project.show', $budget_absorption->project->uuid) }}" type="button"
                                     class="btn btn-secondary">Cancel</a>
                                 <button type="submit" form="editForm" class="btn btn-primary">Update</button>
                             </div>

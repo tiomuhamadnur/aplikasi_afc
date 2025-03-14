@@ -120,7 +120,7 @@
                         </div>
                         <div class="form-group">
                             <label for="balance" class="required">Balance (IDR)</label>
-                            <input type="number" min="0" class="form-control" id="balance_edit" name="balance"
+                            <input type="number" min="1" class="form-control" id="balance_edit" name="balance"
                                 placeholder="Input Balance" autocomplete="off" required>
                         </div>
                     </form>
