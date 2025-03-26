@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looker Report Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+        }
+
+        iframe {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 8px;
+            transition: background 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        button:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .countdown {
+            color: white;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            /* Countdown disembunyikan saat OFF */
+        }
+    </style>
+</head>
+
+<body>
+
+    <iframe id="lookerFrame"
+        src="https://lookerstudio.google.com/embed/reporting/36c8410c-3ad2-4430-8d01-d40bcd2bab9c/page/lQlEF"
+        allowfullscreen></iframe>
+
+    <div class="controls">
+        <button id="prev">❮</button>
+        <button id="toggleAuto">Auto: ON</button>
+        <button id="next">❯</button>
+        <div class="countdown" id="countdownTimer">60s</div>
+    </div>
+
+    <script>
+        const pages = [
+            "https://lookerstudio.google.com/embed/reporting/36c8410c-3ad2-4430-8d01-d40bcd2bab9c/page/lQlEF",
+            "https://lookerstudio.google.com/embed/reporting/36c8410c-3ad2-4430-8d01-d40bcd2bab9c/page/p_gomj7d1xqd"
+        ];
+
+        let currentIndex = 0;
+        let autoSlide = true;
+        let countdown = 60;
+        let countdownInterval;
+        const iframe = document.getElementById("lookerFrame");
+        const toggleButton = document.getElementById("toggleAuto");
+        const countdownTimer = document.getElementById("countdownTimer");
+
+        function changePage(index) {
+            iframe.style.opacity = "0"; // Fade out
+            setTimeout(() => {
+                iframe.src = pages[index];
+                iframe.onload = () => {
+                    iframe.style.opacity = "1"; // Fade in
+                };
+            }, 500);
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            if (autoSlide) {
+                countdownTimer.style.display = "block"; // Tampilkan countdown
+                countdown = 60;
+                updateCountdown();
+                countdownInterval = setInterval(() => {
+                    countdown--;
+                    updateCountdown();
+                    if (countdown <= 0) {
+                        currentIndex = (currentIndex + 1) % pages.length;
+                        changePage(currentIndex);
+                        countdown = 60;
+                    }
+                }, 1000);
+            }
+        }
+
+        function stopAutoSlide() {
+            clearInterval(countdownInterval);
+            countdownTimer.style.display = "none"; // Sembunyikan countdown
+        }
+
+        function resetAutoSlide() {
+            stopAutoSlide();
+            clearTimeout(timeoutReset);
+            timeoutReset = setTimeout(() => {
+                if (autoSlide) startAutoSlide();
+            }, 60000); // Auto-slide aktif lagi setelah 1 menit
+        }
+
+        function updateCountdown() {
+            countdownTimer.textContent = `${countdown}s`;
+        }
+
+        document.getElementById("prev").addEventListener("click", () => {
+            currentIndex = (currentIndex - 1 + pages.length) % pages.length;
+            changePage(currentIndex);
+            resetAutoSlide();
+        });
+
+        document.getElementById("next").addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % pages.length;
+            changePage(currentIndex);
+            resetAutoSlide();
+        });
+
+        toggleButton.addEventListener("click", () => {
+            autoSlide = !autoSlide;
+            toggleButton.textContent = `Auto: ${autoSlide ? "ON" : "OFF"}`;
+            if (autoSlide) {
+                startAutoSlide();
+            } else {
+                stopAutoSlide();
+            }
+        });
+
+        // Auto-start setelah load
+        window.onload = () => {
+            setTimeout(startAutoSlide, 2000);
+        };
+    </script>
+
+</body>
+
+</html>

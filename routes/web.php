@@ -21,6 +21,7 @@ use App\Http\Controllers\admin\FunctionalLocationController;
 use App\Http\Controllers\admin\FundController;
 use App\Http\Controllers\admin\FundSourceController;
 use App\Http\Controllers\admin\GenderController;
+use App\Http\Controllers\admin\GoogleSpreadsheetController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
 use App\Http\Controllers\admin\OptionFormController;
@@ -54,6 +55,7 @@ use App\Http\Controllers\user\BudgetAbsorptionController;
 use App\Http\Controllers\user\ChecksheetController;
 use App\Http\Controllers\user\DashboardBudgetController;
 use App\Http\Controllers\user\GangguanController;
+use App\Http\Controllers\user\GangguanLMController;
 use App\Http\Controllers\user\LCUChecklistController;
 use App\Http\Controllers\user\LogAfcController;
 use App\Http\Controllers\user\MonitoringEquipmentController;
@@ -113,6 +115,11 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
         Route::put('/profile/change-password', 'change_password')->name('profile.change_password');
     });
 
+    Route::controller(GoogleSpreadsheetController::class)->group(function () {
+        Route::get('/google', 'index')->name('google.index');
+        Route::post('/google/store', 'store')->name('google.looker.sync');
+    });
+
     Route::controller(TransaksiBarangController::class)->group(function () {
         Route::get('/transaksi-barang', 'index')->name('transaksi-barang.index');
         Route::post('/transaksi-barang', 'store')->name('transaksi-barang.store');
@@ -136,6 +143,17 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
 
         Route::get('/gangguan/filter', 'filter')->name('gangguan.filter');
         Route::get('/gangguan/trend/monthly', 'trend_monthly')->name('gangguan.trend.monthly');
+    });
+
+    Route::controller(GangguanLMController::class)->group(function () {
+        Route::get('/gangguan-lm', 'index')->name('gangguan.lm.index');
+        Route::get('/gangguan-lm/create', 'create')->name('gangguan.lm.create');
+        Route::post('/gangguan-lm', 'store')->name('gangguan.lm.store');
+        Route::get('/gangguan-lm/{uuid}/edit', 'edit')->name('gangguan.lm.edit');
+        Route::get('/gangguan-lm/{uuid}/show', 'show')->name('gangguan.lm.show');
+        Route::post('/gangguan-lm/import', 'import')->name('gangguan.lm.import');
+        Route::put('/gangguan-lm', 'update')->name('gangguan.lm.update');
+        Route::delete('/gangguan-lm', 'destroy')->name('gangguan.lm.delete');
     });
 
     Route::controller(TransGangguanRemedyController::class)->group(function () {
@@ -577,6 +595,10 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
 Route::controller(MonitoringEquipmentController::class)->group(function () {
     Route::get('/monitoring-equipment/store', 'store')->name('monitoring-equipment.store');
     Route::get('/client-monitoring-equipment', 'client_index')->name('client.monitoring-equipment.index');
+});
+
+Route::controller(DashboardController::class)->group(function () {
+    Route::get('/dashboard-public', 'public')->name('dashboard.public.index');
 });
 
 // Route::get('/send-message', function (Request $request) {

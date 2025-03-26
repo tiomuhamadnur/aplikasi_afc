@@ -428,9 +428,9 @@ class DashboardController extends Controller
         return $availability;
     }
 
-    public function show(string $id)
+    public function public()
     {
-        //
+        return view('pages.public.dashboard.index');
     }
 
     public function edit(string $id)

@@ -38,6 +38,12 @@
                                 data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
+                            @if (auth()->user()->role_id == 1)
+                                <button type="button" title="Sync Data to Looker" data-bs-toggle="modal"
+                                    data-bs-target="#syncLookerModal" class="btn btn-outline-primary btn-rounded btn-icon">
+                                    <i class="mdi mdi-sync"></i>
+                                </button>
+                            @endif
                         </div>
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
@@ -401,6 +407,35 @@
         </div>
     </div>
     <!-- End Export Excel Modal -->
+
+    <!-- Sync Looker Modal -->
+    <div class="modal fade" id="syncLookerModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Looker.svg/768px-Looker.svg.png?20210222181719"
+                            alt="Excel" style="height: 110px;">
+                    </div>
+                    <form class="hidden" id="syncLooker" action="{{ route('google.looker.sync') }}" method="POST">
+                        @csrf
+                        @method('POST')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="syncLooker"
+                        class="btn btn-gradient-success me-2">Sync Looker</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Sync Looker Modal -->
 @endsection
 
 @push('scripts')

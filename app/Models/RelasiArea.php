@@ -24,6 +24,16 @@ class RelasiArea extends Model
         });
     }
 
+    public function scopeLintas($query)
+    {
+        return $query->where('lokasi_id', 4); // lokasi_id 4 = Lintas
+    }
+
+    public function scopeLine($query)
+    {
+        return $query->where('lokasi_id', 5); // lokasi_id 5 = line
+    }
+
     public function lokasi()
     {
         return $this->belongsTo(Lokasi::class);

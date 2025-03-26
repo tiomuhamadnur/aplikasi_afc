@@ -171,7 +171,7 @@
                 },
                 colors: colors,
                 title: {
-                    text: 'Penyerapan Anggaran Tiap Fund (Div. {{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})',
+                    text: 'Penyerapan Anggaran Tiap Fund (Dept. {{ auth()->user()->relasi_struktur->departemen->code ?? 'N/A' }})',
                     align: 'left',
                 },
                 xAxis: {

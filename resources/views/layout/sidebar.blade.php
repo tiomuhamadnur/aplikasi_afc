@@ -21,10 +21,26 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('gangguan.index') }}">
+            <a class="nav-link" data-bs-toggle="collapse" href="#gangguan" aria-expanded="false"
+                aria-controls="budgeting">
                 <span class="menu-title">Failure Report</span>
-                <i class="mdi mdi-receipt menu-icon"></i>
+                <i class="menu-arrow"></i>
+                <i class="mdi mdi-alert menu-icon"></i>
             </a>
+            <div class="collapse" id="gangguan">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('gangguan.index') }}">
+                            Failure Report Ticketing
+                        </a>
+                    </li>
+                    {{-- <li class="nav-item">
+                        <a class="nav-link" href="{{ route('gangguan.lm.index') }}">
+                            Failure Report LM
+                        </a>
+                    </li> --}}
+                </ul>
+            </div>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('lcu-checklist.index') }}">
