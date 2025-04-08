@@ -209,7 +209,7 @@ class GoogleSpreadsheetController extends Controller
                 'Fund Name'         => $item->fund->name ?? '',
                 'Type'              => $item->fund->type ?? '',
                 'Fund Source Value' => $item->balance ?? 0,
-                'Absorbed Value'    => $absorbedValue - $plannedValue,
+                'Absorbed Value'    => $absorbedValue,
                 'Planned Value'     => $plannedValue,
                 'Remaining Value'   => $item->balance - ($absorbedValue + $plannedValue),
                 'Year'              => $item->year ?? '',
