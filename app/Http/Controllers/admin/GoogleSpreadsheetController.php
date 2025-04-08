@@ -194,8 +194,8 @@ class GoogleSpreadsheetController extends Controller
             $projects = $item->project;
 
             $absorbedValue = $projects->flatMap(function ($project) {
-                return $project->budget_absorption ?? collect();
-            })->whereNot('status', 'Planned')->sum('value');
+                return $project->budget_absorption->whereNot('status', 'Planned') ?? collect();
+            })->sum('value');
 
             $plannedValue = $projects->flatMap(function ($project) {
                 return $project->budget_absorption
