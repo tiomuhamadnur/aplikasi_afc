@@ -118,6 +118,7 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
     Route::controller(GoogleSpreadsheetController::class)->group(function () {
         Route::get('/google', 'index')->name('google.index');
         Route::post('/google/store', 'store')->name('google.looker.sync');
+        Route::post('/google/store-budgeting', 'store_budgeting')->name('google.looker.sync.budgeting');
     });
 
     Route::controller(TransaksiBarangController::class)->group(function () {

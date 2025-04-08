@@ -14,9 +14,16 @@
                             Divisi {{ auth()->user()->relasi_struktur->divisi->name ?? 'N/A' }}
                             ({{ auth()->user()->relasi_struktur->divisi->code ?? 'N/A' }})
                         </h3>
-                        <h4>{{ $today }} <button data-bs-toggle="modal" data-bs-target="#evaluasiModal" class="bg-gradient-primary text-white" title="Pilih tanggal evaluasi">
-                            <i class="mdi mdi-calendar"></i>
+                        <h4>{{ $today }} <button data-bs-toggle="modal" data-bs-target="#evaluasiModal"
+                                class="btn btn-gradient-primary text-white" title="Pilih tanggal evaluasi">
+                                <i class="mdi mdi-calendar"></i>
                             </button>
+                            @if (auth()->user()->role_id == 1)
+                                <button title="Sync Data to Looker" data-bs-toggle="modal" data-bs-target="#syncLookerModal"
+                                    class="btn btn-gradient-success text-white">
+                                    <i class="mdi mdi-sync"></i>
+                                </button>
+                            @endif
                         </h4>
                     </div>
                 </div>
@@ -26,7 +33,8 @@
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card card-img-holder mrt-orange text-white">
                     <div class="card-body">
-                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute"
+                            alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Anggaran
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
@@ -39,7 +47,8 @@
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card mrt-blue card-img-holder text-white">
                     <div class="card-body">
-                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute"
+                            alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Penyerapan <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
                         <h3 class="mb-3">{{ $used_balance }}</h3>
@@ -51,7 +60,8 @@
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card mrt-green card-img-holder text-white">
                     <div class="card-body">
-                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute"
+                            alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Proyeksi
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
@@ -64,7 +74,8 @@
             <div class="col-md-3 stretch-card grid-margin">
                 <div class="card mrt-grey card-img-holder text-white">
                     <div class="card-body">
-                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image">
+                        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute"
+                            alt="circle-image">
                         <h4 class="font-weight-normal mb-3">Sisa
                             <i class="mdi mdi-database mdi-24px float-right"></i>
                         </h4>
@@ -121,10 +132,10 @@
                         <div class="form-group">
                             <label for="start_date" class="required">Pilih Periode</label>
                             <div class="input-group">
-                                <input type="date" class="form-control" placeholder="Start Date"
-                                    name="start_date" autocomplete="off" value="{{ $start_date ?? null }}">
-                                <input type="date" class="form-control" placeholder="End Date"
-                                    name="end_date" autocomplete="off" value="{{ $end_date ?? null }}">
+                                <input type="date" class="form-control" placeholder="Start Date" name="start_date"
+                                    autocomplete="off" value="{{ $start_date ?? null }}">
+                                <input type="date" class="form-control" placeholder="End Date" name="end_date"
+                                    autocomplete="off" value="{{ $end_date ?? null }}">
                             </div>
                         </div>
                     </form>
@@ -138,6 +149,35 @@
         </div>
     </div>
     <!-- End Evaluasi Modal -->
+
+
+    <!-- Sync Looker Modal -->
+    <div class="modal fade" id="syncLookerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Looker.svg/768px-Looker.svg.png?20210222181719"
+                            alt="Excel" style="height: 110px;">
+                    </div>
+                    <form class="hidden" id="syncLooker" action="{{ route('google.looker.sync.budgeting') }}"
+                        method="POST">
+                        @csrf
+                        @method('POST')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="syncLooker" class="btn btn-gradient-success me-2">Sync Looker</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Sync Looker Modal -->
 @endsection
 
 @section('javascript')
@@ -284,9 +324,10 @@
                     categories: categoriesFund,
                     labels: {
                         formatter: function() {
-                            return '<span title="' + namesFund[this.pos] + '">' + this.value + '</span>';
+                            return '<span title="' + namesFund[this.pos] + '">' + this.value +
+                            '</span>';
                         },
-                        useHTML: true,  // Memastikan HTML digunakan untuk menampilkan nama fund saat dihover
+                        useHTML: true, // Memastikan HTML digunakan untuk menampilkan nama fund saat dihover
                     },
                     tooltip: {
                         // Menggunakan pointFormatter untuk menampilkan tooltip yang lebih terstruktur
