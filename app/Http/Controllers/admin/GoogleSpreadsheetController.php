@@ -150,7 +150,7 @@ class GoogleSpreadsheetController extends Controller
 
         if ($rows->isEmpty()) {
             // return response()->json(['message' => 'Google Sheet is empty or not found'], 404);
-            return redirect()->route('project.index')->withNotifyerror('Google Sheet is empty or not found');
+            return redirect()->route('dashboard-budget.index')->withNotifyerror('Google Sheet is empty or not found');
         }
 
         // Ambil hanya header (baris pertama)
@@ -220,7 +220,7 @@ class GoogleSpreadsheetController extends Controller
             Sheets::spreadsheet($spreadsheetId)->sheet($sheetName)->append($fund_source_array);
         }
 
-        return redirect()->route('project.index')->withNotify('Data Synced to Looker Successfully.');
+        return redirect()->route('dashboard-budget.index')->withNotify('Data Synced to Looker Successfully.');
     }
 
     public function edit(string $id)
