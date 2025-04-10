@@ -24,12 +24,12 @@ class LCUChecklistController extends Controller
     public function index(LCUChecklistDataTable $dataTable, Request $request)
     {
         $request->validate([
-            'start_date' => 'nullable',
-            'end_date' => 'nullable',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        $start_date = $request->start_date ?? Carbon::now()->format('Y-m-d');
-        $end_date = $request->end_date ?? $start_date;
+        $start_date = $request->start_date ? Carbon::parse($request->start_date)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+        $end_date = $request->end_date ? Carbon::parse($request->end_date)->format('Y-m-d') : $start_date;
 
         $today = Carbon::now()->format('Y-m-d');
 
