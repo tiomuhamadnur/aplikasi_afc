@@ -93,11 +93,8 @@ class TransaksiTiketController extends Controller
                 }
 
                 // Filter berdasarkan type (jika ada)
-                if ($type) {
-                    $filenameType = substr($filename, -8, 6); // Ambil 'Paid' atau 'UnPaid' dari nama file
-                    if ($filenameType !== $type) {
-                        continue;
-                    }
+                if ($type && !Str::endsWith($filename, "{$type}.ini")) {
+                    continue;
                 }
 
                 // Ambil isi file jika lolos filter
