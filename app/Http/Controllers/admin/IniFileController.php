@@ -4,22 +4,24 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class IniFileController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $results = [];
+        return view('pages.admin.ini-file.index', compact('results'));
     }
 
     public function update(Request $request)
     {
         $request->validate([
-            'filename'      => 'required|string',
-            'mandiri_pin'   => 'required|string',
-            'bni_mc'        => 'required|string',
+            'filename' => 'required|string',
+            'mandiri_pin' => 'required|string',
+            'bni_mc' => 'required|string',
         ]);
 
         $disk = Storage::disk('sftp');
@@ -62,12 +64,12 @@ class IniFileController extends Controller
             'filename' => $filename,
             'updated' => [
                 'Mandiri.pin' => $mandiri_pin,
-                'BNI.mc'      => $bni_mc,
-            ]
+                'BNI.mc' => $bni_mc,
+            ],
         ]);
     }
 
-    public function ini_file(Request $request)
+    public function store(Request $request)
     {
         // Validasi parameter
         $request->validate([
@@ -138,6 +140,7 @@ class IniFileController extends Controller
             }
         }
 
-        return response()->json($results);
+        // return response()->json($results);
+        return view('pages.admin.ini-file.index', compact($results));
     }
 }

@@ -581,6 +581,7 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
 
         Route::controller(IniFileController::class)->group(function () {
             Route::get('/ini-file', 'index')->name('ini-file.index');
+            Route::post('/ini-file', 'store')->name('ini-file.store');
             Route::put('/ini-file', 'update')->name('ini-file.update');
             Route::get('/test-sftp', 'ini_file');
         });
