@@ -68,7 +68,7 @@ class TransaksiTiketController extends Controller
         foreach ($allFiles as $file) {
             $filename = basename($file);
 
-            // Filter hanya file dengan ekstensi .ini
+            // Filter hanya file .ini
             if (!Str::endsWith($filename, '.ini')) {
                 continue;
             }
@@ -76,14 +76,16 @@ class TransaksiTiketController extends Controller
             // Ambil isi file
             $fileContent = Storage::disk('sftp')->get($file);
 
-            // Pastikan isinya valid JSON
+            // Decode JSON
             $json = json_decode($fileContent, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                continue; // skip jika bukan JSON valid
+                continue;
             }
 
-            // Simpan isi asli (bukan path, bukan nama saja)
-            $results[] = $json;
+            // Tempel actual_filename di awal
+            $finalData = ['actual_filename' => $filename] + $json;
+
+            $results[] = $finalData;
         }
 
         return response()->json($results);
