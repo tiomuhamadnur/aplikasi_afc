@@ -141,6 +141,6 @@ class IniFileController extends Controller
         }
 
         // return response()->json($results);
-        return view('pages.admin.ini-file.index', compact($results));
+        return view('pages.admin.ini-file.index', compact('results'));
     }
 }
