@@ -140,6 +140,10 @@ class IniFileController extends Controller
             }
         }
 
+        if (empty($results)) {
+            return redirect()->route('ini-file.index')->withNotifyerror('Data .ini file tidak ditemukan');
+        }
+
         // return response()->json($results);
         return view('pages.admin.ini-file.index', compact('results'));
     }
