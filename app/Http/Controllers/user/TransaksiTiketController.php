@@ -54,27 +54,29 @@ class TransaksiTiketController extends Controller
 
     public function ini_file(Request $request)
     {
-        // Validasi parameter (semuanya nullable)
+        // Validasi parameter
         $request->validate([
             'station_code' => 'nullable|string',
             'asset_code' => 'nullable|string',
-            'type' => 'nullable|in:Paid,UnPaid', // Validasi type hanya bisa 'Paid' atau 'UnPaid'
+            'type' => 'nullable|in:Paid,UnPaid',
         ]);
-
-        $directory = '/AG_System/Install/AINO/ini';
-        $allFiles = Storage::disk('sftp')->allFiles($directory);
 
         $station_code = $request->station_code;
         $asset_code = $request->asset_code;
-        $type = $request->type; // Bisa null atau 'Paid'/'UnPaid'
+        $type = $request->type;
 
-        $allFiles = Storage::disk('sftp')->allFiles(); // Ambil semua file dari SFTP
+        // Direktori tempat file .ini berada
+        $directory = '/AG_System/Install/AINO/ini';
+
+        // Ambil semua file di dalam direktori
+        $allFiles = Storage::disk('sftp')->allFiles($directory);
+
         $results = [];
 
         foreach ($allFiles as $file) {
             $filename = basename($file);
 
-            // Filter hanya .ini
+            // Filter hanya file dengan ekstensi .ini
             if (!Str::endsWith($filename, '.ini')) {
                 continue;
             }
@@ -85,7 +87,7 @@ class TransaksiTiketController extends Controller
                 $station = substr($code, 3, 3); // angka ke-4 s.d. ke-6
                 $asset = substr($code, 9, 3); // angka ke-10 s.d. ke-12
 
-                // Jika station_code dan asset_code ada, filter berdasarkan kode tersebut
+                // Filter berdasarkan station_code dan asset_code jika ada
                 if (($station_code && $station !== $station_code) || ($asset_code && $asset !== $asset_code)) {
                     continue;
                 }
@@ -97,23 +99,21 @@ class TransaksiTiketController extends Controller
                         continue;
                     }
                 }
-            } else {
-                continue;
+
+                // Ambil isi file jika lolos filter
+                $fileContent = Storage::disk('sftp')->get($file);
+
+                // Decode JSON
+                $json = json_decode($fileContent, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    continue;
+                }
+
+                // Tambahkan actual_filename di urutan pertama
+                $finalData = ['actual_filename' => $filename] + $json;
+
+                $results[] = $finalData;
             }
-
-            // Ambil isi file
-            $fileContent = Storage::disk('sftp')->get($file);
-
-            // Decode JSON
-            $json = json_decode($fileContent, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                continue;
-            }
-
-            // Tambahkan actual_filename di urutan pertama
-            $finalData = ['actual_filename' => $filename] + $json;
-
-            $results[] = $finalData;
         }
 
         return response()->json($results);
