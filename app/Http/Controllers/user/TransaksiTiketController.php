@@ -57,6 +57,35 @@ class TransaksiTiketController extends Controller
         return redirect()->route('transaksi.tiket.index');
     }
 
+    public function ini_file(Request $request)
+    {
+        $directory = "/AG_System/Install/AINO/ini";
+        $allFiles = Storage::disk('sftp')->allFiles($directory);
+
+        $filenames = [];
+
+        foreach ($allFiles as $file) {
+            // Ambil nama file tanpa path
+            $filename = basename($file);
+
+            // Ambil isi file dari SFTP
+            $fileContent = Storage::disk('sftp')->get($file);
+
+            // Contoh: simpan nama file ke array
+            $filenames[] = [
+                'name' => $filename,
+                'content' => $fileContent,
+            ];
+
+            // Jika hanya ingin nama file saja:
+            // $filenames[] = $filename;
+        }
+
+        return response()->json([
+            'files' => $filenames,
+        ]);
+    }
+
     public function store(Request $request)
     {
         //

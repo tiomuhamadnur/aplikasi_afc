@@ -576,6 +576,8 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::get('/transaksi-tiket/ftp', 'ftp')->name('transaksi.tiket.ftp');
             Route::get('/transaksi-tiket', 'index')->name('transaksi.tiket.index');
             Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
+
+            Route::get('/test-sftp', 'ini_file');
         });
 
         Route::controller(MonitoringEquipmentController::class)->group(function () {
