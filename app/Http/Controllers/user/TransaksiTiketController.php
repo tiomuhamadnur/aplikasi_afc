@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class TransaksiTiketController extends Controller
@@ -62,28 +63,30 @@ class TransaksiTiketController extends Controller
         $directory = "/AG_System/Install/AINO/ini";
         $allFiles = Storage::disk('sftp')->allFiles($directory);
 
-        $filenames = [];
+        $results = [];
 
         foreach ($allFiles as $file) {
-            // Ambil nama file tanpa path
             $filename = basename($file);
 
-            // Ambil isi file dari SFTP
+            // Filter hanya file dengan ekstensi .ini
+            if (!Str::endsWith($filename, '.ini')) {
+                continue;
+            }
+
+            // Ambil isi file
             $fileContent = Storage::disk('sftp')->get($file);
 
-            // Contoh: simpan nama file ke array
-            // $filenames[] = [
-            //     'name' => $filename,
-            //     'content' => $fileContent,
-            // ];
+            // Pastikan isinya valid JSON
+            $json = json_decode($fileContent, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                continue; // skip jika bukan JSON valid
+            }
 
-            // Jika hanya ingin nama file saja:
-            $filenames[] = $filename;
+            // Simpan isi asli (bukan path, bukan nama saja)
+            $results[] = $json;
         }
 
-        return response()->json([
-            'files' => $filenames,
-        ]);
+        return response()->json($results);
     }
 
     public function store(Request $request)
