@@ -156,8 +156,8 @@
                             <label for="type">Type</label>
                             <select class="form-control" name="type" id="type">
                                 <option value="" selected disabled>- select type -</option>
-                                <option value="Paid" @selcted($type == "Paid")>Paid</option>
-                                <option value="UnPaid" @selcted($type == "UnPaid")>UnPaid</option>
+                                <option value="Paid" @selected($type == "Paid")>Paid</option>
+                                <option value="UnPaid" @selected($type == "UnPaid")>UnPaid</option>
                             </select>
                         </div>
                     </form>

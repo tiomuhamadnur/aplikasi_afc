@@ -137,6 +137,7 @@
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{ route('user.index') }}">User</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{ route('ini-file.index') }}">Ini File PG</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('lokasi.index') }}">Lokasi</a>
                             </li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('sub-lokasi.index') }}">Sub
