@@ -111,12 +111,12 @@
     </div>
 
 
-    <!-- Search Modal -->
-    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Form Search</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -129,7 +129,7 @@
                                 placeholder="input host/ip address" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="station_id" class="required">Station</label>
+                            <label for="station_id">Station</label>
                             <select class="form-control" name="station_id" id="station_id">
                                 <option value="" selected disabled>- select station -</option>
                                 <option value="101">LBB</option>
@@ -148,12 +148,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="pg_id" class="required">PG ID</label>
+                            <label for="pg_id">PG ID</label>
                             <input type="number" class="form-control" id="pg_id" name="pg_id"
                                 placeholder="input PG ID" autocomplete="off" min="1">
                         </div>
                         <div class="form-group">
-                            <label for="type" class="required">Type</label>
+                            <label for="type">Type</label>
                             <select class="form-control" name="type" id="type">
                                 <option value="" selected disabled>- select type -</option>
                                 <option value="Paid">Paid</option>
@@ -163,13 +163,14 @@
                     </form>
                 </div>
                 <div class="modal-footer">
+                    <a href="{{ route('ini-file.index') }}" class="btn btn-gradient-warning">Reset</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" form="addForm" class="btn btn-gradient-primary me-2">Submit</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Search Modal -->
+    <!-- End Filter Modal -->
 @endsection
 
 @section('javascript')
