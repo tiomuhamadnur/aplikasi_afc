@@ -72,13 +72,13 @@ class TransaksiTiketController extends Controller
             $fileContent = Storage::disk('sftp')->get($file);
 
             // Contoh: simpan nama file ke array
-            $filenames[] = [
-                'name' => $filename,
-                'content' => $fileContent,
-            ];
+            // $filenames[] = [
+            //     'name' => $filename,
+            //     'content' => $fileContent,
+            // ];
 
             // Jika hanya ingin nama file saja:
-            // $filenames[] = $filename;
+            $filenames[] = $filename;
         }
 
         return response()->json([
