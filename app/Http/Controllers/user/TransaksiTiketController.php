@@ -36,13 +36,7 @@ class TransaksiTiketController extends Controller
             file_put_contents($tempPath, $fileContent);
 
             // Buat instance UploadedFile dari file sementara
-            $uploadedFile = new UploadedFile(
-                $tempPath,
-                basename($file),
-                mime_content_type($tempPath),
-                null,
-                true
-            );
+            $uploadedFile = new UploadedFile($tempPath, basename($file), mime_content_type($tempPath), null, true);
 
             // Buat request dan tambahkan file ke dalamnya
             $request = new Request();
@@ -60,16 +54,50 @@ class TransaksiTiketController extends Controller
 
     public function ini_file(Request $request)
     {
-        $directory = "/AG_System/Install/AINO/ini";
+        // Validasi parameter (semuanya nullable)
+        $request->validate([
+            'station_code' => 'nullable|string',
+            'asset_code' => 'nullable|string',
+            'type' => 'nullable|in:Paid,UnPaid', // Validasi type hanya bisa 'Paid' atau 'UnPaid'
+        ]);
+
+        $directory = '/AG_System/Install/AINO/ini';
         $allFiles = Storage::disk('sftp')->allFiles($directory);
 
+        $station_code = $request->station_code;
+        $asset_code = $request->asset_code;
+        $type = $request->type; // Bisa null atau 'Paid'/'UnPaid'
+
+        $allFiles = Storage::disk('sftp')->allFiles(); // Ambil semua file dari SFTP
         $results = [];
 
         foreach ($allFiles as $file) {
             $filename = basename($file);
 
-            // Filter hanya file .ini
+            // Filter hanya .ini
             if (!Str::endsWith($filename, '.ini')) {
+                continue;
+            }
+
+            // Cari 12 digit angka dari nama file
+            if (preg_match('/AinoConfiguration_(\d{12})_/', $filename, $matches)) {
+                $code = $matches[1];
+                $station = substr($code, 3, 3); // angka ke-4 s.d. ke-6
+                $asset = substr($code, 9, 3); // angka ke-10 s.d. ke-12
+
+                // Jika station_code dan asset_code ada, filter berdasarkan kode tersebut
+                if (($station_code && $station !== $station_code) || ($asset_code && $asset !== $asset_code)) {
+                    continue;
+                }
+
+                // Filter berdasarkan type (jika ada)
+                if ($type) {
+                    $filenameType = substr($filename, -8, 6); // Ambil 'Paid' atau 'UnPaid' dari nama file
+                    if ($filenameType !== $type) {
+                        continue;
+                    }
+                }
+            } else {
                 continue;
             }
 
@@ -82,7 +110,7 @@ class TransaksiTiketController extends Controller
                 continue;
             }
 
-            // Tempel actual_filename di awal
+            // Tambahkan actual_filename di urutan pertama
             $finalData = ['actual_filename' => $filename] + $json;
 
             $results[] = $finalData;
@@ -98,12 +126,15 @@ class TransaksiTiketController extends Controller
 
     public function import(Request $request)
     {
-        $request->validate([
-            'logfile' => 'required|file',
-        ], [
-            'logfile.required' => 'Log file wajib diunggah.',
-            'logfile.file' => 'File yang diunggah harus berupa file yang valid.',
-        ]);
+        $request->validate(
+            [
+                'logfile' => 'required|file',
+            ],
+            [
+                'logfile.required' => 'Log file wajib diunggah.',
+                'logfile.file' => 'File yang diunggah harus berupa file yang valid.',
+            ],
+        );
 
         $file = $request->file('logfile');
 
