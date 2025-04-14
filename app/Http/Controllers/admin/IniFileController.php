@@ -12,8 +12,35 @@ class IniFileController extends Controller
 {
     public function index(Request $request)
     {
+        $host = null;
+        $station_id = null;
+        $pg_id = null;
+        $type = null;
         $results = [];
-        return view('pages.admin.ini-file.index', compact('results'));
+        $station = [
+            '101' => 'LBB',
+            '105' => 'FTM',
+            '109' => 'CPR',
+            '113' => 'HJN',
+            '117' => 'BLA',
+            '121' => 'BLM',
+            '125' => 'ASN',
+            '129' => 'SNY',
+            '133' => 'IST',
+            '137' => 'BNH',
+            '141' => 'STB',
+            '145' => 'DKA',
+            '149' => 'BHI',
+        ];
+
+        return view('pages.admin.ini-file.index', compact([
+            'results',
+            'station',
+            'host',
+            'station_id',
+            'pg_id',
+            'type',
+        ]));
     }
 
     public function update(Request $request)
@@ -145,6 +172,30 @@ class IniFileController extends Controller
         }
 
         // return response()->json($results);
-        return view('pages.admin.ini-file.index', compact('results'));
+
+        $station = [
+            '101' => 'LBB',
+            '105' => 'FTM',
+            '109' => 'CPR',
+            '113' => 'HJN',
+            '117' => 'BLA',
+            '121' => 'BLM',
+            '125' => 'ASN',
+            '129' => 'SNY',
+            '133' => 'IST',
+            '137' => 'BNH',
+            '141' => 'STB',
+            '145' => 'DKA',
+            '149' => 'BHI',
+        ];
+
+        return view('pages.admin.ini-file.index', compact([
+            'results',
+            'station',
+            'host',
+            'station_id',
+            'pg_id',
+            'type',
+        ]));
     }
 }
