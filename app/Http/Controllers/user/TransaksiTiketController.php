@@ -21,7 +21,6 @@ class TransaksiTiketController extends Controller
     }
     public function ftp()
     {
-        // dd('ok');
         // Ambil semua file dari direktori tertentu
         set_time_limit(300);
         $allFiles = Storage::disk('ftp')->allFiles('/contoh_ftp');
@@ -50,74 +49,6 @@ class TransaksiTiketController extends Controller
         }
 
         return redirect()->route('transaksi.tiket.index');
-    }
-
-    public function ini_file(Request $request)
-    {
-        // Validasi parameter
-        $request->validate([
-            'station_code' => 'nullable|string',
-            'asset_code' => 'nullable|string',
-            'type' => 'nullable|in:Paid,UnPaid',
-        ]);
-
-        $station_code = $request->station_code;
-        $asset_code = $request->asset_code;
-        $type = $request->type;
-
-        // Direktori tempat file .ini berada
-        $directory = '/AG_System/Install/AINO/ini';
-
-        // Ambil semua file di dalam direktori
-        $allFiles = Storage::disk('sftp')->allFiles($directory);
-
-        $results = [];
-
-        foreach ($allFiles as $file) {
-            $filename = basename($file);
-
-            // Filter hanya file dengan ekstensi .ini
-            if (!Str::endsWith($filename, '.ini')) {
-                continue;
-            }
-
-            // Cari 12 digit angka dari nama file
-            if (preg_match('/AinoConfiguration_(\d{12})_/', $filename, $matches)) {
-                $code = $matches[1];
-                $station = substr($code, 3, 3); // angka ke-4 s.d. ke-6
-                $asset = substr($code, 9, 3); // angka ke-10 s.d. ke-12
-
-                // Filter berdasarkan station_code dan asset_code jika ada
-                if (($station_code && $station !== $station_code) || ($asset_code && $asset !== $asset_code)) {
-                    continue;
-                }
-
-                // Ekstrak 'type' dari nama file (Paid atau UnPaid)
-                $filenameParts = explode('_', pathinfo($filename, PATHINFO_FILENAME));
-                $fileType = end($filenameParts); // Ambil bagian terakhir sebelum .ini
-
-                // Filter berdasarkan type (jika ada)
-                if ($type && strtolower($type) !== strtolower($fileType)) {
-                    continue;
-                }
-
-                // Ambil isi file jika lolos filter
-                $fileContent = Storage::disk('sftp')->get($file);
-
-                // Decode JSON
-                $json = json_decode($fileContent, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    continue;
-                }
-
-                // Tambahkan actual_filename di urutan pertama
-                $finalData = ['actual_filename' => $filename] + $json;
-
-                $results[] = $finalData;
-            }
-        }
-
-        return response()->json($results);
     }
 
     public function store(Request $request)

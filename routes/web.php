@@ -22,6 +22,7 @@ use App\Http\Controllers\admin\FundController;
 use App\Http\Controllers\admin\FundSourceController;
 use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\GoogleSpreadsheetController;
+use App\Http\Controllers\admin\IniFileController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LokasiController;
 use App\Http\Controllers\admin\OptionFormController;
@@ -576,7 +577,11 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::get('/transaksi-tiket/ftp', 'ftp')->name('transaksi.tiket.ftp');
             Route::get('/transaksi-tiket', 'index')->name('transaksi.tiket.index');
             Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
+        });
 
+        Route::controller(IniFileController::class)->group(function () {
+            Route::get('/ini-file', 'index')->name('ini-file.index');
+            Route::put('/ini-file', 'update')->name('ini-file.update');
             Route::get('/test-sftp', 'ini_file');
         });
 
