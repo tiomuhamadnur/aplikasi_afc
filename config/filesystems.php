@@ -73,7 +73,7 @@ return [
         'sftp' => [
             'driver' => 'sftp',
             'host' => env('SFTP_HOST'),
-            'port' => env('SFTP_PORT', 22),
+            'port' => (int) env('SFTP_PORT', 22),
 
             // Settings for basic authentication...
             'username' => env('SFTP_USERNAME'),
