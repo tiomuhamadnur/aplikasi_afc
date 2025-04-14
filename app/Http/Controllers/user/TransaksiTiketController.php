@@ -92,8 +92,12 @@ class TransaksiTiketController extends Controller
                     continue;
                 }
 
+                // Ekstrak 'type' dari nama file (Paid atau UnPaid)
+                $filenameParts = explode('_', pathinfo($filename, PATHINFO_FILENAME));
+                $fileType = end($filenameParts); // Ambil bagian terakhir sebelum .ini
+
                 // Filter berdasarkan type (jika ada)
-                if ($type && !Str::endsWith($filename, "{$type}.ini")) {
+                if ($type && strtolower($type) !== strtolower($fileType)) {
                     continue;
                 }
 
