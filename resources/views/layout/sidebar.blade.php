@@ -126,7 +126,7 @@
                     </ul>
                 </div>
             </li>
-            @if (auth()->user()->role->id == 1)
+            @if (auth()->user()->role->id == 1 && auth()->user()->tipe_employee->id == 1)
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
                         aria-controls="ui-basic">
