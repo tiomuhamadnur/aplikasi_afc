@@ -16,7 +16,8 @@
                                 data-bs-toggle="modal" data-bs-target="#searchModal">
                                 <i class="mdi mdi-plus-circle"></i>
                             </button> --}}
-                            <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon"
+                                data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <i class="mdi mdi-filter"></i>
                             </button>
                             <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
@@ -30,19 +31,16 @@
                                         <th rowspan="2">No</th>
                                         <th rowspan="2">Filename</th>
                                         <th rowspan="2">Location</th>
-                                        <th colspan="6">BCA</th>
                                         <th colspan="6">Mandiri</th>
-                                        <th colspan="6">BRI</th>
-                                        <th colspan="6">BNI</th>
+                                        <th colspan="5">BNI</th>
+                                        <th colspan="6">BCA</th>
+                                        <th colspan="5">BRI</th>
+                                        <th colspan="5">DKI2</th>
+                                        <th colspan="4">Mega2</th>
+                                        <th colspan="6">NOBU</th>
                                     </tr>
                                     <tr>
-                                        <th>BankActive</th>
-                                        <th>TID</th>
-                                        <th>MID</th>
-                                        <th>Samslot</th>
-                                        <th>MinBalance</th>
-                                        <th>Merchant Key</th>
-
+                                        {{-- Mandiri --}}
                                         <th>BankActive</th>
                                         <th>TID</th>
                                         <th>MID</th>
@@ -50,17 +48,48 @@
                                         <th>PIN</th>
                                         <th>IID</th>
 
+                                        {{-- BNI --}}
+                                        <th>BankActive</th>
+                                        <th>TID</th>
+                                        <th>MID</th>
+                                        <th>Samslot</th>
+                                        <th>MC</th>
+
+                                        {{-- BCA --}}
+                                        <th>BankActive</th>
+                                        <th>TID</th>
+                                        <th>MID</th>
+                                        <th>Samslot</th>
+                                        <th>MinBalance</th>
+                                        <th>Merchant Key</th>
+
+                                        {{-- BRI --}}
                                         <th>BankActive</th>
                                         <th>TID</th>
                                         <th>MID</th>
                                         <th>Samslot</th>
                                         <th>Proccode</th>
 
+                                        {{-- DKI2 --}}
                                         <th>BankActive</th>
                                         <th>TID</th>
                                         <th>MID</th>
                                         <th>Samslot</th>
-                                        <th>MC</th>
+                                        <th>CardStatus</th>
+
+                                        {{-- MEGA2 --}}
+                                        <th>BankActive</th>
+                                        <th>TID</th>
+                                        <th>MID</th>
+                                        <th>Samslot</th>
+
+                                        {{-- NOBU --}}
+                                        <th>BankActive</th>
+                                        <th>TID</th>
+                                        <th>MID</th>
+                                        <th>Samslot</th>
+                                        <th>token</th>
+                                        <th>area_key</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -70,14 +99,6 @@
                                             <td>{{ $item['actual_filename'] }}</td>
                                             <td>{{ $item['location'] }}</td>
 
-                                            {{-- BCA --}}
-                                            <td>{{ $item['BCA']['BankActive'] ? 'true' : 'false' }}</td>
-                                            <td>{{ $item['BCA']['tid'] ?? '-' }}</td>
-                                            <td>{{ $item['BCA']['mid'] ?? '-' }}</td>
-                                            <td>{{ $item['BCA']['samslot'] ?? '-' }}</td>
-                                            <td>{{ $item['BCA']['minbalance'] ?? '-' }}</td>
-                                            <td>{{ $item['BCA']['merchant_key'] ?? '-' }}</td>
-
                                             {{-- Mandiri --}}
                                             <td>{{ $item['Mandiri']['BankActive'] ? 'true' : 'false' }}</td>
                                             <td>{{ $item['Mandiri']['tid'] ?? '-' }}</td>
@@ -86,6 +107,21 @@
                                             <td>{{ $item['Mandiri']['pin'] ?? '-' }}</td>
                                             <td>{{ $item['Mandiri']['iid'] ?? '-' }}</td>
 
+                                            {{-- BNI --}}
+                                            <td>{{ $item['BNI']['BankActive'] ? 'true' : 'false' }}</td>
+                                            <td>{{ $item['BNI']['tid'] ?? '-' }}</td>
+                                            <td>{{ $item['BNI']['mid'] ?? '-' }}</td>
+                                            <td>{{ $item['BNI']['samslot'] ?? '-' }}</td>
+                                            <td>{{ $item['BNI']['mc'] ?? '-' }}</td>
+
+                                            {{-- BCA --}}
+                                            <td>{{ $item['BCA']['BankActive'] ? 'true' : 'false' }}</td>
+                                            <td>{{ $item['BCA']['tid'] ?? '-' }}</td>
+                                            <td>{{ $item['BCA']['mid'] ?? '-' }}</td>
+                                            <td>{{ $item['BCA']['samslot'] ?? '-' }}</td>
+                                            <td>{{ $item['BCA']['minbalance'] ?? '-' }}</td>
+                                            <td>{{ $item['BCA']['merchant_key'] ?? '-' }}</td>
+
                                             {{-- BRI --}}
                                             <td>{{ $item['BRI']['BankActive'] ? 'true' : 'false' }}</td>
                                             <td>{{ $item['BRI']['tid'] ?? '-' }}</td>
@@ -93,12 +129,26 @@
                                             <td>{{ $item['BRI']['samslot'] ?? '-' }}</td>
                                             <td>{{ $item['BRI']['proccode'] ?? '-' }}</td>
 
-                                            {{-- BNI --}}
-                                            <td>{{ $item['BNI']['BankActive'] ? 'true' : 'false' }}</td>
-                                            <td>{{ $item['BNI']['tid'] ?? '-' }}</td>
-                                            <td>{{ $item['BNI']['mid'] ?? '-' }}</td>
-                                            <td>{{ $item['BNI']['samslot'] ?? '-' }}</td>
-                                            <td>{{ $item['BNI']['mc'] ?? '-' }}</td>
+                                            {{-- DKI2 --}}
+                                            <td>{{ $item['DKI2']['BankActive'] ? 'true' : 'false' }}</td>
+                                            <td>{{ $item['DKI2']['tid'] ?? '-' }}</td>
+                                            <td>{{ $item['DKI2']['mid'] ?? '-' }}</td>
+                                            <td>{{ $item['DKI2']['samslot'] ?? '-' }}</td>
+                                            <td>{{ $item['DKI2']['card_status'] ?? '-' }}</td>
+
+                                            {{-- MEGA2 --}}
+                                            <td>{{ $item['MEGA2']['BankActive'] ? 'true' : 'false' }}</td>
+                                            <td>{{ $item['MEGA2']['tid'] ?? '-' }}</td>
+                                            <td>{{ $item['MEGA2']['mid'] ?? '-' }}</td>
+                                            <td>{{ $item['MEGA2']['samslot'] ?? '-' }}</td>
+
+                                            {{-- NOBU --}}
+                                            <td>{{ $item['NOBU']['BankActive'] ? 'true' : 'false' }}</td>
+                                            <td>{{ $item['NOBU']['tid'] ?? '-' }}</td>
+                                            <td>{{ $item['NOBU']['mid'] ?? '-' }}</td>
+                                            <td>{{ $item['NOBU']['samslot'] ?? '-' }}</td>
+                                            <td>{{ $item['NOBU']['token'] ?? '-' }}</td>
+                                            <td>{{ $item['NOBU']['area_key'] ?? '-' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -133,21 +183,23 @@
                             <select class="form-control" name="station_id" id="station_id" required>
                                 <option value="" selected disabled>- select station -</option>
                                 @foreach ($config_pg as $item)
-                                    <option value="{{ $item->station_id }}" @selected($station_id == $item->station_id)>{{ $item->station_code }}</option>
+                                    <option value="{{ $item->station_id }}" @selected($station_id == $item->station_id)>
+                                        {{ $item->station_code }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="pg_id" class="required">PG ID</label>
                             <input type="number" class="form-control" id="pg_id" name="pg_id"
-                                placeholder="input PG ID" autocomplete="off" min="1" value="{{ $pg_id }}" required>
+                                placeholder="input PG ID" autocomplete="off" min="1" value="{{ $pg_id }}"
+                                required>
                         </div>
                         <div class="form-group">
                             <label for="type">Type</label>
                             <select class="form-control" name="type" id="type">
                                 <option value="" selected disabled>- select type -</option>
-                                <option value="Paid" @selected($type == "Paid")>Paid</option>
-                                <option value="UnPaid" @selected($type == "UnPaid")>UnPaid</option>
+                                <option value="Paid" @selected($type == 'Paid')>Paid</option>
+                                <option value="UnPaid" @selected($type == 'UnPaid')>UnPaid</option>
                             </select>
                         </div>
                     </form>
