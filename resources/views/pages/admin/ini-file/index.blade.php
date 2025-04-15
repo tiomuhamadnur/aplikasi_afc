@@ -31,12 +31,14 @@
                                         <th rowspan="2">No</th>
                                         <th rowspan="2">Filename</th>
                                         <th rowspan="2">Location</th>
+                                        <th rowspan="2">ConfigVersion</th>
+                                        <th rowspan="2">CreatedOn</th>
                                         <th colspan="6">Mandiri</th>
                                         <th colspan="5">BNI</th>
                                         <th colspan="6">BCA</th>
                                         <th colspan="5">BRI</th>
                                         <th colspan="5">DKI2</th>
-                                        <th colspan="4">Mega2</th>
+                                        <th colspan="4">MEGA2</th>
                                         <th colspan="6">NOBU</th>
                                     </tr>
                                     <tr>
@@ -98,6 +100,8 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['actual_filename'] }}</td>
                                             <td>{{ $item['location'] }}</td>
+                                            <td>{{ $item['config_version'] }}</td>
+                                            <td>{{ $item['created_on'] }}</td>
 
                                             {{-- Mandiri --}}
                                             <td>{{ $item['Mandiri']['BankActive'] ? 'true' : 'false' }}</td>
