@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ConfigPG;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -17,25 +18,11 @@ class IniFileController extends Controller
         $pg_id = null;
         $type = null;
         $results = [];
-        $station = [
-            '101' => 'LBB',
-            '105' => 'FTM',
-            '109' => 'CPR',
-            '113' => 'HJN',
-            '117' => 'BLA',
-            '121' => 'BLM',
-            '125' => 'ASN',
-            '129' => 'SNY',
-            '133' => 'IST',
-            '137' => 'BNH',
-            '141' => 'STB',
-            '145' => 'DKA',
-            '149' => 'BHI',
-        ];
+        $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
 
         return view('pages.admin.ini-file.index', compact([
             'results',
-            'station',
+            'config_pg',
             'host',
             'station_id',
             'pg_id',
@@ -100,16 +87,19 @@ class IniFileController extends Controller
     {
         // Validasi parameter
         $request->validate([
-            'host' => 'required|string|ip',
-            'station_id' => 'nullable|string',
-            'pg_id' => 'nullable|string',
+            // 'host' => 'required|string|ip',
+            'station_id' => 'required|string',
+            'pg_id' => 'required|string',
             'type' => 'nullable|in:Paid,UnPaid',
         ]);
 
-        $host = $request->host;
         $station_id = $request->station_id;
         $pg_id = $request->pg_id;
         $type = $request->type;
+
+        $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
+
+        $host = Str::beforeLast($config_pg->ip_address, '.') . '.' . $pg_id;
 
         // Direktori tempat file .ini berada
         $directory = '/AG_System/Install/AINO/ini';
@@ -173,25 +163,11 @@ class IniFileController extends Controller
 
         // return response()->json($results);
 
-        $station = [
-            '101' => 'LBB',
-            '105' => 'FTM',
-            '109' => 'CPR',
-            '113' => 'HJN',
-            '117' => 'BLA',
-            '121' => 'BLM',
-            '125' => 'ASN',
-            '129' => 'SNY',
-            '133' => 'IST',
-            '137' => 'BNH',
-            '141' => 'STB',
-            '145' => 'DKA',
-            '149' => 'BHI',
-        ];
+        $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
 
         return view('pages.admin.ini-file.index', compact([
             'results',
-            'station',
+            'config_pg',
             'host',
             'station_id',
             'pg_id',
