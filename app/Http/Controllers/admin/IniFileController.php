@@ -161,7 +161,7 @@ class IniFileController extends Controller
             return redirect()->route('ini-file.index')->withNotifyerror('Data .ini file tidak ditemukan');
         }
 
-        // return response()->json($results);
+        return response()->json($results);
 
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
 
