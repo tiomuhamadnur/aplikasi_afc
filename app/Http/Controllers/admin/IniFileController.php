@@ -20,14 +20,7 @@ class IniFileController extends Controller
         $results = [];
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
 
-        return view('pages.admin.ini-file.index', compact([
-            'results',
-            'config_pg',
-            'host',
-            'station_id',
-            'pg_id',
-            'type',
-        ]));
+        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'host', 'station_id', 'pg_id', 'type']));
     }
 
     public function update(Request $request)
@@ -122,27 +115,27 @@ class IniFileController extends Controller
                 continue;
             }
 
-            // Cari 12 digit angka dari nama file
-            if (preg_match('/AinoConfiguration_(\d{12})_/', $filename, $matches)) {
-                $code = $matches[1];
-                $station = substr($code, 3, 3); // angka ke-4 s.d. ke-6
-                $pg = substr($code, 9, 3); // angka ke-10 s.d. ke-12
+            // Cek file dengan pola: AinoConfiguration_123456789012_Paid.ini atau UnPaid.ini
+            if (preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
+                $code = $matches[1]; // 12 digit kode dari nama file
+                $fileType = $matches[2]; // Paid atau UnPaid
 
+                // Ekstrak station dan pg id dari kode
+                $station = substr($code, 3, 3); // digit ke-4 sampai ke-6
+                $pg = substr($code, 9, 3); // digit ke-10 sampai ke-12
+
+                // Filter berdasarkan station_id dan pg_id jika dikirim dari request
                 if (($station_id && $station !== $station_id) || ($pg_id && $pg !== $pg_id)) {
                     continue;
                 }
 
-                // Ekstrak 'type' dari nama file (Paid atau UnPaid)
-                $filenameParts = explode('_', pathinfo($filename, PATHINFO_FILENAME));
-                $fileType = end($filenameParts); // Ambil bagian terakhir sebelum .ini
-
-                // Filter berdasarkan type (jika ada)
+                // Filter berdasarkan type jika dikirim dari request
                 if ($type && strtolower($type) !== strtolower($fileType)) {
                     continue;
                 }
 
                 // Ambil isi file jika lolos filter
-                $fileContent = Storage::disk('sftp')->get($file);
+                $fileContent = $disk->get($file);
 
                 // Decode JSON
                 $json = json_decode($fileContent, true);
@@ -150,7 +143,7 @@ class IniFileController extends Controller
                     continue;
                 }
 
-                // Tambahkan actual_filename di urutan pertama
+                // Tambahkan nama file ke hasil data
                 $finalData = ['actual_filename' => $filename] + $json;
 
                 $results[] = $finalData;
@@ -161,17 +154,10 @@ class IniFileController extends Controller
             return redirect()->route('ini-file.index')->withNotifyerror('Data .ini file tidak ditemukan');
         }
 
-        return response()->json($results);
+        // return response()->json($results);
 
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
 
-        return view('pages.admin.ini-file.index', compact([
-            'results',
-            'config_pg',
-            'host',
-            'station_id',
-            'pg_id',
-            'type',
-        ]));
+        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'host', 'station_id', 'pg_id', 'type']));
     }
 }
