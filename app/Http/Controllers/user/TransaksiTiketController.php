@@ -395,12 +395,13 @@ class TransaksiTiketController extends Controller
             return substr($filename, 10, 8) === $dateFilter;
         });
 
-        $now = now();
         $totalInserted = 0;
         $totalFiles = count($filteredFiles);
         $skippedTransactions = 0;
         $problematicFiles = [];
         $skippedSamples = [];
+
+        $stationCodeMap = ConfigPG::pluck('station_code', 'station_kue_id')->toArray();
 
         // Hapus semua data dulu
         TransaksiTiket::truncate();
@@ -449,11 +450,9 @@ class TransaksiTiketController extends Controller
                             'balance_after' => $data1[7] ?? null,
                             'card_type' => $data1[9] ?? null,
                             'tap_in_time' => $data2[0] ?? null,
-                            'tap_in_station' => $data2[1] ?? null,
                             'tap_out_time' => $data2[2] ?? null,
-                            'tap_out_station' => $data2[3] ?? null,
-                            'created_at' => $now,
-                            'updated_at' => $now,
+                            'tap_in_station' => $stationCodeMap[$data2[1] ?? null] ?? null,
+                            'tap_out_station' => $stationCodeMap[$data2[3] ?? null] ?? null,
                         ];
 
                         TransaksiTiket::create($item);
