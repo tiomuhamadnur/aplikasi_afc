@@ -30,48 +30,6 @@
                         </a> --}}
                         <div class="table-responsive">
                             {{ $dataTable->table() }}
-                            {{-- <table class="table table-hover text-center data-table">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th> Transaction <br> Type </th>
-                                        <th> Transaction <br> ID </th>
-                                        <th> Device </th>
-                                        <th> Corner <br> ID </th>
-                                        <th> PG <br> ID </th>
-                                        <th> PAN </th>
-                                        <th> Transaction <br> Amount </th>
-                                        <th> Balance <br> Before </th>
-                                        <th> Balance <br> After </th>
-                                        <th> Card <br> Type </th>
-                                        <th> Tap In Time </th>
-                                        <th> Tap In Station </th>
-                                        <th> Tap Out Time </th>
-                                        <th> Tap Out Station </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($transaksi as $item)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->transaction_type }}</td>
-                                            <td>{{ $item->transaction_id }}</td>
-                                            <td>{{ $item->device }}</td>
-                                            <td>{{ $item->corner_id }}</td>
-                                            <td>{{ $item->pg_id }}</td>
-                                            <td>{{ $item->pan }}</td>
-                                            <td>{{ $item->transaction_amount }}</td>
-                                            <td>{{ $item->balance_before }}</td>
-                                            <td>{{ $item->balance_after }}</td>
-                                            <td>{{ $item->card_type }}</td>
-                                            <td>{{ $item->tap_in_time }}</td>
-                                            <td>{{ $item->tap_in_station }}</td>
-                                            <td>{{ $item->tap_out_time }}</td>
-                                            <td>{{ $item->tap_out_station }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table> --}}
                         </div>
                     </div>
                 </div>
@@ -115,6 +73,46 @@
         </div>
     </div>
     <!-- End Convert Log Modal -->
+
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Filter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addForm" action="{{ route('transaksi.tiket.store') }}" method="POST" class="forms-sample">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group">
+                            <label for="station_id" class="required">Station</label>
+                            <select class="form-control" name="station_id" id="station_id" required>
+                                <option value="" selected disabled>- select station -</option>
+                                @foreach ($config_pg as $item)
+                                    <option value="{{ $item->station_id }}" @selected($station_id == $item->station_id)>
+                                        {{ $item->station_code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date" class="required">Date</label>
+                            <input type="date" class="form-control" id="date" name="date"
+                                placeholder="input PG ID" autocomplete="off" value="{{ $date }}"
+                                required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('transaksi.tiket.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="addForm" class="btn btn-gradient-primary me-2">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Filter Modal -->
 @endsection
 
 @push('scripts')
