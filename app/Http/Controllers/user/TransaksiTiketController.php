@@ -56,6 +56,7 @@ class TransaksiTiketController extends Controller
         return redirect()->route('transaksi.tiket.index');
     }
 
+    // VERSI AWAAAAAL BANGET
     // public function store(Request $request)
     // {
     //     $request->validate([
@@ -117,7 +118,248 @@ class TransaksiTiketController extends Controller
     //     return response()->json($result);
     // }
 
+    // VERSI LAMAAAAAAA
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'station_id' => 'string|required',
+    //         'date' => 'date|required',
+    //     ]);
 
+    //     $station_id = $request->station_id;
+    //     $date = $request->date;
+
+    //     $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
+    //     $host = Str::beforeLast($config_pg->ip_address, '.') . '.161';
+
+    //     $directory = '/home/sps/bank/alreadysent';
+
+    //     $baseConfig = config('filesystems.disks.sftp');
+
+    //     $baseConfig['host'] = $host;
+    //     $baseConfig['port'] = (int) env("SFTP_SCU_PORT");
+    //     $baseConfig['username'] = env("SFTP_SCU_USERNAME");
+    //     $baseConfig['password'] = env("SFTP_SCU_PASSWORD");
+
+    //     $disk = Storage::build($baseConfig);
+
+    //     // Ambil semua file dari SFTP
+    //     $allFiles = $disk->allFiles($directory);
+    //     $dateFilter = Carbon::parse($date)->format('Ymd');
+
+    //     // Filter berdasarkan tanggal pada nama file
+    //     $filteredFiles = array_filter($allFiles, function ($file) use ($dateFilter) {
+    //         $filename = basename($file);
+    //         return substr($filename, 10, 8) === $dateFilter;
+    //     });
+
+    //     $now = now();
+    //     $totalInserted = 0;
+
+    //     // Hapus semua data dulu
+    //     TransaksiTiket::truncate();
+
+    //     foreach ($filteredFiles as $filePath) {
+    //         try {
+    //             $filename = basename($filePath);
+    //             $rawContent = $disk->get($filePath);
+
+    //             // Coba beberapa encoding umum sebelum menggunakan UTF-8
+    //             $encodings = ['ISO-8859-1', 'Windows-1252', 'UTF-8'];
+    //             $utf8Data = false;
+
+    //             foreach ($encodings as $encoding) {
+    //                 $convertedData = @mb_convert_encoding($rawContent, 'UTF-8', $encoding);
+    //                 if ($convertedData !== false) {
+    //                     $utf8Data = $convertedData;
+    //                     break;
+    //                 }
+    //             }
+
+    //             if ($utf8Data === false) {
+    //                 continue;
+    //             }
+
+    //             // Potong berdasarkan delimiter blok transaksi
+    //             $pattern = '/(\d+;[0-9A-F\-]+;\d+,\d+\.\d+,.*?)(?=0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)/s';
+    //             preg_match_all($pattern, $utf8Data, $matches);
+    //             $extractedData = $matches[0];
+
+    //             $result = [];
+
+    //             foreach ($extractedData as $key => $data) {
+    //                 $parts = explode(';', $data);
+
+    //                 $data1 = explode(',', $parts[2]);
+    //                 $data2 = explode(',', $parts[3]);
+
+    //                 $item = [
+    //                     'transaction_type' => 'KUE',
+    //                     'transaction_id' => $parts[1],
+    //                     'device' => substr($filename, 0, 2),
+    //                     'corner_id' => substr($filename, 6, 2),
+    //                     'pg_id' => hexdec(substr($filename, 8, 2)),
+    //                     'pan' => $data1[0] ?? null,
+    //                     'transaction_amount' => $data1[1] ?? null,
+    //                     'balance_before' => $data1[6] ?? null,
+    //                     'balance_after' => $data1[7] ?? null,
+    //                     'card_type' => $data1[9] ?? null,
+    //                     'tap_in_time' => $data2[0] ?? null,
+    //                     'tap_in_station' => $data2[1] ?? null,
+    //                     'tap_out_time' => $data2[2] ?? null,
+    //                     'tap_out_station' => $data2[3] ?? null,
+    //                     'created_at' => $now,
+    //                     'updated_at' => $now,
+    //                 ];
+
+    //                 // Mengecek apakah data sudah ada di database
+    //                 $existingEntry = TransaksiTiket::where('transaction_id', $item['transaction_id'])->first();
+
+    //                 if (!$existingEntry) {
+    //                     TransaksiTiket::create($item);
+    //                     $totalInserted++;
+    //                 }
+    //             }
+
+    //         } catch (\Exception $e) {
+    //             continue;
+    //         }
+    //     }
+
+    //     // Menampilkan hasil ke user
+    //     $message = sprintf(
+    //         'Import semua file berhasil. Jumlah file diproses: %d, Total data dimasukkan: %d',
+    //         count($filteredFiles),
+    //         $totalInserted
+    //     );
+
+    //     return redirect()->route('transaksi.tiket.index')->withNotify($message);
+    // }
+
+    // SEBELUMNYA CHATGPT
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'station_id' => 'string|required',
+    //         'date' => 'date|required',
+    //     ]);
+
+    //     $station_id = $request->station_id;
+    //     $date = $request->date;
+
+    //     $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
+    //     $host = Str::beforeLast($config_pg->ip_address, '.') . '.161';
+
+    //     $directory = '/home/sps/bank/alreadysent';
+
+    //     $baseConfig = config('filesystems.disks.sftp');
+
+    //     // $baseConfig['host'] = $host;
+    //     // $baseConfig['port'] = (int) env("SFTP_SCU_PORT");
+    //     $baseConfig['host'] = 'localhost';
+    //     $baseConfig['port'] = (int) 2222;
+    //     $baseConfig['username'] = env('SFTP_SCU_USERNAME');
+    //     $baseConfig['password'] = env('SFTP_SCU_PASSWORD');
+
+    //     $disk = Storage::build($baseConfig);
+
+    //     // Ambil semua file dari SFTP
+    //     $allFiles = $disk->allFiles($directory);
+    //     $dateFilter = Carbon::parse($date)->format('Ymd');
+
+    //     // Filter berdasarkan tanggal pada nama file
+    //     $filteredFiles = array_filter($allFiles, function ($file) use ($dateFilter) {
+    //         $filename = basename($file);
+    //         return substr($filename, 10, 8) === $dateFilter;
+    //     });
+
+    //     $now = now();
+    //     $totalInserted = 0;
+
+    //     // Hapus semua data dulu
+    //     TransaksiTiket::truncate();
+
+    //     foreach ($filteredFiles as $filePath) {
+    //         try {
+    //             $filename = basename($filePath);
+    //             $rawContent = $disk->get($filePath);
+
+    //             // Coba beberapa encoding umum
+    //             $encodings = ['ISO-8859-1', 'Windows-1252', 'UTF-8'];
+    //             $utf8Data = false;
+
+    //             foreach ($encodings as $encoding) {
+    //                 $convertedData = @mb_convert_encoding($rawContent, 'UTF-8', $encoding);
+    //                 if ($convertedData !== false) {
+    //                     $utf8Data = $convertedData;
+    //                     break;
+    //                 }
+    //             }
+
+    //             if ($utf8Data === false) {
+    //                 continue;
+    //             }
+
+    //             // Pisahkan data berdasarkan delimiter '|'
+    //             $chunks = explode('|', $utf8Data);
+
+    //             foreach ($chunks as $chunk) {
+    //                 if (substr_count($chunk, ';') < 4) {
+    //                     continue;
+    //                 }
+
+    //                 if (!preg_match('/;0{100,}$/', $chunk)) {
+    //                     continue;
+    //                 }
+
+    //                 $parts = explode(';', $chunk);
+
+    //                 if (count($parts) < 5) {
+    //                     continue;
+    //                 }
+
+    //                 $data1 = explode(',', $parts[2]);
+    //                 $data2 = explode(',', $parts[3]);
+
+    //                 $item = [
+    //                     'transaction_type' => 'KUE',
+    //                     'transaction_id' => $parts[1],
+    //                     'device' => substr($filename, 0, 2),
+    //                     'corner_id' => substr($filename, 6, 2),
+    //                     'pg_id' => hexdec(substr($filename, 8, 2)),
+    //                     'pan' => $data1[0] ?? null,
+    //                     'transaction_amount' => $data1[1] ?? null,
+    //                     'balance_before' => $data1[6] ?? null,
+    //                     'balance_after' => $data1[7] ?? null,
+    //                     'card_type' => $data1[9] ?? null,
+    //                     'tap_in_time' => $data2[0] ?? null,
+    //                     'tap_in_station' => $data2[1] ?? null,
+    //                     'tap_out_time' => $data2[2] ?? null,
+    //                     'tap_out_station' => $data2[3] ?? null,
+    //                     'created_at' => $now,
+    //                     'updated_at' => $now,
+    //                 ];
+
+    //                 $existingEntry = TransaksiTiket::where('transaction_id', $item['transaction_id'])->first();
+
+    //                 if (!$existingEntry) {
+    //                     TransaksiTiket::create($item);
+    //                     $totalInserted++;
+    //                 }
+    //             }
+    //         } catch (\Exception $e) {
+    //             // Log::error("Gagal parsing file $filePath: " . $e->getMessage());
+    //             continue;
+    //         }
+    //     }
+
+    //     // Menampilkan hasil ke user
+    //     $message = sprintf('Import semua file berhasil. Jumlah file diproses: %d, Total data dimasukkan: %d', count($filteredFiles), $totalInserted);
+
+    //     return redirect()->route('transaksi.tiket.index')->withNotify($message);
+    // }
+
+    // DEEPSEEK
     public function store(Request $request)
     {
         $request->validate([
@@ -133,12 +375,14 @@ class TransaksiTiketController extends Controller
 
         $directory = '/home/sps/bank/alreadysent';
 
-        $baseConfig = config('filesystems.disks.sftp');
-
-        $baseConfig['host'] = $host;
-        $baseConfig['port'] = (int) env("SFTP_SCU_PORT");
-        $baseConfig['username'] = env("SFTP_SCU_USERNAME");
-        $baseConfig['password'] = env("SFTP_SCU_PASSWORD");
+        $baseConfig = [
+            'driver' => 'sftp',
+            'host' => 'localhost',
+            'port' => 2222,
+            'username' => env('SFTP_SCU_USERNAME'),
+            'password' => env('SFTP_SCU_PASSWORD'),
+            'timeout' => 30,
+        ];
 
         $disk = Storage::build($baseConfig);
 
@@ -154,88 +398,97 @@ class TransaksiTiketController extends Controller
 
         $now = now();
         $totalInserted = 0;
+        $totalFiles = count($filteredFiles);
+        $skippedTransactions = 0;
+        $problematicFiles = [];
+        $skippedSamples = [];
 
         // Hapus semua data dulu
         TransaksiTiket::truncate();
 
         foreach ($filteredFiles as $filePath) {
+            $filename = basename($filePath);
+            $fileProblems = 0;
+
             try {
-                $filename = basename($filePath);
-                $rawContent = $disk->get($filePath);
+                $content = $disk->get($filePath);
+                $utf8Content = mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
+                $cleanContent = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $utf8Content);
 
-                // Coba beberapa encoding umum sebelum menggunakan UTF-8
-                $encodings = ['ISO-8859-1', 'Windows-1252', 'UTF-8'];
-                $utf8Data = false;
+                $transactions = explode('|', $cleanContent);
 
-                foreach ($encodings as $encoding) {
-                    $convertedData = @mb_convert_encoding($rawContent, 'UTF-8', $encoding);
-                    if ($convertedData !== false) {
-                        $utf8Data = $convertedData;
-                        break;
+                foreach ($transactions as $transaction) {
+                    $transaction = trim($transaction);
+                    if (empty($transaction)) {
+                        $skippedTransactions++;
+                        continue;
                     }
-                }
 
-                if ($utf8Data === false) {
-                    continue;
-                }
+                    $parts = explode(';', $transaction);
 
-                // Potong berdasarkan delimiter blok transaksi
-                $pattern = '/(\d+;[0-9A-F\-]+;\d+,\d+\.\d+,.*?)(?=0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)/s';
-                preg_match_all($pattern, $utf8Data, $matches);
-                $extractedData = $matches[0];
+                    // Validasi lebih longgar
+                    if (count($parts) < 3) {
+                        $skippedTransactions++;
+                        $fileProblems++;
+                        $skippedSamples[] = substr($transaction, 0, 50);
+                        continue;
+                    }
 
-                $result = [];
+                    try {
+                        $data1 = explode(',', $parts[2] ?? '');
+                        $data2 = explode(',', $parts[3] ?? '');
 
-                foreach ($extractedData as $key => $data) {
-                    $parts = explode(';', $data);
+                        $item = [
+                            'transaction_type' => 'KUE',
+                            'transaction_id' => $parts[1] ?? 'UNKNOWN_' . uniqid(),
+                            'device' => substr($filename, 0, 2),
+                            'corner_id' => substr($filename, 6, 2),
+                            'pg_id' => hexdec(substr($filename, 8, 2)),
+                            'pan' => $data1[0] ?? null,
+                            'transaction_amount' => $data1[1] ?? null,
+                            'balance_before' => $data1[6] ?? null,
+                            'balance_after' => $data1[7] ?? null,
+                            'card_type' => $data1[9] ?? null,
+                            'tap_in_time' => $data2[0] ?? null,
+                            'tap_in_station' => $data2[1] ?? null,
+                            'tap_out_time' => $data2[2] ?? null,
+                            'tap_out_station' => $data2[3] ?? null,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ];
 
-                    $data1 = explode(',', $parts[2]);
-                    $data2 = explode(',', $parts[3]);
-
-                    $item = [
-                        'transaction_type' => 'KUE',
-                        'transaction_id' => $parts[1],
-                        'device' => substr($filename, 0, 2),
-                        'corner_id' => substr($filename, 6, 2),
-                        'pg_id' => hexdec(substr($filename, 8, 2)),
-                        'pan' => $data1[0] ?? null,
-                        'transaction_amount' => $data1[1] ?? null,
-                        'balance_before' => $data1[6] ?? null,
-                        'balance_after' => $data1[7] ?? null,
-                        'card_type' => $data1[9] ?? null,
-                        'tap_in_time' => $data2[0] ?? null,
-                        'tap_in_station' => $data2[1] ?? null,
-                        'tap_out_time' => $data2[2] ?? null,
-                        'tap_out_station' => $data2[3] ?? null,
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
-
-                    // Mengecek apakah data sudah ada di database
-                    $existingEntry = TransaksiTiket::where('transaction_id', $item['transaction_id'])->first();
-
-                    if (!$existingEntry) {
                         TransaksiTiket::create($item);
                         $totalInserted++;
+                    } catch (\Exception $e) {
+                        $skippedTransactions++;
+                        $fileProblems++;
+                        $skippedSamples[] = substr($transaction, 0, 50) . ' [ERROR: ' . $e->getMessage() . ']';
                     }
                 }
-
             } catch (\Exception $e) {
+                $problematicFiles[] = $filename;
                 continue;
+            }
+
+            if ($fileProblems > 0) {
+                $problematicFiles[] = "$filename ($fileProblems masalah)";
             }
         }
 
-        // Menampilkan hasil ke user
-        $message = sprintf(
-            'Import semua file berhasil. Jumlah file diproses: %d, Total data dimasukkan: %d',
-            count($filteredFiles),
-            $totalInserted
-        );
+        $message = sprintf('Import selesai. File: %d, Data masuk: %d, Di-skip: %d.', $totalFiles, $totalInserted, $skippedTransactions);
+
+        // Tambahkan info debugging jika ada selisih
+        if ($skippedTransactions > 0) {
+            $sampleProblem = $skippedSamples[0] ?? 'tidak ada contoh';
+            $message .= ' Contoh data yang di-skip: ' . $sampleProblem;
+
+            if (count($problematicFiles) > 0) {
+                $message .= ' File bermasalah: ' . implode(', ', array_slice($problematicFiles, 0, 3));
+            }
+        }
 
         return redirect()->route('transaksi.tiket.index')->withNotify($message);
     }
-
-
 
     public function import(Request $request)
     {
