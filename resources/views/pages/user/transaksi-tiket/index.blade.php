@@ -100,7 +100,7 @@
                             <select class="form-control" name="station_id" id="station_id" required>
                                 <option value="" selected disabled>- select station -</option>
                                 @foreach ($config_pg as $item)
-                                    <option value="{{ $item->station_id }}" @selected($station_id == $item->station_id)>
+                                    <option value="{{ $item->station_id }}">
                                         {{ $item->station_code }}</option>
                                 @endforeach
                             </select>
@@ -108,8 +108,7 @@
                         <div class="form-group">
                             <label for="date" class="required">Date</label>
                             <input type="date" class="form-control" id="date" name="date"
-                                placeholder="input PG ID" autocomplete="off" value="{{ $date }}"
-                                required>
+                                placeholder="input PG ID" autocomplete="off" required>
                         </div>
                     </form>
                 </div>
@@ -139,7 +138,7 @@
                             <select class="form-control" name="tap_in_station_code" id="tap_in_station_code">
                                 <option value="" selected disabled>- select tap in station -</option>
                                 @foreach ($config_pg as $item)
-                                    <option value="{{ $item->station_code }}">
+                                    <option value="{{ $item->station_code }}" @selected($item->station_code === $tap_in_station_code)>
                                         {{ $item->station_code }}
                                     </option>
                                 @endforeach
@@ -150,7 +149,7 @@
                             <select class="form-control" name="tap_out_station_code" id="tap_out_station_code">
                                 <option value="" selected disabled>- select tap out station -</option>
                                 @foreach ($config_pg as $item)
-                                    <option value="{{ $item->station_code }}">
+                                    <option value="{{ $item->station_code }}" @selected($item->station_code === $tap_out_station_code)>
                                         {{ $item->station_code }}
                                     </option>
                                 @endforeach
@@ -161,7 +160,7 @@
                             <select class="form-control" name="bank" id="bank">
                                 <option value="" selected disabled>- select bank -</option>
                                 @foreach ($banks as $item)
-                                    <option value="{{ $item }}">
+                                    <option value="{{ $item }}" @selected($item === $bank)>
                                         {{ $item }}
                                     </option>
                                 @endforeach
