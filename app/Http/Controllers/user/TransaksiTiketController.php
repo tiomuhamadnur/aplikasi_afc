@@ -16,13 +16,32 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TransaksiTiketController extends Controller
 {
-    public function index(TransaksiTiketDataTable $dataTable)
+    public function index(TransaksiTiketDataTable $dataTable, Request $request)
     {
-        $station_id = null;
-        $date = null;
+        $tap_in_station_code = $request->tap_in_station_code;
+        $tap_out_station_code = $request->tap_out_station_code;
+        $bank = $request->bank;
+        $station_id = $request->station_id ?? null;
+        $date = $request->date ?? null;
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
 
-        return $dataTable->render('pages.user.transaksi-tiket.index', compact(['station_id', 'date', 'config_pg']));
+        $banks = TransaksiTiket::distinct()->orderBy('card_type', 'ASC')->pluck('card_type');
+
+        return $dataTable->with([
+            'tap_in_station_code' => $tap_in_station_code,
+            'tap_out_station_code' => $tap_out_station_code,
+            'bank' => $bank,
+            'date' => $date,
+        ])->render('pages.user.transaksi-tiket.index', compact([
+            'station_id',
+            'date',
+            'config_pg',
+            'banks',
+            'bank',
+            'date',
+            'tap_in_station_code',
+            'tap_out_station_code',
+        ]));
     }
     public function ftp()
     {
@@ -363,10 +382,12 @@ class TransaksiTiketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'is_deleted' => 'required|in:1,0',
             'station_id' => 'string|required',
             'date' => 'date|required',
         ]);
 
+        $is_deleted = $request->is_deleted;
         $station_id = $request->station_id;
         $date = $request->date;
 
@@ -378,7 +399,7 @@ class TransaksiTiketController extends Controller
         $baseConfig = [
             'driver' => 'sftp',
             'host' => $host,
-            'port' => (int) env("SFTP_SCU_PORT"),
+            'port' => (int) env('SFTP_SCU_PORT'),
             'username' => env('SFTP_SCU_USERNAME'),
             'password' => env('SFTP_SCU_PASSWORD'),
         ];
@@ -403,8 +424,10 @@ class TransaksiTiketController extends Controller
 
         $stationCodeMap = ConfigPG::pluck('station_code', 'station_kue_id')->toArray();
 
-        // Hapus semua data dulu
-        TransaksiTiket::truncate();
+        if ($is_deleted == 1) {
+            // Hapus semua data dulu
+            TransaksiTiket::truncate();
+        }
 
         foreach ($filteredFiles as $filePath) {
             $filename = basename($filePath);

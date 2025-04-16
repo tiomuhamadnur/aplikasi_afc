@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\TransaksiTiket;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Request;
 use Laraindo\RupiahFormat;
@@ -16,6 +17,24 @@ use Yajra\DataTables\Services\DataTable;
 
 class TransaksiTiketDataTable extends DataTable
 {
+    protected $tap_in_station_code;
+    protected $tap_out_station_code;
+    protected $bank;
+    protected $date;
+
+    public function with(array|string $key, mixed $value = null): static
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->{$k} = $v;
+            }
+        } else {
+            $this->{$key} = $value;
+        }
+
+        return $this;
+    }
+
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
@@ -34,14 +53,27 @@ class TransaksiTiketDataTable extends DataTable
     {
         $query = $model->newQuery();
 
-        // // Apply filters
-        // if ($request->has('transaction_type')) {
-        //     $query->where('transaction_type', $request->get('transaction_type'));
-        // }
-        // if ($request->has('transaction_id')) {
-        //     $query->where('transaction_id', 'like', '%' . $request->get('transaction_id') . '%');
-        // }
-        // Add more filters as needed
+        // Apply filters
+        if ($this->bank != null) {
+            $query->where('card_type', $this->bank);
+        }
+
+        if ($this->tap_in_station_code != null) {
+            $query->where('tap_in_station', $this->tap_in_station_code);
+        }
+
+        if ($this->tap_out_station_code != null) {
+            $query->where('tap_out_station', $this->tap_out_station_code);
+        }
+
+        if ($this->date != null) {
+            $date = explode('?', $this->date)[0];
+
+            $start = Carbon::parse($date)->startOfDay()->format('Y-m-d H:i:s');
+            $end = Carbon::parse($date)->endOfDay()->format('Y-m-d H:i:s');
+
+            $query->whereBetween('tap_out_time', [$start, $end]);
+        }
 
         return $query;
     }
