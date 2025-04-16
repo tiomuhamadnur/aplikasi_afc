@@ -377,11 +377,10 @@ class TransaksiTiketController extends Controller
 
         $baseConfig = [
             'driver' => 'sftp',
-            'host' => 'localhost',
-            'port' => 2222,
+            'host' => $host,
+            'port' => (int) env("SFTP_SCU_PORT"),
             'username' => env('SFTP_SCU_USERNAME'),
             'password' => env('SFTP_SCU_PASSWORD'),
-            'timeout' => 30,
         ];
 
         $disk = Storage::build($baseConfig);
