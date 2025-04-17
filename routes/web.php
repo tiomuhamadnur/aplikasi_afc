@@ -24,6 +24,7 @@ use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\GoogleSpreadsheetController;
 use App\Http\Controllers\admin\IniFileController;
 use App\Http\Controllers\admin\JabatanController;
+use App\Http\Controllers\admin\LogController;
 use App\Http\Controllers\admin\LokasiController;
 use App\Http\Controllers\admin\OptionFormController;
 use App\Http\Controllers\admin\ParameterController;
@@ -585,6 +586,11 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::post('/ini-file', 'store')->name('ini-file.store');
             Route::put('/ini-file', 'update')->name('ini-file.update');
             Route::get('/test-sftp', 'ini_file');
+        });
+
+        Route::controller(LogController::class)->group(function () {
+            Route::get('/log', 'index')->name('log.index');
+            Route::post('/log', 'store')->name('log.store');
         });
 
         Route::controller(MonitoringEquipmentController::class)->group(function () {
