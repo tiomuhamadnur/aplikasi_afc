@@ -66,22 +66,28 @@ class LogController extends Controller
         $results = [];
 
         foreach ($lines as $line) {
-            $line = trim(preg_replace('/\s+/', ' ', $line)); // Normalize spasi berlebih
-            if (empty($line)) {
-                continue;
-            }
+            $line = trim(preg_replace('/\s+/', ' ', $line)); // Normalize spasi
+            if (empty($line)) continue;
 
-            $parts = explode(' ', $line, 6); // Ambil 6 bagian maksimum
-            if (count($parts) < 6) {
-                continue;
-            }
+            $parts = explode(' ', $line);
+
+            if (count($parts) < 5) continue; // Minimal: date time code desc status
+
+            $date = $parts[0];
+            $time = $parts[1];
+            $error_code = $parts[2];
+            $status = array_pop($parts); // ambil kata terakhir sebagai status
+
+            // Sisanya dari index 3 sampai sebelum terakhir = description
+            $description_parts = array_slice($parts, 3);
+            $description = implode(' ', $description_parts);
 
             $results[] = [
-                'date' => $parts[0],
-                'time' => $parts[1],
-                'error_code' => $parts[2],
-                'description' => $parts[3] . ' ' . $parts[4],
-                'status' => $parts[5],
+                'date' => $date,
+                'time' => $time,
+                'error_code' => $error_code,
+                'description' => $description,
+                'status' => $status,
             ];
         }
 
