@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Admin | Log</title>
+    <title>Admin | Log PG</title>
 @endsection
 
 @section('content')
@@ -10,7 +10,7 @@
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Data Log</h4>
+                        <h4 class="card-title">Data Log PG</h4>
                         <div class="btn-group my-2">
                             {{-- <button type="button" title="Search" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#searchModal">
@@ -31,6 +31,8 @@
                                         <th>No</th>
                                         <th>Date</th>
                                         <th>Time</th>
+                                        <th>Station</th>
+                                        <th>PG ID</th>
                                         <th>Error Code</th>
                                         <th>Error Description</th>
                                         <th>Status</th>
@@ -42,6 +44,8 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['date'] }}</td>
                                             <td>{{ $item['time'] }}</td>
+                                            <td>{{ $item['station_code'] }}</td>
+                                            <td>{{ $item['pg_id'] }}</td>
                                             <td>{{ $item['error_code'] }}</td>
                                             <td>{{ $item['description'] }}</td>
                                             <td>

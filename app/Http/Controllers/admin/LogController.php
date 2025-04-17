@@ -83,6 +83,8 @@ class LogController extends Controller
             $description = implode(' ', $description_parts);
 
             $results[] = [
+                'station_code' => $config_pg->station_code,
+                'pg_id' => $pg_id,
                 'date' => $date,
                 'time' => $time,
                 'error_code' => $error_code,
