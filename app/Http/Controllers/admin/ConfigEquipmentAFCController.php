@@ -6,6 +6,7 @@ use App\DataTables\ConfigEquipmentAFCDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Process;
 use Spatie\Ssh\Ssh;
 
 class ConfigEquipmentAFCController extends Controller
@@ -77,7 +78,22 @@ class ConfigEquipmentAFCController extends Controller
 
     private function sshExecute(string $ip, string $username, string $password, int $port, string $command)
     {
-        return Ssh::create($username, $ip, $port, $password)->execute($command)->getOutput();
+        $sshCommand = sprintf(
+            'sshpass -p %s ssh -o StrictHostKeyChecking=no -p %d %s@%s "%s"',
+            escapeshellarg($password),
+            $port,
+            $username,
+            $ip,
+            $command
+        );
+
+        $result = Process::run($sshCommand);
+
+        if ($result->failed()) {
+            throw new \RuntimeException("SSH command failed: " . $result->errorOutput());
+        }
+
+        return $result->output();
     }
 
     private function pg_power_on(string $scu_ip_address, string $pg_mac_address)
