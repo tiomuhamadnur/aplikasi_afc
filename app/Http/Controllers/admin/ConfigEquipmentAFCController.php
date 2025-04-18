@@ -77,7 +77,7 @@ class ConfigEquipmentAFCController extends Controller
 
     private function sshExecute(string $ip, string $username, string $password, int $port, string $command)
     {
-        return Ssh::create($username, $ip, $port, $password)->executeAsync($command)->getOutput();
+        return Ssh::create($username, $ip, $port, $password)->execute($command)->getOutput();
     }
 
     private function pg_power_on(string $scu_ip_address, string $pg_mac_address)
