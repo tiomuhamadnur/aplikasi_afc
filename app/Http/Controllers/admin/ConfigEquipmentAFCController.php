@@ -60,13 +60,13 @@ class ConfigEquipmentAFCController extends Controller
 
         switch ($control_type) {
             case 'on':
-                $notifyMessage = $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On';
+                $notifyMessage = $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On - ' . $pg->equipment_name;
                 break;
             case 'off':
-                $notifyMessage = $this->pg_power_off($pg->ip_address) . ' Power Off';
+                $notifyMessage = $this->pg_power_off($pg->ip_address) . ' Power Off - ' . $pg->equipment_name;
                 break;
             case 'reboot':
-                $notifyMessage = $this->pg_reboot($pg->ip_address) . ' Rebooting';
+                $notifyMessage = $this->pg_reboot($pg->ip_address) . ' Rebooting - ' . $pg->equipment_name;
                 break;
             default:
                 $notifyMessage = 'Invalid control type';
