@@ -29,16 +29,7 @@ class ConfigEquipmentAFCController extends Controller
                 'corner_id' => $corner_id,
                 'direction' => $direction,
             ])
-            ->render('pages.admin.config-equipment-afc.index', compact([
-                'station_codes',
-                'equipment_type_codes',
-                'corner_ids',
-                'directions',
-                'station_code',
-                'equipment_type_code',
-                'corner_id',
-                'direction',
-            ]));
+            ->render('pages.admin.config-equipment-afc.index', compact(['station_codes', 'equipment_type_codes', 'corner_ids', 'directions', 'station_code', 'equipment_type_code', 'corner_id', 'direction']));
     }
 
     public function create()
@@ -62,49 +53,70 @@ class ConfigEquipmentAFCController extends Controller
         $control_type = $request->control_type;
 
         $pg = ConfigEquipmentAFC::where('uuid', $uuid)->firstOrFail();
-        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')
-                ->where('station_name', $pg->station_name)
-                ->where('station_code', $pg->station_code)
-                ->firstOrFail();
+        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->where('station_name', $pg->station_name)->where('station_code', $pg->station_code)->firstOrFail();
 
-        if($control_type == 'on') {
-            $message = $this->pg_power_on($scu->ip_address, $pg->mac_address);
-            return redirect()->route('config-equipment-afc.index')->withNotify($message);
-        }
-        elseif($control_type == 'off') {
-            $message = $this->pg_power_off($pg->ip_address);
-            return redirect()->route('config-equipment-afc.index')->withNotify($message);
-        }
-        elseif($control_type == 'reboot') {
-            $message = $this->pg_reboot($pg->ip_address);
-            return redirect()->route('config-equipment-afc.index')->withNotify($message);
+        $notifyMessage = '';
+
+        switch ($control_type) {
+            case 'on':
+                $notifyMessage = $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On';
+                break;
+            case 'off':
+                $notifyMessage = $this->pg_power_off($pg->ip_address) . ' Power Off';
+                break;
+            case 'reboot':
+                $notifyMessage = $this->pg_reboot($pg->ip_address) . ' Rebooting';
+                break;
+            default:
+                $notifyMessage = 'Invalid control type';
+                break;
         }
 
-        return redirect()->route('config-equipment-afc.index')->withNotofyerror('Something went wrong, please check your connection');
+        return redirect()->route('config-equipment-afc.index')->withNotify($notifyMessage);
+    }
+
+    private function sshExecute(string $ip, string $username, string $password, int $port, string $command)
+    {
+        return Ssh::create($username, $ip, $port, $password)->executeAsync($command)->getOutput();
     }
 
     private function pg_power_on(string $scu_ip_address, string $pg_mac_address)
     {
         $command = 'ether-wake -i em1 ' . $pg_mac_address;
-        $connection = Ssh::create(env('SSH_SCU_USERNAME'), $scu_ip_address, (int)env('SSH_SCU_PORT'), env('SSH_SCU_PASSWORD'))
-                    ->executeAsync($command);
-        return $connection->getOutput();
+
+        return $this->sshExecute(
+            $scu_ip_address,
+            env('SSH_SCU_USERNAME'),
+            env('SSH_SCU_PASSWORD'),
+            (int) env('SSH_SCU_PORT'),
+            $command
+        );
     }
 
     private function pg_power_off(string $pg_ip_address)
     {
         $command = 'shutdown -h now';
-        $connection = Ssh::create(env('SSH_PG_USERNAME'), $pg_ip_address, (int)env('SSH_PG_PORT'), env('SSH_PG_PASSWORD'))
-                    ->executeAsync($command);
-        return $connection->getOutput();
+
+        return $this->sshExecute(
+            $pg_ip_address,
+            env('SSH_PG_USERNAME'),
+            env('SSH_PG_PASSWORD'),
+            (int) env('SSH_PG_PORT'),
+            $command
+        );
     }
 
     private function pg_reboot(string $pg_ip_address)
     {
         $command = 'reboot';
-        $connection = Ssh::create(env('SSH_PG_USERNAME'), $pg_ip_address, (int)env('SSH_PG_PORT'), env('SSH_PG_PASSWORD'))
-                    ->executeAsync($command);
-        return $connection->getOutput();
+
+        return $this->sshExecute(
+            $pg_ip_address,
+            env('SSH_PG_USERNAME'),
+            env('SSH_PG_PASSWORD'),
+            (int) env('SSH_PG_PORT'),
+            $command
+        );
     }
 
     public function show(string $id)
