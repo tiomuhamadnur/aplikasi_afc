@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\BarangController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\CauseController;
 use App\Http\Controllers\admin\ClassificationController;
+use App\Http\Controllers\admin\ConfigEquipmentAFCController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\DepartemenController;
 use App\Http\Controllers\admin\DetailLokasiController;
@@ -585,7 +586,11 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::get('/ini-file', 'index')->name('ini-file.index');
             Route::post('/ini-file', 'store')->name('ini-file.store');
             Route::put('/ini-file', 'update')->name('ini-file.update');
-            Route::get('/test-sftp', 'ini_file');
+        });
+
+        Route::controller(ConfigEquipmentAFCController::class)->group(function () {
+            Route::get('/config-equipment-afc', 'index')->name('config-equipment-afc.index');
+            Route::post('/config-equipment-afc', 'control_pg')->name('config-equipment-afc.control-pg');
         });
 
         Route::controller(LogController::class)->group(function () {
