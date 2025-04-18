@@ -82,7 +82,7 @@ class ConfigEquipmentAFCController extends Controller
 
     private function pg_power_on(string $scu_ip_address, string $pg_mac_address)
     {
-        $command = 'ether-wake -i em1 ' . $pg_mac_address;
+        $command = sprintf('ether-wake -i em1 %s', $pg_mac_address);
 
         return $this->sshExecute(
             $scu_ip_address,
