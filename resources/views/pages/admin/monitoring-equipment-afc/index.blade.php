@@ -6,6 +6,7 @@
         .table td {
             vertical-align: middle;
         }
+
         .progress {
             min-width: 50px;
         }
@@ -69,7 +70,8 @@
                                             <td class="font-monospace">{{ $item['ip'] }}</td>
 
                                             <td>
-                                                <span class="badge bg-{{ $item['status'] === 'online' ? 'success' : 'danger' }}">
+                                                <span
+                                                    class="badge bg-{{ $item['status'] === 'online' ? 'success' : 'danger' }}">
                                                     {{ ucfirst($item['status']) }}
                                                 </span>
                                             </td>
@@ -81,10 +83,10 @@
                                             <td>{{ number_format($item['load_average']['15m'], 2) }}</td>
                                             <td>
                                                 @php
-                                                    $loadStatusColor = match($item['load_average']['status']) {
+                                                    $loadStatusColor = match ($item['load_average']['status']) {
                                                         'normal' => 'success',
                                                         'busy' => 'warning',
-                                                        default => 'danger'
+                                                        default => 'danger',
                                                     };
                                                 @endphp
                                                 <span class="badge bg-{{ $loadStatusColor }}">
@@ -94,26 +96,25 @@
 
                                             <td>
                                                 <div class="d-flex flex-column small">
-                                                    <div class="text-nowrap">{{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}</div>
+                                                    <div class="text-nowrap">{{ $item['ram']['used'] }} /
+                                                        {{ $item['ram']['total'] }}</div>
                                                     <div class="progress mt-1" style="height: 3px;">
-                                                        <div
-                                                            class="progress-bar bg-{{ $item['ram']['percent'] > 80 ? 'danger' : ($item['ram']['percent'] > 60 ? 'warning' : 'success') }}"
-                                                            role="progressbar"
-                                                            style="width: {{ $item['ram']['percent'] }}%"
-                                                        ></div>
+                                                        <div class="progress-bar
+                                                            @if ($item['ram']['percent'] > 90) bg-danger
+                                                            @elseif($item['ram']['percent'] > 70) bg-warning
+                                                            @else bg-success @endif"></div>
+                                                        </div>
                                                     </div>
-                                                </div>
                                             </td>
 
                                             <td>
                                                 <div class="d-flex flex-column small">
-                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}</div>
+                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} /
+                                                        {{ $item['disk_root']['total'] }}</div>
                                                     <div class="progress mt-1" style="height: 3px;">
-                                                        <div
-                                                            class="progress-bar bg-{{ $item['disk_root']['percent'] > 80 ? 'danger' : ($item['disk_root']['percent'] > 60 ? 'warning' : 'success') }}"
+                                                        <div class="progress-bar bg-{{ $item['disk_root']['percent'] > 80 ? 'danger' : ($item['disk_root']['percent'] > 60 ? 'warning' : 'success') }}"
                                                             role="progressbar"
-                                                            style="width: {{ $item['disk_root']['percent'] }}%"
-                                                        ></div>
+                                                            style="width: {{ $item['disk_root']['percent'] }}%"></div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -121,15 +122,22 @@
                                             <td>{{ $item['cpu_cores'] }}</td>
 
                                             <td>
-                                                @if(!empty($item['core_temperatures']))
+                                                @if (!empty($item['core_temperatures']))
                                                     <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                        @foreach($item['core_temperatures'] as $index => $temp)
+                                                        @foreach ($item['core_temperatures'] as $index => $temp)
                                                             @php
-                                                                $tempColor = (float)$temp > 75 ? 'danger' : ((float)$temp > 60 ? 'warning' : 'success');
+                                                                $tempColor =
+                                                                    (float) $temp > 75
+                                                                        ? 'danger'
+                                                                        : ((float) $temp > 60
+                                                                            ? 'warning'
+                                                                            : 'success');
                                                             @endphp
-                                                            <span class="badge bg-{{ $tempColor }}-subtle text-{{ $tempColor }} d-inline-flex align-items-center">
+                                                            <span
+                                                                class="badge bg-{{ $tempColor }}-subtle text-{{ $tempColor }} d-inline-flex align-items-center">
                                                                 <span class="me-1">Core {{ $index + 1 }}</span>
-                                                                <span class="fw-bold">{{ number_format($temp, 1) }}°C</span>
+                                                                <span
+                                                                    class="fw-bold">{{ number_format($temp, 1) }}°C</span>
                                                             </span>
                                                         @endforeach
                                                     </div>

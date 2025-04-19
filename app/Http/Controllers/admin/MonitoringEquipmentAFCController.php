@@ -199,16 +199,28 @@ class MonitoringEquipmentAFCController extends Controller
         $lines = explode("\n", $free);
         $memLine = preg_split('/\s+/', $lines[1] ?? '');
 
-        $ramUsed = $memLine[2] ?? '-';
-        $ramTotal = $memLine[1] ?? '-';
-
-        $percent = $this->calculatePercentage($ramUsed, $ramTotal);
+        $ramUsed = $this->convertToMegabytes($memLine[2] ?? '0M');  // Konversi ke MB
+        $ramTotal = $this->convertToMegabytes($memLine[1] ?? '1M'); // Konversi ke MB
+        $percent = $ramTotal > 0 ? round(($ramUsed / $ramTotal) * 100) : 0;
 
         return [
-            'used' => $ramUsed,
-            'total' => $ramTotal,
-            'percent' => $percent,
+            'used' => $memLine[2] ?? '-',  // Format asli (contoh: "77M")
+            'total' => $memLine[1] ?? '-',  // Format asli (contoh: "1.9G")
+            'percent' => $percent,          // Persentase akurat
         ];
+    }
+
+    protected function convertToMegabytes(string $size): float
+    {
+        $size = trim($size);
+
+        if (str_ends_with($size, 'G')) {
+            return (float)$size * 1024;  // Konversi GB ke MB
+        }
+        if (str_ends_with($size, 'M')) {
+            return (float)$size;         // Sudah dalam MB
+        }
+        return 0;  // Fallback untuk format tidak dikenal
     }
 
     protected function parseDiskUsage(string $df): array
