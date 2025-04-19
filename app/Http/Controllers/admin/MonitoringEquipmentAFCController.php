@@ -185,15 +185,46 @@ class MonitoringEquipmentAFCController extends Controller
         foreach ($equipments as $eq) {
             $ip = $eq->ip_address;
 
-            // Cek status online/offline
-            $ping = Process::timeout(5)->run("ping -c 1 $ip");
+            // Cek status online/offline dengan memperpanjang timeout ping
+            try {
+                $ping = Process::timeout(10)->run("ping -c 1 -w 10 $ip");
 
-            if (!$ping->successful()) {
+                if (!$ping->successful()) {
+                    // Jika ping gagal atau perangkat tidak dapat dijangkau
+                    $results[] = [
+                        'scu_id' => $eq->id,
+                        'ip' => $ip,
+                        'status' => 'offline',
+                        'uptime' => '-',
+                        'load_average' => [
+                            '1m' => 0,
+                            '5m' => 0,
+                            '15m' => 0,
+                            'status' => 'offline',
+                        ],
+                        'ram' => [
+                            'used' => '-',
+                            'total' => '-',
+                            'percent' => 0,
+                        ],
+                        'disk_root' => [
+                            'used' => '-',
+                            'total' => '-',
+                            'percent' => 0,
+                        ],
+                        'cpu_cores' => 0,
+                        'core_temperatures' => [],
+                        'message' => 'Server offline atau tidak dapat dijangkau', // Pesan tambahan
+                    ];
+                    continue; // Skip further processing for this equipment if offline
+                }
+            } catch (\Exception $e) {
+                // Jika terjadi kesalahan di ping
                 $results[] = [
                     'scu_id' => $eq->id,
                     'ip' => $ip,
                     'status' => 'offline',
-                    'uptime' => '-',
+                    'uptime' => 'Error',
                     'load_average' => [
                         '1m' => 0,
                         '5m' => 0,
@@ -201,19 +232,20 @@ class MonitoringEquipmentAFCController extends Controller
                         'status' => 'offline',
                     ],
                     'ram' => [
-                        'used' => '-',
-                        'total' => '-',
+                        'used' => 'Error',
+                        'total' => 'Error',
                         'percent' => 0,
                     ],
                     'disk_root' => [
-                        'used' => '-',
-                        'total' => '-',
+                        'used' => 'Error',
+                        'total' => 'Error',
                         'percent' => 0,
                     ],
-                    'cpu_cores' => 0,
+                    'cpu_cores' => 'Error',
                     'core_temperatures' => [],
+                    'message' => 'Tidak dapat menghubungi server', // Pesan tambahan
                 ];
-                continue; // Skip further processing for this equipment if offline
+                continue; // Skip further processing if ping failed
             }
 
             try {
@@ -282,7 +314,7 @@ class MonitoringEquipmentAFCController extends Controller
                     'core_temperatures' => $coreTemps, // array of temps per core
                 ];
             } catch (\Exception $e) {
-                // Jika ada kesalahan saat menjalankan perintah SSH
+                // Jika terjadi kesalahan saat menjalankan perintah SSH
                 $results[] = [
                     'scu_id' => $eq->id,
                     'ip' => $ip,
@@ -306,6 +338,7 @@ class MonitoringEquipmentAFCController extends Controller
                     ],
                     'cpu_cores' => 'Error',
                     'core_temperatures' => [],
+                    'message' => 'Gagal menghubungi server via SSH', // Pesan tambahan
                 ];
             }
         }
@@ -319,7 +352,6 @@ class MonitoringEquipmentAFCController extends Controller
             'results',
         ]));
     }
-
 
 
     public function show(string $id)
