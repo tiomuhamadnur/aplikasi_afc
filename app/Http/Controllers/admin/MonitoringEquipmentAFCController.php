@@ -6,166 +6,47 @@ use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
 use Illuminate\Http\Request;
 use Illuminate\Process\Exceptions\ProcessTimedOutException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
 
 class MonitoringEquipmentAFCController extends Controller
 {
+    const EQUIPMENT_TYPE_SCU = 'SCU';
+    const EQUIPMENT_TYPE_PG = 'PG';
+
+    protected $sshTimeout = 3;
+    protected $pingTimeout = 3;
+
     public function index()
     {
-        $results = [];
-        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
-        return view('pages.admin.monitoring-equipment-afc.index', compact([
-            'scu',
-            'pg',
-            'results',
-        ]));
-    }
+        $equipmentTypes = [
+            'scu' => ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_SCU)->get(),
+            'pg' => ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)->get(),
+        ];
 
-    public function create()
-    {
-        //
+        return view('pages.admin.monitoring-equipment-afc.index', [
+            'scu' => $equipmentTypes['scu'],
+            'pg' => $equipmentTypes['pg'],
+            'results' => [],
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'scu_id' => 'required'
-        ]);
+        $request->validate(['scu_id' => 'required']);
 
-        $scu_id = $request->scu_id;
+        $equipments = $this->getTargetEquipment(
+            self::EQUIPMENT_TYPE_SCU,
+            $request->scu_id
+        );
 
-        if ($scu_id === 'all') {
-            $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
-        } else {
-            $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->where('id', $scu_id)->get();
-        }
+        $results = $this->checkEquipmentStatus(
+            $equipments,
+            env('SSH_SCU_USERNAME'),
+            env('SSH_SCU_PASSWORD')
+        );
 
-        $user = env('SSH_SCU_USERNAME');
-        $pass = env('SSH_SCU_PASSWORD');
-
-        $results = [];
-
-        foreach ($equipments as $eq) {
-            $ip = $eq->ip_address;
-
-            $ssh = "sshpass -p '$pass' ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$ip";
-
-            // Cek status online/offline
-            try {
-                $ping = Process::timeout(3)->run("ping -c 1 $ip");
-                $status = $ping->successful() ? 'online' : 'offline';
-            } catch (ProcessTimedOutException $e) {
-                $status = 'offline'; // kalau timeout, anggap offline
-            }
-
-            if ($status === 'offline') {
-                $results[] = [
-                    'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
-                    'equipment_name' => $eq->equipment_name,
-                    'ip' => $ip,
-                    'status' => 'offline',
-                    'uptime' => '-',
-                    'load_average' => [
-                        '1m' => 0,
-                        '5m' => 0,
-                        '15m' => 0,
-                        'status' => 'offline',
-                    ],
-                    'ram' => [
-                        'used' => '-',
-                        'total' => '-',
-                        'percent' => 0,
-                    ],
-                    'disk_root' => [
-                        'used' => '-',
-                        'total' => '-',
-                        'percent' => 0,
-                    ],
-                    'cpu_cores' => 0,
-                    'core_temperatures' => [],
-                ];
-                continue; // Skip further processing for this equipment if offline
-            }
-
-            // Ambil data dari SSH
-            $uptime = Process::run("$ssh 'uptime'")->output(); // Uptime untuk load average
-            $uptime_p = Process::run("$ssh 'uptime -p'")->output(); // Uptime bersih
-            $free = Process::run("$ssh 'free -h'")->output();
-            $df = Process::run("$ssh 'df -h /'")->output();
-            $cores = (int) trim(Process::run("$ssh 'nproc'")->output());
-
-            // Parse load average
-            preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
-            $load1m = (float)($matches[1] ?? 0);
-            $load5m = (float)($matches[2] ?? 0);
-            $load15m = (float)($matches[3] ?? 0);
-            $load_status = $this->classifyLoad($load1m, $cores);
-
-            // Parse RAM Usage
-            $lines = explode("\n", $free);
-            $memLine = preg_split('/\s+/', $lines[1]);
-            $ramUsed = $memLine[2] ?? '-';
-            $ramTotal = $memLine[1] ?? '-';
-            $ramPercent = (is_numeric(str_replace('G', '', $ramUsed)) && is_numeric(str_replace('G', '', $ramTotal)))
-                ? round(((float)str_replace('G', '', $ramUsed) / (float)str_replace('G', '', $ramTotal)) * 100)
-                : 0;
-
-            $ram = [
-                'used' => $ramUsed,
-                'total' => $ramTotal,
-                'percent' => $ramPercent,
-            ];
-
-            // Parse Disk Usage
-            $diskLine = explode("\n", trim($df))[1] ?? '';
-            $diskParts = preg_split('/\s+/', $diskLine);
-            $disk = [
-                'used' => $diskParts[2] ?? '-',
-                'total' => $diskParts[1] ?? '-',
-                'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
-            ];
-
-            // Menyusun data hasil
-            $results[] = [
-                'scu_id' => $eq->id,
-                'station_code' => $eq->station_code,
-                'equipment_type_code' => $eq->equipment_type_code,
-                'equipment_name' => $eq->equipment_name,
-                'ip' => $ip,
-                'status' => $status,
-                'uptime' => $uptime_p, // Menampilkan uptime dalam format yang bersih
-                'load_average' => [
-                    '1m' => $load1m,
-                    '5m' => $load5m,
-                    '15m' => $load15m,
-                    'status' => $load_status,
-                ],
-                'ram' => $ram,
-                'disk_root' => $disk,
-                'cpu_cores' => $cores,
-                'core_temperatures' => [],
-            ];
-        }
-
-        // Kirim data ke view
-        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
-        return view('pages.admin.monitoring-equipment-afc.index', compact([
-            'scu',
-            'pg',
-            'results',
-        ]));
-    }
-
-    private function classifyLoad($load1m, $cpuCores)
-    {
-        $percent = $load1m / $cpuCores;
-        if ($percent < 0.7) return 'normal';
-        if ($percent < 1.0) return 'busy';
-        return 'overload';
+        return $this->buildResponse($results);
     }
 
     public function store_pg(Request $request)
@@ -175,159 +56,205 @@ class MonitoringEquipmentAFCController extends Controller
             'pg_id' => 'required',
         ]);
 
-        $station_code = $request->station_code;
-        $pg_id = $request->pg_id;
-
-        $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'PG')
-            ->when($station_code !== 'all', function ($query) use ($station_code) {
-                $query->where('station_code', $station_code);
-            })
-            ->when($pg_id !== 'all', function ($query) use ($pg_id) {
-                $query->where('id', $pg_id);
-            })
+        $equipments = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)
+            ->when($request->station_code !== 'all', fn($q) => $q->where('station_code', $request->station_code))
+            ->when($request->pg_id !== 'all', fn($q) => $q->where('id', $request->pg_id))
             ->get();
 
-        $user = env('SSH_PG_USERNAME');
-        $pass = env('SSH_PG_PASSWORD');
+        $results = $this->checkEquipmentStatus(
+            $equipments,
+            env('SSH_PG_USERNAME'),
+            env('SSH_PG_PASSWORD'),
+            true // Include temperature check for PG
+        );
 
-        $results = [];
-        foreach ($equipments as $eq) {
+        return $this->buildResponse($results);
+    }
+
+    protected function getTargetEquipment(string $type, $id)
+    {
+        $query = ConfigEquipmentAFC::where('equipment_type_code', $type);
+
+        return $id === 'all'
+            ? $query->get()
+            : $query->where('id', $id)->get();
+    }
+
+    protected function checkEquipmentStatus(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
+    {
+        return $equipments->map(function ($eq) use ($username, $password, $checkTemp) {
             $ip = $eq->ip_address;
-
-            $ssh = "sshpass -p '$pass' ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$ip";
-
-            // Cek status online/offline
-            try {
-                $ping = Process::timeout(5)->run("ping -c 1 $ip");
-                $status = $ping->successful() ? 'online' : 'offline';
-            } catch (ProcessTimedOutException $e) {
-                $status = 'offline'; // kalau timeout, anggap offline
-            }
+            $status = $this->checkOnlineStatus($ip);
 
             if ($status === 'offline') {
-                $results[] = [
-                    'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
-                    'equipment_name' => $eq->equipment_name,
-                    'ip' => $ip,
-                    'status' => 'offline',
-                    'uptime' => '-',
-                    'load_average' => [
-                        '1m' => 0,
-                        '5m' => 0,
-                        '15m' => 0,
-                        'status' => 'offline',
-                    ],
-                    'ram' => [
-                        'used' => '-',
-                        'total' => '-',
-                        'percent' => 0,
-                    ],
-                    'disk_root' => [
-                        'used' => '-',
-                        'total' => '-',
-                        'percent' => 0,
-                    ],
-                    'cpu_cores' => 0,
-                    'core_temperatures' => [],
-                ];
-                continue; // Skip further processing for this equipment if offline
+                return $this->createOfflineResponse($eq, $ip);
             }
 
-            // Ambil data dari SSH
-            $uptime = Process::run("$ssh 'uptime'")->output();
-            $uptime_p = Process::run("$ssh 'uptime -p'")->output();
-            $free = Process::run("$ssh 'free -h'")->output();
-            $df = Process::run("$ssh 'df -h /'")->output();
-            $cores = (int) trim(Process::run("$ssh \"grep -c ^processor /proc/cpuinfo\"")->output());
+            $ssh = $this->createSshCommand($username, $password, $ip);
+
+            return $this->gatherSystemInfo($eq, $ip, $ssh, $checkTemp);
+        })->all();
+    }
+
+    protected function checkOnlineStatus(string $ip): string
+    {
+        try {
+            $ping = Process::timeout($this->pingTimeout)
+                ->run("ping -c 1 $ip");
+            return $ping->successful() ? 'online' : 'offline';
+        } catch (ProcessTimedOutException $e) {
+            return 'offline';
+        }
+    }
+
+    protected function createSshCommand(string $user, string $pass, string $ip): string
+    {
+        return "sshpass -p '$pass' ssh -o ConnectTimeout={$this->sshTimeout} " .
+                "-o StrictHostKeyChecking=no $user@$ip";
+    }
+
+    protected function createOfflineResponse($eq, string $ip): array
+    {
+        return [
+            'scu_id' => $eq->id,
+            'station_code' => $eq->station_code,
+            'equipment_type_code' => $eq->equipment_type_code,
+            'equipment_name' => $eq->equipment_name,
+            'corner_id' => $eq->corner_id,
+            'ip' => $ip,
+            'status' => 'offline',
+            'uptime' => '-',
+            'load_average' => [
+                '1m' => 0,
+                '5m' => 0,
+                '15m' => 0,
+                'status' => 'offline',
+            ],
+            'ram' => [
+                'used' => '-',
+                'total' => '-',
+                'percent' => 0,
+            ],
+            'disk_root' => [
+                'used' => '-',
+                'total' => '-',
+                'percent' => 0,
+            ],
+            'cpu_cores' => 0,
+            'core_temperatures' => [],
+        ];
+    }
+
+    protected function gatherSystemInfo($eq, string $ip, string $ssh, bool $checkTemp): array
+    {
+        $uptime = Process::run("$ssh 'uptime'")->output();
+        $uptime_p = Process::run("$ssh 'uptime -p'")->output();
+        $free = Process::run("$ssh 'free -h'")->output();
+        $df = Process::run("$ssh 'df -h /'")->output();
+        $cores = (int) trim(Process::run("$ssh 'nproc'")->output());
+
+        $loadData = $this->parseLoadAverage($uptime, $cores);
+        $ram = $this->parseRamUsage($free);
+        $disk = $this->parseDiskUsage($df);
+
+        $result = [
+            'scu_id' => $eq->id,
+            'station_code' => $eq->station_code,
+            'equipment_type_code' => $eq->equipment_type_code,
+            'equipment_name' => $eq->equipment_name,
+            'corner_id' => $eq->corner_id,
+            'ip' => $ip,
+            'status' => 'online',
+            'uptime' => trim($uptime_p),
+            'load_average' => $loadData,
+            'ram' => $ram,
+            'disk_root' => $disk,
+            'cpu_cores' => $cores,
+            'core_temperatures' => [],
+        ];
+
+        if ($checkTemp) {
             $sensors = Process::run("$ssh 'sensors'")->output();
-
-            // Parse load average
-            preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
-            $load1m = (float)($matches[1] ?? 0);
-            $load5m = (float)($matches[2] ?? 0);
-            $load15m = (float)($matches[3] ?? 0);
-            $load_status = $this->classifyLoad($load1m, $cores);
-
-            // Parse RAM Usage
-            $lines = explode("\n", $free);
-            $memLine = preg_split('/\s+/', $lines[1]);
-            $ramUsed = $memLine[2] ?? '-';
-            $ramTotal = $memLine[1] ?? '-';
-            $ramPercent = (is_numeric(str_replace('G', '', $ramUsed)) && is_numeric(str_replace('G', '', $ramTotal)))
-                ? round(((float)str_replace('G', '', $ramUsed) / (float)str_replace('G', '', $ramTotal)) * 100)
-                : 0;
-
-            $ram = [
-                'used' => $ramUsed,
-                'total' => $ramTotal,
-                'percent' => $ramPercent,
-            ];
-
-            // Parse Disk Usage
-            $diskLine = explode("\n", trim($df))[1] ?? '';
-            $diskParts = preg_split('/\s+/', $diskLine);
-            $disk = [
-                'used' => $diskParts[2] ?? '-',
-                'total' => $diskParts[1] ?? '-',
-                'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
-            ];
-
-            // Parse Core Temperature
-            preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $tempMatches);
-            $coreTemps = $tempMatches[1] ?? []; // Menyimpan suhu setiap core dalam array
-
-            // Menyusun data hasil
-            $results[] = [
-                'scu_id' => $eq->id,
-                'station_code' => $eq->station_code,
-                'equipment_type_code' => $eq->equipment_type_code,
-                'equipment_name' => $eq->equipment_name,
-                'ip' => $ip,
-                'status' => $status,
-                'uptime' => trim($uptime_p),
-                'load_average' => [
-                    '1m' => $load1m,
-                    '5m' => $load5m,
-                    '15m' => $load15m,
-                    'status' => $load_status,
-                ],
-                'ram' => $ram,
-                'disk_root' => $disk,
-                'cpu_cores' => $cores,
-                'core_temperatures' => $coreTemps, // array of temps per core
-            ];
+            $result['core_temperatures'] = $this->parseCoreTemperatures($sensors);
         }
 
-        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
-
-        return view('pages.admin.monitoring-equipment-afc.index', compact([
-            'scu',
-            'pg',
-            'results',
-        ]));
+        return $result;
     }
 
-
-    public function show(string $id)
+    protected function parseLoadAverage(string $uptime, int $cores): array
     {
-        //
+        preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
+
+        $load1m = (float)($matches[1] ?? 0);
+
+        return [
+            '1m' => $load1m,
+            '5m' => (float)($matches[2] ?? 0),
+            '15m' => (float)($matches[3] ?? 0),
+            'status' => $this->classifyLoad($load1m, $cores),
+        ];
     }
 
-    public function edit(string $id)
+    protected function parseRamUsage(string $free): array
     {
-        //
+        $lines = explode("\n", $free);
+        $memLine = preg_split('/\s+/', $lines[1] ?? '');
+
+        $ramUsed = $memLine[2] ?? '-';
+        $ramTotal = $memLine[1] ?? '-';
+
+        $percent = $this->calculatePercentage($ramUsed, $ramTotal);
+
+        return [
+            'used' => $ramUsed,
+            'total' => $ramTotal,
+            'percent' => $percent,
+        ];
     }
 
-    public function update(Request $request, string $id)
+    protected function parseDiskUsage(string $df): array
     {
-        //
+        $diskLine = explode("\n", trim($df))[1] ?? '';
+        $diskParts = preg_split('/\s+/', $diskLine);
+
+        return [
+            'used' => $diskParts[2] ?? '-',
+            'total' => $diskParts[1] ?? '-',
+            'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
+        ];
     }
 
-    public function destroy(string $id)
+    protected function parseCoreTemperatures(string $sensors): array
     {
-        //
+        preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $matches);
+        return $matches[1] ?? [];
+    }
+
+    protected function calculatePercentage(string $used, string $total): int
+    {
+        $usedNum = (float)str_replace(['G', 'M'], '', $used);
+        $totalNum = (float)str_replace(['G', 'M'], '', $total);
+
+        return $totalNum > 0 ? round(($usedNum / $totalNum) * 100) : 0;
+    }
+
+    protected function classifyLoad(float $load1m, int $cpuCores): string
+    {
+        $percent = $load1m / $cpuCores;
+
+        return match (true) {
+            $percent < 0.7 => 'normal',
+            $percent < 1.0 => 'busy',
+            default => 'overload',
+        };
+    }
+
+    protected function buildResponse(array $results)
+    {
+        return view('pages.admin.monitoring-equipment-afc.index', [
+            'scu' => ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_SCU)->get(),
+            'pg' => ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)->get(),
+            'results' => $results,
+        ]);
     }
 }

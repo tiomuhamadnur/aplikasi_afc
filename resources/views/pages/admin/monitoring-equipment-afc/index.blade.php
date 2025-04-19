@@ -2,6 +2,14 @@
 
 @section('title-head')
     <title>Admin | Monitoring Equipment AFC</title>
+    <style>
+        .table td {
+            vertical-align: middle;
+        }
+        .progress {
+            min-width: 50px;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -26,81 +34,117 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
-                                <thead>
+                            <table class="table table-bordered text-center align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <th rowspan="2">No</th>
-                                        <th rowspan="2">Equipment Type</th>
+                                        <th rowspan="2">#</th>
+                                        <th rowspan="2">Type</th>
                                         <th rowspan="2">Station</th>
-                                        <th rowspan="2">Equipment Name</th>
+                                        <th rowspan="2">Equipment</th>
+                                        <th rowspan="2">Corner</th>
                                         <th rowspan="2">IP Address</th>
                                         <th rowspan="2">Status</th>
                                         <th rowspan="2">Uptime</th>
                                         <th colspan="4">Load Average</th>
-                                        <th rowspan="2">RAM Usage</th>
-                                        <th rowspan="2">Disk Root Usage</th>
-                                        <th rowspan="2">CPU Core</th>
-                                        <th rowspan="2">Core Temperature</th>
+                                        <th rowspan="2">RAM</th>
+                                        <th rowspan="2">Disk</th>
+                                        <th rowspan="2">Cores</th>
+                                        <th rowspan="2">Temperatures</th>
                                     </tr>
                                     <tr>
-                                        <th>1 min</th>
-                                        <th>5 min</th>
-                                        <th>15 min</th>
+                                        <th>1m</th>
+                                        <th>5m</th>
+                                        <th>15m</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($results as $index => $item)
+                                    @forelse ($results as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['equipment_type_code'] }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['equipment_name'] }}</td>
-                                            <td>{{ $item['ip'] }}</td>
+                                            <td>{{ $item['corner_id'] }}</td>
+                                            <td class="font-monospace">{{ $item['ip'] }}</td>
+
                                             <td>
-                                                <span
-                                                    class="badge {{ $item['status'] === 'online' ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $item['status'] }}
+                                                <span class="badge bg-{{ $item['status'] === 'online' ? 'success' : 'danger' }}">
+                                                    {{ ucfirst($item['status']) }}
                                                 </span>
                                             </td>
+
                                             <td>{{ $item['uptime'] }}</td>
-                                            <td>{{ $item['load_average']['1m'] }}</td>
-                                            <td>{{ $item['load_average']['5m'] }}</td>
-                                            <td>{{ $item['load_average']['15m'] }}</td>
+
+                                            <td>{{ number_format($item['load_average']['1m'], 2) }}</td>
+                                            <td>{{ number_format($item['load_average']['5m'], 2) }}</td>
+                                            <td>{{ number_format($item['load_average']['15m'], 2) }}</td>
                                             <td>
-                                                <span
-                                                    class="badge
-                                                    @if ($item['load_average']['status'] === 'normal') bg-success
-                                                    @elseif($item['load_average']['status'] === 'busy') bg-warning
-                                                    @else bg-danger @endif">
+                                                @php
+                                                    $loadStatusColor = match($item['load_average']['status']) {
+                                                        'normal' => 'success',
+                                                        'busy' => 'warning',
+                                                        default => 'danger'
+                                                    };
+                                                @endphp
+                                                <span class="badge bg-{{ $loadStatusColor }}">
                                                     {{ ucfirst($item['load_average']['status']) }}
                                                 </span>
                                             </td>
-                                            <td>{{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}
-                                                ({{ $item['ram']['percent'] }}%)
-                                            </td>
-                                            <td>{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}
-                                                ({{ $item['disk_root']['percent'] }}%)</td>
-                                            <td>{{ $item['cpu_cores'] }}</td>
+
                                             <td>
-                                                @if (!empty($item['core_temperatures']))
-                                                    <ul style="font-size: 0.75rem; padding-left: 1rem;">
-                                                        @foreach ($item['core_temperatures'] as $index => $temp)
-                                                            <li>
-                                                                Core {{ $index }}:
-                                                                <span
-                                                                    class="{{ (float) $temp > 70 ? 'text-danger' : 'text-success' }}">
-                                                                    {{ $temp }} °C
-                                                                </span>
-                                                            </li>
+                                                <div class="d-flex flex-column small">
+                                                    <div class="text-nowrap">{{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}</div>
+                                                    <div class="progress mt-1" style="height: 3px;">
+                                                        <div
+                                                            class="progress-bar bg-{{ $item['ram']['percent'] > 80 ? 'danger' : ($item['ram']['percent'] > 60 ? 'warning' : 'success') }}"
+                                                            role="progressbar"
+                                                            style="width: {{ $item['ram']['percent'] }}%"
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="d-flex flex-column small">
+                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}</div>
+                                                    <div class="progress mt-1" style="height: 3px;">
+                                                        <div
+                                                            class="progress-bar bg-{{ $item['disk_root']['percent'] > 80 ? 'danger' : ($item['disk_root']['percent'] > 60 ? 'warning' : 'success') }}"
+                                                            role="progressbar"
+                                                            style="width: {{ $item['disk_root']['percent'] }}%"
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td>{{ $item['cpu_cores'] }}</td>
+
+                                            <td>
+                                                @if(!empty($item['core_temperatures']))
+                                                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                                        @foreach($item['core_temperatures'] as $index => $temp)
+                                                            @php
+                                                                $tempColor = (float)$temp > 75 ? 'danger' : ((float)$temp > 60 ? 'warning' : 'success');
+                                                            @endphp
+                                                            <span class="badge bg-{{ $tempColor }}-subtle text-{{ $tempColor }} d-inline-flex align-items-center">
+                                                                <span class="me-1">Core {{ $index + 1 }}</span>
+                                                                <span class="fw-bold">{{ number_format($temp, 1) }}°C</span>
+                                                            </span>
                                                         @endforeach
-                                                    </ul>
+                                                    </div>
                                                 @else
-                                                    <span>-</span>
+                                                    <span class="text-muted">N/A</span>
                                                 @endif
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="16" class="text-muted py-4">
+                                                No equipment data available
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
