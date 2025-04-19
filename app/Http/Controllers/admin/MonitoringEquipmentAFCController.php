@@ -142,7 +142,6 @@ class MonitoringEquipmentAFCController extends Controller
 
     public function store_pg(Request $request)
     {
-        dd($request);
         $request->validate([
             'station_code' => 'required',
             'pg_id' => 'required',
