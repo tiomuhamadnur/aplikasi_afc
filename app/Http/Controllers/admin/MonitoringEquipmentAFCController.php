@@ -58,9 +58,28 @@ class MonitoringEquipmentAFCController extends Controller
                 $results[] = [
                     'scu_id' => $eq->id,
                     'ip' => $ip,
-                    'status' => 'offline'
+                    'status' => 'offline',
+                    'uptime' => '-',
+                    'load_average' => [
+                        '1m' => 0,
+                        '5m' => 0,
+                        '15m' => 0,
+                        'status' => 'offline',
+                    ],
+                    'ram' => [
+                        'used' => '-',
+                        'total' => '-',
+                        'percent' => 0,
+                    ],
+                    'disk_root' => [
+                        'used' => '-',
+                        'total' => '-',
+                        'percent' => 0,
+                    ],
+                    'cpu_cores' => 0,
+                    'core_temperatures' => [],
                 ];
-                continue;
+                continue; // Skip further processing for this equipment if offline
             }
 
             // Ambil data dari SSH
@@ -176,9 +195,28 @@ class MonitoringEquipmentAFCController extends Controller
                 $results[] = [
                     'scu_id' => $eq->id,
                     'ip' => $ip,
-                    'status' => 'offline'
+                    'status' => 'offline',
+                    'uptime' => '-',
+                    'load_average' => [
+                        '1m' => 0,
+                        '5m' => 0,
+                        '15m' => 0,
+                        'status' => 'offline',
+                    ],
+                    'ram' => [
+                        'used' => '-',
+                        'total' => '-',
+                        'percent' => 0,
+                    ],
+                    'disk_root' => [
+                        'used' => '-',
+                        'total' => '-',
+                        'percent' => 0,
+                    ],
+                    'cpu_cores' => 0,
+                    'core_temperatures' => [],
                 ];
-                continue;
+                continue; // Skip further processing for this equipment if offline
             }
 
             // Ambil data dari SSH
@@ -224,6 +262,7 @@ class MonitoringEquipmentAFCController extends Controller
             preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $tempMatches);
             $coreTemps = $tempMatches[1] ?? []; // Menyimpan suhu setiap core dalam array
 
+            // Menyusun data hasil
             $results[] = [
                 'scu_id' => $eq->id,
                 'station_code' => $eq->station_code,
@@ -253,6 +292,7 @@ class MonitoringEquipmentAFCController extends Controller
             'results',
         ]));
     }
+
 
     public function show(string $id)
     {
