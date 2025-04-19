@@ -57,6 +57,9 @@ class MonitoringEquipmentAFCController extends Controller
             if ($status === 'offline') {
                 $results[] = [
                     'scu_id' => $eq->id,
+                    'station_code' => $eq->station_code,
+                    'equipment_type_code' => $eq->equipment_type_code,
+                    'equipment_name' => $eq->equipment_name,
                     'ip' => $ip,
                     'status' => 'offline',
                     'uptime' => '-',
@@ -125,6 +128,7 @@ class MonitoringEquipmentAFCController extends Controller
                 'scu_id' => $eq->id,
                 'station_code' => $eq->station_code,
                 'equipment_type_code' => $eq->equipment_type_code,
+                'equipment_name' => $eq->equipment_name,
                 'ip' => $ip,
                 'status' => $status,
                 'uptime' => $uptime_p, // Menampilkan uptime dalam format yang bersih
@@ -194,6 +198,9 @@ class MonitoringEquipmentAFCController extends Controller
             if ($status === 'offline') {
                 $results[] = [
                     'scu_id' => $eq->id,
+                    'station_code' => $eq->station_code,
+                    'equipment_type_code' => $eq->equipment_type_code,
+                    'equipment_name' => $eq->equipment_name,
                     'ip' => $ip,
                     'status' => 'offline',
                     'uptime' => '-',
@@ -267,6 +274,7 @@ class MonitoringEquipmentAFCController extends Controller
                 'scu_id' => $eq->id,
                 'station_code' => $eq->station_code,
                 'equipment_type_code' => $eq->equipment_type_code,
+                'equipment_name' => $eq->equipment_name,
                 'ip' => $ip,
                 'status' => $status,
                 'uptime' => trim($uptime_p),

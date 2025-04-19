@@ -32,6 +32,7 @@
                                         <th rowspan="2">No</th>
                                         <th rowspan="2">Equipment Type</th>
                                         <th rowspan="2">Station</th>
+                                        <th rowspan="2">Equipment Name</th>
                                         <th rowspan="2">IP Address</th>
                                         <th rowspan="2">Status</th>
                                         <th rowspan="2">Uptime</th>
@@ -54,6 +55,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['equipment_type_code'] }}</td>
                                             <td>{{ $item['station_code'] }}</td>
+                                            <td>{{ $item['equipment_name'] }}</td>
                                             <td>{{ $item['ip'] }}</td>
                                             <td>
                                                 <span
