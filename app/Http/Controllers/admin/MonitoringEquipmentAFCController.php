@@ -185,46 +185,20 @@ class MonitoringEquipmentAFCController extends Controller
         foreach ($equipments as $eq) {
             $ip = $eq->ip_address;
 
-            // Cek status online/offline dengan memperpanjang timeout ping
-            try {
-                $ping = Process::timeout(10)->run("ping -c 1 -w 10 $ip");
+            $ssh = "sshpass -p '$pass' ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$ip";
 
-                if (!$ping->successful()) {
-                    // Jika ping gagal atau perangkat tidak dapat dijangkau
-                    $results[] = [
-                        'scu_id' => $eq->id,
-                        'ip' => $ip,
-                        'status' => 'offline',
-                        'uptime' => '-',
-                        'load_average' => [
-                            '1m' => 0,
-                            '5m' => 0,
-                            '15m' => 0,
-                            'status' => 'offline',
-                        ],
-                        'ram' => [
-                            'used' => '-',
-                            'total' => '-',
-                            'percent' => 0,
-                        ],
-                        'disk_root' => [
-                            'used' => '-',
-                            'total' => '-',
-                            'percent' => 0,
-                        ],
-                        'cpu_cores' => 0,
-                        'core_temperatures' => [],
-                        'message' => 'Server offline atau tidak dapat dijangkau', // Pesan tambahan
-                    ];
-                    continue; // Skip further processing for this equipment if offline
-                }
-            } catch (\Exception $e) {
-                // Jika terjadi kesalahan di ping
+            // Cek status online/offline
+            $ping = Process::timeout(5)->run("ping -c 1 $ip");
+            $status = $ping->successful() ? 'online' : 'offline';
+
+            if ($status === 'offline') {
                 $results[] = [
                     'scu_id' => $eq->id,
+                    'station_code' => $eq->station_code,
+                    'equipment_type_code' => $eq->equipment_type_code,
                     'ip' => $ip,
                     'status' => 'offline',
-                    'uptime' => 'Error',
+                    'uptime' => '-',
                     'load_average' => [
                         '1m' => 0,
                         '5m' => 0,
@@ -232,26 +206,23 @@ class MonitoringEquipmentAFCController extends Controller
                         'status' => 'offline',
                     ],
                     'ram' => [
-                        'used' => 'Error',
-                        'total' => 'Error',
+                        'used' => '-',
+                        'total' => '-',
                         'percent' => 0,
                     ],
                     'disk_root' => [
-                        'used' => 'Error',
-                        'total' => 'Error',
+                        'used' => '-',
+                        'total' => '-',
                         'percent' => 0,
                     ],
-                    'cpu_cores' => 'Error',
+                    'cpu_cores' => 0,
                     'core_temperatures' => [],
-                    'message' => 'Tidak dapat menghubungi server', // Pesan tambahan
+                    'message' => 'Server offline atau tidak dapat dijangkau',
                 ];
-                continue; // Skip further processing if ping failed
+                continue;
             }
 
             try {
-                $ssh = "sshpass -p '$pass' ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$ip";
-
-                // Ambil data dari SSH
                 $uptime = Process::run("$ssh 'uptime'")->output();
                 $uptime_p = Process::run("$ssh 'uptime -p'")->output();
                 $free = Process::run("$ssh 'free -h'")->output();
@@ -259,16 +230,16 @@ class MonitoringEquipmentAFCController extends Controller
                 $cores = (int) trim(Process::run("$ssh \"grep -c ^processor /proc/cpuinfo\"")->output());
                 $sensors = Process::run("$ssh 'sensors'")->output();
 
-                // Parse load average
+                // Load Average
                 preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
                 $load1m = (float)($matches[1] ?? 0);
                 $load5m = (float)($matches[2] ?? 0);
                 $load15m = (float)($matches[3] ?? 0);
                 $load_status = $this->classifyLoad($load1m, $cores);
 
-                // Parse RAM Usage
-                $lines = explode("\n", $free);
-                $memLine = preg_split('/\s+/', $lines[1]);
+                // RAM
+                $lines = explode("\n", trim($free));
+                $memLine = isset($lines[1]) ? preg_split('/\s+/', $lines[1]) : [];
                 $ramUsed = $memLine[2] ?? '-';
                 $ramTotal = $memLine[1] ?? '-';
                 $ramPercent = (is_numeric(str_replace('G', '', $ramUsed)) && is_numeric(str_replace('G', '', $ramTotal)))
@@ -281,8 +252,9 @@ class MonitoringEquipmentAFCController extends Controller
                     'percent' => $ramPercent,
                 ];
 
-                // Parse Disk Usage
-                $diskLine = explode("\n", trim($df))[1] ?? '';
+                // Disk
+                $dfLines = explode("\n", trim($df));
+                $diskLine = $dfLines[1] ?? '';
                 $diskParts = preg_split('/\s+/', $diskLine);
                 $disk = [
                     'used' => $diskParts[2] ?? '-',
@@ -290,17 +262,16 @@ class MonitoringEquipmentAFCController extends Controller
                     'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
                 ];
 
-                // Parse Core Temperature
+                // Core Temperatures
                 preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $tempMatches);
-                $coreTemps = $tempMatches[1] ?? []; // Menyimpan suhu setiap core dalam array
+                $coreTemps = $tempMatches[1] ?? [];
 
-                // Menyusun data hasil
                 $results[] = [
                     'scu_id' => $eq->id,
                     'station_code' => $eq->station_code,
                     'equipment_type_code' => $eq->equipment_type_code,
                     'ip' => $ip,
-                    'status' => 'online',
+                    'status' => $status,
                     'uptime' => trim($uptime_p),
                     'load_average' => [
                         '1m' => $load1m,
@@ -311,12 +282,13 @@ class MonitoringEquipmentAFCController extends Controller
                     'ram' => $ram,
                     'disk_root' => $disk,
                     'cpu_cores' => $cores,
-                    'core_temperatures' => $coreTemps, // array of temps per core
+                    'core_temperatures' => $coreTemps,
                 ];
             } catch (\Exception $e) {
-                // Jika terjadi kesalahan saat menjalankan perintah SSH
                 $results[] = [
                     'scu_id' => $eq->id,
+                    'station_code' => $eq->station_code,
+                    'equipment_type_code' => $eq->equipment_type_code,
                     'ip' => $ip,
                     'status' => 'error',
                     'uptime' => 'Error',
@@ -338,7 +310,7 @@ class MonitoringEquipmentAFCController extends Controller
                     ],
                     'cpu_cores' => 'Error',
                     'core_temperatures' => [],
-                    'message' => 'Gagal menghubungi server via SSH', // Pesan tambahan
+                    'message' => 'Gagal menghubungi server via SSH',
                 ];
             }
         }
@@ -352,6 +324,7 @@ class MonitoringEquipmentAFCController extends Controller
             'results',
         ]));
     }
+
 
 
     public function show(string $id)

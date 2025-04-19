@@ -52,40 +52,44 @@
                                     @foreach ($results as $index => $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item['equipment_type_code'] }}</td>
-                                            <td>{{ $item['station_code'] }}</td>
-                                            <td>{{ $item['ip'] }}</td>
+                                            <td>{{ $item['equipment_type_code'] ?? '-' }}</td>
+                                            <td>{{ $item['station_code'] ?? '-' }}</td>
+                                            <td>{{ $item['ip'] ?? '-' }}</td>
                                             <td>
                                                 <span
                                                     class="badge {{ $item['status'] === 'online' ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $item['status'] }}
+                                                    {{ $item['status'] ?? 'unknown' }}
                                                 </span>
                                             </td>
-                                            <td>{{ $item['uptime'] }}</td>
-                                            <td>{{ $item['load_average']['1m'] }}</td>
-                                            <td>{{ $item['load_average']['5m'] }}</td>
-                                            <td>{{ $item['load_average']['15m'] }}</td>
+                                            <td>{{ $item['uptime'] ?? '-' }}</td>
+                                            <td>{{ $item['load_average']['1m'] ?? 0 }}</td>
+                                            <td>{{ $item['load_average']['5m'] ?? 0 }}</td>
+                                            <td>{{ $item['load_average']['15m'] ?? 0 }}</td>
                                             <td>
                                                 <span
                                                     class="badge
-                                                    @if ($item['load_average']['status'] === 'normal') bg-success
-                                                    @elseif($item['load_average']['status'] === 'busy') bg-warning
+                                                    @if (($item['load_average']['status'] ?? 'offline') === 'normal') bg-success
+                                                    @elseif(($item['load_average']['status'] ?? 'offline') === 'busy') bg-warning
                                                     @else bg-danger @endif">
-                                                    {{ ucfirst($item['load_average']['status']) }}
+                                                    {{ ucfirst($item['load_average']['status'] ?? '-') }}
                                                 </span>
                                             </td>
-                                            <td>{{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}
-                                                ({{ $item['ram']['percent'] }}%)
+                                            <td>
+                                                {{ $item['ram']['used'] ?? '-' }} / {{ $item['ram']['total'] ?? '-' }}
+                                                ({{ $item['ram']['percent'] ?? 0 }}%)
                                             </td>
-                                            <td>{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}
-                                                ({{ $item['disk_root']['percent'] }}%)</td>
-                                            <td>{{ $item['cpu_cores'] }}</td>
+                                            <td>
+                                                {{ $item['disk_root']['used'] ?? '-' }} /
+                                                {{ $item['disk_root']['total'] ?? '-' }}
+                                                ({{ $item['disk_root']['percent'] ?? 0 }}%)
+                                            </td>
+                                            <td>{{ $item['cpu_cores'] ?? '-' }}</td>
                                             <td>
                                                 @if (!empty($item['core_temperatures']))
                                                     <ul style="font-size: 0.75rem; padding-left: 1rem;">
-                                                        @foreach ($item['core_temperatures'] as $index => $temp)
+                                                        @foreach ($item['core_temperatures'] as $coreIndex => $temp)
                                                             <li>
-                                                                Core {{ $index }}:
+                                                                Core {{ $coreIndex }}:
                                                                 <span
                                                                     class="{{ (float) $temp > 70 ? 'text-danger' : 'text-success' }}">
                                                                     {{ $temp }} °C
@@ -98,9 +102,17 @@
                                                 @endif
                                             </td>
                                         </tr>
+                                        @if (!empty($item['message']))
+                                            <tr>
+                                                <td colspan="14" class="text-start text-danger">
+                                                    ⚠️ {{ $item['message'] }}
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
