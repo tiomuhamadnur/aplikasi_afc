@@ -42,7 +42,7 @@ class MonitoringEquipmentAFCController extends Controller
         return $this->buildResponse($results);
     }
 
-    public function storePg(Request $request)
+    public function store_pg(Request $request)
     {
         $request->validate([
             'station_code' => 'required',
