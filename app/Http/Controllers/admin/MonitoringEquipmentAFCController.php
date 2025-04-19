@@ -14,9 +14,9 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 1;
-    protected $pingTimeout = 1;
-    protected $maxConcurrentProcesses = 20; // Adjust based on your server capacity
+    protected $sshTimeout = 2;
+    protected $pingTimeout = 2;
+    protected $maxConcurrentProcesses = 20;
 
     public function index()
     {
@@ -153,7 +153,6 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function parseSshOutput($eq, string $ip, array $lines, bool $checkTemp): array
     {
-        // Initialize with basic info
         $result = [
             'scu_id' => $eq->id,
             'station_code' => $eq->station_code,
@@ -189,7 +188,6 @@ class MonitoringEquipmentAFCController extends Controller
             $result['disk_root'] = $this->createEmptyResource();
         }
 
-        // Parse temperatures if needed
         if ($checkTemp) {
             $sensorsStart = max($freeIndex, $dfIndex, $coresIndex) + 1;
             $sensorsOutput = implode("\n", array_slice($lines, $sensorsStart));
