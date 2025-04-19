@@ -221,8 +221,8 @@ class MonitoringEquipmentAFCController extends Controller
             ];
 
             // Parse Core Temperature
-            preg_match_all('/Core \d+:\s+\+([\d.]+)°C/', $sensors, $tempMatches);
-            $coreTemps = $tempMatches[1] ?? [];
+            preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $tempMatches);
+            $coreTemps = $tempMatches[1] ?? []; // Menyimpan suhu setiap core dalam array
 
             $results[] = [
                 'scu_id' => $eq->id,

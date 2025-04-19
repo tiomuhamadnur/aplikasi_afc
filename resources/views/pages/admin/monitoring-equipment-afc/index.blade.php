@@ -75,19 +75,20 @@
                                                 </span>
                                             </td>
                                             <td>{{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}
-                                                ({{ $item['ram']['percent'] }}%)</td>
+                                                ({{ $item['ram']['percent'] }}%)
+                                            </td>
                                             <td>{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}
                                                 ({{ $item['disk_root']['percent'] }}%)</td>
                                             <td>{{ $item['cpu_cores'] }}</td>
                                             <td>
                                                 @if (!empty($item['core_temperatures']))
                                                     <ul style="font-size: 0.75rem; padding-left: 1rem;">
-                                                        @foreach ($item['core_temperatures'] as $label => $temp)
+                                                        @foreach ($item['core_temperatures'] as $index => $temp)
                                                             <li>
-                                                                {{ $label }}:
+                                                                Core {{ $index }}:
                                                                 <span
                                                                     class="{{ (float) $temp > 70 ? 'text-danger' : 'text-success' }}">
-                                                                    {{ $temp }}
+                                                                    {{ $temp }} °C
                                                                 </span>
                                                             </li>
                                                         @endforeach
