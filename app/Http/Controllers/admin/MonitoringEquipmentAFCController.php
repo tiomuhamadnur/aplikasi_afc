@@ -77,88 +77,90 @@ class MonitoringEquipmentAFCController extends Controller
         return $id === 'all' ? $query->get() : $query->where('id', $id)->get();
     }
 
-    protected function checkEquipmentStatusParallel(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
-    {
+    protected function checkEquipmentStatusParallel(
+        Collection $equipments,
+        string $username,
+        string $password,
+        bool $checkTemp = false
+    ): array {
         $results = [];
 
-        // 1. Parallel ping checks
-        $pingProcesses = [];
-        foreach ($equipments as $eq) {
-            $pingProcesses[$eq->ip_address] = Process::start(['ping', '-c', '1', '-W', $this->pingTimeout, $eq->ip_address]);
-        }
+        // 1. Parallel Ping Check
+        $pingPool = Process::pool(function (Pool $pool) use ($equipments) {
+            foreach ($equipments as $eq) {
+                $pool->command(['ping', '-c', '1', '-W', $this->pingTimeout, $eq->ip_address])
+                    ->timeout($this->pingTimeout + 1);
+            }
+        })->start();
 
-        // Wait for all ping processes to complete
-        $onlineDevices = [];
-        foreach ($pingProcesses as $ip => $process) {
-            try {
-                $process->wait();
-                if ($process->exitCode() === 0) {
-                    $onlineDevices[] = $ip;
+        $pingResults = $pingPool->wait();
+        $onlineDevices = collect($pingResults)
+            ->filter(fn ($result) => $result->successful())
+            ->keys();
+
+        // 2. Parallel SSH Processing
+        $sshPool = Process::pool(function (Pool $pool) use ($onlineDevices, $username, $password, $checkTemp) {
+            foreach ($onlineDevices as $ip) {
+                $commands = [
+                    'uptime' => 'uptime',
+                    'uptime_p' => 'uptime -p',
+                    'free' => 'free -h',
+                    'df' => 'df -h /',
+                    'cores' => 'grep -c ^processor /proc/cpuinfo'
+                ];
+
+                if ($checkTemp) {
+                    $commands['sensors'] = 'sensors';
                 }
-            } catch (\Exception $e) {
+
+                $combinedCmd = implode(' && ', array_map(
+                    fn($cmd) => "echo '===CMD_".md5($cmd)."===' && $cmd",
+                    $commands
+                ));
+
+                $pool->command([
+                    'sshpass', '-p', $password,
+                    'ssh', '-o', "ConnectTimeout={$this->sshTimeout}",
+                    '-o', 'StrictHostKeyChecking=no',
+                    "{$username}@{$ip}",
+                    $combinedCmd
+                ])->timeout($this->sshTimeout + 2);
+            }
+        })->concurrently($this->concurrency);
+
+        $sshResults = $sshPool->wait();
+
+        // 3. Build Results
+        foreach ($equipments as $eq) {
+            $ip = $eq->ip_address;
+
+            if (!$onlineDevices->contains($ip)) {
+                $results[$ip] = $this->createOfflineResponse($eq, $ip);
                 continue;
             }
-        }
 
-        // 2. Parallel SSH checks for online devices
-        $sshProcesses = [];
-        foreach ($onlineDevices as $ip) {
-            $commands = [
-                'uptime' => 'uptime',
-                'uptime_p' => 'uptime -p',
-                'free' => 'free -h',
-                'df' => 'df -h /',
-                'cores' => 'grep -c ^processor /proc/cpuinfo',
-            ];
-
-            if ($checkTemp) {
-                $commands['sensors'] = 'sensors';
-            }
-
-            $combinedCmd = implode(' && ', array_map(fn($cmd) => "echo '===CMD_" . md5($cmd) . "===' && $cmd", $commands));
-
-            $sshProcesses[$ip] = Process::start(['sshpass', '-p', $password, 'ssh', '-o', 'ConnectTimeout=' . $this->sshTimeout, '-o', 'StrictHostKeyChecking=no', $username . '@' . $ip, $combinedCmd]);
-        }
-
-        // Process SSH results
-        foreach ($sshProcesses as $ip => $process) {
-            try {
-                $process->wait();
-                $eq = $equipments->firstWhere('ip_address', $ip);
-
-                if ($process->exitCode() !== 0) {
-                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
-                    continue;
-                }
-
-                $parsed = $this->parseCombinedOutput($process->output(), $checkTemp);
-
-                $results[$ip] = [
-                    'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
-                    'equipment_name' => $eq->equipment_name,
-                    'corner_id' => $eq->corner_id,
-                    'ip' => $ip,
-                    'status' => 'online',
-                    'uptime' => $parsed['uptime_p'] ?? '-',
-                    'load_average' => $this->parseLoadAverage($parsed['uptime'] ?? '', (int) ($parsed['cores'] ?? 1)),
-                    'ram' => $this->parseRamUsage($parsed['free'] ?? ''),
-                    'disk_root' => $this->parseDiskUsage($parsed['df'] ?? ''),
-                    'cpu_cores' => (int) ($parsed['cores'] ?? 1),
-                    'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($parsed['sensors'] ?? '') : [],
-                ];
-            } catch (\Exception $e) {
-                $eq = $equipments->firstWhere('ip_address', $ip);
+            if (!isset($sshResults[$ip]) || !$sshResults[$ip]->successful()) {
                 $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                continue;
             }
-        }
 
-        // Add offline devices to results
-        foreach ($equipments as $eq) {
-            if (!isset($results[$eq->ip_address])) {
-                $results[$eq->ip_address] = $this->createOfflineResponse($eq, $eq->ip_address);
-            }
+            $parsed = $this->parseCombinedOutput($sshResults[$ip]->output(), $checkTemp);
+
+            $results[$ip] = [
+                'scu_id' => $eq->id,
+                'station_code' => $eq->station_code,
+                'equipment_type_code' => $eq->equipment_type_code,
+                'equipment_name' => $eq->equipment_name,
+                'corner_id' => $eq->corner_id,
+                'ip' => $ip,
+                'status' => 'online',
+                'uptime' => $parsed['uptime_p'] ?? '-',
+                'load_average' => $this->parseLoadAverage($parsed['uptime'] ?? '', (int)($parsed['cores'] ?? 1)),
+                'ram' => $this->parseRamUsage($parsed['free'] ?? ''),
+                'disk_root' => $this->parseDiskUsage($parsed['df'] ?? ''),
+                'cpu_cores' => (int)($parsed['cores'] ?? 1),
+                'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($parsed['sensors'] ?? '') : [],
+            ];
         }
 
         return array_values($results);
