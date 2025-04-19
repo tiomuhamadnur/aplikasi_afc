@@ -5,9 +5,10 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
 use Illuminate\Http\Request;
-use Illuminate\Process\Exceptions\ProcessTimedOutException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Process\Exceptions\ProcessTimedOutException;
+use Illuminate\Support\Facades\Log;
 
 class MonitoringEquipmentAFCController extends Controller
 {
@@ -16,6 +17,7 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected $sshTimeout = 1;
     protected $pingTimeout = 1;
+    protected $concurrency = 20;
 
     public function index()
     {
@@ -73,52 +75,93 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function checkEquipmentStatus(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
     {
-        // Gunakan map untuk parallel processing
-        return $equipments
-            ->map(function ($eq) use ($username, $password, $checkTemp) {
-                $ip = $eq->ip_address;
+        $results = [];
+        $chunks = $equipments->chunk($this->concurrency);
 
-                // Gunakan ping dengan timeout lebih agresif
-                $status = $this->checkOnlineStatus($ip);
-                if ($status === 'offline') {
-                    return $this->createOfflineResponse($eq, $ip);
+        foreach ($chunks as $chunk) {
+            $batchResults = $this->processBatch($chunk, $username, $password, $checkTemp);
+            $results = array_merge($results, $batchResults);
+        }
+
+        return $results;
+    }
+
+    protected function processBatch(Collection $batch, string $username, string $password, bool $checkTemp): array
+    {
+        $processes = [];
+
+        // 1. Ping check paralel
+        foreach ($batch as $eq) {
+            $ip = $eq->ip_address;
+            $process = Process::timeout($this->pingTimeout)->start("ping -c 1 -W {$this->pingTimeout} $ip");
+            $processes[$ip] = [
+                'process' => $process,
+                'equipment' => $eq,
+                'type' => 'ping'
+            ];
+        }
+
+        // 2. Proses hasil ping dan jalankan SSH untuk yang online
+        foreach ($processes as $ip => $data) {
+            try {
+                $data['process']->wait();
+                $eq = $data['equipment'];
+
+                if (!$data['process']->isSuccessful()) {
+                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                    continue;
                 }
 
-                // Eksekusi semua command sekaligus dalam satu SSH connection
+                // Gabungkan semua command dalam satu SSH
                 $commands = [
                     'uptime' => 'uptime',
                     'uptime_p' => 'uptime -p',
                     'free' => 'free -h',
                     'df' => 'df -h /',
-                    'cores' => 'grep -c ^processor /proc/cpuinfo',
+                    'cores' => 'grep -c ^processor /proc/cpuinfo'
                 ];
 
                 if ($checkTemp) {
                     $commands['sensors'] = 'sensors';
                 }
 
-                $combinedCommand = implode(
-                    ' && ',
-                    array_map(function ($cmd) {
-                        return "echo '===CMD_START===' && $cmd";
-                    }, $commands),
-                );
+                $combinedCmd = implode(' && ', array_map(
+                    fn($cmd) => "echo '===CMD_".md5($cmd)."===' && $cmd",
+                    $commands
+                ));
 
-                $output = Process::run($this->createSshCommand($username, $password, $ip) . " '$combinedCommand'")->output();
+                $sshProcess = Process::timeout($this->sshTimeout)
+                    ->start($this->createSshCommand($username, $password, $ip)." '$combinedCmd'");
 
-                // Parse output
-                $results = [];
-                $parts = explode('===CMD_START===', $output);
-                array_shift($parts); // Remove first empty part
+                $processes[$ip] = [
+                    'process' => $sshProcess,
+                    'equipment' => $eq,
+                    'type' => 'ssh'
+                ];
+            } catch (\Exception $e) {
+                $results[$ip] = $this->createOfflineResponse($data['equipment'], $ip);
+            }
+        }
 
-                foreach (array_values($commands) as $index => $cmd) {
-                    $results[array_keys($commands)[$index]] = trim($parts[$index] ?? '');
+        // 3. Proses output SSH
+        foreach ($processes as $ip => $data) {
+            if ($data['type'] !== 'ssh' || isset($results[$ip])) {
+                continue;
+            }
+
+            try {
+                $data['process']->wait();
+                $eq = $data['equipment'];
+
+                if (!$data['process']->isSuccessful()) {
+                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                    continue;
                 }
 
-                // Build result seperti semula
-                $cores = max(1, (int) ($results['cores'] ?? 1));
+                $output = $data['process']->output();
+                $parsed = $this->parseCombinedOutput($output, $checkTemp);
 
-                return [
+                $results[$ip] = [
                     'scu_id' => $eq->id,
                     'station_code' => $eq->station_code,
                     'equipment_type_code' => $eq->equipment_type_code,
@@ -126,15 +169,47 @@ class MonitoringEquipmentAFCController extends Controller
                     'corner_id' => $eq->corner_id,
                     'ip' => $ip,
                     'status' => 'online',
-                    'uptime' => trim($results['uptime_p'] ?? '-'),
-                    'load_average' => $this->parseLoadAverage($results['uptime'] ?? '', $cores),
-                    'ram' => $this->parseRamUsage($results['free'] ?? ''),
-                    'disk_root' => $this->parseDiskUsage($results['df'] ?? ''),
-                    'cpu_cores' => $cores,
-                    'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($results['sensors'] ?? '') : [],
+                    'uptime' => $parsed['uptime_p'] ?? '-',
+                    'load_average' => $this->parseLoadAverage($parsed['uptime'] ?? '', (int)($parsed['cores'] ?? 1)),
+                    'ram' => $this->parseRamUsage($parsed['free'] ?? ''),
+                    'disk_root' => $this->parseDiskUsage($parsed['df'] ?? ''),
+                    'cpu_cores' => (int)($parsed['cores'] ?? 1),
+                    'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($parsed['sensors'] ?? '') : [],
                 ];
-            })
-            ->all();
+            } catch (\Exception $e) {
+                $results[$ip] = $this->createOfflineResponse($data['equipment'], $ip);
+            }
+        }
+
+        return array_values($results);
+    }
+
+    protected function parseCombinedOutput(string $output, bool $checkTemp): array
+    {
+        $commands = [
+            'uptime' => 'uptime',
+            'uptime_p' => 'uptime -p',
+            'free' => 'free -h',
+            'df' => 'df -h /',
+            'cores' => 'grep -c ^processor /proc/cpuinfo'
+        ];
+
+        if ($checkTemp) {
+            $commands['sensors'] = 'sensors';
+        }
+
+        $results = [];
+        $pattern = '/===CMD_([a-f0-9]{32})===/';
+        $parts = preg_split($pattern, $output);
+        array_shift($parts); // Remove bagian awal
+
+        foreach (array_values($commands) as $index => $cmd) {
+            if (isset($parts[$index])) {
+                $results[array_keys($commands)[$index]] = trim($parts[$index]);
+            }
+        }
+
+        return $results;
     }
 
     protected function checkOnlineStatus(string $ip): string
