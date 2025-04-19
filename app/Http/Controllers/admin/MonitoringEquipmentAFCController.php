@@ -14,7 +14,7 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 3;
+    protected $sshTimeout = 5;
     protected $pingTimeout = 3;
 
     public function index()
@@ -35,21 +35,14 @@ class MonitoringEquipmentAFCController extends Controller
     {
         $request->validate(['scu_id' => 'required']);
 
-        $equipments = $this->getTargetEquipment(
-            self::EQUIPMENT_TYPE_SCU,
-            $request->scu_id
-        );
+        $equipments = $this->getTargetEquipment(self::EQUIPMENT_TYPE_SCU, $request->scu_id);
 
-        $results = $this->checkEquipmentStatus(
-            $equipments,
-            env('SSH_SCU_USERNAME'),
-            env('SSH_SCU_PASSWORD')
-        );
+        $results = $this->checkEquipmentStatus($equipments, env('SSH_SCU_USERNAME'), env('SSH_SCU_PASSWORD'));
 
         return $this->buildResponse($results);
     }
 
-    public function store_pg(Request $request)
+    public function storePg(Request $request)
     {
         $request->validate([
             'station_code' => 'required',
@@ -65,7 +58,7 @@ class MonitoringEquipmentAFCController extends Controller
             $equipments,
             env('SSH_PG_USERNAME'),
             env('SSH_PG_PASSWORD'),
-            true // Include temperature check for PG
+            true, // Include temperature check for PG
         );
 
         return $this->buildResponse($results);
@@ -75,32 +68,31 @@ class MonitoringEquipmentAFCController extends Controller
     {
         $query = ConfigEquipmentAFC::where('equipment_type_code', $type);
 
-        return $id === 'all'
-            ? $query->get()
-            : $query->where('id', $id)->get();
+        return $id === 'all' ? $query->get() : $query->where('id', $id)->get();
     }
 
     protected function checkEquipmentStatus(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
     {
-        return $equipments->map(function ($eq) use ($username, $password, $checkTemp) {
-            $ip = $eq->ip_address;
-            $status = $this->checkOnlineStatus($ip);
+        return $equipments
+            ->map(function ($eq) use ($username, $password, $checkTemp) {
+                $ip = $eq->ip_address;
+                $status = $this->checkOnlineStatus($ip);
 
-            if ($status === 'offline') {
-                return $this->createOfflineResponse($eq, $ip);
-            }
+                if ($status === 'offline') {
+                    return $this->createOfflineResponse($eq, $ip);
+                }
 
-            $ssh = $this->createSshCommand($username, $password, $ip);
+                $ssh = $this->createSshCommand($username, $password, $ip);
 
-            return $this->gatherSystemInfo($eq, $ip, $ssh, $checkTemp);
-        })->all();
+                return $this->gatherSystemInfo($eq, $ip, $ssh, $checkTemp);
+            })
+            ->all();
     }
 
     protected function checkOnlineStatus(string $ip): string
     {
         try {
-            $ping = Process::timeout($this->pingTimeout)
-                ->run("ping -c 1 $ip");
+            $ping = Process::timeout($this->pingTimeout)->run("ping -c 1 $ip");
             return $ping->successful() ? 'online' : 'offline';
         } catch (ProcessTimedOutException $e) {
             return 'offline';
@@ -109,8 +101,7 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function createSshCommand(string $user, string $pass, string $ip): string
     {
-        return "sshpass -p '$pass' ssh -o ConnectTimeout={$this->sshTimeout} " .
-                "-o StrictHostKeyChecking=no $user@$ip";
+        return "sshpass -p '$pass' ssh -o ConnectTimeout={$this->sshTimeout} " . "-o StrictHostKeyChecking=no $user@$ip";
     }
 
     protected function createOfflineResponse($eq, string $ip): array
@@ -147,50 +138,58 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function gatherSystemInfo($eq, string $ip, string $ssh, bool $checkTemp): array
     {
-        $uptime = Process::run("$ssh 'uptime'")->output();
-        $uptime_p = Process::run("$ssh 'uptime -p'")->output();
-        $free = Process::run("$ssh 'free -h'")->output();
-        $df = Process::run("$ssh 'df -h /'")->output();
-        $cores = (int) trim(Process::run("$ssh 'nproc'")->output());
+        try {
+            $uptime = Process::run("$ssh 'uptime'")->output();
+            $uptime_p = Process::run("$ssh 'uptime -p'")->output();
+            $free = Process::run("$ssh 'free -h'")->output();
+            $df = Process::run("$ssh 'df -h /'")->output();
 
-        $loadData = $this->parseLoadAverage($uptime, $cores);
-        $ram = $this->parseRamUsage($free);
-        $disk = $this->parseDiskUsage($df);
+            // Ensure we get at least 1 core
+            $coresOutput = trim(Process::run("$ssh 'nproc'")->output());
+            $cores = max(1, (int) $coresOutput);
 
-        $result = [
-            'scu_id' => $eq->id,
-            'station_code' => $eq->station_code,
-            'equipment_type_code' => $eq->equipment_type_code,
-            'equipment_name' => $eq->equipment_name,
-            'corner_id' => $eq->corner_id,
-            'ip' => $ip,
-            'status' => 'online',
-            'uptime' => trim($uptime_p),
-            'load_average' => $loadData,
-            'ram' => $ram,
-            'disk_root' => $disk,
-            'cpu_cores' => $cores,
-            'core_temperatures' => [],
-        ];
+            $loadData = $this->parseLoadAverage($uptime, $cores);
+            $ram = $this->parseRamUsage($free);
+            $disk = $this->parseDiskUsage($df);
 
-        if ($checkTemp) {
-            $sensors = Process::run("$ssh 'sensors'")->output();
-            $result['core_temperatures'] = $this->parseCoreTemperatures($sensors);
+            $result = [
+                'scu_id' => $eq->id,
+                'station_code' => $eq->station_code,
+                'equipment_type_code' => $eq->equipment_type_code,
+                'equipment_name' => $eq->equipment_name,
+                'corner_id' => $eq->corner_id,
+                'ip' => $ip,
+                'status' => 'online',
+                'uptime' => trim($uptime_p),
+                'load_average' => $loadData,
+                'ram' => $ram,
+                'disk_root' => $disk,
+                'cpu_cores' => $cores,
+                'core_temperatures' => [],
+            ];
+
+            if ($checkTemp) {
+                $sensors = Process::run("$ssh 'sensors'")->output();
+                $result['core_temperatures'] = $this->parseCoreTemperatures($sensors);
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            // Fallback to offline response if any command fails
+            return $this->createOfflineResponse($eq, $ip);
         }
-
-        return $result;
     }
 
     protected function parseLoadAverage(string $uptime, int $cores): array
     {
         preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
 
-        $load1m = (float)($matches[1] ?? 0);
+        $load1m = (float) ($matches[1] ?? 0);
 
         return [
             '1m' => $load1m,
-            '5m' => (float)($matches[2] ?? 0),
-            '15m' => (float)($matches[3] ?? 0),
+            '5m' => (float) ($matches[2] ?? 0),
+            '15m' => (float) ($matches[3] ?? 0),
             'status' => $this->classifyLoad($load1m, $cores),
         ];
     }
@@ -220,7 +219,7 @@ class MonitoringEquipmentAFCController extends Controller
         return [
             'used' => $diskParts[2] ?? '-',
             'total' => $diskParts[1] ?? '-',
-            'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
+            'percent' => (int) rtrim($diskParts[4] ?? '0%', '%'),
         ];
     }
 
@@ -232,14 +231,18 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function calculatePercentage(string $used, string $total): int
     {
-        $usedNum = (float)str_replace(['G', 'M'], '', $used);
-        $totalNum = (float)str_replace(['G', 'M'], '', $total);
+        $usedNum = (float) str_replace(['G', 'M'], '', $used);
+        $totalNum = (float) str_replace(['G', 'M'], '', $total);
 
         return $totalNum > 0 ? round(($usedNum / $totalNum) * 100) : 0;
     }
 
     protected function classifyLoad(float $load1m, int $cpuCores): string
     {
+        if ($cpuCores <= 0) {
+            return 'unknown';
+        }
+
         $percent = $load1m / $cpuCores;
 
         return match (true) {
