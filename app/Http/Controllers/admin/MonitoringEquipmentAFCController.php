@@ -73,18 +73,66 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function checkEquipmentStatus(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
     {
+        // Gunakan map untuk parallel processing
         return $equipments
             ->map(function ($eq) use ($username, $password, $checkTemp) {
                 $ip = $eq->ip_address;
-                $status = $this->checkOnlineStatus($ip);
 
+                // Gunakan ping dengan timeout lebih agresif
+                $status = $this->checkOnlineStatus($ip);
                 if ($status === 'offline') {
                     return $this->createOfflineResponse($eq, $ip);
                 }
 
-                $ssh = $this->createSshCommand($username, $password, $ip);
+                // Eksekusi semua command sekaligus dalam satu SSH connection
+                $commands = [
+                    'uptime' => 'uptime',
+                    'uptime_p' => 'uptime -p',
+                    'free' => 'free -h',
+                    'df' => 'df -h /',
+                    'cores' => 'grep -c ^processor /proc/cpuinfo',
+                ];
 
-                return $this->gatherSystemInfo($eq, $ip, $ssh, $checkTemp);
+                if ($checkTemp) {
+                    $commands['sensors'] = 'sensors';
+                }
+
+                $combinedCommand = implode(
+                    ' && ',
+                    array_map(function ($cmd) {
+                        return "echo '===CMD_START===' && $cmd";
+                    }, $commands),
+                );
+
+                $output = Process::run($this->createSshCommand($username, $password, $ip) . " '$combinedCommand'")->output();
+
+                // Parse output
+                $results = [];
+                $parts = explode('===CMD_START===', $output);
+                array_shift($parts); // Remove first empty part
+
+                foreach (array_values($commands) as $index => $cmd) {
+                    $results[array_keys($commands)[$index]] = trim($parts[$index] ?? '');
+                }
+
+                // Build result seperti semula
+                $cores = max(1, (int) ($results['cores'] ?? 1));
+
+                return [
+                    'scu_id' => $eq->id,
+                    'station_code' => $eq->station_code,
+                    'equipment_type_code' => $eq->equipment_type_code,
+                    'equipment_name' => $eq->equipment_name,
+                    'corner_id' => $eq->corner_id,
+                    'ip' => $ip,
+                    'status' => 'online',
+                    'uptime' => trim($results['uptime_p'] ?? '-'),
+                    'load_average' => $this->parseLoadAverage($results['uptime'] ?? '', $cores),
+                    'ram' => $this->parseRamUsage($results['free'] ?? ''),
+                    'disk_root' => $this->parseDiskUsage($results['df'] ?? ''),
+                    'cpu_cores' => $cores,
+                    'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($results['sensors'] ?? '') : [],
+                ];
             })
             ->all();
     }
@@ -202,7 +250,7 @@ class MonitoringEquipmentAFCController extends Controller
         return [
             'used' => $memLine[2] ?? '0M',
             'total' => $memLine[1] ?? '1M',
-            'percent' => $this->calculateRamPercent($memLine[2] ?? '0M', $memLine[1] ?? '1M')
+            'percent' => $this->calculateRamPercent($memLine[2] ?? '0M', $memLine[1] ?? '1M'),
         ];
     }
 
@@ -219,12 +267,12 @@ class MonitoringEquipmentAFCController extends Controller
         $size = trim($size);
 
         if (str_ends_with($size, 'G')) {
-            return (float)$size * 1024;  // Konversi GB ke MB
+            return (float) $size * 1024; // Konversi GB ke MB
         }
         if (str_ends_with($size, 'M')) {
-            return (float)$size;         // Sudah dalam MB
+            return (float) $size; // Sudah dalam MB
         }
-        return 0;  // Fallback untuk format tidak dikenal
+        return 0; // Fallback untuk format tidak dikenal
     }
 
     protected function parseDiskUsage(string $df): array
@@ -235,7 +283,7 @@ class MonitoringEquipmentAFCController extends Controller
         return [
             'used' => $diskParts[2] ?? '0M',
             'total' => $diskParts[1] ?? '1G',
-            'percent' => (int) rtrim($diskParts[4] ?? '0%', '%')
+            'percent' => (int) rtrim($diskParts[4] ?? '0%', '%'),
         ];
     }
 
