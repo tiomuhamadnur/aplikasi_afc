@@ -7,9 +7,8 @@ use App\Models\ConfigEquipmentAFC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
-use Symfony\Component\Process\Process as SymfonyProcess;
-use Illuminate\Process\Exceptions\ProcessTimedOutException;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Process\Pool;
+use Illuminate\Support\Facades\Cache;
 
 class MonitoringEquipmentAFCController extends Controller
 {
@@ -18,7 +17,7 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected $sshTimeout = 1;
     protected $pingTimeout = 1;
-    protected $concurrency = 20;
+    protected $concurrency = 25;
 
     public function index()
     {
@@ -37,10 +36,12 @@ class MonitoringEquipmentAFCController extends Controller
     public function store(Request $request)
     {
         $request->validate(['scu_id' => 'required']);
-
         $equipments = $this->getTargetEquipment(self::EQUIPMENT_TYPE_SCU, $request->scu_id);
 
-        $results = $this->checkEquipmentStatus($equipments, env('SSH_SCU_USERNAME'), env('SSH_SCU_PASSWORD'));
+        $cacheKey = 'monitoring_scu_' . $request->scu_id;
+        $results = Cache::remember($cacheKey, 30, function () use ($equipments) {
+            return $this->checkEquipmentStatusParallel($equipments, env('SSH_SCU_USERNAME'), env('SSH_SCU_PASSWORD'));
+        });
 
         return $this->buildResponse($results);
     }
@@ -52,17 +53,20 @@ class MonitoringEquipmentAFCController extends Controller
             'pg_id' => 'required',
         ]);
 
-        $equipments = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)
-            ->when($request->station_code !== 'all', fn($q) => $q->where('station_code', $request->station_code))
-            ->when($request->pg_id !== 'all', fn($q) => $q->where('id', $request->pg_id))
-            ->get();
+        $cacheKey = 'monitoring_pg_' . $request->station_code . '_' . $request->pg_id;
+        $results = Cache::remember($cacheKey, 30, function () use ($request) {
+            $equipments = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)
+                ->when($request->station_code !== 'all', fn($q) => $q->where('station_code', $request->station_code))
+                ->when($request->pg_id !== 'all', fn($q) => $q->where('id', $request->pg_id))
+                ->get();
 
-        $results = $this->checkEquipmentStatus(
-            $equipments,
-            env('SSH_PG_USERNAME'),
-            env('SSH_PG_PASSWORD'),
-            true, // Include temperature check for PG
-        );
+            return $this->checkEquipmentStatusParallel(
+                $equipments,
+                env('SSH_PG_USERNAME'),
+                env('SSH_PG_PASSWORD'),
+                true, // Include temperature check
+            );
+        });
 
         return $this->buildResponse($results);
     }
@@ -70,92 +74,77 @@ class MonitoringEquipmentAFCController extends Controller
     protected function getTargetEquipment(string $type, $id)
     {
         $query = ConfigEquipmentAFC::where('equipment_type_code', $type);
-
         return $id === 'all' ? $query->get() : $query->where('id', $id)->get();
     }
 
-    protected function checkEquipmentStatus(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
-    {
-        $results = [];
-        $chunks = $equipments->chunk($this->concurrency);
-
-        foreach ($chunks as $chunk) {
-            $batchResults = $this->processBatch($chunk, $username, $password, $checkTemp);
-            $results = array_merge($results, $batchResults);
-        }
-
-        return $results;
-    }
-
-    protected function processBatch(Collection $batch, string $username, string $password, bool $checkTemp): array
+    protected function checkEquipmentStatusParallel(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
     {
         $results = [];
 
-        foreach ($batch as $eq) {
-            $ip = $eq->ip_address;
+        // 1. Parallel ping checks
+        $pingPool = Process::pool(function (Pool $pool) use ($equipments) {
+            foreach ($equipments as $eq) {
+                $pool->command(['ping', '-c', '1', '-W', $this->pingTimeout, $eq->ip_address])->name($eq->ip_address);
+            }
+        })->start();
 
-            try {
-                // 1. Ping check (synchronous)
-                $pingResult = Process::run(['ping', '-c', '1', '-W', $this->pingTimeout, $ip]);
+        $pingResults = $pingPool->wait();
+        $onlineDevices = collect($pingResults)->filter(fn($result) => $result->exitCode() === 0)->keys();
 
-                if (!$pingResult->successful()) {
-                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
-                    continue;
-                }
-
-                // 2. SSH commands (synchronous)
+        // 2. Parallel SSH checks for online devices
+        $sshPool = Process::pool(function (Pool $pool) use ($onlineDevices, $username, $password, $checkTemp) {
+            foreach ($onlineDevices as $ip) {
                 $commands = [
                     'uptime' => 'uptime',
                     'uptime_p' => 'uptime -p',
                     'free' => 'free -h',
                     'df' => 'df -h /',
-                    'cores' => 'grep -c ^processor /proc/cpuinfo'
+                    'cores' => 'grep -c ^processor /proc/cpuinfo',
                 ];
 
                 if ($checkTemp) {
                     $commands['sensors'] = 'sensors';
                 }
 
-                $combinedCommand = implode(' && ', array_map(
-                    fn($cmd) => "echo '===CMD_".md5($cmd)."===' && $cmd",
-                    $commands
-                ));
+                $combinedCmd = implode(' && ', array_map(fn($cmd) => "echo '===CMD_" . md5($cmd) . "===' && $cmd", $commands));
 
-                $sshResult = Process::run([
-                    'sshpass', '-p', $password,
-                    'ssh', '-o', 'ConnectTimeout='.$this->sshTimeout,
-                    '-o', 'StrictHostKeyChecking=no',
-                    $username.'@'.$ip,
-                    $combinedCommand
-                ]);
-
-                if (!$sshResult->successful()) {
-                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
-                    continue;
-                }
-
-                // Parsing output
-                $parsed = $this->parseCombinedOutput($sshResult->output(), $checkTemp);
-
-                $results[$ip] = [
-                    'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
-                    'equipment_name' => $eq->equipment_name,
-                    'corner_id' => $eq->corner_id,
-                    'ip' => $ip,
-                    'status' => 'online',
-                    'uptime' => $parsed['uptime_p'] ?? '-',
-                    'load_average' => $this->parseLoadAverage($parsed['uptime'] ?? '', (int)($parsed['cores'] ?? 1)),
-                    'ram' => $this->parseRamUsage($parsed['free'] ?? ''),
-                    'disk_root' => $this->parseDiskUsage($parsed['df'] ?? ''),
-                    'cpu_cores' => (int)($parsed['cores'] ?? 1),
-                    'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($parsed['sensors'] ?? '') : [],
-                ];
-
-            } catch (\Exception $e) {
-                $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                $pool->command(['sshpass', '-p', $password, 'ssh', '-o', 'ConnectTimeout=' . $this->sshTimeout, '-o', 'StrictHostKeyChecking=no', $username . '@' . $ip, $combinedCmd])->name($ip);
             }
+        })->concurrently($this->concurrency);
+
+        $sshResults = $sshPool->wait();
+
+        // 3. Build final results
+        foreach ($equipments as $eq) {
+            $ip = $eq->ip_address;
+
+            if (!$onlineDevices->contains($ip)) {
+                $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                continue;
+            }
+
+            if (!isset($sshResults[$ip]) || !$sshResults[$ip]->successful()) {
+                $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                continue;
+            }
+
+            $parsed = $this->parseCombinedOutput($sshResults[$ip]->output(), $checkTemp);
+
+            $results[$ip] = [
+                'scu_id' => $eq->id,
+                'station_code' => $eq->station_code,
+                'equipment_type_code' => $eq->equipment_type_code,
+                'equipment_name' => $eq->equipment_name,
+                'corner_id' => $eq->corner_id,
+                'ip' => $ip,
+                'status' => 'online',
+                'uptime' => $parsed['uptime_p'] ?? '-',
+                'load_average' => $this->parseLoadAverage($parsed['uptime'] ?? '', (int) ($parsed['cores'] ?? 1)),
+                'ram' => $this->parseRamUsage($parsed['free'] ?? ''),
+                'disk_root' => $this->parseDiskUsage($parsed['df'] ?? ''),
+                'cpu_cores' => (int) ($parsed['cores'] ?? 1),
+                'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($parsed['sensors'] ?? '') : [],
+            ];
         }
 
         return array_values($results);
@@ -168,7 +157,7 @@ class MonitoringEquipmentAFCController extends Controller
             'uptime_p' => 'uptime -p',
             'free' => 'free -h',
             'df' => 'df -h /',
-            'cores' => 'grep -c ^processor /proc/cpuinfo'
+            'cores' => 'grep -c ^processor /proc/cpuinfo',
         ];
 
         if ($checkTemp) {
@@ -178,7 +167,7 @@ class MonitoringEquipmentAFCController extends Controller
         $results = [];
         $pattern = '/===CMD_([a-f0-9]{32})===/';
         $parts = preg_split($pattern, $output);
-        array_shift($parts); // Remove bagian awal
+        array_shift($parts); // Remove initial empty part
 
         foreach (array_values($commands) as $index => $cmd) {
             if (isset($parts[$index])) {
@@ -187,21 +176,6 @@ class MonitoringEquipmentAFCController extends Controller
         }
 
         return $results;
-    }
-
-    protected function checkOnlineStatus(string $ip): string
-    {
-        try {
-            $ping = Process::timeout($this->pingTimeout)->run("ping -c 1 $ip");
-            return $ping->successful() ? 'online' : 'offline';
-        } catch (ProcessTimedOutException $e) {
-            return 'offline';
-        }
-    }
-
-    protected function createSshCommand(string $user, string $pass, string $ip): string
-    {
-        return "sshpass -p '$pass' ssh -o ConnectTimeout={$this->sshTimeout} " . "-o StrictHostKeyChecking=no $user@$ip";
     }
 
     protected function createOfflineResponse($eq, string $ip): array
@@ -236,50 +210,6 @@ class MonitoringEquipmentAFCController extends Controller
         ];
     }
 
-    protected function gatherSystemInfo($eq, string $ip, string $ssh, bool $checkTemp): array
-    {
-        try {
-            $uptime = Process::run("$ssh 'uptime'")->output();
-            $uptime_p = Process::run("$ssh 'uptime -p'")->output();
-            $free = Process::run("$ssh 'free -h'")->output();
-            $df = Process::run("$ssh 'df -h /'")->output();
-
-            // Ensure we get at least 1 core
-            $coresOutput = trim(Process::run("$ssh 'grep -c ^processor /proc/cpuinfo'")->output());
-            $cores = max(1, (int) $coresOutput);
-
-            $loadData = $this->parseLoadAverage($uptime, $cores);
-            $ram = $this->parseRamUsage($free);
-            $disk = $this->parseDiskUsage($df);
-
-            $result = [
-                'scu_id' => $eq->id,
-                'station_code' => $eq->station_code,
-                'equipment_type_code' => $eq->equipment_type_code,
-                'equipment_name' => $eq->equipment_name,
-                'corner_id' => $eq->corner_id,
-                'ip' => $ip,
-                'status' => 'online',
-                'uptime' => trim($uptime_p),
-                'load_average' => $loadData,
-                'ram' => $ram,
-                'disk_root' => $disk,
-                'cpu_cores' => $cores,
-                'core_temperatures' => [],
-            ];
-
-            if ($checkTemp) {
-                $sensors = Process::run("$ssh 'sensors'")->output();
-                $result['core_temperatures'] = $this->parseCoreTemperatures($sensors);
-            }
-
-            return $result;
-        } catch (\Exception $e) {
-            // Fallback to offline response if any command fails
-            return $this->createOfflineResponse($eq, $ip);
-        }
-    }
-
     protected function parseLoadAverage(string $uptime, int $cores): array
     {
         preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
@@ -306,27 +236,6 @@ class MonitoringEquipmentAFCController extends Controller
         ];
     }
 
-    protected function calculateRamPercent(string $used, string $total): int
-    {
-        $usedMB = $this->convertToMegabytes($used);
-        $totalMB = $this->convertToMegabytes($total);
-
-        return (int) min(100, round(($usedMB / max(1, $totalMB)) * 100));
-    }
-
-    protected function convertToMegabytes(string $size): float
-    {
-        $size = trim($size);
-
-        if (str_ends_with($size, 'G')) {
-            return (float) $size * 1024; // Konversi GB ke MB
-        }
-        if (str_ends_with($size, 'M')) {
-            return (float) $size; // Sudah dalam MB
-        }
-        return 0; // Fallback untuk format tidak dikenal
-    }
-
     protected function parseDiskUsage(string $df): array
     {
         $diskLine = explode("\n", trim($df))[1] ?? '';
@@ -341,16 +250,31 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function parseCoreTemperatures(string $sensors): array
     {
-        preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $matches);
+        preg_match_all('/Core \d+:\s+\+([\d.]+)°?C/', $sensors, $matches);
         return $matches[1] ?? [];
     }
 
-    protected function calculatePercentage(string $used, string $total): int
+    protected function calculateRamPercent(string $used, string $total): int
     {
-        $usedNum = (float) str_replace(['G', 'M'], '', $used);
-        $totalNum = (float) str_replace(['G', 'M'], '', $total);
+        $usedMB = $this->convertToMegabytes($used);
+        $totalMB = $this->convertToMegabytes($total);
+        return (int) min(100, round(($usedMB / max(1, $totalMB)) * 100));
+    }
 
-        return $totalNum > 0 ? round(($usedNum / $totalNum) * 100) : 0;
+    protected function convertToMegabytes(string $size): float
+    {
+        $size = trim($size);
+
+        if (str_ends_with($size, 'G')) {
+            return (float) $size * 1024;
+        }
+        if (str_ends_with($size, 'M')) {
+            return (float) $size;
+        }
+        if (str_ends_with($size, 'K')) {
+            return (float) $size / 1024;
+        }
+        return 0;
     }
 
     protected function classifyLoad(float $load1m, int $cpuCores): string
