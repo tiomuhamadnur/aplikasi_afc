@@ -122,8 +122,8 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="station_code" class="required">Station</label>
-                            <select class="form-control" name="station_code" id="station_code" required>
+                            <label for="scu_id" class="required">Station</label>
+                            <select class="form-control" name="scu_id" id="scu_id" required>
                                 <option value="" selected disabled>- select station -</option>
                                 <option value="all">All Station</option>
                                 @foreach ($scu as $item)
