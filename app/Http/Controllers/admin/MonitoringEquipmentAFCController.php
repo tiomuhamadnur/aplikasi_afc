@@ -7,6 +7,7 @@ use App\Models\ConfigEquipmentAFC;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
+use Symfony\Component\Process\Process as SymfonyProcess;
 use Illuminate\Process\Exceptions\ProcessTimedOutException;
 use Illuminate\Support\Facades\Log;
 
@@ -89,38 +90,75 @@ class MonitoringEquipmentAFCController extends Controller
     protected function processBatch(Collection $batch, string $username, string $password, bool $checkTemp): array
     {
         $results = [];
-        $processes = [];
 
-        // 1. Start parallel ping processes
         foreach ($batch as $eq) {
             $ip = $eq->ip_address;
-            $processes[$ip] = [
-                'process' => Process::timeout($this->pingTimeout)
-                    ->start("ping -c 1 -W {$this->pingTimeout} $ip"),
-                'equipment' => $eq,
-                'type' => 'ping'
-            ];
-        }
 
-        // 2. Process ping results
-        foreach ($processes as $ip => $data) {
             try {
-                $data['process']->wait();
+                // 1. Ping check (synchronous)
+                $pingResult = Process::run(['ping', '-c', '1', '-W', $this->pingTimeout, $ip]);
 
-                // Gunakan successful() atau cek exit code
-                if ($data['process']->exitCode() !== 0) {
-                    $results[$ip] = $this->createOfflineResponse($data['equipment'], $ip);
+                if (!$pingResult->successful()) {
+                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
                     continue;
                 }
 
-                // ... [lanjutkan dengan SSH command] ...
+                // 2. SSH commands (synchronous)
+                $commands = [
+                    'uptime' => 'uptime',
+                    'uptime_p' => 'uptime -p',
+                    'free' => 'free -h',
+                    'df' => 'df -h /',
+                    'cores' => 'grep -c ^processor /proc/cpuinfo'
+                ];
+
+                if ($checkTemp) {
+                    $commands['sensors'] = 'sensors';
+                }
+
+                $combinedCommand = implode(' && ', array_map(
+                    fn($cmd) => "echo '===CMD_".md5($cmd)."===' && $cmd",
+                    $commands
+                ));
+
+                $sshResult = Process::run([
+                    'sshpass', '-p', $password,
+                    'ssh', '-o', 'ConnectTimeout='.$this->sshTimeout,
+                    '-o', 'StrictHostKeyChecking=no',
+                    $username.'@'.$ip,
+                    $combinedCommand
+                ]);
+
+                if (!$sshResult->successful()) {
+                    $results[$ip] = $this->createOfflineResponse($eq, $ip);
+                    continue;
+                }
+
+                // Parsing output
+                $parsed = $this->parseCombinedOutput($sshResult->output(), $checkTemp);
+
+                $results[$ip] = [
+                    'scu_id' => $eq->id,
+                    'station_code' => $eq->station_code,
+                    'equipment_type_code' => $eq->equipment_type_code,
+                    'equipment_name' => $eq->equipment_name,
+                    'corner_id' => $eq->corner_id,
+                    'ip' => $ip,
+                    'status' => 'online',
+                    'uptime' => $parsed['uptime_p'] ?? '-',
+                    'load_average' => $this->parseLoadAverage($parsed['uptime'] ?? '', (int)($parsed['cores'] ?? 1)),
+                    'ram' => $this->parseRamUsage($parsed['free'] ?? ''),
+                    'disk_root' => $this->parseDiskUsage($parsed['df'] ?? ''),
+                    'cpu_cores' => (int)($parsed['cores'] ?? 1),
+                    'core_temperatures' => $checkTemp ? $this->parseCoreTemperatures($parsed['sensors'] ?? '') : [],
+                ];
 
             } catch (\Exception $e) {
-                $results[$ip] = $this->createOfflineResponse($data['equipment'], $ip);
+                $results[$ip] = $this->createOfflineResponse($eq, $ip);
             }
         }
 
-        return $results;
+        return array_values($results);
     }
 
     protected function parseCombinedOutput(string $output, bool $checkTemp): array
