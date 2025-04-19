@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\GoogleSpreadsheetController;
 use App\Http\Controllers\api\GetDataController;
 use App\Http\Controllers\api\MonitoringPermitController;
 use App\Http\Controllers\api\MonitoringEquipmentController;
@@ -44,4 +45,9 @@ Route::controller(GetDataController::class)->group(function () {
     Route::get('/get-data/equipment', 'data_equipment')->name('api.data.equipment');
     Route::get('/get-data/asset', 'data_asset')->name('api.data.asset');
     Route::get('/get-data/functional-location', 'data_functional_location')->name('api.data.functional_location');
+});
+
+Route::controller(GoogleSpreadsheetController::class)->group(function () {
+    Route::get('/looker/store-failure', 'store')->name('api.failure.looker.sync');
+    Route::get('/looker/store-budgeting', 'store_budgeting')->name('api.budgeting.looker.sync');
 });

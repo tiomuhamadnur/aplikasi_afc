@@ -54,19 +54,22 @@ class ConfigEquipmentAFCController extends Controller
         $control_type = $request->control_type;
 
         $pg = ConfigEquipmentAFC::where('uuid', $uuid)->firstOrFail();
-        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->where('station_name', $pg->station_name)->where('station_code', $pg->station_code)->firstOrFail();
+        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')
+                            ->where('station_name', $pg->station_name)
+                            ->where('station_code', $pg->station_code)
+                            ->firstOrFail();
 
         $notifyMessage = '';
 
         switch ($control_type) {
             case 'on':
-                $notifyMessage = $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On - ' . $pg->equipment_name;
+                $notifyMessage = $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On - (' . $pg->equipment_name . ')';
                 break;
             case 'off':
-                $notifyMessage = $this->pg_power_off($pg->ip_address) . ' Power Off - ' . $pg->equipment_name;
+                $notifyMessage = $this->pg_power_off($pg->ip_address) . ' Power Off - (' . $pg->equipment_name . ')';
                 break;
             case 'reboot':
-                $notifyMessage = $this->pg_reboot($pg->ip_address) . ' Rebooting - ' . $pg->equipment_name;
+                $notifyMessage = $this->pg_reboot($pg->ip_address) . ' Rebooting - (' . $pg->equipment_name . ')';
                 break;
             default:
                 $notifyMessage = 'Invalid control type';

@@ -146,8 +146,8 @@
                             <input type="text" class="form-control" id="direction_edit" name="direction" disabled>
                         </div>
                         <div class="form-group">
-                            <label for="control_type">Power (ON/OFF/Reboot)</label>
-                            <select class="tom-select-class" name="control_type" id="control_type">
+                            <label for="control_type" class="required">Power (ON/OFF/Reboot)</label>
+                            <select class="tom-select-class" name="control_type" id="control_type" required>
                                 <option value="" disabled selected>- select power option -</option>
                                 <option value="on">Power ON</option>
                                 <option value="off">Power OFF</option>

@@ -27,6 +27,7 @@ use App\Http\Controllers\admin\IniFileController;
 use App\Http\Controllers\admin\JabatanController;
 use App\Http\Controllers\admin\LogController;
 use App\Http\Controllers\admin\LokasiController;
+use App\Http\Controllers\admin\MonitoringEquipmentAFCController;
 use App\Http\Controllers\admin\OptionFormController;
 use App\Http\Controllers\admin\ParameterController;
 use App\Http\Controllers\admin\PCRController;
@@ -600,7 +601,13 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
 
         Route::controller(MonitoringEquipmentController::class)->group(function () {
             Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
+            Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
             Route::delete('/monitoring-equipment', 'destroy')->name('monitoring-equipment.delete');
+        });
+
+        Route::controller(MonitoringEquipmentAFCController::class)->group(function () {
+            Route::get('/monitoring-equipment-afc', 'index')->name('monitoring-equipment-afc.index');
+            Route::post('/monitoring-equipment-afc', 'store')->name('monitoring-equipment-afc.store');
         });
 
         Route::controller(ChecksheetController::class)->group(function () {
@@ -621,22 +628,3 @@ Route::controller(MonitoringEquipmentController::class)->group(function () {
 Route::controller(DashboardController::class)->group(function () {
     Route::get('/dashboard-public', 'public')->name('dashboard.public.index');
 });
-
-// Route::get('/send-message', function (Request $request) {
-//     $message = $request->query('message'); // Ambil data dari query string
-//     broadcast(new MessageSent($message))->toOthers();
-//     return response()->json(['success' => true, 'message' => $message]);
-// });
-
-// Route::get('/send-event', function () {
-//     $data = [
-//         'name' => 'Tio Muhamad Nur',
-//         'email' => 'tiomuhamadnur@gmail.com',
-//         'phone' => '087723704469',
-//     ];
-//     broadcast(new HelloEvent($data));
-// });
-
-// Route::get('/chat', function () {
-//     return view('welcome');
-// });

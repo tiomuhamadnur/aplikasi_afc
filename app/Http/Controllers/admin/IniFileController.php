@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ConfigEquipmentAFC;
 use App\Models\ConfigPG;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -91,8 +92,12 @@ class IniFileController extends Controller
         $type = $request->type;
 
         $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
+        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')
+                            ->where('station_code', $config_pg->station_code)
+                            ->where('equipment_id', $pg_id)
+                            ->firstOrFail();
 
-        $host = Str::beforeLast($config_pg->ip_address, '.') . '.' . $pg_id;
+        $host = $pg->ip_address;
 
         // Direktori tempat file .ini berada
         $directory = '/AG_System/Install/AINO/ini';
