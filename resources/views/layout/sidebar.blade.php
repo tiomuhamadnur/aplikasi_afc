@@ -137,7 +137,6 @@
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{ route('user.index') }}">User</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="{{ route('ini-file.index') }}">Ini File PG</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('lokasi.index') }}">Lokasi</a>
                             </li>
                             <li class="nav-item"> <a class="nav-link" href="{{ route('sub-lokasi.index') }}">Sub
@@ -237,6 +236,35 @@
                         </ul>
                     </div>
                 </li>
+                @if (auth()->user()->id == 1 || auth()->user()->id == 2)
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#secret" aria-expanded="false"
+                            aria-controls="secret">
+                            <span class="menu-title">Secrets</span>
+                            <i class="menu-arrow"></i>
+                            <i class="mdi mdi-security menu-icon"></i>
+                        </a>
+                        <div class="collapse" id="secret">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
+                                    Transaksi Tiket</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('log.index') }}">
+                                    Log PG</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('ini-file.index') }}">
+                                    Ini File PG</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('config-equipment-afc.index') }}">
+                                    Config Equipment AFC</a>
+                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('monitoring-equipment-afc.index') }}">
+                                    Monitoring Equip. AFC</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                @endif
             @endif
         @endif
     </ul>
