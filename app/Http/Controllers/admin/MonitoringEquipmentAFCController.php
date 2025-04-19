@@ -194,6 +194,7 @@ class MonitoringEquipmentAFCController extends Controller
             // Cek status online/offline
             $ping = Process::timeout(5)->run("ping -c 1 $ip");
             $status = $ping->successful() ? 'online' : 'offline';
+            dd($ip, $status);
 
             if ($status === 'offline') {
                 $results[] = [
