@@ -204,9 +204,9 @@ class MonitoringEquipmentAFCController extends Controller
         $percent = $ramTotal > 0 ? round(($ramUsed / $ramTotal) * 100) : 0;
 
         return [
-            'used' => $memLine[2] ?? '-',  // Format asli (contoh: "77M")
-            'total' => $memLine[1] ?? '-',  // Format asli (contoh: "1.9G")
-            'percent' => $percent,          // Persentase akurat
+            'used' => $memLine[2] ?? '0M',  // Contoh: "77M"
+            'total' => $memLine[1] ?? '1M', // Contoh: "1.9G"
+            'percent' => min(100, $percent) // Pastikan tidak lebih dari 100%
         ];
     }
 

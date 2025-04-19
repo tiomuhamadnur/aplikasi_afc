@@ -99,23 +99,36 @@
                                                     <div class="text-nowrap">{{ $item['ram']['used'] }} /
                                                         {{ $item['ram']['total'] }}</div>
                                                     <div class="progress mt-1" style="height: 3px;">
-                                                        <div class="progress-bar
+                                                        <div
+                                                            class="progress-bar
                                                             @if ($item['ram']['percent'] > 90) bg-danger
                                                             @elseif($item['ram']['percent'] > 70) bg-warning
-                                                            @else bg-success @endif"></div>
+                                                            @else bg-success @endif">
                                                         </div>
                                                     </div>
+                                                </div>
                                             </td>
 
                                             <td>
                                                 <div class="d-flex flex-column small">
-                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} /
-                                                        {{ $item['disk_root']['total'] }}</div>
-                                                    <div class="progress mt-1" style="height: 3px;">
-                                                        <div class="progress-bar bg-{{ $item['disk_root']['percent'] > 80 ? 'danger' : ($item['disk_root']['percent'] > 60 ? 'warning' : 'success') }}"
-                                                            role="progressbar"
-                                                            style="width: {{ $item['disk_root']['percent'] }}%"></div>
+                                                    <div class="text-nowrap">
+                                                        {{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}
                                                     </div>
+                                                    @isset($item['ram']['percent'])
+                                                        <div class="progress mt-1" style="height: 3px;">
+                                                            <div class="progress-bar
+                                                                @if ($item['ram']['percent'] > 90) bg-danger
+                                                                @elseif($item['ram']['percent'] > 70) bg-warning
+                                                                @else bg-success @endif"
+                                                                style="width: {{ $item['ram']['percent'] }}%"
+                                                                role="progressbar"
+                                                                aria-valuenow="{{ $item['ram']['percent'] }}" aria-valuemin="0"
+                                                                aria-valuemax="100">
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <span class="text-muted small">Data tidak tersedia</span>
+                                                    @endisset
                                                 </div>
                                             </td>
 
