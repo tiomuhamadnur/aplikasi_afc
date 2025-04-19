@@ -194,8 +194,6 @@ class MonitoringEquipmentAFCController extends Controller
             if ($status === 'offline') {
                 $results[] = [
                     'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
                     'ip' => $ip,
                     'status' => 'offline',
                     'uptime' => '-',
@@ -217,102 +215,72 @@ class MonitoringEquipmentAFCController extends Controller
                     ],
                     'cpu_cores' => 0,
                     'core_temperatures' => [],
-                    'message' => 'Server offline atau tidak dapat dijangkau',
                 ];
-                continue;
+                continue; // Skip further processing for this equipment if offline
             }
 
-            try {
-                $uptime = Process::run("$ssh 'uptime'")->output();
-                $uptime_p = Process::run("$ssh 'uptime -p'")->output();
-                $free = Process::run("$ssh 'free -h'")->output();
-                $df = Process::run("$ssh 'df -h /'")->output();
-                $cores = (int) trim(Process::run("$ssh \"grep -c ^processor /proc/cpuinfo\"")->output());
-                $sensors = Process::run("$ssh 'sensors'")->output();
+            // Ambil data dari SSH
+            $uptime = Process::run("$ssh 'uptime'")->output();
+            $uptime_p = Process::run("$ssh 'uptime -p'")->output();
+            $free = Process::run("$ssh 'free -h'")->output();
+            $df = Process::run("$ssh 'df -h /'")->output();
+            $cores = (int) trim(Process::run("$ssh \"grep -c ^processor /proc/cpuinfo\"")->output());
+            $sensors = Process::run("$ssh 'sensors'")->output();
 
-                // Load Average
-                preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
-                $load1m = (float)($matches[1] ?? 0);
-                $load5m = (float)($matches[2] ?? 0);
-                $load15m = (float)($matches[3] ?? 0);
-                $load_status = $this->classifyLoad($load1m, $cores);
+            // Parse load average
+            preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
+            $load1m = (float)($matches[1] ?? 0);
+            $load5m = (float)($matches[2] ?? 0);
+            $load15m = (float)($matches[3] ?? 0);
+            $load_status = $this->classifyLoad($load1m, $cores);
 
-                // RAM
-                $lines = explode("\n", trim($free));
-                $memLine = isset($lines[1]) ? preg_split('/\s+/', $lines[1]) : [];
-                $ramUsed = $memLine[2] ?? '-';
-                $ramTotal = $memLine[1] ?? '-';
-                $ramPercent = (is_numeric(str_replace('G', '', $ramUsed)) && is_numeric(str_replace('G', '', $ramTotal)))
-                    ? round(((float)str_replace('G', '', $ramUsed) / (float)str_replace('G', '', $ramTotal)) * 100)
-                    : 0;
+            // Parse RAM Usage
+            $lines = explode("\n", $free);
+            $memLine = preg_split('/\s+/', $lines[1]);
+            $ramUsed = $memLine[2] ?? '-';
+            $ramTotal = $memLine[1] ?? '-';
+            $ramPercent = (is_numeric(str_replace('G', '', $ramUsed)) && is_numeric(str_replace('G', '', $ramTotal)))
+                ? round(((float)str_replace('G', '', $ramUsed) / (float)str_replace('G', '', $ramTotal)) * 100)
+                : 0;
 
-                $ram = [
-                    'used' => $ramUsed,
-                    'total' => $ramTotal,
-                    'percent' => $ramPercent,
-                ];
+            $ram = [
+                'used' => $ramUsed,
+                'total' => $ramTotal,
+                'percent' => $ramPercent,
+            ];
 
-                // Disk
-                $dfLines = explode("\n", trim($df));
-                $diskLine = $dfLines[1] ?? '';
-                $diskParts = preg_split('/\s+/', $diskLine);
-                $disk = [
-                    'used' => $diskParts[2] ?? '-',
-                    'total' => $diskParts[1] ?? '-',
-                    'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
-                ];
+            // Parse Disk Usage
+            $diskLine = explode("\n", trim($df))[1] ?? '';
+            $diskParts = preg_split('/\s+/', $diskLine);
+            $disk = [
+                'used' => $diskParts[2] ?? '-',
+                'total' => $diskParts[1] ?? '-',
+                'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
+            ];
 
-                // Core Temperatures
-                preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $tempMatches);
-                $coreTemps = $tempMatches[1] ?? [];
+            // Parse Core Temperature
+            preg_match_all('/Core \d+:\s+\+([\d.]+) C/', $sensors, $tempMatches);
+            $coreTemps = $tempMatches[1] ?? []; // Menyimpan suhu setiap core dalam array
 
-                $results[] = [
-                    'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
-                    'ip' => $ip,
-                    'status' => $status,
-                    'uptime' => trim($uptime_p),
-                    'load_average' => [
-                        '1m' => $load1m,
-                        '5m' => $load5m,
-                        '15m' => $load15m,
-                        'status' => $load_status,
-                    ],
-                    'ram' => $ram,
-                    'disk_root' => $disk,
-                    'cpu_cores' => $cores,
-                    'core_temperatures' => $coreTemps,
-                ];
-            } catch (\Exception $e) {
-                $results[] = [
-                    'scu_id' => $eq->id,
-                    'station_code' => $eq->station_code,
-                    'equipment_type_code' => $eq->equipment_type_code,
-                    'ip' => $ip,
-                    'status' => 'error',
-                    'uptime' => 'Error',
-                    'load_average' => [
-                        '1m' => 0,
-                        '5m' => 0,
-                        '15m' => 0,
-                        'status' => 'error',
-                    ],
-                    'ram' => [
-                        'used' => 'Error',
-                        'total' => 'Error',
-                        'percent' => 0,
-                    ],
-                    'disk_root' => [
-                        'used' => 'Error',
-                        'total' => 'Error',
-                        'percent' => 0,
-                    ],
-                    'cpu_cores' => 'Error',
-                    'core_temperatures' => [],
-                    'message' => 'Gagal menghubungi server via SSH',
-                ];
-            }
+            // Menyusun data hasil
+            $results[] = [
+                'scu_id' => $eq->id,
+                'station_code' => $eq->station_code,
+                'equipment_type_code' => $eq->equipment_type_code,
+                'ip' => $ip,
+                'status' => $status,
+                'uptime' => trim($uptime_p),
+                'load_average' => [
+                    '1m' => $load1m,
+                    '5m' => $load5m,
+                    '15m' => $load15m,
+                    'status' => $load_status,
+                ],
+                'ram' => $ram,
+                'disk_root' => $disk,
+                'cpu_cores' => $cores,
+                'core_temperatures' => $coreTemps, // array of temps per core
+            ];
         }
 
         $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
@@ -324,7 +292,6 @@ class MonitoringEquipmentAFCController extends Controller
             'results',
         ]));
     }
-
 
 
     public function show(string $id)
