@@ -32,7 +32,7 @@ class MonitoringEquipmentAFCController extends Controller
 
         $scu_id = $request->scu_id;
 
-        if ($scu_id == 'all') {
+        if ($scu_id === 'all') {
             $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
         } else {
             $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->where('id', $scu_id)->get();
@@ -48,6 +48,7 @@ class MonitoringEquipmentAFCController extends Controller
 
             $ssh = "sshpass -p '$pass' ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$ip";
 
+            // Cek status online/offline
             $ping = Process::timeout(5)->run("ping -c 1 $ip");
             $status = $ping->successful() ? 'online' : 'offline';
 
@@ -60,52 +61,87 @@ class MonitoringEquipmentAFCController extends Controller
                 continue;
             }
 
-            $uptime = Process::run("$ssh 'uptime'")->output();
-            $free = Process::run("$ssh 'free -m'")->output();
+            // Ambil data dari SSH
+            $uptime = Process::run("$ssh 'uptime -p'")->output();
+            $free = Process::run("$ssh 'free -h'")->output();
             $df = Process::run("$ssh 'df -h /'")->output();
             $cores = (int) trim(Process::run("$ssh 'nproc'")->output());
 
-            preg_match('/load average: ([\\d.]+), ([\\d.]+), ([\\d.]+)/', $uptime, $matches);
+            // Parse load average
+            preg_match('/load average: ([\d.]+), ([\d.]+), ([\d.]+)/', $uptime, $matches);
             $load1m = (float)($matches[1] ?? 0);
             $load5m = (float)($matches[2] ?? 0);
             $load15m = (float)($matches[3] ?? 0);
             $load_status = $this->classifyLoad($load1m, $cores);
 
+            // Parse RAM Usage
             $lines = explode("\n", $free);
-            $memLine = preg_split('/\\s+/', $lines[1]);
-            $memUsed = (int)($memLine[2] ?? 0);
-            $memTotal = (int)($memLine[1] ?? 1);
-            $ramPercent = round($memUsed / $memTotal * 100, 1);
+            $memLine = preg_split('/\s+/', $lines[1]);
+            $ramUsed = $memLine[2] ?? '-';
+            $ramTotal = $memLine[1] ?? '-';
+            $ramPercent = (is_numeric(str_replace('G', '', $ramUsed)) && is_numeric(str_replace('G', '', $ramTotal)))
+                ? round(((float)str_replace('G', '', $ramUsed) / (float)str_replace('G', '', $ramTotal)) * 100)
+                : 0;
 
+            $ram = [
+                'used' => $ramUsed,
+                'total' => $ramTotal,
+                'percent' => $ramPercent,
+            ];
+
+            // Parse Disk Usage
             $diskLine = explode("\n", trim($df))[1] ?? '';
-            $diskParts = preg_split('/\\s+/', $diskLine);
-            $diskUsage = $diskParts[4] ?? 'N/A';
+            $diskParts = preg_split('/\s+/', $diskLine);
+            $disk = [
+                'used' => $diskParts[2] ?? '-',
+                'total' => $diskParts[1] ?? '-',
+                'percent' => (int)rtrim($diskParts[4] ?? '0%', '%'),
+            ];
 
+            // Menyusun data hasil
             $results[] = [
                 'scu_id' => $eq->id,
                 'station_code' => $eq->station_code,
                 'equipment_type_code' => $eq->equipment_type_code,
                 'ip' => $ip,
                 'status' => $status,
+                'uptime' => $this->formatUptime($uptime), // Menampilkan uptime dalam format yang bersih
                 'load_average' => [
                     '1m' => $load1m,
                     '5m' => $load5m,
                     '15m' => $load15m,
                     'status' => $load_status,
                 ],
-                'ram_percent' => $ramPercent,
-                'disk_root_usage' => $diskUsage,
+                'ram' => $ram,
+                'disk_root' => $disk,
                 'cpu_cores' => $cores,
             ];
         }
 
-        // return response()->json($results);
-
+        // Kirim data ke view
         $config_equipment_afc = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')->get();
         return view('pages.admin.monitoring-equipment-afc.index', compact([
             'config_equipment_afc',
             'results',
         ]));
+    }
+
+    private function formatUptime($uptime)
+    {
+        // Menghapus kata "up" dari output
+        $uptime = str_replace('up ', '', $uptime);
+
+        // Pisahkan bagian uptime berdasarkan koma (untuk hari, jam, menit)
+        $uptimeParts = explode(', ', $uptime);
+
+        $formatted = '';
+        foreach ($uptimeParts as $part) {
+            if (strpos($part, 'week') !== false || strpos($part, 'day') !== false || strpos($part, 'hour') !== false || strpos($part, 'minute') !== false) {
+                $formatted .= $part . ' ';
+            }
+        }
+
+        return trim($formatted);
     }
 
     private function classifyLoad($load1m, $cpuCores)

@@ -29,8 +29,9 @@
                                         <th rowspan="2">Station</th>
                                         <th rowspan="2">IP Address</th>
                                         <th rowspan="2">Status</th>
+                                        <th rowspan="2">Uptime</th>
                                         <th colspan="4">Load Average</th>
-                                        <th rowspan="2">RAM Percent</th>
+                                        <th rowspan="2">RAM Usage</th>
                                         <th rowspan="2">Disk Root Usage</th>
                                         <th rowspan="2">CPU Core</th>
                                     </tr>
@@ -53,6 +54,7 @@
                                                     {{ $item['status'] }}
                                                 </span>
                                             </td>
+                                            <td>{{ $item['uptime'] }}</td> <!-- Menampilkan uptime -->
                                             <td>{{ $item['load_average']['1m'] }}</td>
                                             <td>{{ $item['load_average']['5m'] }}</td>
                                             <td>{{ $item['load_average']['15m'] }}</td>
@@ -64,8 +66,12 @@
                                                     {{ ucfirst($item['load_average']['status']) }}
                                                 </span>
                                             </td>
-                                            <td>{{ $item['ram_percent'] }}%</td>
-                                            <td>{{ $item['disk_root_usage'] }}</td>
+                                            <td>
+                                                RAM: {{ $item['ram']['used'] }} / {{ $item['ram']['total'] }} ({{ $item['ram']['percent'] }}%)
+                                            </td>
+                                            <td>
+                                                Disk Root: {{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }} ({{ $item['disk_root']['percent'] }}%)
+                                            </td>
                                             <td>{{ $item['cpu_cores'] }}</td>
                                         </tr>
                                     @endforeach
