@@ -67,10 +67,10 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                RAM: {{ $item['ram']['used'] }} / {{ $item['ram']['total'] }} ({{ $item['ram']['percent'] }}%)
+                                                {{ $item['ram']['used'] }} / {{ $item['ram']['total'] }} ({{ $item['ram']['percent'] }}%)
                                             </td>
                                             <td>
-                                                Disk Root: {{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }} ({{ $item['disk_root']['percent'] }}%)
+                                                {{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }} ({{ $item['disk_root']['percent'] }}%)
                                             </td>
                                             <td>{{ $item['cpu_cores'] }}</td>
                                         </tr>
