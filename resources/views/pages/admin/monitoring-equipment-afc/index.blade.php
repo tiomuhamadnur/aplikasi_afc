@@ -93,27 +93,10 @@
                                                     {{ ucfirst($item['load_average']['status']) }}
                                                 </span>
                                             </td>
-
                                             <td>
                                                 <div class="d-flex flex-column small">
                                                     <div class="text-nowrap">{{ $item['ram']['used'] }} /
                                                         {{ $item['ram']['total'] }}</div>
-                                                    <div class="progress mt-1" style="height: 3px;">
-                                                        <div
-                                                            class="progress-bar
-                                                            @if ($item['ram']['percent'] > 90) bg-danger
-                                                            @elseif($item['ram']['percent'] > 70) bg-warning
-                                                            @else bg-success @endif">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="d-flex flex-column small">
-                                                    <div class="text-nowrap">
-                                                        {{ $item['ram']['used'] }} / {{ $item['ram']['total'] }}
-                                                    </div>
                                                     @isset($item['ram']['percent'])
                                                         <div class="progress mt-1" style="height: 3px;">
                                                             <div class="progress-bar
@@ -131,9 +114,7 @@
                                                     @endisset
                                                 </div>
                                             </td>
-
                                             <td>{{ $item['cpu_cores'] }}</td>
-
                                             <td>
                                                 @if (!empty($item['core_temperatures']))
                                                     <div class="d-flex flex-wrap gap-2 justify-content-center">

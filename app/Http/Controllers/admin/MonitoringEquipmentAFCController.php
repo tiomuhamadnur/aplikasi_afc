@@ -199,15 +199,19 @@ class MonitoringEquipmentAFCController extends Controller
         $lines = explode("\n", $free);
         $memLine = preg_split('/\s+/', $lines[1] ?? '');
 
-        $ramUsed = $this->convertToMegabytes($memLine[2] ?? '0M');  // Konversi ke MB
-        $ramTotal = $this->convertToMegabytes($memLine[1] ?? '1M'); // Konversi ke MB
-        $percent = $ramTotal > 0 ? round(($ramUsed / $ramTotal) * 100) : 0;
-
         return [
-            'used' => $memLine[2] ?? '0M',  // Contoh: "77M"
-            'total' => $memLine[1] ?? '1M', // Contoh: "1.9G"
-            'percent' => min(100, $percent) // Pastikan tidak lebih dari 100%
+            'used' => $memLine[2] ?? '0M',
+            'total' => $memLine[1] ?? '1M',
+            'percent' => $this->calculateRamPercent($memLine[2] ?? '0M', $memLine[1] ?? '1M')
         ];
+    }
+
+    protected function calculateRamPercent(string $used, string $total): int
+    {
+        $usedMB = $this->convertToMegabytes($used);
+        $totalMB = $this->convertToMegabytes($total);
+
+        return (int) min(100, round(($usedMB / max(1, $totalMB)) * 100));
     }
 
     protected function convertToMegabytes(string $size): float
