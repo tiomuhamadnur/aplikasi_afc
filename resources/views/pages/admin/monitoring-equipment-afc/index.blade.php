@@ -117,7 +117,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addForm" action="{{ route('monitoring-equipment-afc.store') }}" method="POST"
+                    <form id="scuForm" action="{{ route('monitoring-equipment-afc.store') }}" method="POST"
                         class="forms-sample">
                         @csrf
                         @method('POST')
@@ -138,7 +138,7 @@
                 <div class="modal-footer">
                     <a href="{{ route('monitoring-equipment-afc.index') }}" class="btn btn-gradient-warning">Reset</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="addForm" class="btn btn-gradient-primary me-2">Submit</button>
+                    <button type="submit" form="scuForm" class="btn btn-gradient-primary me-2">Submit</button>
                 </div>
             </div>
         </div>
@@ -154,7 +154,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addForm" action="{{ route('monitoring-equipment-afc.store_pg') }}" method="POST"
+                    <form id="pgForm" action="{{ route('monitoring-equipment-afc.store_pg') }}" method="POST"
                         class="forms-sample">
                         @csrf
                         @method('POST')
@@ -187,7 +187,7 @@
                 <div class="modal-footer">
                     <a href="{{ route('monitoring-equipment-afc.index') }}" class="btn btn-gradient-warning">Reset</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="addForm" class="btn btn-gradient-primary me-2">Submit</button>
+                    <button type="submit" form="pgForm" class="btn btn-gradient-primary me-2">Submit</button>
                 </div>
             </div>
         </div>
