@@ -201,7 +201,9 @@ class TransaksiTiketController extends Controller
         // Agregasi hasil
         $totalInserted = $results->sum('inserted');
         $totalSkipped = $results->sum('skipped');
-        $problematicFiles = $results->flatMap('problems')->take(5)->toArray();
+        $problematicFiles = $results->flatMap(function ($result) {
+            return $result['problems'] ?? [];
+        })->take(5)->toArray();
 
         // Format output sama persis seperti sebelumnya
         $message = sprintf('Import selesai. File: %d, Data masuk: %d, Di-skip: %d.',
