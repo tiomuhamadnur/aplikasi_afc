@@ -11,7 +11,6 @@ use App\Models\TransaksiTiket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -77,6 +76,7 @@ class TransaksiTiketController extends Controller
         return redirect()->route('transaksi.tiket.index');
     }
 
+
     // DEEPSEEK
     public function store(Request $request)
     {
@@ -86,134 +86,128 @@ class TransaksiTiketController extends Controller
             'date' => 'date|required',
         ]);
 
-        // Persiapan data dasar
         $is_deleted = $request->is_deleted;
         $station_id = $request->station_id;
-        $dateFilter = Carbon::parse($request->date)->format('Ymd');
+        $date = $request->date;
 
-        // Ambil config dengan cache
-        $config_pg = Cache::remember("config_pg_{$station_id}", 3600, function() use ($station_id) {
-            return ConfigPG::where('station_id', $station_id)->firstOrFail();
-        });
-
-        $scu = Cache::remember("scu_{$config_pg->station_code}", 3600, function() use ($config_pg) {
-            return ConfigEquipmentAFC::where('equipment_type_code', 'SCU')
+        $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
+        $host = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')
                                 ->where('station_code', $config_pg->station_code)
-                                ->firstOrFail();
-        });
-
-        // Setup koneksi SFTP yang dioptimasi
-        $disk = Storage::build([
-            'driver' => 'sftp',
-            'host' => $scu->ip_address,
-            'port' => (int)env('SFTP_SCU_PORT'),
-            'username' => env('SFTP_SCU_USERNAME'),
-            'password' => env('SFTP_SCU_PASSWORD'),
-            'timeout' => 15,
-        ]);
+                                ->firstOrFail()
+                                ->ip_address;
 
         $directory = '/home/sps/bank/alreadysent';
 
-        // Hapus data lama jika diperlukan
+        $baseConfig = [
+            'driver' => 'sftp',
+            'host' => $host,
+            'port' => (int) env('SFTP_SCU_PORT'),
+            'username' => env('SFTP_SCU_USERNAME'),
+            'password' => env('SFTP_SCU_PASSWORD'),
+        ];
+
+        $disk = Storage::build($baseConfig);
+
+        // Ambil semua file dari SFTP
+        $allFiles = $disk->allFiles($directory);
+        $dateFilter = Carbon::parse($date)->format('Ymd');
+
+        // Filter berdasarkan tanggal pada nama file
+        $filteredFiles = array_filter($allFiles, function ($file) use ($dateFilter) {
+            $filename = basename($file);
+            return substr($filename, 10, 8) === $dateFilter;
+        });
+
+        $totalInserted = 0;
+        $totalFiles = count($filteredFiles);
+        $skippedTransactions = 0;
+        $problematicFiles = [];
+        $skippedSamples = [];
+
+        $stationCodeMap = ConfigPG::pluck('station_code', 'station_kue_id')->toArray();
+
         if ($is_deleted == 1) {
+            // Hapus semua data dulu
             TransaksiTiket::truncate();
         }
 
-        // Proses file secara paralel
-        $allFiles = collect($disk->allFiles($directory))
-            ->filter(fn($file) => substr(basename($file), 10, 8) === $dateFilter);
+        foreach ($filteredFiles as $filePath) {
+            $filename = basename($filePath);
+            $fileProblems = 0;
 
-        $stationCodeMap = Cache::remember('station_code_map', 3600, function() {
-            return ConfigPG::pluck('station_code', 'station_kue_id')->toArray();
-        });
+            try {
+                $content = $disk->get($filePath);
+                $utf8Content = mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
+                $cleanContent = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $utf8Content);
 
-        $results = $allFiles->chunk(100)->map(function($files) use ($disk, $stationCodeMap) {
-            $inserted = 0;
-            $skipped = 0;
-            $problems = [];
+                $transactions = explode('|', $cleanContent);
 
-            foreach ($files as $filePath) {
-                $filename = basename($filePath);
-                $fileProblems = 0;
-
-                try {
-                    $content = $disk->get($filePath);
-                    $utf8Content = mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
-                    $cleanContent = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $utf8Content);
-
-                    $transactions = array_filter(explode('|', $cleanContent));
-
-                    $batch = [];
-                    foreach ($transactions as $transaction) {
-                        $parts = explode(';', $transaction);
-
-                        if (count($parts) < 3) {
-                            $skipped++;
-                            $fileProblems++;
-                            continue;
-                        }
-
-                        try {
-                            $data1 = explode(',', $parts[2] ?? '');
-                            $data2 = explode(',', $parts[3] ?? '');
-
-                            $batch[] = [
-                                'transaction_type' => 'KUE',
-                                'transaction_id' => $parts[1] ?? 'UNKNOWN_' . uniqid(),
-                                'device' => substr($filename, 0, 2),
-                                'corner_id' => substr($filename, 6, 2),
-                                'pg_id' => hexdec(substr($filename, 8, 2)),
-                                'pan' => $data1[0] ?? null,
-                                'transaction_amount' => $data1[1] ?? null,
-                                'balance_before' => $data1[6] ?? null,
-                                'balance_after' => $data1[7] ?? null,
-                                'card_type' => $data1[9] ?? null,
-                                'tap_in_time' => $data2[0] ?? null,
-                                'tap_out_time' => $data2[2] ?? null,
-                                'tap_in_station' => $stationCodeMap[$data2[1] ?? null] ?? null,
-                                'tap_out_station' => $stationCodeMap[$data2[3] ?? null] ?? null,
-                                'created_at' => now(),
-                                'updated_at' => now()
-                            ];
-                        } catch (\Exception $e) {
-                            $skipped++;
-                            $fileProblems++;
-                        }
+                foreach ($transactions as $transaction) {
+                    $transaction = trim($transaction);
+                    if (empty($transaction)) {
+                        $skippedTransactions++;
+                        continue;
                     }
 
-                    if (!empty($batch)) {
-                        TransaksiTiket::insert($batch);
-                        $inserted += count($batch);
+                    $parts = explode(';', $transaction);
+
+                    // Validasi lebih longgar
+                    if (count($parts) < 3) {
+                        $skippedTransactions++;
+                        $fileProblems++;
+                        $skippedSamples[] = substr($transaction, 0, 50);
+                        continue;
                     }
 
-                    if ($fileProblems > 0) {
-                        $problems[] = "$filename ($fileProblems masalah)";
+                    try {
+                        $data1 = explode(',', $parts[2] ?? '');
+                        $data2 = explode(',', $parts[3] ?? '');
+
+                        $item = [
+                            'transaction_type' => 'KUE',
+                            'transaction_id' => $parts[1] ?? 'UNKNOWN_' . uniqid(),
+                            'device' => substr($filename, 0, 2),
+                            'corner_id' => substr($filename, 6, 2),
+                            'pg_id' => hexdec(substr($filename, 8, 2)),
+                            'pan' => $data1[0] ?? null,
+                            'transaction_amount' => $data1[1] ?? null,
+                            'balance_before' => $data1[6] ?? null,
+                            'balance_after' => $data1[7] ?? null,
+                            'card_type' => $data1[9] ?? null,
+                            'tap_in_time' => $data2[0] ?? null,
+                            'tap_out_time' => $data2[2] ?? null,
+                            'tap_in_station' => $stationCodeMap[$data2[1] ?? null] ?? null,
+                            'tap_out_station' => $stationCodeMap[$data2[3] ?? null] ?? null,
+                        ];
+
+                        TransaksiTiket::create($item);
+                        $totalInserted++;
+                    } catch (\Exception $e) {
+                        $skippedTransactions++;
+                        $fileProblems++;
+                        $skippedSamples[] = substr($transaction, 0, 50) . ' [ERROR: ' . $e->getMessage() . ']';
                     }
-                } catch (\Exception $e) {
-                    $problems[] = $filename;
-                    $skipped += count($transactions ?? []);
                 }
+            } catch (\Exception $e) {
+                $problematicFiles[] = $filename;
+                continue;
             }
 
-            return compact('inserted', 'skipped', 'problems');
-        });
+            if ($fileProblems > 0) {
+                $problematicFiles[] = "$filename ($fileProblems masalah)";
+            }
+        }
 
-        // Agregasi hasil
-        $totalInserted = $results->sum('inserted');
-        $totalSkipped = $results->sum('skipped');
-        $problematicFiles = $results->flatMap(function ($result) {
-            return $result['problems'] ?? [];
-        })->take(5)->toArray();
+        $message = sprintf('Import selesai. File: %d, Data masuk: %d, Di-skip: %d.', $totalFiles, $totalInserted, $skippedTransactions);
 
-        // Format output sama persis seperti sebelumnya
-        $message = sprintf('Import selesai. File: %d, Data masuk: %d, Di-skip: %d.',
-            $allFiles->count(),
-            $totalInserted,
-            $totalSkipped
-        );
+        // Tambahkan info debugging jika ada selisih
+        if ($skippedTransactions > 0) {
+            $sampleProblem = $skippedSamples[0] ?? 'tidak ada contoh';
+            $message .= ' Contoh data yang di-skip: ' . $sampleProblem;
 
-        if ($totalSkipped > 0) {
-            $message .= ' Contoh file bermasalah: ' . implode(', ', array_slice($problematicFiles, 0, 3));
+            if (count($problematicFiles) > 0) {
+                $message .= ' File bermasalah: ' . implode(', ', array_slice($problematicFiles, 0, 3));
+            }
         }
 
         return redirect()->route('transaksi.tiket.index')->withNotify($message);
@@ -299,5 +293,25 @@ class TransaksiTiketController extends Controller
         }
 
         return redirect()->route('transaksi.tiket.index');
+    }
+
+    public function show(string $id)
+    {
+        //
+    }
+
+    public function edit(string $id)
+    {
+        //
+    }
+
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    public function destroy(string $id)
+    {
+        //
     }
 }
