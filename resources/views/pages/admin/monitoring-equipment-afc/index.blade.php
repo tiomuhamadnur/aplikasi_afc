@@ -114,6 +114,19 @@
                                                     @endisset
                                                 </div>
                                             </td>
+                                            <td>
+                                                <div class="d-flex flex-column small">
+                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}</div>
+                                                    <div class="progress mt-1" style="height: 3px;">
+                                                        <div class="progress-bar
+                                                            @if($item['disk_root']['percent'] > 90) bg-danger
+                                                            @elseif($item['disk_root']['percent'] > 70) bg-warning
+                                                            @else bg-success @endif"
+                                                            style="width: {{ $item['disk_root']['percent'] }}%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td>{{ $item['cpu_cores'] }}</td>
                                             <td>
                                                 @if (!empty($item['core_temperatures']))

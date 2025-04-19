@@ -233,9 +233,9 @@ class MonitoringEquipmentAFCController extends Controller
         $diskParts = preg_split('/\s+/', $diskLine);
 
         return [
-            'used' => $diskParts[2] ?? '-',
-            'total' => $diskParts[1] ?? '-',
-            'percent' => (int) rtrim($diskParts[4] ?? '0%', '%'),
+            'used' => $diskParts[2] ?? '0M',
+            'total' => $diskParts[1] ?? '1G',
+            'percent' => (int) rtrim($diskParts[4] ?? '0%', '%')
         ];
     }
 
