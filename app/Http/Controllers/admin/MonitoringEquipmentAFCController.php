@@ -52,8 +52,12 @@ class MonitoringEquipmentAFCController extends Controller
             $ssh = "sshpass -p '$pass' ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$ip";
 
             // Cek status online/offline
-            $ping = Process::timeout(5)->run("ping -c 1 $ip");
-            $status = $ping->successful() ? 'online' : 'offline';
+            try {
+                $ping = Process::timeout(5)->run("ping -c 1 $ip");
+                $status = $ping->successful() ? 'online' : 'offline';
+            } catch (ProcessTimedOutException $e) {
+                $status = 'offline'; // kalau timeout, anggap offline
+            }
 
             if ($status === 'offline') {
                 $results[] = [
@@ -199,8 +203,6 @@ class MonitoringEquipmentAFCController extends Controller
             } catch (ProcessTimedOutException $e) {
                 $status = 'offline'; // kalau timeout, anggap offline
             }
-
-            dd($ip, $status);
 
             if ($status === 'offline') {
                 $results[] = [
