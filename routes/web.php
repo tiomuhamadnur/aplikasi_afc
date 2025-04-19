@@ -607,7 +607,8 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
 
         Route::controller(MonitoringEquipmentAFCController::class)->group(function () {
             Route::get('/monitoring-equipment-afc', 'index')->name('monitoring-equipment-afc.index');
-            Route::post('/monitoring-equipment-afc', 'store')->name('monitoring-equipment-afc.store');
+            Route::post('/monitoring-equipment-afc/scu', 'store')->name('monitoring-equipment-afc.store');
+            Route::post('/monitoring-equipment-afc/pg', 'store_pg')->name('monitoring-equipment-afc.store_pg');
         });
 
         Route::controller(ChecksheetController::class)->group(function () {
