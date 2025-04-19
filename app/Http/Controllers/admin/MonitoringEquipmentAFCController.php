@@ -62,7 +62,8 @@ class MonitoringEquipmentAFCController extends Controller
             }
 
             // Ambil data dari SSH
-            $uptime = Process::run("$ssh 'uptime -p'")->output();
+            $uptime = Process::run("$ssh 'uptime'")->output(); // Uptime untuk load average
+            $uptime_p = Process::run("$ssh 'uptime -p'")->output(); // Uptime bersih
             $free = Process::run("$ssh 'free -h'")->output();
             $df = Process::run("$ssh 'df -h /'")->output();
             $cores = (int) trim(Process::run("$ssh 'nproc'")->output());
@@ -105,7 +106,7 @@ class MonitoringEquipmentAFCController extends Controller
                 'equipment_type_code' => $eq->equipment_type_code,
                 'ip' => $ip,
                 'status' => $status,
-                'uptime' => $this->formatUptime($uptime), // Menampilkan uptime dalam format yang bersih
+                'uptime' => $uptime_p, // Menampilkan uptime dalam format yang bersih
                 'load_average' => [
                     '1m' => $load1m,
                     '5m' => $load5m,
@@ -126,24 +127,6 @@ class MonitoringEquipmentAFCController extends Controller
         ]));
     }
 
-    private function formatUptime($uptime)
-    {
-        // Menghapus kata "up" dari output
-        $uptime = str_replace('up ', '', $uptime);
-
-        // Pisahkan bagian uptime berdasarkan koma (untuk hari, jam, menit)
-        $uptimeParts = explode(', ', $uptime);
-
-        $formatted = '';
-        foreach ($uptimeParts as $part) {
-            if (strpos($part, 'week') !== false || strpos($part, 'day') !== false || strpos($part, 'hour') !== false || strpos($part, 'minute') !== false) {
-                $formatted .= $part . ' ';
-            }
-        }
-
-        return trim($formatted);
-    }
-
     private function classifyLoad($load1m, $cpuCores)
     {
         $percent = $load1m / $cpuCores;
@@ -151,6 +134,7 @@ class MonitoringEquipmentAFCController extends Controller
         if ($percent < 1.0) return 'busy';
         return 'overload';
     }
+
 
     public function show(string $id)
     {

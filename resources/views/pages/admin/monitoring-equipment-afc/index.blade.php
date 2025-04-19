@@ -54,7 +54,7 @@
                                                     {{ $item['status'] }}
                                                 </span>
                                             </td>
-                                            <td>{{ $item['uptime'] }}</td> <!-- Menampilkan uptime -->
+                                            <td>{{ $item['uptime'] }}</td>
                                             <td>{{ $item['load_average']['1m'] }}</td>
                                             <td>{{ $item['load_average']['5m'] }}</td>
                                             <td>{{ $item['load_average']['15m'] }}</td>
@@ -66,12 +66,8 @@
                                                     {{ ucfirst($item['load_average']['status']) }}
                                                 </span>
                                             </td>
-                                            <td>
-                                                {{ $item['ram']['used'] }} / {{ $item['ram']['total'] }} ({{ $item['ram']['percent'] }}%)
-                                            </td>
-                                            <td>
-                                                {{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }} ({{ $item['disk_root']['percent'] }}%)
-                                            </td>
+                                            <td>{{ $item['ram']['used'] }} / {{ $item['ram']['total'] }} ({{ $item['ram']['percent'] }}%)</td>
+                                            <td>{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }} ({{ $item['disk_root']['percent'] }}%)</td>
                                             <td>{{ $item['cpu_cores'] }}</td>
                                         </tr>
                                     @endforeach
