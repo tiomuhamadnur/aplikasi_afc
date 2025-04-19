@@ -14,8 +14,8 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 5;
-    protected $pingTimeout = 3;
+    protected $sshTimeout = 2;
+    protected $pingTimeout = 2;
 
     public function index()
     {
@@ -145,7 +145,7 @@ class MonitoringEquipmentAFCController extends Controller
             $df = Process::run("$ssh 'df -h /'")->output();
 
             // Ensure we get at least 1 core
-            $coresOutput = trim(Process::run("$ssh 'nproc'")->output());
+            $coresOutput = trim(Process::run("$ssh 'grep -c ^processor /proc/cpuinfo'")->output());
             $cores = max(1, (int) $coresOutput);
 
             $loadData = $this->parseLoadAverage($uptime, $cores);
