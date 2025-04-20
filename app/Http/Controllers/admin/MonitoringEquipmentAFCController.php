@@ -457,9 +457,9 @@ class MonitoringEquipmentAFCController extends Controller
             }
         }
 
-        $message .= $enter . $enter . $div . $enter . $enter .
+        $message .= $enter . $div . $enter . $enter .
             '_Regards,_' . $enter . $enter .
-            '*ExoBOT*' .
+            '*RollingSyncBOT*' .
             $enter . $enter . $enter . $enter .
             '_Generated at: ' . now()->format('Y-m-d H:i:s') . '_' .
             $enter . $enter . $enter . $enter;

@@ -117,7 +117,7 @@ class ExpiringPermitWhatsappController extends Controller
             $url . $enter . $enter .
             $div . $enter . $enter .
             '_Regards,_' . $enter . $enter .
-            '*ExoBOT*' .
+            '*RollingSyncBOT*' .
             $enter . $enter . $enter . $enter;
 
         return $message;
