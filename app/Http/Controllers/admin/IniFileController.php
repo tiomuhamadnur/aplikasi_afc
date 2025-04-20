@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
 use App\Models\ConfigPG;
+use App\Models\SamCard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -20,28 +21,46 @@ class IniFileController extends Controller
         $type = null;
         $results = [];
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
+        $sam_cards = SamCard::where('status', 'ready')->get();
+        $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
 
-        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'host', 'station_id', 'pg_id', 'type']));
+        return view('pages.admin.ini-file.index', compact([
+            'results',
+            'config_pg',
+            'sam_cards',
+            'equipments',
+            'host',
+            'station_id',
+            'pg_id',
+            'type',
+        ]));
     }
 
     public function update(Request $request)
     {
         $request->validate([
+            'pg_id' => 'required|numeric',
             'filename' => 'required|string',
             'mandiri_pin' => 'required|string',
             'bni_mc' => 'required|string',
         ]);
 
-        $disk = Storage::disk('sftp');
-        $directory = '/AG_System/Install/AINO/ini';
+        $pg_id = $request->pg_id;
         $filename = $request->filename;
         $mandiri_pin = $request->mandiri_pin;
         $bni_mc = $request->bni_mc;
+
+        $directory = '/AG_System/Install/AINO/ini';
         $fullPath = $directory . '/' . $filename;
+
+        $pg = ConfigEquipmentAFC::findOrFail($pg_id);
+
+        $baseConfig['host'] = $pg->ip_address;
+        $disk = Storage::build($baseConfig);
 
         // 1. Pastikan file benar-benar ada
         if (!$disk->exists($fullPath)) {
-            return response()->json(['error' => 'File not found'], 404);
+            return redirect()->route('ini-file.index')->withNotifyerror('File not found');
         }
 
         // 2. Ambil isi file
@@ -50,8 +69,10 @@ class IniFileController extends Controller
         // 3. Decode JSON (validasi JSON dulu)
         $data = json_decode($fileContent, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return response()->json(['error' => 'Invalid JSON in file'], 422);
+            return redirect()->route('ini-file.index')->withNotifyerror('Invalid JSON in file');
         }
+
+        return $data;
 
         // 4. Ubah isi jika ada input
         if ($request->filled('mandiri_pin') && isset($data['Mandiri'])) {
@@ -79,32 +100,24 @@ class IniFileController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi parameter
         $request->validate([
-            // 'host' => 'required|string|ip',
-            'station_id' => 'required|string',
             'pg_id' => 'required|string',
             'type' => 'nullable|in:Paid,UnPaid',
         ]);
 
-        $station_id = $request->station_id;
         $pg_id = $request->pg_id;
         $type = $request->type;
 
-        $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')
-                            ->where('station_code', $config_pg->station_code)
-                            ->where('equipment_id', $pg_id)
-                            ->firstOrFail();
-
-        $host = $pg->ip_address;
+        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->findOrFail($pg_id);
+        $station_id = ConfigPG::where('station_code', $pg->station_code)->firstOrFail()->station_id;
+        $pg_id = $pg->equipment_id;
 
         // Direktori tempat file .ini berada
         $directory = '/AG_System/Install/AINO/ini';
 
         // Buat koneksi SFTP
         $baseConfig = config('filesystems.disks.sftp');
-        $baseConfig['host'] = $host;
+        $baseConfig['host'] = $pg->ip_address;
         $disk = Storage::build($baseConfig);
 
         // Ambil semua file di dalam direktori

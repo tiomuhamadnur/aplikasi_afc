@@ -20,6 +20,10 @@
                                 data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <i class="mdi mdi-filter"></i>
                             </button>
+                            <button type="button" title="Replace Ini File PG" class="btn btn-outline-primary btn-rounded btn-icon"
+                                data-bs-toggle="modal" data-bs-target="#replaceModal">
+                                <i class="mdi mdi-file-replace"></i>
+                            </button>
                             <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
@@ -177,30 +181,20 @@
                     <form id="addForm" action="{{ route('ini-file.store') }}" method="POST" class="forms-sample">
                         @csrf
                         @method('POST')
-                        {{-- <div class="form-group">
-                            <label for="host" class="required">Host</label>
-                            <input type="text" class="form-control" id="host" name="host"
-                                placeholder="input host/ip address" value="{{ $host }}" autocomplete="off" required>
-                        </div> --}}
                         <div class="form-group">
-                            <label for="station_id" class="required">Station</label>
-                            <select class="form-control" name="station_id" id="station_id" required>
-                                <option value="" selected disabled>- select station -</option>
-                                @foreach ($config_pg as $item)
-                                    <option value="{{ $item->station_id }}" @selected($station_id == $item->station_id)>
-                                        {{ $item->station_code }}</option>
+                            <label for="pg_id" class="required">PG ID</label>
+                            <select class="tom-select-class" name="pg_id" id="pg_id" required>
+                                <option value="" selected disabled>- select PG ID -</option>
+                                @foreach ($equipments as $item)
+                                    <option value="{{ $item->id }}">
+                                        {{ $item->station_code }} {{ $item->equipment_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="pg_id" class="required">PG ID</label>
-                            <input type="number" class="form-control" id="pg_id" name="pg_id"
-                                placeholder="input PG ID" autocomplete="off" min="1" value="{{ $pg_id }}"
-                                required>
-                        </div>
-                        <div class="form-group">
                             <label for="type">Type</label>
-                            <select class="form-control" name="type" id="type">
+                            <select class="tom-select-class" name="type" id="type">
                                 <option value="" selected disabled>- select type -</option>
                                 <option value="Paid" @selected($type == 'Paid')>Paid</option>
                                 <option value="UnPaid" @selected($type == 'UnPaid')>UnPaid</option>
@@ -217,6 +211,52 @@
         </div>
     </div>
     <!-- End Filter Modal -->
+
+    <!-- Replace Modal -->
+    <div class="modal fade" id="replaceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Replace .ini File PG</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="replaceForm" action="{{ route('ini-file.update') }}" method="POST" class="forms-sample">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="pg_id" id="pg_id_edit">
+                        <div class="form-group">
+                            <label class="required">PG ID</label>
+                            <input type="text" class="form-control" id="pg_name_edit"
+                                placeholder="input PG name" autocomplete="off" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="filename_edit" class="required">Filename .ini File</label>
+                            <input type="text" class="form-control" id="filename_edit" name="filename"
+                                placeholder="input filename .ini file" autocomplete="off" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="sam_card_id" class="required">SAM Card</label>
+                            <select class="tom-select-class" name="sam_card_id" id="sam_card_id">
+                                <option value="" selected disabled>- select SAM card -</option>
+                                @foreach ($sam_cards as $item)
+                                    <option value="{{ $item->id }}">
+                                        TID: {{ $item->tid }} | UID: {{ $item->uid }} | PIN: {{ $item->pin }} | MC: {{ $item->mc }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('ini-file.index') }}" class="btn btn-gradient-warning">Reset</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="replaceForm" class="btn btn-gradient-primary me-2">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Replace Modal -->
 @endsection
 
 @section('javascript')
