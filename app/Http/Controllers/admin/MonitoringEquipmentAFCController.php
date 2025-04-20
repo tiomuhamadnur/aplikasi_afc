@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
@@ -353,79 +354,117 @@ class MonitoringEquipmentAFCController extends Controller
      */
     public function sendMonitoringNotification()
     {
-        // Ambil data SCU
+        // Ambil data user yang akan menerima notifikasi
+        $recipients = User::whereIn('id', [1]) //sesuaikan jumlahnya
+                    ->with(['gender', 'relasi_struktur.departemen', 'relasi_struktur.seksi'])
+                    ->whereNotNull('no_hp')
+                    ->get();
+
+        // Jika tidak ada penerima yang valid
+        if ($recipients->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No valid recipients found'
+            ], 400);
+        }
+
+        // Ambil data monitoring
         $scuEquipment = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_SCU)->get();
         $scuResults = $this->checkEquipmentStatusParallel($scuEquipment, env('SSH_SCU_USERNAME'), env('SSH_SCU_PASSWORD'));
 
-        // Ambil data PG
         $pgEquipment = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)->get();
         $pgResults = $this->checkEquipmentStatusParallel($pgEquipment, env('SSH_PG_USERNAME'), env('SSH_PG_PASSWORD'), true);
 
-        // Format pesan
-        $message = $this->formatMonitoringMessage($scuResults, $pgResults, $scuEquipment->count(), $pgEquipment->count());
-
-        // Nomor tujuan notifikasi (bisa disesuaikan)
-        $phoneNumbers = [
-            '087723704469', // Contoh nomor
-            // '6289876543210',  // Contoh nomor lain
+        // Hitung status peralatan
+        $monitoringData = [
+            'scu' => [
+                'online' => count(array_filter($scuResults, fn($item) => $item['status'] === 'online')),
+                'total' => $scuEquipment->count(),
+                'offline' => array_filter($scuResults, fn($item) => $item['status'] === 'offline')
+            ],
+            'pg' => [
+                'online' => count(array_filter($pgResults, fn($item) => $item['status'] === 'online')),
+                'total' => $pgEquipment->count(),
+                'offline' => array_filter($pgResults, fn($item) => $item['status'] === 'offline')
+            ]
         ];
 
-        // Kirim notifikasi ke semua nomor
-        foreach ($phoneNumbers as $phoneNumber) {
-            $this->sendNotification($phoneNumber, $message);
+        // Kirim notifikasi ke setiap user
+        $successCount = 0;
+        foreach ($recipients as $user) {
+            $message = $this->formatPersonalizedMessage($user, $monitoringData);
+            $response = $this->sendNotification($user->no_hp, $message);
+
+            if ($response !== false) {
+                $successCount++;
+            }
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Monitoring notification sent successfully'
+            'message' => 'Monitoring notification sent to '.$successCount.' recipients',
+            'data' => [
+                'total_recipients' => $recipients->count(),
+                'successful_sends' => $successCount
+            ]
         ]);
     }
 
-    /**
-     * Format pesan notifikasi monitoring
-     */
-    protected function formatMonitoringMessage(array $scuResults, array $pgResults, int $totalScu, int $totalPg): string
+    protected function formatPersonalizedMessage(User $user, array $monitoringData): string
     {
         $enter = "\n";
         $div = '=============================';
 
-        // Hitung status SCU
-        $onlineScu = count(array_filter($scuResults, fn($item) => $item['status'] === 'online'));
-        $offlineScu = array_filter($scuResults, fn($item) => $item['status'] === 'offline');
+        // Data user
+        $gender = $user->gender->id == 1 ? "Bapak" : "Ibu";
+        $name = $user->name;
+        $departemen = $user->relasi_struktur->departemen->name ?? 'N/A';
+        $seksi = $user->relasi_struktur->seksi->name ?? 'N/A';
 
-        // Hitung status PG
-        $onlinePg = count(array_filter($pgResults, fn($item) => $item['status'] === 'online'));
-        $offlinePg = array_filter($pgResults, fn($item) => $item['status'] === 'offline');
+        // Data monitoring
+        $scuOnline = $monitoringData['scu']['online'];
+        $scuTotal = $monitoringData['scu']['total'];
+        $scuOffline = $monitoringData['scu']['offline'];
+
+        $pgOnline = $monitoringData['pg']['online'];
+        $pgTotal = $monitoringData['pg']['total'];
+        $pgOffline = $monitoringData['pg']['offline'];
 
         $message = '⚠️ *MONITORING EQUIPMENT NOTIFICATION* ' . $enter . $enter .
-            'Berikut status terakhir monitoring peralatan AFC:' . $enter . $enter .
+            'Dear ' . $gender . ' *' . $name . '*,' . $enter . $enter .
+            'Berikut status terakhir monitoring equipment AFC:' . $enter . $enter .
             $div . $enter . $enter .
-            '🔷 *SCU STATUS*' . $enter .
-            'Online: ' . $onlineScu . '/' . $totalScu . $enter;
+            '*Departemen:* ' . $departemen . $enter .
+            '*Seksi:* ' . $seksi . $enter . $enter .
+            $div . $enter . $enter .
+            '🖥️ *SCU STATUS*' . $enter .
+            '*Online:* ' . $scuOnline . '/' . $scuTotal . $enter;
 
         // Tambahkan list SCU offline jika ada
-        if (!empty($offlineScu)) {
+        if (!empty($scuOffline)) {
             $message .= $enter . '*SCU OFFLINE:*' . $enter;
-            foreach ($offlineScu as $scu) {
+            foreach ($scuOffline as $scu) {
                 $message .= '- ' . $scu['equipment_name'] . ' (' . $scu['ip'] . ') - ' . $scu['station_code'] . $enter;
             }
         }
 
-        $message .= $enter . $div . $enter . $enter .
-            '🔷 *PG STATUS*' . $enter .
-            'Online: ' . $onlinePg . '/' . $totalPg . $enter;
+        $message .= $enter . $enter . $enter . $enter .
+            '🚪 *PG STATUS*' . $enter .
+            '*Online:* ' . $pgOnline . '/' . $pgTotal . $enter;
 
         // Tambahkan list PG offline jika ada
-        if (!empty($offlinePg)) {
+        if (!empty($pgOffline)) {
             $message .= $enter . '*PG OFFLINE:*' . $enter;
-            foreach ($offlinePg as $pg) {
+            foreach ($pgOffline as $pg) {
                 $message .= '- ' . $pg['equipment_name'] . ' (' . $pg['ip'] . ') - ' . $pg['station_code'] . $enter;
             }
         }
 
-        $message .= $enter . $div . $enter . $enter .
+        $message .= $enter . $div . $enter . $enter . $enter . $enter .
             '_Generated at: ' . now()->format('Y-m-d H:i:s') . '_' . $enter . $enter .
-            '*AFC Monitoring System*';
+            '_Regards,_' . $enter . $enter .
+            '*ExoBOT*' .
+            $enter . $enter . $enter . $enter;
 
         return $message;
     }
