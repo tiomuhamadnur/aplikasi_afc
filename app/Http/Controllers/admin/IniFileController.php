@@ -175,7 +175,18 @@ class IniFileController extends Controller
         // return response()->json($results);
 
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
+        $sam_cards = SamCard::where('status', 'ready')->get();
+        $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
 
-        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'host', 'station_id', 'pg_id', 'type']));
+        return view('pages.admin.ini-file.index', compact([
+            'results',
+            'config_pg',
+            'sam_cards',
+            'equipments',
+            'host',
+            'station_id',
+            'pg_id',
+            'type',
+        ]));
     }
 }
