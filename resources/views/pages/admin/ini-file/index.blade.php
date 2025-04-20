@@ -33,6 +33,8 @@
                                 <thead>
                                     <tr>
                                         <th rowspan="2">No</th>
+                                        <th rowspan="2">Station</th>
+                                        <th rowspan="2">PG ID</th>
                                         <th rowspan="2">Filename</th>
                                         <th rowspan="2">Location</th>
                                         <th rowspan="2">ConfigVersion</th>
@@ -102,6 +104,8 @@
                                     @foreach ($results as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $item['station_code'] }}</td>
+                                            <td>{{ $item['pg_name'] }}</td>
                                             <td>{{ $item['actual_filename'] }}</td>
                                             <td>{{ $item['location'] }}</td>
                                             <td>{{ $item['config_version'] }}</td>

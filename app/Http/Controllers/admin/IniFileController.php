@@ -94,90 +94,78 @@ class IniFileController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'pg_id' => 'required|string',
-            'type' => 'nullable|in:Paid,UnPaid',
+            'type' => 'nullable|in:Paid,Unpaid',
         ]);
 
-        $pg_id = $request->pg_id;
-        $type = $request->type;
+        // Get PG configuration
+        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')
+            ->findOrFail($validated['pg_id']);
 
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->findOrFail($pg_id);
-        $station_id = ConfigPG::where('station_code', $pg->station_code)->firstOrFail()->station_id;
-        $pg_id = $pg->equipment_id;
+        // Get station ID (keeping original separate query as requested)
+        $station_id = ConfigPG::where('station_code', $pg->station_code)
+            ->firstOrFail()
+            ->station_id;
 
-        // Direktori tempat file .ini berada
-        $directory = '/AG_System/Install/AINO/ini';
+        // Prepare SFTP connection
+        $sftpConfig = config('filesystems.disks.sftp');
+        $sftpConfig['host'] = $pg->ip_address;
+        $sftp = Storage::build($sftpConfig);
 
-        // Buat koneksi SFTP
-        $baseConfig = config('filesystems.disks.sftp');
-        $baseConfig['host'] = $pg->ip_address;
-        $disk = Storage::build($baseConfig);
-
-        // Ambil semua file di dalam direktori
-        $allFiles = $disk->allFiles($directory);
-
-        $results = [];
-
-        foreach ($allFiles as $file) {
-            $filename = basename($file);
-
-            // Filter hanya file dengan ekstensi .ini
-            if (!Str::endsWith($filename, '.ini')) {
-                continue;
-            }
-
-            // Cek file dengan pola: AinoConfiguration_123456789012_Paid.ini atau UnPaid.ini
-            if (preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
-                $code = $matches[1]; // 12 digit kode dari nama file
-                $fileType = $matches[2]; // Paid atau UnPaid
-
-                // Ekstrak station dan pg id dari kode
-                $station = substr($code, 3, 3); // digit ke-4 sampai ke-6
-                $pg = substr($code, 9, 3); // digit ke-10 sampai ke-12
-
-                // Filter berdasarkan station_id dan pg_id jika dikirim dari request
-                if (($station_id && $station !== $station_id) || ($pg_id && $pg !== $pg_id)) {
-                    continue;
+        // Process files efficiently
+        $results = collect($sftp->files('/AG_System/Install/AINO/ini'))
+            ->filter(function ($file) {
+                return Str::endsWith($file, '.ini');
+            })
+            ->mapWithKeys(function ($file) {
+                return [basename($file) => $file];
+            })
+            ->filter(function ($file, $filename) use ($station_id, $pg, $validated) {
+                if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|Unpaid)\.ini$/i', $filename, $matches)) {
+                    return false;
                 }
 
-                // Filter berdasarkan type jika dikirim dari request
-                if ($type && strtolower($type) !== strtolower($fileType)) {
-                    continue;
-                }
+                $code = $matches[1];
+                $fileType = $matches[2];
 
-                // Ambil isi file jika lolos filter
-                $fileContent = $disk->get($file);
+                // Extract IDs from code
+                $fileStationId = substr($code, 3, 3);
+                $filePgId = substr($code, 9, 3);
 
-                // Decode JSON
-                $json = json_decode($fileContent, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    continue;
-                }
+                // Apply filters
+                return $fileStationId === $station_id &&
+                    $filePgId === $pg->equipment_id &&
+                    (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
+            })
+            ->map(function ($file) use ($sftp, $pg) {
+                $content = $sftp->get($file);
+                $json = json_decode($content, true);
 
-                // Tambahkan nama file ke hasil data
-                $finalData = ['actual_filename' => $filename] + $json;
-
-                $results[] = $finalData;
-            }
-        }
+                return json_last_error() === JSON_ERROR_NONE
+                    ? array_merge([
+                        'station_code' => $pg->station_code,
+                        'pg_id' => $pg->id,
+                        'pg_name' => $pg->equipment_name,
+                        'actual_filename' => basename($file),
+                    ], $json)
+                    : null;
+            })
+            ->filter()
+            ->values()
+            ->toArray();
 
         if (empty($results)) {
-            return redirect()->route('ini-file.index')->withNotifyerror('Data .ini file tidak ditemukan');
+            return redirect()->route('ini-file.index')
+                ->withNotifyerror('Data .ini file tidak ditemukan');
         }
 
-        // return response()->json($results);
-
-        $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
-        $sam_cards = SamCard::where('status', 'ready')->get();
-        $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
-
-        return view('pages.admin.ini-file.index', compact([
-            'results',
-            'config_pg',
-            'sam_cards',
-            'equipments',
-            'type',
-        ]));
+        return view('pages.admin.ini-file.index', [
+            'results' => $results,
+            'config_pg' => ConfigPG::orderBy('order')->get(),
+            'sam_cards' => SamCard::where('status', 'ready')->get(),
+            'equipments' => ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get(),
+            'type' => $validated['type'] ?? null,
+        ]);
     }
 }
