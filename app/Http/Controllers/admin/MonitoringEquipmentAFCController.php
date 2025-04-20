@@ -15,7 +15,7 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 1;
+    protected $sshTimeout = 3;
     protected $pingTimeout = 1;
     protected $concurrency = 25;
 
@@ -77,12 +77,8 @@ class MonitoringEquipmentAFCController extends Controller
         return $id === 'all' ? $query->get() : $query->where('id', $id)->get();
     }
 
-    protected function checkEquipmentStatusParallel(
-        Collection $equipments,
-        string $username,
-        string $password,
-        bool $checkTemp = false
-    ): array {
+    protected function checkEquipmentStatusParallel(Collection $equipments, string $username, string $password, bool $checkTemp = false): array
+    {
         $results = [];
 
         // 1. First Phase: Parallel Ping Checks
