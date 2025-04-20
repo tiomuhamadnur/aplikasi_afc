@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\GoogleSpreadsheetController;
+use App\Http\Controllers\admin\MonitoringEquipmentAFCController;
 use App\Http\Controllers\api\GetDataController;
 use App\Http\Controllers\api\MonitoringPermitController;
 use App\Http\Controllers\api\MonitoringEquipmentController;
@@ -34,6 +35,10 @@ Route::controller(MonitoringPermitController::class)->group(function () {
 
 Route::controller(ExpiringPermitMailController::class)->group(function () {
     Route::get('/notification/mail/expiring-permit', 'notification')->name('api.mail.expiring-permit.nofification');
+});
+
+Route::controller(MonitoringEquipmentAFCController::class)->group(function () {
+    Route::get('/notification/whatsapp/monitoring-equipment-afc', 'sendMonitoringNotification');
 });
 
 Route::controller(MonitoringEquipmentController::class)->group(function () {

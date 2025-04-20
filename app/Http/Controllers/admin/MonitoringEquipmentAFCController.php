@@ -342,4 +342,131 @@ class MonitoringEquipmentAFCController extends Controller
             'results' => $results,
         ]);
     }
+
+
+
+
+
+
+    /**
+     * Mengirim notifikasi status peralatan via WhatsApp
+     */
+    public function sendMonitoringNotification()
+    {
+        // Ambil data SCU
+        $scuEquipment = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_SCU)->get();
+        $scuResults = $this->checkEquipmentStatusParallel($scuEquipment, env('SSH_SCU_USERNAME'), env('SSH_SCU_PASSWORD'));
+
+        // Ambil data PG
+        $pgEquipment = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)->get();
+        $pgResults = $this->checkEquipmentStatusParallel($pgEquipment, env('SSH_PG_USERNAME'), env('SSH_PG_PASSWORD'), true);
+
+        // Format pesan
+        $message = $this->formatMonitoringMessage($scuResults, $pgResults, $scuEquipment->count(), $pgEquipment->count());
+
+        // Nomor tujuan notifikasi (bisa disesuaikan)
+        $phoneNumbers = [
+            '087723704469', // Contoh nomor
+            // '6289876543210',  // Contoh nomor lain
+        ];
+
+        // Kirim notifikasi ke semua nomor
+        foreach ($phoneNumbers as $phoneNumber) {
+            $this->sendNotification($phoneNumber, $message);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Monitoring notification sent successfully'
+        ]);
+    }
+
+    /**
+     * Format pesan notifikasi monitoring
+     */
+    protected function formatMonitoringMessage(array $scuResults, array $pgResults, int $totalScu, int $totalPg): string
+    {
+        $enter = "\n";
+        $div = '=============================';
+
+        // Hitung status SCU
+        $onlineScu = count(array_filter($scuResults, fn($item) => $item['status'] === 'online'));
+        $offlineScu = array_filter($scuResults, fn($item) => $item['status'] === 'offline');
+
+        // Hitung status PG
+        $onlinePg = count(array_filter($pgResults, fn($item) => $item['status'] === 'online'));
+        $offlinePg = array_filter($pgResults, fn($item) => $item['status'] === 'offline');
+
+        $message = '⚠️ *MONITORING EQUIPMENT NOTIFICATION* ' . $enter . $enter .
+            'Berikut status terakhir monitoring peralatan AFC:' . $enter . $enter .
+            $div . $enter . $enter .
+            '🔷 *SCU STATUS*' . $enter .
+            'Online: ' . $onlineScu . '/' . $totalScu . $enter;
+
+        // Tambahkan list SCU offline jika ada
+        if (!empty($offlineScu)) {
+            $message .= $enter . '*SCU OFFLINE:*' . $enter;
+            foreach ($offlineScu as $scu) {
+                $message .= '- ' . $scu['equipment_name'] . ' (' . $scu['ip'] . ') - ' . $scu['station_code'] . $enter;
+            }
+        }
+
+        $message .= $enter . $div . $enter . $enter .
+            '🔷 *PG STATUS*' . $enter .
+            'Online: ' . $onlinePg . '/' . $totalPg . $enter;
+
+        // Tambahkan list PG offline jika ada
+        if (!empty($offlinePg)) {
+            $message .= $enter . '*PG OFFLINE:*' . $enter;
+            foreach ($offlinePg as $pg) {
+                $message .= '- ' . $pg['equipment_name'] . ' (' . $pg['ip'] . ') - ' . $pg['station_code'] . $enter;
+            }
+        }
+
+        $message .= $enter . $div . $enter . $enter .
+            '_Generated at: ' . now()->format('Y-m-d H:i:s') . '_' . $enter . $enter .
+            '*AFC Monitoring System*';
+
+        return $message;
+    }
+
+    /**
+     * Mengirim notifikasi WhatsApp
+     */
+    public function sendNotification($phoneNumber, $message)
+    {
+        $apiUrl = env('WHATSAPP_API_URL');
+        $token = env('WHATSAPP_API_TOKEN');
+
+        $data = [
+            'target' => $phoneNumber,
+            'message' => $message,
+            'countryCode' => '62', // Kode negara Indonesia
+        ];
+
+        $headers = [
+            'Authorization: ' . $token,
+        ];
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $apiUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => http_build_query($data),
+            CURLOPT_HTTPHEADER => $headers,
+        ]);
+
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+        curl_close($curl);
+
+        return $response;
+    }
 }
