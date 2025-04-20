@@ -444,28 +444,28 @@ class MonitoringEquipmentAFCController extends Controller
 
         $message = '⚠️ *MONITORING EQUIPMENT AFC MRTJ* ' . $enter . $enter .
             'Dear ' . $gender . ' *' . $name . '*,' . $enter . $enter .
-            'Berikut status terakhir monitoring equipment AFC:' . $enter . $enter .
+            'Berikut status monitoring *Equipment AFC* yang di-generate pada *' . now()->format('Y-m-d H:i:s') . '*:' . $enter . $enter .
             $div . $enter . $enter .
-            '🖥️ *SCU STATUS:*' . $enter .
+            '*SCU STATUS:*' . $enter .
             'Online: *' . $scuOnline . '*/*' . $scuTotal . '* Unit Server' . $enter;
 
         // Tambahkan list SCU offline jika ada
         if (!empty($scuOffline)) {
             $message .= $enter . '*SCU OFFLINE:*' . $enter;
-            foreach ($scuOffline as $scu) {
-                $message .= '- ' . $scu['equipment_name'] . ' (' . $scu['ip'] . ') - ' . $scu['station_code'] . $enter;
+            foreach ($scuOffline as $index => $scu) {
+                $message .= ($index + 1) . '. ' . $scu['equipment_name'] . ' (' . $scu['ip'] . ') - ' . $scu['station_code'] . $enter;
             }
         }
 
         $message .= $enter . $enter .
-            '🚪 *PG STATUS:*' . $enter .
+            '*PG STATUS:*' . $enter .
             'Online: *' . $pgOnline . '*/*' . $pgTotal . '* Unit PG' . $enter;
 
         // Tambahkan list PG offline jika ada
         if (!empty($pgOffline)) {
             $message .= $enter . '*PG OFFLINE:*' . $enter;
-            foreach ($pgOffline as $pg) {
-                $message .= '- ' . $pg['equipment_name'] . ' (' . $pg['ip'] . ') - ' . $pg['station_code'] . $enter;
+            foreach ($pgOffline as $index => $pg) {
+                $message .= ($index + 1) . '. ' . $pg['equipment_name'] . ' (' . $pg['ip'] . ') - ' . $pg['station_code'] . $enter;
             }
         }
 
