@@ -26,8 +26,8 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
-                                <thead>
+                            <table class="table table-bordered text-center align-middle">
+                                <thead class="table-light">
                                     <tr>
                                         <th rowspan="2">No</th>
                                         <th rowspan="2">Station</th>
@@ -98,7 +98,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($results as $item)
+                                    @forelse ($results as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
@@ -167,10 +167,17 @@
                                             <td>{{ $item['NOBU']['token'] ?? '-' }}</td>
                                             <td>{{ $item['NOBU']['area_key'] ?? '-' }}</td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="44" class="text-muted py-4">
+                                                Tidak ada data .ini file yang ditemukan.
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -195,7 +202,7 @@
                             <select class="tom-select-class" name="pg_id" id="pg_id" required>
                                 <option value="" selected disabled>- select PG ID -</option>
                                 @foreach ($equipments as $item)
-                                    <option value="{{ $item->id }}">
+                                    <option value="{{ $item->id }}" @selected($item->id == $pg_id)>
                                         {{ $item->station_code }} {{ $item->equipment_name }}
                                     </option>
                                 @endforeach

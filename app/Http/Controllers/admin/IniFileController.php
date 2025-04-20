@@ -16,76 +16,14 @@ class IniFileController extends Controller
     public function index(Request $request)
     {
         $type = null;
+        $pg_id = null;
         $results = [];
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
         $sam_cards = SamCard::where('status', 'ready')->get();
         $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
 
-        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'sam_cards', 'equipments', 'type']));
+        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'sam_cards', 'equipments', 'pg_id', 'type']));
     }
-
-    // public function update(Request $request)
-    // {
-    //     $request->validate([
-    //         'pg_id' => 'required|numeric',
-    //         'filename' => 'required|string',
-    //         'sam_card_id' => 'required|numeric',
-    //     ]);
-
-    //     $pg_id = $request->pg_id;
-    //     $filename = $request->filename;
-    //     $sam_card_id = $request->sam_card_id;
-
-    //     $pg = ConfigEquipmentAFC::findOrFail($pg_id);
-    //     $sam_card = SamCard::findOrFail($sam_card_id);
-    //     $mandiri_pin = $sam_card->pin;
-    //     $bni_mc = $sam_card->mc;
-
-    //     $directory = '/AG_System/Install/AINO/ini';
-    //     $fullPath = $directory . '/' . $filename;
-
-    //     $baseConfig['host'] = $pg->ip_address;
-    //     $disk = Storage::build($baseConfig);
-
-    //     // 1. Pastikan file benar-benar ada
-    //     if (!$disk->exists($fullPath)) {
-    //         return redirect()->route('ini-file.index')->withNotifyerror('File .ini not found');
-    //     }
-
-    //     // 2. Ambil isi file
-    //     $fileContent = $disk->get($fullPath);
-
-    //     // 3. Decode JSON (validasi JSON dulu)
-    //     $data = json_decode($fileContent, true);
-    //     if (json_last_error() !== JSON_ERROR_NONE) {
-    //         return redirect()->route('ini-file.index')->withNotifyerror('Invalid JSON in file');
-    //     }
-
-    //     return $data;
-
-    //     // 4. Ubah isi jika ada input
-    //     if (isset($data['Mandiri'])) {
-    //         $data['Mandiri']['pin'] = $mandiri_pin;
-    //     }
-
-    //     if (isset($data['BNI'])) {
-    //         $data['BNI']['mc'] = $bni_mc;
-    //     }
-
-    //     // 5. Encode ulang dan simpan
-    //     $updatedContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    //     $disk->put($fullPath, $updatedContent);
-
-    //     // 6. Response OK
-    //     return response()->json([
-    //         'message' => 'File .ini updated successfully',
-    //         'filename' => $filename,
-    //         'updated' => [
-    //             'Mandiri.pin' => $mandiri_pin,
-    //             'BNI.mc' => $bni_mc,
-    //         ],
-    //     ]);
-    // }
 
     public function update(Request $request)
     {
@@ -204,7 +142,7 @@ class IniFileController extends Controller
     {
         $validated = $request->validate([
             'pg_id' => 'required|string',
-            'type' => 'nullable|in:Paid,Unpaid',
+            'type' => 'nullable|in:Paid,UnPaid',
         ]);
 
         // Get PG configuration
@@ -227,7 +165,7 @@ class IniFileController extends Controller
                 return [basename($file) => $file];
             })
             ->filter(function ($file, $filename) use ($station_id, $pg, $validated) {
-                if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|Unpaid)\.ini$/i', $filename, $matches)) {
+                if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
                     return false;
                 }
 
@@ -270,6 +208,7 @@ class IniFileController extends Controller
             'config_pg' => ConfigPG::orderBy('order')->get(),
             'sam_cards' => SamCard::where('status', 'ready')->get(),
             'equipments' => ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get(),
+            'pg_id' => $validated['pg_id'],
             'type' => $validated['type'] ?? null,
         ]);
     }
