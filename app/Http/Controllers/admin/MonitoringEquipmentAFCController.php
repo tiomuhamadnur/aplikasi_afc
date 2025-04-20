@@ -488,7 +488,7 @@ class MonitoringEquipmentAFCController extends Controller
         $data = [
             'target' => $phoneNumber,
             'message' => $message,
-            'countryCode' => '62', // Kode negara Indonesia
+            // 'countryCode' => '62', // Kode negara Indonesia Opsional
         ];
 
         $headers = [
@@ -512,6 +512,11 @@ class MonitoringEquipmentAFCController extends Controller
 
         $response = curl_exec($curl);
         $error = curl_error($curl);
+
+        if ($error) {
+            return "cURL API WhatsApp Error: " . $error;
+        }
+
         curl_close($curl);
 
         return $response;
