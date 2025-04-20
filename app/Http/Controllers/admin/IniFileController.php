@@ -32,6 +32,7 @@ class IniFileController extends Controller
 
     public function update(Request $request)
     {
+        dd($request);
         $request->validate([
             'pg_id' => 'required|numeric',
             'filename' => 'required|string',

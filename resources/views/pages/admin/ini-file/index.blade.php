@@ -12,16 +12,13 @@
                     <div class="card-body">
                         <h4 class="card-title">Data .ini File</h4>
                         <div class="btn-group my-2">
-                            {{-- <button type="button" title="Search" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#searchModal">
-                                <i class="mdi mdi-plus-circle"></i>
-                            </button> --}}
                             <button type="button" title="Filter" class="btn btn-outline-primary btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Replace Ini File PG" class="btn btn-outline-primary btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#replaceModal">
+                            <button type="button" title="Replace Ini File PG"
+                                class="btn btn-outline-primary btn-rounded btn-icon" data-bs-toggle="modal"
+                                data-bs-target="#replaceModal">
                                 <i class="mdi mdi-file-replace"></i>
                             </button>
                             <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
@@ -36,7 +33,7 @@
                                         <th rowspan="2">Station</th>
                                         <th rowspan="2">PG ID</th>
                                         <th rowspan="2">Filename</th>
-                                        <th rowspan="2">Location</th>
+                                        <th rowspan="2">Direction Type</th>
                                         <th rowspan="2">ConfigVersion</th>
                                         <th rowspan="2">CreatedOn</th>
                                         <th colspan="6">Mandiri</th>
@@ -106,7 +103,15 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['pg_name'] }}</td>
-                                            <td>{{ $item['actual_filename'] }}</td>
+                                            <td>
+                                                <button type="button" title="Replace Ini File PG"
+                                                    class="btn btn-outline-primary btn-rounded btn-icon"
+                                                    data-bs-toggle="modal" data-bs-target="#replaceModal"
+                                                    data-filename="{{ $item['actual_filename'] }}"
+                                                    data-pg_id="{{ $item['pg_id'] }}" data-pg_name="{{ $item['pg_name'] }}">
+                                                    {{ $item['actual_filename'] }}
+                                                </button>
+                                            </td>
                                             <td>{{ $item['location'] }}</td>
                                             <td>{{ $item['config_version'] }}</td>
                                             <td>{{ $item['created_on'] }}</td>
@@ -231,8 +236,8 @@
                         <input type="hidden" name="pg_id" id="pg_id_edit">
                         <div class="form-group">
                             <label class="required">PG ID</label>
-                            <input type="text" class="form-control" id="pg_name_edit"
-                                placeholder="input PG name" autocomplete="off" disabled>
+                            <input type="text" class="form-control" id="pg_name_edit" placeholder="input PG name"
+                                autocomplete="off" disabled>
                         </div>
                         <div class="form-group">
                             <label for="filename_edit" class="required">Filename .ini File</label>
@@ -245,7 +250,8 @@
                                 <option value="" selected disabled>- select SAM card -</option>
                                 @foreach ($sam_cards as $item)
                                     <option value="{{ $item->id }}">
-                                        TID: {{ $item->tid }} | UID: {{ $item->uid }} | PIN: {{ $item->pin }} | MC: {{ $item->mc }}
+                                        TID: {{ $item->tid }} | UID: {{ $item->uid }} | PIN: {{ $item->pin }} |
+                                        MC: {{ $item->mc }}
                                     </option>
                                 @endforeach
                             </select>
@@ -264,4 +270,17 @@
 @endsection
 
 @section('javascript')
+    <script>
+        $(document).ready(function() {
+            $('#replaceModal').on('show.bs.modal', function(e) {
+                var pg_id = $(e.relatedTarget).data('pg_id');
+                var pg_name = $(e.relatedTarget).data('pg_name');
+                var filename = $(e.relatedTarget).data('filename');
+
+                $('#pg_id_edit').val(pg_id);
+                $('#pg_name_edit').val(pg_name);
+                $('#filename_edit').val(filename);
+            });
+        });
+    </script>
 @endsection
