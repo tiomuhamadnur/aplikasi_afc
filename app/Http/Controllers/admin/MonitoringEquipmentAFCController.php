@@ -355,7 +355,8 @@ class MonitoringEquipmentAFCController extends Controller
     public function sendMonitoringNotification()
     {
         // Ambil data user yang akan menerima notifikasi
-        $recipients = User::whereIn('id', [1]) //sesuaikan jumlahnya
+        $recipients = User::whereIn('id', [1, 2]) //sesuaikan jumlahnya
+                    ->notBanned()
                     ->with(['gender', 'relasi_struktur.departemen', 'relasi_struktur.seksi'])
                     ->whereNotNull('no_hp')
                     ->get();
