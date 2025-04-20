@@ -154,15 +154,21 @@ class IniFileController extends Controller
             $pg = ConfigEquipmentAFC::findOrFail($validated['pg_id']);
             $samCard = SamCard::findOrFail($validated['sam_card_id']);
 
-            // 2. Setup SFTP connection
-            $sftp = Storage::build([
-                'host' => $pg->ip_address,
-                'username' => config('filesystems.disks.sftp.username'),
-                'password' => config('filesystems.disks.sftp.password'),
-                'port' => config('filesystems.disks.sftp.port'),
-                'root' => '/AG_System/Install/AINO/ini',
-                'timeout' => 10,
-            ]);
+            // 2. Get base SFTP config from filesystems.php
+            $sftpConfig = config('filesystems.disks.sftp');
+
+            // 3. Override specific settings
+            $sftpConfig['host'] = $pg->ip_address; // Dynamic host
+            $sftpConfig['root'] = '/AG_System/Install/AINO/ini'; // Custom root path
+            $sftpConfig['timeout'] = 10; // Shorter timeout
+
+            // 3. Establish connection
+            $sftp = Storage::build($sftpConfig);
+
+            // 4. Verify connection
+            if (!$sftp->exists('/')) {
+                throw new \Exception("Failed to connect to SFTP server");
+            }
 
             $originalPath = $validated['filename'];
             $backupDir = 'BACKUP';
