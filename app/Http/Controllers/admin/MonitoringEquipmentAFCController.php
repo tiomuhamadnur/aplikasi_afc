@@ -16,8 +16,8 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 3;
-    protected $pingTimeout = 3;
+    protected $sshTimeout = 5;
+    protected $pingTimeout = 5;
     protected $concurrency = 25;
 
     public function index()
