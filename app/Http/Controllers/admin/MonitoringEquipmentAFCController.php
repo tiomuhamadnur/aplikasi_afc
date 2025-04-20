@@ -430,12 +430,12 @@ class MonitoringEquipmentAFCController extends Controller
         $pgTotal = $monitoringData['pg']['total'];
         $pgOffline = $monitoringData['pg']['offline'];
 
-        $message = '⚠️ *MONITORING EQUIPMENT NOTIFICATION* ' . $enter . $enter .
+        $message = '⚠️ *MONITORING EQUIPMENT AFC MRTJ* ' . $enter . $enter .
             'Dear ' . $gender . ' *' . $name . '*,' . $enter . $enter .
             'Berikut status terakhir monitoring equipment AFC:' . $enter . $enter .
             $div . $enter . $enter .
-            '🖥️ *SCU STATUS*' . $enter .
-            '*Online:* ' . $scuOnline . '/' . $scuTotal . $enter . ' Unit Server';
+            '🖥️ *SCU STATUS:*' . $enter .
+            'Online: *' . $scuOnline . '*/*' . $scuTotal . '* Unit Server' . $enter;
 
         // Tambahkan list SCU offline jika ada
         if (!empty($scuOffline)) {
@@ -445,9 +445,9 @@ class MonitoringEquipmentAFCController extends Controller
             }
         }
 
-        $message .= $enter . $enter . $enter . $enter .
-            '🚪 *PG STATUS*' . $enter .
-            '*Online:* ' . $pgOnline . '/' . $pgTotal . $enter . ' Unit PG';;
+        $message .= $enter . $enter .
+            '🚪 *PG STATUS:*' . $enter .
+            'Online: *' . $pgOnline . '*/*' . $pgTotal . '* Unit PG' . $enter;
 
         // Tambahkan list PG offline jika ada
         if (!empty($pgOffline)) {
@@ -457,7 +457,7 @@ class MonitoringEquipmentAFCController extends Controller
             }
         }
 
-        $message .= $enter . $div . $enter . $enter .
+        $message .= $enter . $enter . $div . $enter . $enter .
             '_Regards,_' . $enter . $enter .
             '*ExoBOT*' .
             $enter . $enter . $enter . $enter .
