@@ -15,9 +15,6 @@ class IniFileController extends Controller
 {
     public function index(Request $request)
     {
-        $host = null;
-        $station_id = null;
-        $pg_id = null;
         $type = null;
         $results = [];
         $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
@@ -29,9 +26,6 @@ class IniFileController extends Controller
             'config_pg',
             'sam_cards',
             'equipments',
-            'host',
-            'station_id',
-            'pg_id',
             'type',
         ]));
     }
@@ -183,9 +177,6 @@ class IniFileController extends Controller
             'config_pg',
             'sam_cards',
             'equipments',
-            'host',
-            'station_id',
-            'pg_id',
             'type',
         ]));
     }
