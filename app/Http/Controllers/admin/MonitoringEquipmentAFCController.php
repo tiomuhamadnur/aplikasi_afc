@@ -15,7 +15,7 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 3;
+    protected $sshTimeout = 1;
     protected $pingTimeout = 1;
     protected $concurrency = 25;
 
@@ -117,7 +117,7 @@ class MonitoringEquipmentAFCController extends Controller
             ];
 
             if ($checkTemp) {
-                $commands['sensors'] = 'sensors';
+                $commands['sensors'] = 'sensors'; // Command sederhana
             }
 
             $combinedCmd = implode(' && ', array_map(
@@ -283,8 +283,17 @@ class MonitoringEquipmentAFCController extends Controller
 
     protected function parseCoreTemperatures(string $sensors): array
     {
-        preg_match_all('/Core \d+:\s+\+([\d.]+)°?C/', $sensors, $matches);
-        return $matches[1] ?? [];
+        // Pattern untuk format Intel (contoh: "Core 0: +57.0 C")
+        if (preg_match_all('/Core \d+:\s+\+([\d.]+)\s?[°]?C/', $sensors, $matches)) {
+            return $matches[1];
+        }
+
+        // Pattern untuk sensor umum (contoh: "temp1: +52.0 C")
+        if (preg_match_all('/temp\d+:\s+\+([\d.]+)\s?[°]?C/', $sensors, $matches)) {
+            return $matches[1];
+        }
+
+        return []; // Return array kosong jika tidak ditemukan
     }
 
     protected function calculateRamPercent(string $used, string $total): int

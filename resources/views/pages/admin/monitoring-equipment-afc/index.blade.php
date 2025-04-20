@@ -116,10 +116,11 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-column small">
-                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} / {{ $item['disk_root']['total'] }}</div>
+                                                    <div class="text-nowrap">{{ $item['disk_root']['used'] }} /
+                                                        {{ $item['disk_root']['total'] }}</div>
                                                     <div class="progress mt-1" style="height: 3px;">
                                                         <div class="progress-bar
-                                                            @if($item['disk_root']['percent'] > 90) bg-danger
+                                                            @if ($item['disk_root']['percent'] > 90) bg-danger
                                                             @elseif($item['disk_root']['percent'] > 70) bg-warning
                                                             @else bg-success @endif"
                                                             style="width: {{ $item['disk_root']['percent'] }}%">
@@ -133,18 +134,20 @@
                                                     <div class="d-flex flex-wrap gap-2 justify-content-center">
                                                         @foreach ($item['core_temperatures'] as $index => $temp)
                                                             @php
+                                                                $tempValue = (float) $temp;
                                                                 $tempColor =
-                                                                    (float) $temp > 75
+                                                                    $tempValue > 75
                                                                         ? 'danger'
-                                                                        : ((float) $temp > 60
+                                                                        : ($tempValue > 60
                                                                             ? 'warning'
                                                                             : 'success');
                                                             @endphp
+
                                                             <span
                                                                 class="badge bg-{{ $tempColor }}-subtle text-{{ $tempColor }} d-inline-flex align-items-center">
                                                                 <span class="me-1">Core {{ $index + 1 }}</span>
                                                                 <span
-                                                                    class="fw-bold">{{ number_format($temp, 1) }}°C</span>
+                                                                    class="fw-bold">{{ number_format($tempValue, 1) }}°C</span>
                                                             </span>
                                                         @endforeach
                                                     </div>
