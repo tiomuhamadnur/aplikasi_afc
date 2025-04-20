@@ -375,6 +375,17 @@ class MonitoringEquipmentAFCController extends Controller
         $pgEquipment = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)->get();
         $pgResults = $this->checkEquipmentStatusParallel($pgEquipment, env('SSH_PG_USERNAME'), env('SSH_PG_PASSWORD'), true);
 
+        // Periksa apakah ada perangkat offline
+        $offlineScu = array_filter($scuResults, fn($item) => $item['status'] === 'offline');
+        $offlinePg = array_filter($pgResults, fn($item) => $item['status'] === 'offline');
+
+        if (empty($offlineScu) && empty($offlinePg)) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No offline equipment found, notification not sent'
+            ]);
+        }
+
         // Hitung status peralatan
         $monitoringData = [
             'scu' => [
