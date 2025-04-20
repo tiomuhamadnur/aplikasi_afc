@@ -95,44 +95,109 @@ class IniFileController extends Controller
             'sam_card_id' => 'required|numeric',
         ]);
 
-        // 1. Dapatkan data PG dan SAM Card
+        // 1. Get PG and SAM Card Data
         $pg = ConfigEquipmentAFC::findOrFail($validated['pg_id']);
         $samCard = SamCard::findOrFail($validated['sam_card_id']);
 
-        // 2. Setup koneksi SFTP
+        // 2. Setup SFTP Connection
         $sftpConfig = config('filesystems.disks.sftp');
         $sftpConfig['host'] = $pg->ip_address;
         $sftp = Storage::build($sftpConfig);
 
-        $filePath = '/AG_System/Install/AINO/ini/' . $validated['filename'];
+        $baseDir = '/AG_System/Install/AINO/ini';
+        $backupDir = $baseDir . '/BACKUP';
+        $originalPath = $baseDir . '/' . $validated['filename'];
 
-        // 3. Validasi keberadaan file
-        if (!$sftp->exists($filePath)) {
-            return redirect()->route('ini-file.index')->withNotifyerror('File .ini tidak ditemukan');
+        // 3. Validate Original File
+        if (!$sftp->exists($originalPath)) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Original file not found',
+                ],
+                404,
+            );
         }
 
-        // 4. Baca dan decode isi file
-        $fileContent = $sftp->get($filePath);
-        $data = json_decode($fileContent, true);
+        // 4. Create BACKUP directory if not exists
+        if (!$sftp->exists($backupDir)) {
+            $sftp->makeDirectory($backupDir);
+        }
 
-        // 5. Validasi format JSON
+        // 5. Read Original File
+        $originalContent = $sftp->get($originalPath);
+        $data = json_decode($originalContent, true);
+
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return redirect()->route('ini-file.index')->withNotifyerror('Format JSON dalam file tidak valid');
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Invalid JSON format in original file',
+                ],
+                400,
+            );
         }
 
-        // 6. Kembalikan data decoded saja (untuk debugging)
-        return response()->json([
-            'file_data' => $data,
-            'file_info' => [
-                'filename' => $validated['filename'],
-                'pg_ip' => $pg->ip_address,
-                'pg_name' => $pg->equipment_name,
-                'sam_card' => $samCard->only(['id', 'mc', 'pin']),
-            ],
-        ]);
+        // 6. Create Backup Data
+        $backupData = $data;
 
-        // Kode berikut tidak akan dijalankan karena ada return di atas
-        // ... proses update seperti sebelumnya ...
+        // Update values from SAM Card
+        $changes = [];
+        if (isset($backupData['Mandiri'])) {
+            $changes['Mandiri.pin'] = [
+                'from' => $backupData['Mandiri']['pin'] ?? null,
+                'to' => $samCard->pin,
+            ];
+            $backupData['Mandiri']['pin'] = $samCard->pin;
+        }
+
+        if (isset($backupData['BNI'])) {
+            $changes['BNI.mc'] = [
+                'from' => $backupData['BNI']['mc'] ?? null,
+                'to' => $samCard->mc,
+            ];
+            $backupData['BNI']['mc'] = $samCard->mc;
+        }
+
+        // 7. Generate Backup Filename (with .ini extension)
+        $originalName = pathinfo($validated['filename'], PATHINFO_FILENAME);
+        $backupFilename = $originalName . '_BACKUP_' . date('Ymd_His') . '.ini';
+        $backupPath = $backupDir . '/' . $backupFilename;
+
+        // 8. Save Backup File
+        $sftp->put($backupPath, json_encode($backupData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        // 9. Verify Both Files
+        $verification = [
+            'original' => [
+                'exists' => $sftp->exists($originalPath),
+                'size' => $sftp->size($originalPath),
+                'md5' => md5($originalContent),
+            ],
+            'backup' => [
+                'exists' => $sftp->exists($backupPath),
+                'size' => $sftp->size($backupPath),
+                'md5' => md5(json_encode($backupData)),
+            ],
+        ];
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Backup file created successfully with .ini extension',
+            'original_file' => [
+                'path' => $originalPath,
+                'filename' => $validated['filename'],
+                'size' => $verification['original']['size'],
+                'last_modified' => $sftp->lastModified($originalPath),
+            ],
+            'backup_file' => [
+                'path' => $backupPath,
+                'filename' => $backupFilename,
+                'changes_applied' => $changes,
+                'size' => $verification['backup']['size'],
+            ],
+            'verification' => $verification,
+        ]);
     }
 
     public function store(Request $request)
