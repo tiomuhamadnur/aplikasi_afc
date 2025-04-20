@@ -211,15 +211,15 @@ class IniFileController extends Controller
 
             // Update Mandiri PIN if section exists
             if (isset($originalData['Mandiri'])) {
-                $changes[] = "PIN Mandiri: " . $originalData['Mandiri']['pin'] . " → " . $samCard->pin;
-                $originalData['Mandiri']['pin'] = $samCard->pin;
+                $changes[] = "PIN Mandiri: " . $originalData['Mandiri']['pin'] . " → " . trim($samCard->pin);
+                $originalData['Mandiri']['pin'] = trim($samCard->pin);
                 $changesMade = true;
             }
 
             // Update BNI MC if section exists
             if (isset($originalData['BNI'])) {
-                $changes[] = "MC BNI: " . $originalData['BNI']['mc'] . " → " . $samCard->mc;
-                $originalData['BNI']['mc'] = $samCard->mc;
+                $changes[] = "MC BNI: " . $originalData['BNI']['mc'] . " → " . trim($samCard->mc);
+                $originalData['BNI']['mc'] = trim($samCard->mc);
                 $changesMade = true;
             }
 
