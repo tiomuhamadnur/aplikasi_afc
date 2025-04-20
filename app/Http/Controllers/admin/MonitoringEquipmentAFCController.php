@@ -434,11 +434,8 @@ class MonitoringEquipmentAFCController extends Controller
             'Dear ' . $gender . ' *' . $name . '*,' . $enter . $enter .
             'Berikut status terakhir monitoring equipment AFC:' . $enter . $enter .
             $div . $enter . $enter .
-            '*Departemen:* ' . $departemen . $enter .
-            '*Seksi:* ' . $seksi . $enter . $enter .
-            $div . $enter . $enter .
             '🖥️ *SCU STATUS*' . $enter .
-            '*Online:* ' . $scuOnline . '/' . $scuTotal . $enter;
+            '*Online:* ' . $scuOnline . '/' . $scuTotal . $enter . ' Unit Server';
 
         // Tambahkan list SCU offline jika ada
         if (!empty($scuOffline)) {
@@ -450,7 +447,7 @@ class MonitoringEquipmentAFCController extends Controller
 
         $message .= $enter . $enter . $enter . $enter .
             '🚪 *PG STATUS*' . $enter .
-            '*Online:* ' . $pgOnline . '/' . $pgTotal . $enter;
+            '*Online:* ' . $pgOnline . '/' . $pgTotal . $enter . ' Unit PG';;
 
         // Tambahkan list PG offline jika ada
         if (!empty($pgOffline)) {
@@ -460,10 +457,11 @@ class MonitoringEquipmentAFCController extends Controller
             }
         }
 
-        $message .= $enter . $div . $enter . $enter . $enter . $enter .
-            '_Generated at: ' . now()->format('Y-m-d H:i:s') . '_' . $enter . $enter .
+        $message .= $enter . $div . $enter . $enter .
             '_Regards,_' . $enter . $enter .
             '*ExoBOT*' .
+            $enter . $enter . $enter . $enter .
+            '_Generated at: ' . now()->format('Y-m-d H:i:s') . '_' .
             $enter . $enter . $enter . $enter;
 
         return $message;
