@@ -105,7 +105,7 @@
                                             <td>{{ $item['pg_name'] }}</td>
                                             <td>
                                                 <button type="button" title="Replace Ini File PG"
-                                                    class="btn btn-outline-primary btn-rounded btn-icon"
+                                                    class="btn btn-link fw-bold text-primary p-0 m-0 align-baseline"
                                                     data-bs-toggle="modal" data-bs-target="#replaceModal"
                                                     data-filename="{{ $item['actual_filename'] }}"
                                                     data-pg_id="{{ $item['pg_id'] }}" data-pg_name="{{ $item['pg_name'] }}">
