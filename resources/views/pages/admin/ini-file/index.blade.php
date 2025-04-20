@@ -246,7 +246,7 @@
                         </div>
                         <div class="form-group">
                             <label for="sam_card_id" class="required">SAM Card</label>
-                            <select class="tom-select-class" name="sam_card_id" id="sam_card_id">
+                            <select class="tom-select-class" name="sam_card_id" id="sam_card_id" required>
                                 <option value="" selected disabled>- select SAM card -</option>
                                 @foreach ($sam_cards as $item)
                                     <option value="{{ $item->id }}">

@@ -21,76 +21,118 @@ class IniFileController extends Controller
         $sam_cards = SamCard::where('status', 'ready')->get();
         $equipments = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
 
-        return view('pages.admin.ini-file.index', compact([
-            'results',
-            'config_pg',
-            'sam_cards',
-            'equipments',
-            'type',
-        ]));
+        return view('pages.admin.ini-file.index', compact(['results', 'config_pg', 'sam_cards', 'equipments', 'type']));
     }
+
+    // public function update(Request $request)
+    // {
+    //     $request->validate([
+    //         'pg_id' => 'required|numeric',
+    //         'filename' => 'required|string',
+    //         'sam_card_id' => 'required|numeric',
+    //     ]);
+
+    //     $pg_id = $request->pg_id;
+    //     $filename = $request->filename;
+    //     $sam_card_id = $request->sam_card_id;
+
+    //     $pg = ConfigEquipmentAFC::findOrFail($pg_id);
+    //     $sam_card = SamCard::findOrFail($sam_card_id);
+    //     $mandiri_pin = $sam_card->pin;
+    //     $bni_mc = $sam_card->mc;
+
+    //     $directory = '/AG_System/Install/AINO/ini';
+    //     $fullPath = $directory . '/' . $filename;
+
+    //     $baseConfig['host'] = $pg->ip_address;
+    //     $disk = Storage::build($baseConfig);
+
+    //     // 1. Pastikan file benar-benar ada
+    //     if (!$disk->exists($fullPath)) {
+    //         return redirect()->route('ini-file.index')->withNotifyerror('File .ini not found');
+    //     }
+
+    //     // 2. Ambil isi file
+    //     $fileContent = $disk->get($fullPath);
+
+    //     // 3. Decode JSON (validasi JSON dulu)
+    //     $data = json_decode($fileContent, true);
+    //     if (json_last_error() !== JSON_ERROR_NONE) {
+    //         return redirect()->route('ini-file.index')->withNotifyerror('Invalid JSON in file');
+    //     }
+
+    //     return $data;
+
+    //     // 4. Ubah isi jika ada input
+    //     if (isset($data['Mandiri'])) {
+    //         $data['Mandiri']['pin'] = $mandiri_pin;
+    //     }
+
+    //     if (isset($data['BNI'])) {
+    //         $data['BNI']['mc'] = $bni_mc;
+    //     }
+
+    //     // 5. Encode ulang dan simpan
+    //     $updatedContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    //     $disk->put($fullPath, $updatedContent);
+
+    //     // 6. Response OK
+    //     return response()->json([
+    //         'message' => 'File .ini updated successfully',
+    //         'filename' => $filename,
+    //         'updated' => [
+    //             'Mandiri.pin' => $mandiri_pin,
+    //             'BNI.mc' => $bni_mc,
+    //         ],
+    //     ]);
+    // }
 
     public function update(Request $request)
     {
-        dd($request);
-        $request->validate([
+        $validated = $request->validate([
             'pg_id' => 'required|numeric',
             'filename' => 'required|string',
-            'mandiri_pin' => 'required|string',
-            'bni_mc' => 'required|string',
+            'sam_card_id' => 'required|numeric',
         ]);
 
-        $pg_id = $request->pg_id;
-        $filename = $request->filename;
-        $mandiri_pin = $request->mandiri_pin;
-        $bni_mc = $request->bni_mc;
+        // 1. Dapatkan data PG dan SAM Card
+        $pg = ConfigEquipmentAFC::findOrFail($validated['pg_id']);
+        $samCard = SamCard::findOrFail($validated['sam_card_id']);
 
-        $directory = '/AG_System/Install/AINO/ini';
-        $fullPath = $directory . '/' . $filename;
+        // 2. Setup koneksi SFTP
+        $sftpConfig = config('filesystems.disks.sftp');
+        $sftpConfig['host'] = $pg->ip_address;
+        $sftp = Storage::build($sftpConfig);
 
-        $pg = ConfigEquipmentAFC::findOrFail($pg_id);
+        $filePath = '/AG_System/Install/AINO/ini/' . $validated['filename'];
 
-        $baseConfig['host'] = $pg->ip_address;
-        $disk = Storage::build($baseConfig);
-
-        // 1. Pastikan file benar-benar ada
-        if (!$disk->exists($fullPath)) {
-            return redirect()->route('ini-file.index')->withNotifyerror('File not found');
+        // 3. Validasi keberadaan file
+        if (!$sftp->exists($filePath)) {
+            return redirect()->route('ini-file.index')->withNotifyerror('File .ini tidak ditemukan');
         }
 
-        // 2. Ambil isi file
-        $fileContent = $disk->get($fullPath);
-
-        // 3. Decode JSON (validasi JSON dulu)
+        // 4. Baca dan decode isi file
+        $fileContent = $sftp->get($filePath);
         $data = json_decode($fileContent, true);
+
+        // 5. Validasi format JSON
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return redirect()->route('ini-file.index')->withNotifyerror('Invalid JSON in file');
+            return redirect()->route('ini-file.index')->withNotifyerror('Format JSON dalam file tidak valid');
         }
 
-        return $data;
-
-        // 4. Ubah isi jika ada input
-        if ($request->filled('mandiri_pin') && isset($data['Mandiri'])) {
-            $data['Mandiri']['pin'] = $mandiri_pin;
-        }
-
-        if ($request->filled('bni_mc') && isset($data['BNI'])) {
-            $data['BNI']['mc'] = $bni_mc;
-        }
-
-        // 5. Encode ulang dan simpan
-        $updatedContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        $disk->put($fullPath, $updatedContent);
-
-        // 6. Response OK
+        // 6. Kembalikan data decoded saja (untuk debugging)
         return response()->json([
-            'message' => 'File .ini updated successfully',
-            'filename' => $filename,
-            'updated' => [
-                'Mandiri.pin' => $mandiri_pin,
-                'BNI.mc' => $bni_mc,
+            'file_data' => $data,
+            'file_info' => [
+                'filename' => $validated['filename'],
+                'pg_ip' => $pg->ip_address,
+                'pg_name' => $pg->equipment_name,
+                'sam_card' => $samCard->only(['id', 'mc', 'pin']),
             ],
         ]);
+
+        // Kode berikut tidak akan dijalankan karena ada return di atas
+        // ... proses update seperti sebelumnya ...
     }
 
     public function store(Request $request)
@@ -101,13 +143,10 @@ class IniFileController extends Controller
         ]);
 
         // Get PG configuration
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')
-            ->findOrFail($validated['pg_id']);
+        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->findOrFail($validated['pg_id']);
 
         // Get station ID (keeping original separate query as requested)
-        $station_id = ConfigPG::where('station_code', $pg->station_code)
-            ->firstOrFail()
-            ->station_id;
+        $station_id = ConfigPG::where('station_code', $pg->station_code)->firstOrFail()->station_id;
 
         // Prepare SFTP connection
         $sftpConfig = config('filesystems.disks.sftp');
@@ -135,21 +174,22 @@ class IniFileController extends Controller
                 $filePgId = substr($code, 9, 3);
 
                 // Apply filters
-                return $fileStationId === $station_id &&
-                    $filePgId === $pg->equipment_id &&
-                    (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
+                return $fileStationId === $station_id && $filePgId === $pg->equipment_id && (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
             })
             ->map(function ($file) use ($sftp, $pg) {
                 $content = $sftp->get($file);
                 $json = json_decode($content, true);
 
                 return json_last_error() === JSON_ERROR_NONE
-                    ? array_merge([
-                        'station_code' => $pg->station_code,
-                        'pg_id' => $pg->id,
-                        'pg_name' => $pg->equipment_name,
-                        'actual_filename' => basename($file),
-                    ], $json)
+                    ? array_merge(
+                        [
+                            'station_code' => $pg->station_code,
+                            'pg_id' => $pg->id,
+                            'pg_name' => $pg->equipment_name,
+                            'actual_filename' => basename($file),
+                        ],
+                        $json,
+                    )
                     : null;
             })
             ->filter()
@@ -157,8 +197,7 @@ class IniFileController extends Controller
             ->toArray();
 
         if (empty($results)) {
-            return redirect()->route('ini-file.index')
-                ->withNotifyerror('Data .ini file tidak ditemukan');
+            return redirect()->route('ini-file.index')->withNotifyerror('Data .ini file tidak ditemukan');
         }
 
         return view('pages.admin.ini-file.index', [
