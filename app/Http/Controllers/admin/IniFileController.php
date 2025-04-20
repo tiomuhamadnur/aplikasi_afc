@@ -183,10 +183,10 @@ class IniFileController extends Controller
 
             // 4. Create backup directory if not exists
             if (!$sftp->exists($backupDir)) {
-                if (!$sftp->makeDirectory($backupDir)) {
-                    return redirect()->route('ini-file.index')
-                        ->withNotifyerror('Gagal membuat folder BACKUP');
+                if (!$sftp->makeDirectory($backupDir, ['visibility' => 'public'])) {
+                    throw new Exception('Gagal membuat folder BACKUP');
                 }
+                $sftp->setVisibility($backupDir, 'public');
             }
 
             // 5. Read original file content
@@ -200,7 +200,10 @@ class IniFileController extends Controller
             }
 
             // 7. Create backup file (exact copy of original)
-            if (!$sftp->put($backupPath, $originalContent)) {
+            if (!$sftp->put($backupPath, $originalContent, [
+                'visibility' => 'public',
+                'permissions' => 0777  // Explicit set permissions
+            ])) {
                 return redirect()->route('ini-file.index')
                     ->withNotifyerror('Gagal membuat file backup');
             }
@@ -231,7 +234,10 @@ class IniFileController extends Controller
 
             // 10. Update original file with new values
             $updatedContent = json_encode($originalData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            if (!$sftp->put($originalPath, $updatedContent)) {
+            if (!$sftp->put($originalPath, $updatedContent, [
+                'visibility' => 'public',
+                'permissions' => 0777  // Explicit set permissions
+            ])) {
                 return redirect()->route('ini-file.index')
                     ->withNotifyerror('Gagal menyimpan perubahan ke file original');
             }
