@@ -16,8 +16,8 @@ class MonitoringEquipmentAFCController extends Controller
     const EQUIPMENT_TYPE_SCU = 'SCU';
     const EQUIPMENT_TYPE_PG = 'PG';
 
-    protected $sshTimeout = 1;
-    protected $pingTimeout = 1;
+    protected $sshTimeout = 3;
+    protected $pingTimeout = 2;
     protected $concurrency = 25;
 
     public function index()
@@ -355,7 +355,7 @@ class MonitoringEquipmentAFCController extends Controller
     public function sendMonitoringNotification()
     {
         // Ambil data user yang akan menerima notifikasi
-        $recipients = User::whereIn('id', [1, 2, 5]) //sesuaikan jumlahnya
+        $recipients = User::whereIn('id', [1]) //sesuaikan jumlahnya
                     ->with(['gender', 'relasi_struktur.departemen', 'relasi_struktur.seksi'])
                     ->whereNotNull('no_hp')
                     ->get();
