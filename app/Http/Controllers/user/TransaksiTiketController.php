@@ -178,6 +178,7 @@ class TransaksiTiketController extends Controller
                             'tap_out_time' => $data2[2] ?? null,
                             'tap_in_station' => $stationCodeMap[$data2[1] ?? null] ?? null,
                             'tap_out_station' => $stationCodeMap[$data2[3] ?? null] ?? null,
+                            'file_name' => $filename, // Menyimpan nama file
                         ];
 
                         TransaksiTiket::create($item);

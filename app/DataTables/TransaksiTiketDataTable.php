@@ -118,6 +118,7 @@ class TransaksiTiketDataTable extends DataTable
             Column::make('tap_in_station')->title('Tap In Station'),
             Column::make('tap_out_time')->title('Tap Out Time'),
             Column::make('tap_out_station')->title('Tap Out Station'),
+            Column::make('file_name')->title('File Name'),
         ];
     }
 
