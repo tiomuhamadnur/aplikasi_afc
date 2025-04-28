@@ -31,11 +31,12 @@
                                         <th>Direction</th>
                                         <th>Library Master (6603.txt)</th>
                                         <th>Library Slave (6604.txt)</th>
+                                        <th>Status</th> <!-- Tambah kolom status -->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($results as $item)
-                                        <tr>
+                                        <tr class="@if($item['status'] === 'offline') table-danger @endif">
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['pg_id'] }}</td>
@@ -43,20 +44,18 @@
 
                                             {{-- Library 6603 --}}
                                             <td class="text-start">
-                                                @if (!empty($item['library6603']))
+                                                @if($item['status'] === 'offline')
+                                                    <span class="text-danger">Server Offline</span>
+                                                @elseif (!empty($item['library6603']))
                                                     @foreach (explode(',', $item['library6603']) as $lib)
                                                         @php
                                                             $lib = trim($lib);
                                                             if (str_contains($lib, 'DKI2:')) {
-                                                                $lib =
-                                                                    '<span class="badge bg-success">' .
-                                                                    $lib .
-                                                                    '</span>';
+                                                                $lib = '<span class="badge bg-success">' . $lib . '</span>';
                                                             } elseif (str_contains($lib, 'MEGA2:')) {
-                                                                $lib =
-                                                                    '<span class="badge bg-primary">' .
-                                                                    $lib .
-                                                                    '</span>';
+                                                                $lib = '<span class="badge bg-primary">' . $lib . '</span>';
+                                                            } elseif (str_contains($lib, 'Error')) {
+                                                                $lib = '<span class="text-danger">' . $lib . '</span>';
                                                             }
                                                         @endphp
                                                         {!! $lib !!}
@@ -69,20 +68,18 @@
 
                                             {{-- Library 6604 --}}
                                             <td class="text-start">
-                                                @if (!empty($item['library6604']))
+                                                @if($item['status'] === 'offline')
+                                                    <span class="text-danger">Server Offline</span>
+                                                @elseif (!empty($item['library6604']))
                                                     @foreach (explode(',', $item['library6604']) as $lib)
                                                         @php
                                                             $lib = trim($lib);
                                                             if (str_contains($lib, 'DKI2:')) {
-                                                                $lib =
-                                                                    '<span class="badge bg-success">' .
-                                                                    $lib .
-                                                                    '</span>';
+                                                                $lib = '<span class="badge bg-success">' . $lib . '</span>';
                                                             } elseif (str_contains($lib, 'MEGA2:')) {
-                                                                $lib =
-                                                                    '<span class="badge bg-primary">' .
-                                                                    $lib .
-                                                                    '</span>';
+                                                                $lib = '<span class="badge bg-primary">' . $lib . '</span>';
+                                                            } elseif (str_contains($lib, 'Error')) {
+                                                                $lib = '<span class="text-danger">' . $lib . '</span>';
                                                             }
                                                         @endphp
                                                         {!! $lib !!}
@@ -92,10 +89,18 @@
                                                     <div><i>-</i></div>
                                                 @endif
                                             </td>
+
+                                            <td>
+                                                @if($item['status'] === 'online')
+                                                    <span class="badge bg-success">Online</span>
+                                                @else
+                                                    <span class="badge bg-danger">Offline</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-muted py-4">
+                                            <td colspan="7" class="text-muted py-4">
                                                 Tidak ada data library bank card yang ditemukan.
                                             </td>
                                         </tr>
