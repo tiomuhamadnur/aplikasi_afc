@@ -26,8 +26,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Station</th>
-                                        <th>Equipment ID</th>
-                                        <th>Direction</th>
+                                        <th>Equipment</th>
                                         <th>Library 6603</th>
                                         <th>Library 6604</th>
                                     </tr>
@@ -38,13 +37,21 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['pg_id'] }}</td>
-                                            <td>{{ $item['direction'] }}</td>
 
                                             {{-- Library 6603 --}}
                                             <td class="text-start">
                                                 @if (!empty($item['library6603']))
                                                     @foreach (explode(',', $item['library6603']) as $lib)
-                                                        <div>{{ trim($lib) }}</div>
+                                                        @php
+                                                            $lib = trim($lib);
+                                                            if (str_contains($lib, 'DKI2:')) {
+                                                                $lib = '<span class="badge bg-success">'.$lib.'</span>';
+                                                            } elseif (str_contains($lib, 'MEGA2:')) {
+                                                                $lib = '<span class="badge bg-primary">'.$lib.'</span>';
+                                                            }
+                                                        @endphp
+                                                        {!! $lib !!}
+                                                        <br>
                                                     @endforeach
                                                 @else
                                                     <div><i>Tidak ada library</i></div>
@@ -55,12 +62,22 @@
                                             <td class="text-start">
                                                 @if (!empty($item['library6604']))
                                                     @foreach (explode(',', $item['library6604']) as $lib)
-                                                        <div>{{ trim($lib) }}</div>
+                                                        @php
+                                                            $lib = trim($lib);
+                                                            if (str_contains($lib, 'DKI2:')) {
+                                                                $lib = '<span class="badge bg-success">'.$lib.'</span>';
+                                                            } elseif (str_contains($lib, 'MEGA2:')) {
+                                                                $lib = '<span class="badge bg-primary">'.$lib.'</span>';
+                                                            }
+                                                        @endphp
+                                                        {!! $lib !!}
+                                                        <br>
                                                     @endforeach
                                                 @else
                                                     <div><i>Tidak ada library</i></div>
                                                 @endif
                                             </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>
