@@ -16,24 +16,25 @@
                                 data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <i class="mdi mdi-filter"></i>
                             </button>
-                            <button type="button" title="Export" class="btn btn-outline-primary btn-rounded btn-icon">
+                            <button type="button" title="Export to Excel" data-bs-toggle="modal"
+                                data-bs-target="#exportExcelModal" class="btn btn-outline-primary btn-rounded btn-icon">
                                 <i class="mdi mdi-file-export"></i>
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center">
-                                <thead>
+                            <table id="myTable" class="table table-bordered text-center">
+                                <thead class="table-light">
                                     <tr>
                                         <th>No</th>
                                         <th>Station</th>
                                         <th>Equipment</th>
                                         <th>Direction</th>
-                                        <th>Library 6603.txt (Master)</th>
-                                        <th>Library 6604.txt (Slave)</th>
+                                        <th>Library Master (6603.txt)</th>
+                                        <th>Library Slave (6604.txt)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($results as $item)
+                                    @forelse ($results as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
@@ -47,16 +48,22 @@
                                                         @php
                                                             $lib = trim($lib);
                                                             if (str_contains($lib, 'DKI2:')) {
-                                                                $lib = '<span class="badge bg-success">'.$lib.'</span>';
+                                                                $lib =
+                                                                    '<span class="badge bg-success">' .
+                                                                    $lib .
+                                                                    '</span>';
                                                             } elseif (str_contains($lib, 'MEGA2:')) {
-                                                                $lib = '<span class="badge bg-primary">'.$lib.'</span>';
+                                                                $lib =
+                                                                    '<span class="badge bg-primary">' .
+                                                                    $lib .
+                                                                    '</span>';
                                                             }
                                                         @endphp
                                                         {!! $lib !!}
                                                         <br>
                                                     @endforeach
                                                 @else
-                                                    <div><i>Tidak ada library</i></div>
+                                                    <div><i>-</i></div>
                                                 @endif
                                             </td>
 
@@ -67,20 +74,32 @@
                                                         @php
                                                             $lib = trim($lib);
                                                             if (str_contains($lib, 'DKI2:')) {
-                                                                $lib = '<span class="badge bg-success">'.$lib.'</span>';
+                                                                $lib =
+                                                                    '<span class="badge bg-success">' .
+                                                                    $lib .
+                                                                    '</span>';
                                                             } elseif (str_contains($lib, 'MEGA2:')) {
-                                                                $lib = '<span class="badge bg-primary">'.$lib.'</span>';
+                                                                $lib =
+                                                                    '<span class="badge bg-primary">' .
+                                                                    $lib .
+                                                                    '</span>';
                                                             }
                                                         @endphp
                                                         {!! $lib !!}
                                                         <br>
                                                     @endforeach
                                                 @else
-                                                    <div><i>Tidak ada library</i></div>
+                                                    <div><i>-</i></div>
                                                 @endif
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-muted py-4">
+                                                Tidak ada data library bank card yang ditemukan.
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -89,7 +108,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Filter Modal -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -137,7 +155,41 @@
         </div>
     </div>
     <!-- End Filter Modal -->
+
+    <!-- Export Excel Modal -->
+    <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img src="https://i.pinimg.com/originals/1b/db/8a/1bdb8ac897512116cbac58ffe7560d82.png"
+                            alt="Excel" style="height: 150px; width: 150px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="exportButton" onclick="exportExcel()"
+                        class="btn btn-gradient-success me-2">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Export Excel Modal -->
 @endsection
 
 @section('javascript')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        function exportExcel() {
+            var table = document.getElementById('myTable');
+            var wb = XLSX.utils.table_to_book(table, {
+                sheet: "Data"
+            });
+            XLSX.writeFile(wb, 'library_bank_card_version.xlsx');
+        }
+    </script>
 @endsection
