@@ -37,7 +37,7 @@ class LibraryBankCardController extends Controller
         if ($pgs->isEmpty()) {
             return redirect()
                 ->route('library-bank-card.index')
-                ->with('notifyerror', 'PG tidak ditemukan');
+                ->withNotifyerror('PG tidak ditemukan');
         }
 
         // Configuration
@@ -98,8 +98,8 @@ class LibraryBankCardController extends Controller
             });
         }
 
-        // Wait for all jobs to complete
-        $results = $pool->wait()->collect();
+        // Wait for all jobs to complete and convert to collection
+        $results = collect($pool->wait());
 
         // Get additional data for the view
         $stations = ConfigPG::orderBy('order', 'asc')->get();
