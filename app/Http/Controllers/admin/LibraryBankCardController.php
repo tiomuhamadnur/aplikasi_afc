@@ -34,20 +34,20 @@ class LibraryBankCardController extends Controller
         $pg_id = $validated['pg_id'];
 
         $pgs = ConfigEquipmentAFC::where('equipment_type_code', 'PG')
-                ->when($station_id !== 'all', function ($query) use ($station_id) {
-                    $query->where('station_code', $station_id);
-                })
-                ->when($pg_id !== 'all', function ($query) use ($pg_id) {
-                    $query->where('id', $pg_id);
-                })
-                ->get();
-
+            ->when($station_id !== 'all', function ($query) use ($station_id) {
+                $query->where('station_code', $station_id);
+            })
+            ->when($pg_id !== 'all', function ($query) use ($pg_id) {
+                $query->where('id', $pg_id);
+            })
+            ->get();
 
         if ($pgs->isEmpty()) {
             return redirect()->route('library-bank-card.index')->withNotifyerror('PG tidak ditemukan');
         }
 
-        $path = '/AG_AplData/Maintenance/csv_text/6603.txt';
+        $path1 = '/AG_AplData/Maintenance/csv_text/6603.txt';
+        $path2 = '/AG_AplData/Maintenance/csv_text/6604.txt';
         $baseConfig = config('filesystems.disks.sftp');
 
         $results = collect();
@@ -56,28 +56,33 @@ class LibraryBankCardController extends Controller
             $baseConfig['host'] = $pg->ip_address;
             $disk = Storage::build($baseConfig);
 
-            $libraryContent = '';
+            $library6603 = '';
+            $library6604 = '';
 
-            // Cek apakah file ada
-            if ($disk->exists($path)) {
+            // Ambil file 6603
+            if ($disk->exists($path1)) {
                 try {
-                    $libraryContent = trim($disk->get($path));
+                    $library6603 = trim($disk->get($path1));
                 } catch (\Exception $e) {
-                    // Gagal baca file, biarkan kosong
-                    $libraryContent = '';
+                    $library6603 = '';
+                }
+            }
+
+            // Ambil file 6604
+            if ($disk->exists($path2)) {
+                try {
+                    $library6604 = trim($disk->get($path2));
+                } catch (\Exception $e) {
+                    $library6604 = '';
                 }
             }
 
             $results->push([
                 'station_code' => $pg->station_code,
                 'pg_id' => $pg->equipment_name,
-                'library' => $libraryContent,
+                'library6603' => $library6603,
+                'library6604' => $library6604,
             ]);
-        }
-
-
-        if ($results->isEmpty()) {
-            return redirect()->route('library-bank-card.index')->withNotifyerror('Data tidak ditemukan');
         }
 
         $stations = ConfigPG::orderBy('order', 'ASC')->get();
@@ -89,4 +94,5 @@ class LibraryBankCardController extends Controller
             'pgs' => $pgs,
         ]);
     }
+
 }

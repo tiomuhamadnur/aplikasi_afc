@@ -26,27 +26,41 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Station</th>
-                                        <th>Equipment</th>
-                                        <th>Library Version</th>
+                                        <th>Equipment ID</th>
+                                        <th>Library 6603</th>
+                                        <th>Library 6604</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($results as $item)
+                                    @foreach ($results as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['pg_id'] }}</td>
+
+                                            {{-- Library 6603 --}}
                                             <td class="text-start">
-                                                @foreach (explode(',', $item['library']) as $library)
-                                                    <div>{{ trim($library) }}</div>
-                                                @endforeach
+                                                @if (!empty($item['library6603']))
+                                                    @foreach (explode(',', $item['library6603']) as $lib)
+                                                        <div>{{ trim($lib) }}</div>
+                                                    @endforeach
+                                                @else
+                                                    <div><i>Tidak ada library</i></div>
+                                                @endif
+                                            </td>
+
+                                            {{-- Library 6604 --}}
+                                            <td class="text-start">
+                                                @if (!empty($item['library6604']))
+                                                    @foreach (explode(',', $item['library6604']) as $lib)
+                                                        <div>{{ trim($lib) }}</div>
+                                                    @endforeach
+                                                @else
+                                                    <div><i>Tidak ada library</i></div>
+                                                @endif
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4">Data tidak tersedia</td>
-                                        </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
