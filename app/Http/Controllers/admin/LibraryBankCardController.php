@@ -53,29 +53,28 @@ class LibraryBankCardController extends Controller
         $results = collect();
 
         foreach ($pgs as $pg) {
-            $disk = Storage::build(array_merge($baseConfig, ['host' => $pg->ip_address]));
+            $baseConfig['host'] = $pg->ip_address;
+            $disk = Storage::build($baseConfig);
 
-            if (!$disk->exists($path)) {
-                continue;
+            $libraryContent = '';
+
+            // Cek apakah file ada
+            if ($disk->exists($path)) {
+                try {
+                    $libraryContent = trim($disk->get($path));
+                } catch (\Exception $e) {
+                    // Gagal baca file, biarkan kosong
+                    $libraryContent = '';
+                }
             }
-
-            try {
-                $content = $disk->get($path);
-            } catch (\Exception $e) {
-                continue;
-            }
-
-            $library = collect(explode(',', $content))
-                ->map(fn($item) => trim($item))
-                ->filter()
-                ->implode(', ');
 
             $results->push([
                 'station_code' => $pg->station_code,
                 'pg_id' => $pg->equipment_name,
-                'library' => $library,
+                'library' => $libraryContent,
             ]);
         }
+
 
         if ($results->isEmpty()) {
             return redirect()->route('library-bank-card.index')->withNotifyerror('Data tidak ditemukan');
