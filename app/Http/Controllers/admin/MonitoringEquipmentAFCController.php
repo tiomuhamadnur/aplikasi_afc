@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
 use App\Models\User;
+use App\Services\WhatsappService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
@@ -352,7 +353,7 @@ class MonitoringEquipmentAFCController extends Controller
     /**
      * Mengirim notifikasi status peralatan via WhatsApp
      */
-    public function sendMonitoringNotification()
+    public function sendMonitoringNotification(WhatsappService $whatsappService)
     {
         // Ambil data user yang akan menerima notifikasi
         $recipients = User::whereIn('id', [1, 2]) //sesuaikan jumlahnya
@@ -405,7 +406,8 @@ class MonitoringEquipmentAFCController extends Controller
         $successCount = 0;
         foreach ($recipients as $user) {
             $message = $this->formatPersonalizedMessage($user, $monitoringData);
-            $response = $this->sendNotification($user->no_hp, $message);
+            // $response = $this->sendNotification($user->no_hp, $message);
+            $response = $whatsappService->sendMessage($user->no_hp, $message);
 
             if ($response !== false) {
                 $successCount++;
@@ -475,50 +477,5 @@ class MonitoringEquipmentAFCController extends Controller
             $enter . $enter . $enter . $enter;
 
         return $message;
-    }
-
-    /**
-     * Mengirim notifikasi WhatsApp
-     */
-    public function sendNotification($phoneNumber, $message)
-    {
-        $apiUrl = env('WHATSAPP_API_URL');
-        $token = env('WHATSAPP_API_TOKEN');
-
-        $data = [
-            'target' => $phoneNumber,
-            'message' => $message,
-            // 'countryCode' => '62', // Kode negara Indonesia Opsional
-        ];
-
-        $headers = [
-            'Authorization: ' . $token,
-        ];
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $apiUrl,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => http_build_query($data),
-            CURLOPT_HTTPHEADER => $headers,
-        ]);
-
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-
-        if ($error) {
-            return "cURL API WhatsApp Error: " . $error;
-        }
-
-        curl_close($curl);
-
-        return $response;
     }
 }

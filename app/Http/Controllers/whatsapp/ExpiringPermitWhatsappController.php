@@ -6,16 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Departemen;
 use App\Models\MonitoringPermit;
 use App\Models\User;
+use App\Services\WhatsappService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ExpiringPermitWhatsappController extends Controller
 {
-    public function notification()
+    public function notification(WhatsappService $whatsappService)
     {
-        MonitoringPermit::updateStatus();
         $data = $this->get_data();
-        // dd($data);
 
         foreach($data as $item) {
             $whatsAppData = [
@@ -30,7 +29,7 @@ class ExpiringPermitWhatsappController extends Controller
             $message = $this->format_message($whatsAppData);
             $no_hp = $item['no_hp'];
 
-            $this->sendNotification($no_hp, $message);
+            $whatsappService->sendMessage($no_hp, $message);
         }
 
         return response()->json([
@@ -121,47 +120,5 @@ class ExpiringPermitWhatsappController extends Controller
             $enter . $enter . $enter . $enter;
 
         return $message;
-    }
-
-    public static function sendNotification($phoneNumber, $message)
-    {
-        $apiUrl = env('WHATSAPP_API_URL');
-        $token = env('WHATSAPP_API_TOKEN');
-
-        $data = [
-            'target' => $phoneNumber,
-            'message' => $message,
-            'countryCode' => '62',
-        ];
-
-        $headers = [
-            'Authorization: ' . $token,
-        ];
-
-        return self::sendRequest($apiUrl, 'POST', $data, $headers);
-    }
-
-    private static function sendRequest($url, $method, $data = [], $headers = [])
-    {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => $headers,
-        ]);
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $response;
     }
 }
