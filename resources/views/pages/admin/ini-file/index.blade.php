@@ -200,7 +200,7 @@
                         <div class="form-group">
                             <label for="pg_id" class="required">PG ID</label>
                             <select class="tom-select-class" name="pg_id" id="pg_id" required>
-                                <option value="" selected disabled>- select PG ID -</option>
+                                <option value="all" selected>- all PG -</option>
                                 @foreach ($equipments as $item)
                                     <option value="{{ $item->id }}" @selected($item->id == $pg_id)>
                                         {{ $item->station_code }} {{ $item->equipment_name }}

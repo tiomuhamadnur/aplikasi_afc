@@ -140,7 +140,6 @@ class IniFileController extends Controller
     //     ]);
     // }
 
-
     public function update(Request $request)
     {
         $validated = $request->validate([
@@ -167,7 +166,7 @@ class IniFileController extends Controller
 
             // 4. Verify connection
             if (!$sftp->exists('/')) {
-                throw new \Exception("Failed to connect to SFTP server");
+                throw new \Exception('Failed to connect to SFTP server');
             }
 
             $originalPath = $validated['filename'];
@@ -177,7 +176,8 @@ class IniFileController extends Controller
 
             // 3. Validate original file exists
             if (!$sftp->exists($originalPath)) {
-                return redirect()->route('ini-file.index')
+                return redirect()
+                    ->route('ini-file.index')
                     ->withNotifyerror('File .ini tidak ditemukan di PG ' . $pg->equipment_name);
             }
 
@@ -195,17 +195,17 @@ class IniFileController extends Controller
 
             // 6. Validate JSON format
             if (json_last_error() !== JSON_ERROR_NONE) {
-                return redirect()->route('ini-file.index')
-                    ->withNotifyerror('Format file tidak valid (bukan JSON)');
+                return redirect()->route('ini-file.index')->withNotifyerror('Format file tidak valid (bukan JSON)');
             }
 
             // 7. Create backup file (exact copy of original)
-            if (!$sftp->put($backupPath, $originalContent, [
-                'visibility' => 'public',
-                'permissions' => 0777  // Explicit set permissions
-            ])) {
-                return redirect()->route('ini-file.index')
-                    ->withNotifyerror('Gagal membuat file backup');
+            if (
+                !$sftp->put($backupPath, $originalContent, [
+                    'visibility' => 'public',
+                    'permissions' => 0777, // Explicit set permissions
+                ])
+            ) {
+                return redirect()->route('ini-file.index')->withNotifyerror('Gagal membuat file backup');
             }
 
             // 8. Prepare changes
@@ -214,45 +214,41 @@ class IniFileController extends Controller
 
             // Update Mandiri PIN if section exists
             if (isset($originalData['Mandiri'])) {
-                $changes[] = "PIN Mandiri: " . $originalData['Mandiri']['pin'] . " → " . trim($samCard->pin);
+                $changes[] = 'PIN Mandiri: ' . $originalData['Mandiri']['pin'] . ' → ' . trim($samCard->pin);
                 $originalData['Mandiri']['pin'] = trim($samCard->pin);
                 $changesMade = true;
             }
 
             // Update BNI MC if section exists
             if (isset($originalData['BNI'])) {
-                $changes[] = "MC BNI: " . $originalData['BNI']['mc'] . " → " . trim($samCard->mc);
+                $changes[] = 'MC BNI: ' . $originalData['BNI']['mc'] . ' → ' . trim($samCard->mc);
                 $originalData['BNI']['mc'] = trim($samCard->mc);
                 $changesMade = true;
             }
 
             // 9. Verify changes were made
             if (!$changesMade) {
-                return redirect()->route('ini-file.index')
-                    ->withNotifyerror('Tidak ada section Mandiri/BNI yang ditemukan dalam file');
+                return redirect()->route('ini-file.index')->withNotifyerror('Tidak ada section Mandiri/BNI yang ditemukan dalam file');
             }
 
             // 10. Update original file with new values
             $updatedContent = json_encode($originalData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            if (!$sftp->put($originalPath, $updatedContent, [
-                'visibility' => 'public',
-                'permissions' => 0777  // Explicit set permissions
-            ])) {
-                return redirect()->route('ini-file.index')
-                    ->withNotifyerror('Gagal menyimpan perubahan ke file original');
+            if (
+                !$sftp->put($originalPath, $updatedContent, [
+                    'visibility' => 'public',
+                    'permissions' => 0777, // Explicit set permissions
+                ])
+            ) {
+                return redirect()->route('ini-file.index')->withNotifyerror('Gagal menyimpan perubahan ke file original');
             }
 
             // 11. Prepare success message
-            $message = "Update berhasil!\n"
-                    . "File: " . $originalPath . "\n"
-                    . "Backup: " . $backupFilename . "\n"
-                    . "Perubahan:\n- " . implode("\n- ", $changes);
+            $message = "Update berhasil!\n" . 'File: ' . $originalPath . "\n" . 'Backup: ' . $backupFilename . "\n" . "Perubahan:\n- " . implode("\n- ", $changes);
 
-            return redirect()->route('ini-file.index')
-                ->withNotify($message);
-
+            return redirect()->route('ini-file.index')->withNotify($message);
         } catch (Exception $e) {
-            return redirect()->route('ini-file.index')
+            return redirect()
+                ->route('ini-file.index')
                 ->withNotifyerror('Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -264,66 +260,78 @@ class IniFileController extends Controller
             'type' => 'nullable|in:Paid,UnPaid',
         ]);
 
-        // Get PG configuration
-        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->findOrFail($validated['pg_id']);
+        // Check if pg_id is 'all'
+        if ($validated['pg_id'] === 'all') {
+            // Fetch all PG configurations
+            $pgs = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
+        } else {
+            // Get the specific PG configuration
+            $pgs = collect([ConfigEquipmentAFC::where('equipment_type_code', 'PG')->findOrFail($validated['pg_id'])]);
+        }
 
-        // Get station ID (keeping original separate query as requested)
-        $station_id = ConfigPG::where('station_code', $pg->station_code)->firstOrFail()->station_id;
+        // Prepare results collection
+        $results = collect();
 
-        // Prepare SFTP connection
-        $sftpConfig = config('filesystems.disks.sftp');
-        $sftpConfig['host'] = $pg->ip_address;
-        $sftp = Storage::build($sftpConfig);
+        foreach ($pgs as $pg) {
+            // Get station ID (keeping original separate query as requested)
+            $station_id = ConfigPG::where('station_code', $pg->station_code)->firstOrFail()->station_id;
 
-        // Process files efficiently
-        $results = collect($sftp->files('/AG_System/Install/AINO/ini'))
-            ->filter(function ($file) {
-                return Str::endsWith($file, '.ini');
-            })
-            ->mapWithKeys(function ($file) {
-                return [basename($file) => $file];
-            })
-            ->filter(function ($file, $filename) use ($station_id, $pg, $validated) {
-                if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
-                    return false;
-                }
+            // Prepare SFTP connection
+            $sftpConfig = config('filesystems.disks.sftp');
+            $sftpConfig['host'] = $pg->ip_address;
+            $sftp = Storage::build($sftpConfig);
 
-                $code = $matches[1];
-                $fileType = $matches[2];
+            // Process files efficiently
+            $files = collect($sftp->files('/AG_System/Install/AINO/ini'))
+                ->filter(function ($file) {
+                    return Str::endsWith($file, '.ini');
+                })
+                ->mapWithKeys(function ($file) {
+                    return [basename($file) => $file];
+                })
+                ->filter(function ($file, $filename) use ($station_id, $pg, $validated) {
+                    if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
+                        return false;
+                    }
 
-                // Extract IDs from code
-                $fileStationId = substr($code, 3, 3);
-                $filePgId = substr($code, 9, 3);
+                    $code = $matches[1];
+                    $fileType = $matches[2];
 
-                // Apply filters
-                return $fileStationId === $station_id && $filePgId === $pg->equipment_id && (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
-            })
-            ->map(function ($file) use ($sftp, $pg) {
-                $content = $sftp->get($file);
-                $json = json_decode($content, true);
+                    // Extract IDs from code
+                    $fileStationId = substr($code, 3, 3);
+                    $filePgId = substr($code, 9, 3);
 
-                return json_last_error() === JSON_ERROR_NONE
-                    ? array_merge(
-                        [
-                            'station_code' => $pg->station_code,
-                            'pg_id' => $pg->id,
-                            'pg_name' => $pg->equipment_name,
-                            'actual_filename' => basename($file),
-                        ],
-                        $json,
-                    )
-                    : null;
-            })
-            ->filter()
-            ->values()
-            ->toArray();
+                    // Apply filters
+                    return $fileStationId === $station_id && $filePgId === $pg->equipment_id && (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
+                })
+                ->map(function ($file) use ($sftp, $pg) {
+                    $content = $sftp->get($file);
+                    $json = json_decode($content, true);
 
-        if (empty($results)) {
+                    return json_last_error() === JSON_ERROR_NONE
+                        ? array_merge(
+                            [
+                                'station_code' => $pg->station_code,
+                                'pg_id' => $pg->id,
+                                'pg_name' => $pg->equipment_name,
+                                'actual_filename' => basename($file),
+                            ],
+                            $json,
+                        )
+                        : null;
+                })
+                ->filter();
+
+            // Merge the results
+            $results = $results->merge($files);
+        }
+
+        if ($results->isEmpty()) {
             return redirect()->route('ini-file.index')->withNotifyerror('Data .ini file tidak ditemukan');
         }
 
         return view('pages.admin.ini-file.index', [
-            'results' => $results,
+            'results' => $results->values(),
             'config_pg' => ConfigPG::orderBy('order')->get(),
             'sam_cards' => SamCard::where('status', 'ready')->get(),
             'equipments' => ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get(),
