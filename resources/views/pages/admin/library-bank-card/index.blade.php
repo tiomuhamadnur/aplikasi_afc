@@ -27,6 +27,7 @@
                                         <th>No</th>
                                         <th>Station</th>
                                         <th>Equipment ID</th>
+                                        <th>Direction</th>
                                         <th>Library 6603</th>
                                         <th>Library 6604</th>
                                     </tr>
@@ -37,6 +38,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['pg_id'] }}</td>
+                                            <td>{{ $item['direction'] }}</td>
 
                                             {{-- Library 6603 --}}
                                             <td class="text-start">

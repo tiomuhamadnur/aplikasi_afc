@@ -80,6 +80,7 @@ class LibraryBankCardController extends Controller
             $results->push([
                 'station_code' => $pg->station_code,
                 'pg_id' => $pg->equipment_name,
+                'direction' => $pg->direction,
                 'library6603' => $library6603,
                 'library6604' => $library6604,
             ]);
