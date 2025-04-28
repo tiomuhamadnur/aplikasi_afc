@@ -27,8 +27,9 @@
                                         <th>No</th>
                                         <th>Station</th>
                                         <th>Equipment</th>
-                                        <th>Library 6603</th>
-                                        <th>Library 6604</th>
+                                        <th>Direction</th>
+                                        <th>Library 6603.txt (Master)</th>
+                                        <th>Library 6604.txt (Slave)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -37,6 +38,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['station_code'] }}</td>
                                             <td>{{ $item['pg_id'] }}</td>
+                                            <td>{{ $item['direction'] }}</td>
 
                                             {{-- Library 6603 --}}
                                             <td class="text-start">
@@ -77,7 +79,6 @@
                                                     <div><i>Tidak ada library</i></div>
                                                 @endif
                                             </td>
-
                                         </tr>
                                     @endforeach
                                 </tbody>
