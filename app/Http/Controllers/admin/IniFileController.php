@@ -281,46 +281,51 @@ class IniFileController extends Controller
             $sftpConfig['host'] = $pg->ip_address;
             $sftp = Storage::build($sftpConfig);
 
-            // Process files efficiently
-            $files = collect($sftp->files('/AG_System/Install/AINO/ini'))
-                ->filter(function ($file) {
-                    return Str::endsWith($file, '.ini');
-                })
-                ->mapWithKeys(function ($file) {
-                    return [basename($file) => $file];
-                })
-                ->filter(function ($file, $filename) use ($station_id, $pg, $validated) {
-                    if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
-                        return false;
-                    }
+            try {
+                // Attempt to get the files
+                $files = collect($sftp->files('/AG_System/Install/AINO/ini'))
+                    ->filter(function ($file) {
+                        return Str::endsWith($file, '.ini');
+                    })
+                    ->mapWithKeys(function ($file) {
+                        return [basename($file) => $file];
+                    })
+                    ->filter(function ($file, $filename) use ($station_id, $pg, $validated) {
+                        if (!preg_match('/AinoConfiguration_(\d{12})_(Paid|UnPaid)\.ini$/i', $filename, $matches)) {
+                            return false;
+                        }
 
-                    $code = $matches[1];
-                    $fileType = $matches[2];
+                        $code = $matches[1];
+                        $fileType = $matches[2];
 
-                    // Extract IDs from code
-                    $fileStationId = substr($code, 3, 3);
-                    $filePgId = substr($code, 9, 3);
+                        // Extract IDs from code
+                        $fileStationId = substr($code, 3, 3);
+                        $filePgId = substr($code, 9, 3);
 
-                    // Apply filters
-                    return $fileStationId === $station_id && $filePgId === $pg->equipment_id && (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
-                })
-                ->map(function ($file) use ($sftp, $pg) {
-                    $content = $sftp->get($file);
-                    $json = json_decode($content, true);
+                        // Apply filters
+                        return $fileStationId === $station_id && $filePgId === $pg->equipment_id && (!isset($validated['type']) || strcasecmp($validated['type'], $fileType) === 0);
+                    })
+                    ->map(function ($file) use ($sftp, $pg) {
+                        $content = $sftp->get($file);
+                        $json = json_decode($content, true);
 
-                    return json_last_error() === JSON_ERROR_NONE
-                        ? array_merge(
-                            [
-                                'station_code' => $pg->station_code,
-                                'pg_id' => $pg->id,
-                                'pg_name' => $pg->equipment_name,
-                                'actual_filename' => basename($file),
-                            ],
-                            $json,
-                        )
-                        : null;
-                })
-                ->filter();
+                        return json_last_error() === JSON_ERROR_NONE
+                            ? array_merge(
+                                [
+                                    'station_code' => $pg->station_code,
+                                    'pg_id' => $pg->id,
+                                    'pg_name' => $pg->equipment_name,
+                                    'actual_filename' => basename($file),
+                                ],
+                                $json,
+                            )
+                            : null;
+                    })
+                    ->filter();
+            } catch (\Exception $e) {
+                // Handle the exception, possibly log it
+                $files = collect(); // Return an empty collection if the SFTP connection fails
+            }
 
             // Merge the results
             $results = $results->merge($files);
@@ -339,4 +344,5 @@ class IniFileController extends Controller
             'type' => $validated['type'] ?? null,
         ]);
     }
+
 }
