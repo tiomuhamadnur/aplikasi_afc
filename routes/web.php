@@ -25,6 +25,7 @@ use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\GoogleSpreadsheetController;
 use App\Http\Controllers\admin\IniFileController;
 use App\Http\Controllers\admin\JabatanController;
+use App\Http\Controllers\admin\LibraryBankCardController;
 use App\Http\Controllers\admin\LogController;
 use App\Http\Controllers\admin\LokasiController;
 use App\Http\Controllers\admin\MonitoringEquipmentAFCController;
@@ -597,6 +598,11 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
         Route::controller(LogController::class)->group(function () {
             Route::get('/log', 'index')->name('log.index');
             Route::post('/log', 'store')->name('log.store');
+        });
+
+        Route::controller(LibraryBankCardController::class)->group(function () {
+            Route::get('/library-bank-card', 'index')->name('library-bank-card.index');
+            Route::post('/library-bank-card', 'store')->name('library-bank-card.store');
         });
 
         Route::controller(MonitoringEquipmentController::class)->group(function () {

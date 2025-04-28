@@ -252,6 +252,9 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('log.index') }}">
                                     Log PG</a>
                                 </li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ route('library-bank-card.index') }}">
+                                    Library Bank Card</a>
+                                </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('ini-file.index') }}">
                                     Ini File PG</a>
                                 </li>
