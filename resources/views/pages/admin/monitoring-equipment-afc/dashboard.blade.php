@@ -103,36 +103,6 @@
                 <div class="modal-body">
                     <dl class="row small" id="equipment-details">
                         <!-- Data injected here -->
-                        <dt class="col-sm-4">Type</dt>
-                        <dd class="col-sm-8" id="modal-equipment-type"></dd>
-                        <dt class="col-sm-4">Station</dt>
-                        <dd class="col-sm-8" id="modal-station-code"></dd>
-                        <dt class="col-sm-4">Equipment</dt>
-                        <dd class="col-sm-8" id="modal-equipment-name"></dd>
-                        <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8" id="modal-status"></dd>
-                        <dt class="col-sm-4">Corner</dt>
-                        <dd class="col-sm-8" id="modal-corner-id"></dd>
-                        <dt class="col-sm-4">IP Address</dt>
-                        <dd class="col-sm-8" id="modal-ip-address"></dd>
-                        <dt class="col-sm-4">Uptime</dt>
-                        <dd class="col-sm-8" id="modal-uptime"></dd>
-
-                        <!-- Load Average -->
-                        <dt class="col-sm-4">Load Average (1m/5m/15m)</dt>
-                        <dd class="col-sm-8" id="modal-load-average"></dd>
-
-                        <!-- RAM Progress -->
-                        <dt class="col-sm-4">RAM</dt>
-                        <dd class="col-sm-8" id="modal-ram"></dd>
-                        <dt class="col-sm-4">Disk</dt>
-                        <dd class="col-sm-8" id="modal-disk"></dd>
-
-                        <!-- Other Details -->
-                        <dt class="col-sm-4">CPU Cores</dt>
-                        <dd class="col-sm-8" id="modal-cores"></dd>
-                        <dt class="col-sm-4">Core Temperatures</dt>
-                        <dd class="col-sm-8" id="modal-temperatures"></dd>
                     </dl>
                 </div>
             </div>
@@ -156,95 +126,54 @@
                     svgElement.classList.remove('online', 'offline', 'standby');
                     svgElement.classList.add(eq.status);
 
-                    // Pastikan event listeners tetap aktif setelah status diubah
-                    attachEventListeners(svgElement, eq);
+                    // Tooltip events
+                    svgElement.addEventListener('mouseenter', function(e) {
+                        tooltip.innerHTML = `
+                        <strong>${eq.equipment_name}</strong><br>
+                        IP: ${eq.ip}<br>
+                        Status: ${eq.status}<br>
+                        Uptime: ${eq.uptime}
+                    `;
+                        tooltip.style.display = 'block';
+                    });
+
+                    svgElement.addEventListener('mousemove', function(e) {
+                        tooltip.style.left = (e.pageX + 15) + 'px';
+                        tooltip.style.top = (e.pageY + 15) + 'px';
+                    });
+
+                    svgElement.addEventListener('mouseleave', function(e) {
+                        tooltip.style.display = 'none';
+                    });
+
+                    // Click event → show modal
+                    svgElement.addEventListener('click', function(e) {
+                        modalDetails.innerHTML = `
+                        <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
+                        <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
+                        <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
+                        <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
+                        <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
+                        <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
+                        <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
+
+                        <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
+                            ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
+                            <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
+                        </dd>
+
+                        <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
+                        <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
+                        <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
+
+                        <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
+                            ${formatTemperatures(eq.core_temperatures)}
+                        </dd>
+                    `;
+                        modal.show();
+                    });
                 }
             });
-
-            function attachEventListeners(svgElement, eq) {
-                // Tooltip events
-                svgElement.addEventListener('mouseenter', function(e) {
-                    tooltip.innerHTML = `
-                    <strong>${eq.equipment_name}</strong><br>
-                    IP: ${eq.ip}<br>
-                    Status: ${eq.status}<br>
-                    Uptime: ${eq.uptime}
-                `;
-                    tooltip.style.display = 'block';
-                });
-
-                svgElement.addEventListener('mousemove', function(e) {
-                    tooltip.style.left = (e.pageX + 15) + 'px';
-                    tooltip.style.top = (e.pageY + 15) + 'px';
-                });
-
-                svgElement.addEventListener('mouseleave', function(e) {
-                    tooltip.style.display = 'none';
-                });
-
-                // Click event → show modal
-                svgElement.addEventListener('click', function(e) {
-                    // Modal content
-                    document.getElementById('modal-equipment-type').textContent = eq.equipment_type_code;
-                    document.getElementById('modal-station-code').textContent = eq.station_code;
-                    document.getElementById('modal-equipment-name').textContent = eq.equipment_name;
-                    document.getElementById('modal-status').innerHTML =
-                        `<span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span>`;
-                    document.getElementById('modal-corner-id').textContent = eq.corner_id ?? '-';
-                    document.getElementById('modal-ip-address').textContent = eq.ip;
-                    document.getElementById('modal-uptime').textContent = eq.uptime;
-
-                    // Load Average
-                    document.getElementById('modal-load-average').innerHTML = `
-                    ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}
-                    <br><span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
-                `;
-
-                    // RAM - Calculate Percentage and Update Color
-                    const ramUsed = eq.ram.used;
-                    const ramTotal = eq.ram.total;
-                    const ramPercent = ((ramUsed / ramTotal) * 100).toFixed(1); // Calculate percentage
-                    document.getElementById('modal-ram').textContent =
-                        `${formatBytes(ramUsed)} / ${formatBytes(ramTotal)} (${ramPercent}%)`;
-                    const ramElement = document.getElementById('modal-ram');
-                    if (ramPercent > 70) {
-                        ramElement.classList.add('text-danger');
-                        ramElement.classList.remove('text-warning', 'text-success');
-                    } else if (ramPercent > 50) {
-                        ramElement.classList.add('text-warning');
-                        ramElement.classList.remove('text-danger', 'text-success');
-                    } else {
-                        ramElement.classList.add('text-success');
-                        ramElement.classList.remove('text-warning', 'text-danger');
-                    }
-
-                    // Disk - Calculate Percentage and Update Color
-                    const diskUsed = eq.disk_root.used;
-                    const diskTotal = eq.disk_root.total;
-                    const diskPercent = ((diskUsed / diskTotal) * 100).toFixed(1); // Calculate percentage
-                    document.getElementById('modal-disk').textContent =
-                        `${formatBytes(diskUsed)} / ${formatBytes(diskTotal)} (${diskPercent}%)`;
-                    const diskElement = document.getElementById('modal-disk');
-                    if (diskPercent > 70) {
-                        diskElement.classList.add('text-danger');
-                        diskElement.classList.remove('text-warning', 'text-success');
-                    } else if (diskPercent > 50) {
-                        diskElement.classList.add('text-warning');
-                        diskElement.classList.remove('text-danger', 'text-success');
-                    } else {
-                        diskElement.classList.add('text-success');
-                        diskElement.classList.remove('text-warning', 'text-danger');
-                    }
-
-                    // CPU Cores and Temperatures
-                    document.getElementById('modal-cores').textContent = eq.cpu_cores;
-                    document.getElementById('modal-temperatures').innerHTML = formatTemperatures(eq
-                        .core_temperatures);
-
-                    // Show modal
-                    modal.show();
-                });
-            }
 
             function loadStatusColor(status) {
                 switch (status) {
@@ -270,14 +199,6 @@
 
                     return `<span class="badge bg-${color}-subtle text-${color} me-1 mb-1">Core ${index + 1}: ${val.toFixed(1)}°C</span>`;
                 }).join(' ');
-            }
-
-            // Helper function to format bytes into human-readable format (e.g. 162M, 1.9G)
-            function formatBytes(bytes) {
-                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-                if (bytes === 0) return '0 B';
-                const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-                return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
             }
         });
     </script>
