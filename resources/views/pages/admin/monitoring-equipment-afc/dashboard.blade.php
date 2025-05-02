@@ -8,6 +8,27 @@
             height: auto;
             max-width: 100%;
         }
+
+        .offline {
+            fill: #ff4040 !important;
+            animation: blinkOffline 1s infinite;
+        }
+
+        .online {
+                fill: #00E600 !important;
+            }
+
+        @keyframes blinkOffline {
+
+            0%,
+            100% {
+                fill: #ff4040 !important;
+            }
+
+            50% {
+                fill: #ffcccc !important;
+            }
+        }
     </style>
 @endsection
 
