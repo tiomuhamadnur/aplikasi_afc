@@ -9,25 +9,35 @@
             max-width: 100%;
         }
 
-        .offline {
-            fill: #ff4040 !important;
+        /* Status classes */
+        .svg-container svg .online {
+            fill: #00E600 !important;
+        }
+
+        .svg-container svg .standby {
+            fill: #8e8e8e !important;
+        }
+
+        .svg-container svg .offline {
             animation: blinkOffline 1s infinite;
         }
 
-        .online {
-                fill: #00E600 !important;
-            }
-
+        /* Offline blinking animation — !important hanya di .offline, bukan di keyframes */
         @keyframes blinkOffline {
 
             0%,
             100% {
-                fill: #ff4040 !important;
+                fill: #ff4040;
             }
 
             50% {
-                fill: #ffcccc !important;
+                fill: #ffcccc;
             }
+        }
+
+        /* Force first frame of offline to red (biar nggak delay animasi) */
+        .svg-container svg .offline {
+            fill: #ff4040 !important;
         }
     </style>
 @endsection
