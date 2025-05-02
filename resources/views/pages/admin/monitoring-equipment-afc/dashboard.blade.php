@@ -21,7 +21,10 @@
         .svg-container svg .offline {
             fill: #ff4040 !important;
             animation: blinkOffline 1s infinite;
-            /* Start as red */
+            pointer-events: all;
+            /* Ensure the SVG is still clickable and hoverable */
+            z-index: 10;
+            /* Ensure the SVG stays on top of other content */
         }
 
         /* Blink animation using FILTER (safe for SVG fill) */
@@ -37,7 +40,7 @@
             }
         }
 
-        /* Tooltip styling (optional, biar rapi) */
+        /* Tooltip styling */
         #equipment-tooltip {
             position: absolute;
             display: none;
@@ -123,54 +126,59 @@
                     svgElement.classList.remove('online', 'offline', 'standby');
                     svgElement.classList.add(eq.status);
 
-                    // Tooltip events
-                    svgElement.addEventListener('mouseenter', function(e) {
-                        tooltip.innerHTML = `
-                        <strong>${eq.equipment_name}</strong><br>
-                        IP: ${eq.ip}<br>
-                        Status: ${eq.status}<br>
-                        Uptime: ${eq.uptime}
-                    `;
-                        tooltip.style.display = 'block';
-                    });
-
-                    svgElement.addEventListener('mousemove', function(e) {
-                        tooltip.style.left = (e.pageX + 15) + 'px';
-                        tooltip.style.top = (e.pageY + 15) + 'px';
-                    });
-
-                    svgElement.addEventListener('mouseleave', function(e) {
-                        tooltip.style.display = 'none';
-                    });
-
-                    // Click event → show modal
-                    svgElement.addEventListener('click', function(e) {
-                        modalDetails.innerHTML = `
-                        <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
-                        <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
-                        <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
-                        <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
-                        <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
-                        <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
-                        <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
-
-                        <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
-                            ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
-                            <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
-                        </dd>
-
-                        <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
-                        <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
-                        <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
-
-                        <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
-                            ${formatTemperatures(eq.core_temperatures)}
-                        </dd>
-                    `;
-                        modal.show();
-                    });
+                    // Pastikan event listeners tetap aktif setelah status diubah
+                    attachEventListeners(svgElement, eq);
                 }
             });
+
+            function attachEventListeners(svgElement, eq) {
+                // Tooltip events
+                svgElement.addEventListener('mouseenter', function(e) {
+                    tooltip.innerHTML = `
+            <strong>${eq.equipment_name}</strong><br>
+            IP: ${eq.ip}<br>
+            Status: ${eq.status}<br>
+            Uptime: ${eq.uptime}
+        `;
+                    tooltip.style.display = 'block';
+                });
+
+                svgElement.addEventListener('mousemove', function(e) {
+                    tooltip.style.left = (e.pageX + 15) + 'px';
+                    tooltip.style.top = (e.pageY + 15) + 'px';
+                });
+
+                svgElement.addEventListener('mouseleave', function(e) {
+                    tooltip.style.display = 'none';
+                });
+
+                // Click event → show modal
+                svgElement.addEventListener('click', function(e) {
+                    modalDetails.innerHTML = `
+            <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
+            <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
+            <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
+            <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
+            <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
+            <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
+            <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
+
+            <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
+                ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
+                <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
+            </dd>
+
+            <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
+            <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
+            <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
+
+            <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
+                ${formatTemperatures(eq.core_temperatures)}
+            </dd>
+        `;
+                    modal.show();
+                });
+            }
 
             function loadStatusColor(status) {
                 switch (status) {
