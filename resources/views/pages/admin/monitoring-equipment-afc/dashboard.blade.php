@@ -3,46 +3,41 @@
 @section('title-head')
     <title>Dashboard Equipment AFC</title>
     <style>
-        /* --- SVG Container Sizing --- */
         .svg-container svg {
             width: 100%;
             height: auto;
             max-width: 100%;
         }
 
-        /* --- Equipment Status Colors --- */
+        /* Status classes */
         .svg-container svg .online {
             fill: #00E600 !important;
-            /* Green */
         }
 
         .svg-container svg .standby {
             fill: #8e8e8e !important;
-            /* Grey */
         }
 
         .svg-container svg .offline {
-            animation: blinkOffline 0.7s infinite;
             fill: #ff4040 !important;
-            /* Red base */
+            animation: blinkOffline 1s infinite;
+            /* Start as red */
         }
 
-        /* --- Blinking Animation for Offline (Red ↔ White hard contrast) --- */
+        /* Blink animation using FILTER (safe for SVG fill) */
         @keyframes blinkOffline {
 
             0%,
             100% {
-                fill: #ff4040;
-                /* Red */
+                filter: brightness(1);
             }
 
             50% {
-                fill: #ffffff;
-                /* White */
+                filter: brightness(2.5);
             }
         }
 
-        /* --- Tooltip styling (optional, rapi) --- */
+        /* Tooltip styling (optional, biar rapi) */
         #equipment-tooltip {
             position: absolute;
             display: none;
