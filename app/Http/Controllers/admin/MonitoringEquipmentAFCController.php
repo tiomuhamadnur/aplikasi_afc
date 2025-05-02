@@ -223,7 +223,7 @@ class MonitoringEquipmentAFCController extends Controller
     protected function createOfflineResponse($eq, string $ip): array
     {
         return [
-            'scu_id' => $eq->id,
+            'id' => $eq->id,
             'station_code' => $eq->station_code,
             'equipment_type_code' => $eq->equipment_type_code,
             'equipment_name' => $eq->equipment_name,
