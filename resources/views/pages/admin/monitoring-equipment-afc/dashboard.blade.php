@@ -168,10 +168,10 @@
                             <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
                             <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
                                 ${eq.core_temperatures?.map((temp, i) => `
-                                        <span class="badge bg-${temp > 75 ? 'danger' : (temp > 60 ? 'warning' : 'success')}-subtle text-${temp > 75 ? 'danger' : (temp > 60 ? 'warning' : 'success')} me-1 mb-1">
-                                            Core ${i + 1}: ${temp.toFixed(1)}°C
-                                        </span>
-                                    `).join('') || '<span class="text-muted">N/A</span>'}
+                                            <span class="badge bg-${temp > 75 ? 'danger' : (temp > 60 ? 'warning' : 'success')}-subtle text-${temp > 75 ? 'danger' : (temp > 60 ? 'warning' : 'success')} me-1 mb-1">
+                                                Core ${i + 1}: ${temp.toFixed(1)}°C
+                                            </span>
+                                        `).join('') || '<span class="text-muted">N/A</span>'}
                             </dd>
                         `;
                         modal.show();
