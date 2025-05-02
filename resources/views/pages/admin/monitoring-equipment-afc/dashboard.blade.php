@@ -103,6 +103,44 @@
                 <div class="modal-body">
                     <dl class="row small" id="equipment-details">
                         <!-- Data injected here -->
+                        <dt class="col-sm-4">Type</dt>
+                        <dd class="col-sm-8" id="modal-equipment-type"></dd>
+                        <dt class="col-sm-4">Station</dt>
+                        <dd class="col-sm-8" id="modal-station-code"></dd>
+                        <dt class="col-sm-4">Equipment</dt>
+                        <dd class="col-sm-8" id="modal-equipment-name"></dd>
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8" id="modal-status"></dd>
+                        <dt class="col-sm-4">Corner</dt>
+                        <dd class="col-sm-8" id="modal-corner-id"></dd>
+                        <dt class="col-sm-4">IP Address</dt>
+                        <dd class="col-sm-8" id="modal-ip-address"></dd>
+                        <dt class="col-sm-4">Uptime</dt>
+                        <dd class="col-sm-8" id="modal-uptime"></dd>
+
+                        <!-- Load Average -->
+                        <dt class="col-sm-4">Load Average (1m/5m/15m)</dt>
+                        <dd class="col-sm-8" id="modal-load-average"></dd>
+
+                        <!-- RAM Progress -->
+                        <dt class="col-sm-4">RAM</dt>
+                        <dd class="col-sm-8" id="modal-ram"></dd>
+                        <div class="progress mt-1" style="height: 3px;">
+                            <div id="modal-ram-progress" class="progress-bar" style="width: 0%"></div>
+                        </div>
+
+                        <!-- Disk Progress -->
+                        <dt class="col-sm-4">Disk</dt>
+                        <dd class="col-sm-8" id="modal-disk"></dd>
+                        <div class="progress mt-1" style="height: 3px;">
+                            <div id="modal-disk-progress" class="progress-bar" style="width: 0%"></div>
+                        </div>
+
+                        <!-- Other Details -->
+                        <dt class="col-sm-4">CPU Cores</dt>
+                        <dd class="col-sm-8" id="modal-cores"></dd>
+                        <dt class="col-sm-4">Core Temperatures</dt>
+                        <dd class="col-sm-8" id="modal-temperatures"></dd>
                     </dl>
                 </div>
             </div>
@@ -135,11 +173,11 @@
                 // Tooltip events
                 svgElement.addEventListener('mouseenter', function(e) {
                     tooltip.innerHTML = `
-            <strong>${eq.equipment_name}</strong><br>
-            IP: ${eq.ip}<br>
-            Status: ${eq.status}<br>
-            Uptime: ${eq.uptime}
-        `;
+                    <strong>${eq.equipment_name}</strong><br>
+                    IP: ${eq.ip}<br>
+                    Status: ${eq.status}<br>
+                    Uptime: ${eq.uptime}
+                `;
                     tooltip.style.display = 'block';
                 });
 
@@ -154,28 +192,56 @@
 
                 // Click event → show modal
                 svgElement.addEventListener('click', function(e) {
-                    modalDetails.innerHTML = `
-            <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
-            <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
-            <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
-            <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
-            <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
-            <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
-            <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
+                    // Modal content
+                    document.getElementById('modal-equipment-type').textContent = eq.equipment_type_code;
+                    document.getElementById('modal-station-code').textContent = eq.station_code;
+                    document.getElementById('modal-equipment-name').textContent = eq.equipment_name;
+                    document.getElementById('modal-status').innerHTML =
+                        `<span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span>`;
+                    document.getElementById('modal-corner-id').textContent = eq.corner_id ?? '-';
+                    document.getElementById('modal-ip-address').textContent = eq.ip;
+                    document.getElementById('modal-uptime').textContent = eq.uptime;
 
-            <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
-                ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
-                <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
-            </dd>
+                    // Load Average
+                    document.getElementById('modal-load-average').innerHTML = `
+                    ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}
+                    <br><span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
+                `;
 
-            <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
-            <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
-            <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
+                    // RAM Progress
+                    const ramUsed = eq.ram.used;
+                    const ramTotal = eq.ram.total;
+                    const ramPercent = eq.ram.percent || 0;
+                    document.getElementById('modal-ram').textContent = `${ramUsed} / ${ramTotal}`;
+                    document.getElementById('modal-ram-progress').style.width = `${ramPercent}%`;
+                    document.getElementById('modal-ram-progress').classList.remove('bg-danger',
+                        'bg-warning', 'bg-success');
+                    if (ramPercent > 90) document.getElementById('modal-ram-progress').classList.add(
+                        'bg-danger');
+                    else if (ramPercent > 70) document.getElementById('modal-ram-progress').classList.add(
+                        'bg-warning');
+                    else document.getElementById('modal-ram-progress').classList.add('bg-success');
 
-            <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
-                ${formatTemperatures(eq.core_temperatures)}
-            </dd>
-        `;
+                    // Disk Progress
+                    const diskUsed = eq.disk_root.used;
+                    const diskTotal = eq.disk_root.total;
+                    const diskPercent = eq.disk_root.percent || 0;
+                    document.getElementById('modal-disk').textContent = `${diskUsed} / ${diskTotal}`;
+                    document.getElementById('modal-disk-progress').style.width = `${diskPercent}%`;
+                    document.getElementById('modal-disk-progress').classList.remove('bg-danger',
+                        'bg-warning', 'bg-success');
+                    if (diskPercent > 90) document.getElementById('modal-disk-progress').classList.add(
+                        'bg-danger');
+                    else if (diskPercent > 70) document.getElementById('modal-disk-progress').classList.add(
+                        'bg-warning');
+                    else document.getElementById('modal-disk-progress').classList.add('bg-success');
+
+                    // CPU Cores and Temperatures
+                    document.getElementById('modal-cores').textContent = eq.cpu_cores;
+                    document.getElementById('modal-temperatures').innerHTML = formatTemperatures(eq
+                        .core_temperatures);
+
+                    // Show modal
                     modal.show();
                 });
             }
