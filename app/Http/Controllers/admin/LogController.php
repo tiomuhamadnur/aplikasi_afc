@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ConfigEquipmentAFC;
 use App\Models\ConfigPG;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,39 +13,33 @@ class LogController extends Controller
 {
     public function index()
     {
-        $station_id = null;
+        $pgs = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
         $pg_id = null;
-        $results = [];
-        $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
+        $results = collect();
 
-        return view('pages.admin.log.index', compact(['results', 'config_pg', 'station_id', 'pg_id']));
-    }
-
-    public function create()
-    {
-        //
+        return view('pages.admin.log.index', compact([
+            'pgs',
+            'pg_id',
+            'results',
+        ]));
     }
 
     public function store(Request $request)
     {
         // Validasi parameter
         $request->validate([
-            'station_id' => 'required|string',
             'pg_id' => 'required|string',
         ]);
 
-        $station_id = $request->station_id;
         $pg_id = $request->pg_id;
 
-        $config_pg = ConfigPG::where('station_id', $station_id)->firstOrFail();
-
-        $host = Str::beforeLast($config_pg->ip_address, '.') . '.' . $pg_id;
+        $pg = ConfigEquipmentAFC::findOrFail($pg_id);
 
         // Direktori + nama file
         $path = '/AG_AplData/Maintenance/8001.txt';
 
         $baseConfig = config('filesystems.disks.sftp');
-        $baseConfig['host'] = $host;
+        $baseConfig['host'] = $pg->ip_address;
         $disk = Storage::build($baseConfig);
 
         // Cek apakah file ada
@@ -83,8 +78,9 @@ class LogController extends Controller
             $description = implode(' ', $description_parts);
 
             $results[] = [
-                'station_code' => $config_pg->station_code,
-                'pg_id' => $pg_id,
+                'station_code' => $pg->station_code,
+                'equipment_type' => $pg->equipment_type_code,
+                'equipment_name' => $pg->equipment_name,
                 'date' => $date,
                 'time' => $time,
                 'error_code' => $error_code,
@@ -98,29 +94,12 @@ class LogController extends Controller
             return redirect()->route('log.index')->withNotifyerror('Data log tidak ditemukan');
         }
 
-        // Load config_pg buat dropdown atau kebutuhan tampilan
-        $config_pg = ConfigPG::orderBy('order', 'ASC')->get();
+        $pgs = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->get();
 
-        return view('pages.admin.log.index', compact(['results', 'config_pg', 'station_id', 'pg_id']));
-    }
-
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
-    }
-
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    public function destroy(string $id)
-    {
-        //
+        return view('pages.admin.log.index', compact([
+            'pgs',
+            'pg_id',
+            'results',
+        ]));
     }
 }

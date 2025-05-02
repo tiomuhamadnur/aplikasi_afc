@@ -42,7 +42,7 @@
                                             <td>{{ $item['date'] }}</td>
                                             <td>{{ $item['time'] }}</td>
                                             <td>{{ $item['station_code'] }}</td>
-                                            <td>{{ $item['pg_id'] }}</td>
+                                            <td>{{ $item['equipment_name'] }}</td>
                                             <td>{{ $item['error_code'] }}</td>
                                             <td>{{ $item['description'] }}</td>
                                             <td>
@@ -82,20 +82,15 @@
                         @csrf
                         @method('POST')
                         <div class="form-group">
-                            <label for="station_id" class="required">Station</label>
-                            <select class="form-control" name="station_id" id="station_id" required>
-                                <option value="" selected disabled>- select station -</option>
-                                @foreach ($config_pg as $item)
-                                    <option value="{{ $item->station_id }}" @selected($station_id == $item->station_id)>
-                                        {{ $item->station_code }}</option>
+                            <label for="pg_id" class="required">PG ID</label>
+                            <select class="tom-select-class" name="pg_id" id="pg_id" required>
+                                <option value="" selected disabled>- select PG -</option>
+                                @foreach ($pgs as $item)
+                                    <option value="{{ $item->id }}" @selected($item->id == $pg_id)>
+                                        {{ $item->station_code }} {{ $item->equipment_name }}
+                                    </option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="pg_id" class="required">PG ID</label>
-                            <input type="number" class="form-control" id="pg_id" name="pg_id"
-                                placeholder="input PG ID" autocomplete="off" min="1" value="{{ $pg_id }}"
-                                required>
                         </div>
                     </form>
                 </div>
