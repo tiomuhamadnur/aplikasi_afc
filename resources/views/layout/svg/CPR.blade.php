@@ -136,6 +136,10 @@
                 fill: #D2CDE6
             }
 
+            .standby {
+                fill: #8e8e8e
+            }
+
             .online {
                 fill: #00E600
             }
@@ -189,7 +193,7 @@
         <rect class="fil2 str0" x="-33" y="48" width="160000" height="90000" />
 
         <!-- /* CPR PG-121 */ -->
-        <path id="61" class="online str0"
+        <path id="61" class="standby str0"
             d="M10236 30476l31868 0c312,0 566,254 566,566l0 4868c0,311 -254,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-312 255,-566 566,-566z" />
         <text x="21138" y="34549" class="fil1 fnt1">PG-121</text>
         <path class="fil4 str1"
@@ -197,7 +201,7 @@
         <text x="22553" y="51659" class="fil1 fnt2">SFO</text>
 
         <!-- /* CPR PG-122 */ -->
-        <path id="62" class="online str0"
+        <path id="62" class="standby str0"
             d="M10236 66076l31868 0c312,0 566,255 566,566l0 4868c0,311 -254,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-311 255,-566 566,-566z" />
         <g id="_2648561891888">
             <path class="fil5 str0"
@@ -208,7 +212,7 @@
         <text x="21138" y="70150" class="fil1 fnt1">PG-122</text>
 
         <!-- /* CPR PG-123 */ -->
-        <path id="63" class="online str0"
+        <path id="63" class="standby str0"
             d="M10236 75512l31868 0c312,0 566,255 566,566l0 4868c0,311 -254,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-311 255,-566 566,-566z" />
         <g id="_2648561892016">
             <path class="fil5 str0"
@@ -229,7 +233,7 @@
         <rect class="fil7 str0" x="25513" y="82000" width="987" height="8048" />
 
         <!-- /* CPR PG-103 */ -->
-        <path id="60" class="online str0"
+        <path id="60" class="standby str0"
             d="M117896 30472l31868 0c311,0 566,254 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-312,0 -566,-255 -566,-566l0 -4868c0,-312 254,-566 566,-566z" />
         <g id="_2648561957840">
             <path class="fil5 str0"
@@ -248,7 +252,7 @@
         </g>
 
         <!-- /* CPR PG-102 */ -->
-        <path id="59" class="online str0"
+        <path id="59" class="standby str0"
             d="M117896 66072l31868 0c311,0 566,255 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-312,0 -566,-255 -566,-566l0 -4868c0,-311 254,-566 566,-566z" />
         <g id="_2648561955216">
             <path class="fil5 str0"
@@ -267,7 +271,7 @@
         </g>
 
         <!-- /* CPR PG-101 */ -->
-        <path id="58" class="online str0"
+        <path id="58" class="standby str0"
             d="M117896 75508l31868 0c311,0 566,255 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-312,0 -566,-255 -566,-566l0 -4868c0,-311 254,-566 566,-566z" />
         <g id="_2648561951088">
             <path class="fil5 str0"

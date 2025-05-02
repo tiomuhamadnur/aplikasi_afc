@@ -158,6 +158,10 @@
                 fill: #A0D9F6
             }
 
+            .standby {
+                fill: #8e8e8e
+            }
+
             .online {
                 fill: #00E600
             }
@@ -214,7 +218,7 @@
         </g>
 
         <!-- ASN PG-104 -->
-        <rect id="130" class="online str0" x="22147" y="22312" width="33000" height="6000" rx="917"
+        <rect id="130" class="standby str0" x="22147" y="22312" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559270720">
             <rect class="fil3 str0" x="23488" y="23375" width="6094" height="3798" rx="169" ry="358" />
@@ -229,7 +233,7 @@
         <text x="33616" y="26385" class="fil1 fnt1">PG-104</text>
 
         <!-- ASN PG-103 -->
-        <rect id="129" class="online str0" x="22147" y="29667" width="33000" height="6000" rx="917"
+        <rect id="129" class="standby str0" x="22147" y="29667" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559269440">
             <rect class="fil3 str0" x="23488" y="30730" width="6094" height="3798" rx="169"
@@ -240,7 +244,7 @@
         <text x="33616" y="33741" class="fil1 fnt1">PG-103</text>
 
         <!-- ASN PG-106 -->
-        <rect id="132" class="online str0" x="22147" y="36933" width="33000" height="6000" rx="917"
+        <rect id="132" class="standby str0" x="22147" y="36933" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559264512">
             <rect class="fil3 str0" x="23488" y="37996" width="6094" height="3798" rx="169"
@@ -251,7 +255,7 @@
         <text x="33616" y="41006" class="fil1 fnt1">PG-106</text>
 
         <!-- ASN PG-102 -->
-        <rect id="128" class="online str0" x="9000" y="74234" width="33000" height="6000" rx="917"
+        <rect id="128" class="standby str0" x="9000" y="74234" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559255040">
             <rect class="fil3 str0" x="34590" y="75420" width="6094" height="3798" rx="169"
@@ -262,7 +266,7 @@
         <text x="20468" y="78308" class="fil1 fnt1">PG-102</text>
 
         <!-- ASN PG-105 -->
-        <rect id="131" class="online str0" x="9000" y="81500" width="33000" height="6000" rx="917"
+        <rect id="131" class="standby str0" x="9000" y="81500" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559260448">
             <rect class="fil3 str0" x="10340" y="82563" width="6094" height="3798" rx="169"

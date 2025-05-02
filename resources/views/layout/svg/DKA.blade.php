@@ -151,6 +151,10 @@
                 fill: #D2CDE6
             }
 
+            .standby {
+                fill: #8e8e8e
+            }
+
             .online {
                 fill: #00E600
             }
@@ -201,7 +205,7 @@
         </g>
 
         <!-- DKA PG-106 -->
-        <rect id="222" class="online str0" x="117310" y="23926" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="222" class="standby str0" x="117310" y="23926" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554846768">
             <rect class="fil3 str0" x="118650" y="24989" width="6094" height="3798" rx="169" ry="358" />
             <path class="fil4 str0"
@@ -210,7 +214,7 @@
         <text x="128778" y="27999" class="fil1 fnt1">PG-106</text>
 
         <!-- DKA PG-105 -->
-        <rect id="221" class="online str0" x="117310" y="31192" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="221" class="standby str0" x="117310" y="31192" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554844880">
             <rect class="fil3 str0" x="118650" y="32255" width="6094" height="3798" rx="169"
                 ry="358" />
@@ -220,7 +224,7 @@
         <text x="128778" y="35265" class="fil1 fnt1">PG-105</text>
 
         <!-- DKA PG-104 -->
-        <rect id="220" class="online str0" x="117310" y="38547" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="220" class="standby str0" x="117310" y="38547" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554844528">
             <rect class="fil3 str0" x="118650" y="39610" width="6094" height="3798" rx="169"
                 ry="358" />
@@ -233,7 +237,7 @@
         <text x="130192" y="55242" class="fil1 fnt2">SFO</text>
 
         <!-- DKA PG-103 -->
-        <rect id="219" class="online str0" x="117310" y="62786" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="219" class="standby str0" x="117310" y="62786" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554911248">
             <rect class="fil3 str0" x="118650" y="63849" width="6094" height="3798" rx="169"
                 ry="358" />
@@ -249,7 +253,7 @@
         <text x="128778" y="66859" class="fil1 fnt1">PG-103</text>
 
         <!-- DKA PG-102 -->
-        <rect id="218" class="online str0" x="117310" y="70051" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="218" class="standby str0" x="117310" y="70051" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554909168">
             <rect class="fil3 str0" x="142833" y="71114" width="6094" height="3798" rx="169"
                 ry="358" />
@@ -268,7 +272,7 @@
         <rect class="fil6 str0" x="-33" y="48" width="160000" height="90000" />
 
         <!-- DKA PG-123 -->
-        <path id="225" class="online str0"
+        <path id="225" class="standby str0"
             d="M10066 62387l31868 0c311,0 566,255 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-311 255,-566 566,-566z" />
         <g id="_2648554904176">
             <path class="fil3 str0"
@@ -287,7 +291,7 @@
         </g>
 
         <!-- DKA PG-122 -->
-        <path id="224" class="online str0"
+        <path id="224" class="standby str0"
             d="M10066 69653l31868 0c311,0 566,254 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-312 255,-566 566,-566z" />
         <g id="_2648554901904">
             <path class="fil3 str0"
@@ -300,7 +304,7 @@
         </g>
 
         <!-- DKA PG-121 -->
-        <path id="223" class="online str0"
+        <path id="223" class="standby str0"
             d="M10066 76946l31868 0c311,0 566,254 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-312 255,-566 566,-566z" />
         <g transform="matrix(1 0 0 1 -59031.9 36019.2)">
             <text x="80000" y="45000" class="fil1 fnt1">PG-121</text>
@@ -333,7 +337,7 @@
         </g>
 
         <!-- DKA PG-125 -->
-        <rect id="227" class="online str0" x="117310" y="9500" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="227" class="standby str0" x="117310" y="9500" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554882512">
             <rect class="fil3 str0" x="118650" y="10563" width="6094" height="3798" rx="169"
                 ry="358" />
@@ -343,7 +347,7 @@
         <text x="128778" y="13574" class="fil1 fnt1">PG-125</text>
 
         <!-- DKA PG-124 -->
-        <rect id="226" class="online str0" x="117310" y="16766" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="226" class="standby str0" x="117310" y="16766" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554878256">
             <rect class="fil3 str0" x="118650" y="17829" width="6094" height="3798" rx="169"
                 ry="358" />
@@ -353,7 +357,7 @@
         <text x="128778" y="20839" class="fil1 fnt1">PG-124</text>
 
         <!-- DKA PG-127 -->
-        <rect id="229" class="online str0" transform="matrix(2.42937E-014 -0.91728 0.565952 1.4989E-014 72869.6 84986.6)"
+        <rect id="229" class="standby str0" transform="matrix(2.42937E-014 -0.91728 0.565952 1.4989E-014 72869.6 84986.6)"
             width="35976" height="10602" rx="1000" ry="1000" />
         <g id="_2648554875248">
             <rect class="fil3 str0" transform="matrix(4.48612E-015 -0.169386 0.358216 9.48719E-015 73932.8 83646.5)"
@@ -372,7 +376,7 @@
         </g>
 
         <!-- DKA PG-126 -->
-        <rect id="228" class="online str0" transform="matrix(2.42937E-014 -0.91728 0.565952 1.4989E-014 80135.5 84986.6)"
+        <rect id="228" class="standby str0" transform="matrix(2.42937E-014 -0.91728 0.565952 1.4989E-014 80135.5 84986.6)"
             width="35976" height="10602" rx="1000" ry="1000" />
         <g id="_2648554869232">
             <rect class="fil3 str0" transform="matrix(-4.48612E-015 0.169386 0.358216 9.48719E-015 81198.6 53369.5)"
@@ -391,7 +395,7 @@
         </g>
 
         <!-- DKA PG-101 -->
-        <rect id="217" class="online str0" x="117310" y="77252" width="33000" height="6000" rx="917" ry="566" />
+        <rect id="217" class="standby str0" x="117310" y="77252" width="33000" height="6000" rx="917" ry="566" />
         <g id="_2648554868528">
             <rect class="fil3 str0" x="142833" y="78315" width="6094" height="3798" rx="169"
                 ry="358" />

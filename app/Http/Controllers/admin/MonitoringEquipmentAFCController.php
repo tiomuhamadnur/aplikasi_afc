@@ -507,7 +507,7 @@ class MonitoringEquipmentAFCController extends Controller
             $equipments,
             env('SSH_PG_USERNAME'),
             env('SSH_PG_PASSWORD'),
-            true, // Include temperature check
+            true,
         );
 
         return view('pages.admin.monitoring-equipment-afc.dashboard', [

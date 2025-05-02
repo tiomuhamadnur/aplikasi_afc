@@ -165,6 +165,10 @@
                 fill: #A0D9F6
             }
 
+            .standby {
+                fill: #8e8e8e
+            }
+
             .online {
                 fill: #00E600
             }
@@ -221,7 +225,7 @@
         </g>
 
         <!-- BLM PG-101 -->
-        <rect id="103" class="online str0" x="9557" y="16963" width="33000" height="6000" rx="917"
+        <rect id="103" class="standby str0" x="9557" y="16963" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559314432">
             <rect class="fil3 str0" x="10897" y="18026" width="6094" height="3798" rx="169" ry="358" />
@@ -231,7 +235,7 @@
         <text x="21025" y="21036" class="fil1 fnt1">PG-101</text>
 
         <!-- BLM PG-102 -->
-        <rect id="104" class="online str0" x="9557" y="24318" width="33000" height="6000" rx="917"
+        <rect id="104" class="standby str0" x="9557" y="24318" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559313792">
             <rect class="fil3 str0" x="10897" y="25381" width="6094" height="3798" rx="169"
@@ -248,7 +252,7 @@
         <text x="21025" y="28392" class="fil1 fnt1">PG-102</text>
 
         <!-- BLM PG-127 -->
-        <rect id="115" class="online str0" x="9557" y="31584" width="33000" height="6000" rx="917"
+        <rect id="115" class="standby str0" x="9557" y="31584" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559312672">
             <rect class="fil3 str0" x="10897" y="32647" width="6094" height="3798" rx="169"
@@ -265,7 +269,7 @@
         <text x="21025" y="35658" class="fil1 fnt1">PG-127</text>
 
         <!-- BLM PG-126 -->
-        <rect id="114" class="online str0" x="9557" y="38939" width="33000" height="6000" rx="917"
+        <rect id="114" class="standby str0" x="9557" y="38939" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559310912">
             <rect class="fil3 str0" x="10897" y="40003" width="6094" height="3798" rx="169"
@@ -276,7 +280,7 @@
         <text x="21025" y="43013" class="fil1 fnt1">PG-126</text>
 
         <!-- BLM PG-125 -->
-        <rect id="113" class="online str0" x="9557" y="56787" width="33000" height="6000" rx="917"
+        <rect id="113" class="standby str0" x="9557" y="56787" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559308384">
             <rect class="fil3 str0" x="10897" y="57850" width="6094" height="3798" rx="169"
@@ -287,7 +291,7 @@
         <text x="21025" y="60861" class="fil1 fnt1">PG-125</text>
 
         <!-- BLM PG-124 -->
-        <rect id="112" class="online str0" x="9557" y="64053" width="33000" height="6000" rx="917"
+        <rect id="112" class="standby str0" x="9557" y="64053" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559307104">
             <rect class="fil3 str0" x="10897" y="65116" width="6094" height="3798" rx="169"
@@ -298,7 +302,7 @@
         <text x="21025" y="68126" class="fil1 fnt1">PG-124</text>
 
         <!-- BLM PG-123 -->
-        <rect id="111" class="online str0" x="9557" y="71408" width="33000" height="6000" rx="917"
+        <rect id="111" class="standby str0" x="9557" y="71408" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559303072">
             <rect class="fil3 str0" x="10897" y="72471" width="6094" height="3798" rx="169"
@@ -320,7 +324,7 @@
         <rect class="fil6 str0" x="-33" y="48" width="160000" height="90000" />
 
         <!-- BLM PG-121 -->
-        <rect id="109" class="online str0" x="118079" y="1335" width="33000" height="6000" rx="917"
+        <rect id="109" class="standby str0" x="118079" y="1335" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559300960">
             <rect class="fil3 str0" x="119419" y="2398" width="6094" height="3798" rx="169"
@@ -331,7 +335,7 @@
         <text x="129547" y="5408" class="fil1 fnt1">PG-121</text>
 
         <!-- BLM PG-122 -->
-        <rect id="110" class="online str0" x="118079" y="8690" width="33000" height="6000" rx="917"
+        <rect id="110" class="standby str0" x="118079" y="8690" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559300768">
             <rect class="fil3 str0" x="119419" y="9753" width="6094" height="3798" rx="169"
@@ -348,7 +352,7 @@
         <text x="129547" y="12764" class="fil1 fnt1">PG-122</text>
 
         <!-- BLM PG-107 -->
-        <rect id="108" class="online str0" x="118079" y="26471" width="33000" height="6000" rx="917"
+        <rect id="108" class="standby str0" x="118079" y="26471" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683211913072">
             <rect class="fil3 str0" x="119419" y="27534" width="6094" height="3798" rx="169"
@@ -359,7 +363,7 @@
         <text x="129547" y="30545" class="fil1 fnt1">PG-107</text>
 
         <!-- BLM PG-105 -->
-        <rect id="106" class="online str0" x="118079" y="33827" width="33000" height="6000" rx="917"
+        <rect id="106" class="standby str0" x="118079" y="33827" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683211910352">
             <rect class="fil3 str0" x="119419" y="34890" width="6094" height="3798" rx="169"
@@ -370,7 +374,7 @@
         <text x="129547" y="37900" class="fil1 fnt1">PG-105</text>
 
         <!-- BLM PG-103 -->
-        <rect id="105" class="online str0" x="118079" y="57143" width="33000" height="6000" rx="917"
+        <rect id="105" class="standby str0" x="118079" y="57143" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683211908048">
             <rect class="fil3 str0" x="119419" y="58207" width="6094" height="3798" rx="169"
@@ -381,7 +385,7 @@
         <text x="129547" y="61217" class="fil1 fnt1">PG-103</text>
 
         <!-- BLM PG-106 -->
-        <rect id="107" class="online str0" x="118079" y="64409" width="33000" height="6000" rx="917"
+        <rect id="107" class="standby str0" x="118079" y="64409" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683211908368">
             <rect class="fil3 str0" x="119419" y="65472" width="6094" height="3798" rx="169"
@@ -392,7 +396,7 @@
         <text x="129547" y="68483" class="fil1 fnt1">PG-106</text>
 
         <!-- BLM PG-128 -->
-        <rect id="116" class="online str0" x="118079" y="71765" width="33000" height="6000" rx="917"
+        <rect id="116" class="standby str0" x="118079" y="71765" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683211976208">
             <rect class="fil3 str0" x="119419" y="72828" width="6094" height="3798" rx="169"

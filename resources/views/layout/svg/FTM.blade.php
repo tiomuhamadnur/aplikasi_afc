@@ -149,6 +149,10 @@
                 fill: #F4B5D0
             }
 
+            .standby {
+                fill: #8e8e8e
+            }
+
             .online {
                 fill: #00E600
             }
@@ -203,12 +207,12 @@
         </g>
 
         <!-- /* FTM PG-124 */ -->
-        <rect id="41" class="online str0" x="9500" y="60850" width="33000" height="6000" rx="917"
+        <rect id="41" class="standby str0" x="9500" y="60850" width="33000" height="6000" rx="917"
             ry="566" />
         <text x="20968" y="64924" class="fil1 fnt1">PG-124</text>
 
         <!-- /* FTM PG-123 */ -->
-        <rect id="40" class="online str0" x="9500" y="68205" width="33000" height="6000" rx="917"
+        <rect id="40" class="standby str0" x="9500" y="68205" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648503470320">
             <rect class="fil3 str0" x="35023" y="69269" width="6094" height="3798" rx="169" ry="358" />
@@ -218,7 +222,7 @@
         <text x="20968" y="72279" class="fil1 fnt1">PG-123</text>
 
         <!-- /* FTM PG-122 */ -->
-        <rect id="39" class="online str0" x="9500" y="75471" width="33000" height="6000" rx="917"
+        <rect id="39" class="standby str0" x="9500" y="75471" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648503467952">
             <rect class="fil3 str0" x="10840" y="76534" width="6094" height="3798" rx="169"
@@ -235,7 +239,7 @@
         <text x="20968" y="79545" class="fil1 fnt1">PG-122</text>
 
         <!-- /* FTM PG-121 */ -->
-        <rect id="38" class="online str0" x="9500" y="82827" width="33000" height="6000" rx="917"
+        <rect id="38" class="standby str0" x="9500" y="82827" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648503495664">
             <rect class="fil3 str0" x="10840" y="83890" width="6094" height="3798" rx="169"
@@ -246,7 +250,7 @@
         <text x="20968" y="86900" class="fil1 fnt1">PG-121</text>
 
         <!-- /* FTM PG-127 */ -->
-        <rect id="44" class="online str0" x="9500" y="22879" width="33000" height="6000" rx="917"
+        <rect id="44" class="standby str0" x="9500" y="22879" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648503493424">
             <rect class="fil3 str0" x="10840" y="23942" width="6094" height="3798" rx="169"
@@ -257,7 +261,7 @@
         <text x="20968" y="26952" class="fil1 fnt1">PG-127</text>
 
         <!-- /* FTM PG-126 */ -->
-        <rect id="43" class="online str0" x="9500" y="30145" width="33000" height="6000" rx="917"
+        <rect id="43" class="standby str0" x="9500" y="30145" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648553881552">
             <rect class="fil3 str0" x="10840" y="31208" width="6094" height="3798" rx="169"
@@ -268,7 +272,7 @@
         <text x="20968" y="34218" class="fil1 fnt1">PG-126</text>
 
         <!-- /* FTM PG-125 */ -->
-        <rect id="42" class="online str0" x="9500" y="37500" width="33000" height="6000" rx="917"
+        <rect id="42" class="standby str0" x="9500" y="37500" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648553877008">
             <rect class="fil3 str0" x="10840" y="38563" width="6094" height="3798" rx="169"
@@ -288,7 +292,7 @@
         </g>
 
         <!-- /* FTM PG-107 */ -->
-        <rect id="37" class="online str0" x="117310" y="1299" width="33000" height="6000" rx="917"
+        <rect id="37" class="standby str0" x="117310" y="1299" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648553867440">
             <rect class="fil3 str0" x="118650" y="2362" width="6094" height="3798" rx="169"
@@ -299,7 +303,7 @@
         <text x="128778" y="5373" class="fil1 fnt1">PG-107</text>
 
         <!-- /* FTM PG-106 */ -->
-        <rect id="36" class="online str0" x="117310" y="8655" width="33000" height="6000" rx="917"
+        <rect id="36" class="standby str0" x="117310" y="8655" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648553860624">
             <rect class="fil3 str0" x="118650" y="9718" width="6094" height="3798" rx="169"
@@ -316,7 +320,7 @@
         <text x="128778" y="12728" class="fil1 fnt1">PG-106</text>
 
         <!-- /* FTM PG-105 */ -->
-        <rect id="35" class="online str0" x="117310" y="15920" width="33000" height="6000" rx="917"
+        <rect id="35" class="standby str0" x="117310" y="15920" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648553853104">
             <rect class="fil3 str0" x="118650" y="16983" width="6094" height="3798" rx="169"
@@ -327,7 +331,7 @@
         <text x="128778" y="19994" class="fil1 fnt1">PG-105</text>
 
         <!-- /* FTM PG-104 */ -->
-        <rect id="34" class="online str0" x="117310" y="23276" width="33000" height="6000" rx="917"
+        <rect id="34" class="standby str0" x="117310" y="23276" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648553845776">
             <rect class="fil3 str0" x="118650" y="24339" width="6094" height="3798" rx="169"
@@ -342,7 +346,7 @@
         <text x="130192" y="42119" class="fil1 fnt2">SFO</text>
 
         <!-- /* FTM PG-103 */ -->
-        <rect id="33" class="online str0" x="117310" y="52271" width="33000" height="6000" rx="917"
+        <rect id="33" class="standby str0" x="117310" y="52271" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559181600">
             <rect class="fil3 str0" x="118650" y="53334" width="6094" height="3798" rx="169"
@@ -359,7 +363,7 @@
         <text x="128778" y="56344" class="fil1 fnt1">PG-103</text>
 
         <!-- /* FTM PG-102 */ -->
-        <rect id="32" class="online str0" x="117310" y="59536" width="33000" height="6000" rx="917"
+        <rect id="32" class="standby str0" x="117310" y="59536" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2648559177824">
             <rect class="fil3 str0" x="142833" y="60599" width="6094" height="3798" rx="169"
@@ -370,7 +374,7 @@
         <text x="128778" y="63610" class="fil1 fnt1">PG-102</text>
 
         <!-- /* FTM PG-101 */ -->
-        <rect id="31" class="online str0" x="117310" y="66892" width="33000" height="6000" rx="917"
+        <rect id="31" class="standby str0" x="117310" y="66892" width="33000" height="6000" rx="917"
             ry="566" />
         <text x="128778" y="70965" class="fil1 fnt1">PG-101</text>
 
