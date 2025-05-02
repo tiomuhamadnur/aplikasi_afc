@@ -125,16 +125,8 @@
                         <!-- RAM Progress -->
                         <dt class="col-sm-4">RAM</dt>
                         <dd class="col-sm-8" id="modal-ram"></dd>
-                        <div class="progress mt-1" style="height: 3px;">
-                            <div id="modal-ram-progress" class="progress-bar" style="width: 0%"></div>
-                        </div>
-
-                        <!-- Disk Progress -->
                         <dt class="col-sm-4">Disk</dt>
                         <dd class="col-sm-8" id="modal-disk"></dd>
-                        <div class="progress mt-1" style="height: 3px;">
-                            <div id="modal-disk-progress" class="progress-bar" style="width: 0%"></div>
-                        </div>
 
                         <!-- Other Details -->
                         <dt class="col-sm-4">CPU Cores</dt>
@@ -208,33 +200,41 @@
                     <br><span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
                 `;
 
-                    // RAM Progress
+                    // RAM - Calculate Percentage and Update Color
                     const ramUsed = eq.ram.used;
                     const ramTotal = eq.ram.total;
-                    const ramPercent = eq.ram.percent || 0;
-                    document.getElementById('modal-ram').textContent = `${ramUsed} / ${ramTotal}`;
-                    document.getElementById('modal-ram-progress').style.width = `${ramPercent}%`;
-                    document.getElementById('modal-ram-progress').classList.remove('bg-danger',
-                        'bg-warning', 'bg-success');
-                    if (ramPercent > 90) document.getElementById('modal-ram-progress').classList.add(
-                        'bg-danger');
-                    else if (ramPercent > 70) document.getElementById('modal-ram-progress').classList.add(
-                        'bg-warning');
-                    else document.getElementById('modal-ram-progress').classList.add('bg-success');
+                    const ramPercent = ((ramUsed / ramTotal) * 100).toFixed(1); // Calculate percentage
+                    document.getElementById('modal-ram').textContent =
+                        `${formatBytes(ramUsed)} / ${formatBytes(ramTotal)} (${ramPercent}%)`;
+                    const ramElement = document.getElementById('modal-ram');
+                    if (ramPercent > 70) {
+                        ramElement.classList.add('text-danger');
+                        ramElement.classList.remove('text-warning', 'text-success');
+                    } else if (ramPercent > 50) {
+                        ramElement.classList.add('text-warning');
+                        ramElement.classList.remove('text-danger', 'text-success');
+                    } else {
+                        ramElement.classList.add('text-success');
+                        ramElement.classList.remove('text-warning', 'text-danger');
+                    }
 
-                    // Disk Progress
+                    // Disk - Calculate Percentage and Update Color
                     const diskUsed = eq.disk_root.used;
                     const diskTotal = eq.disk_root.total;
-                    const diskPercent = eq.disk_root.percent || 0;
-                    document.getElementById('modal-disk').textContent = `${diskUsed} / ${diskTotal}`;
-                    document.getElementById('modal-disk-progress').style.width = `${diskPercent}%`;
-                    document.getElementById('modal-disk-progress').classList.remove('bg-danger',
-                        'bg-warning', 'bg-success');
-                    if (diskPercent > 90) document.getElementById('modal-disk-progress').classList.add(
-                        'bg-danger');
-                    else if (diskPercent > 70) document.getElementById('modal-disk-progress').classList.add(
-                        'bg-warning');
-                    else document.getElementById('modal-disk-progress').classList.add('bg-success');
+                    const diskPercent = ((diskUsed / diskTotal) * 100).toFixed(1); // Calculate percentage
+                    document.getElementById('modal-disk').textContent =
+                        `${formatBytes(diskUsed)} / ${formatBytes(diskTotal)} (${diskPercent}%)`;
+                    const diskElement = document.getElementById('modal-disk');
+                    if (diskPercent > 70) {
+                        diskElement.classList.add('text-danger');
+                        diskElement.classList.remove('text-warning', 'text-success');
+                    } else if (diskPercent > 50) {
+                        diskElement.classList.add('text-warning');
+                        diskElement.classList.remove('text-danger', 'text-success');
+                    } else {
+                        diskElement.classList.add('text-success');
+                        diskElement.classList.remove('text-warning', 'text-danger');
+                    }
 
                     // CPU Cores and Temperatures
                     document.getElementById('modal-cores').textContent = eq.cpu_cores;
@@ -270,6 +270,14 @@
 
                     return `<span class="badge bg-${color}-subtle text-${color} me-1 mb-1">Core ${index + 1}: ${val.toFixed(1)}°C</span>`;
                 }).join(' ');
+            }
+
+            // Helper function to format bytes into human-readable format (e.g. 162M, 1.9G)
+            function formatBytes(bytes) {
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                if (bytes === 0) return '0 B';
+                const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
             }
         });
     </script>
