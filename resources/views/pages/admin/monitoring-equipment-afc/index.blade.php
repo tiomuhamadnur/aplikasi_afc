@@ -67,7 +67,7 @@
                                             <td>{{ $item['equipment_type_code'] }}</td>
                                             <td>
                                                 @if ($item['equipment_type_code'] == 'PG')
-                                                    <a class="fw-bolder text-black"
+                                                    <a class="fw-bolder text-primary"
                                                         href="{{ route('monitoring-equipment-afc.dashboard', ['station_code' => $item['station_code']]) }}"
                                                         target="_blank">
                                                         {{ $item['station_code'] }}

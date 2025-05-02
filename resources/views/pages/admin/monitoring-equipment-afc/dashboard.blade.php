@@ -26,23 +26,18 @@
 @section('javascript')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Dapatkan semua elemen rect dengan id dari 4 sampai 17
-            for (let i = 4; i <= 17; i++) {
-                const rect = document.getElementById(i.toString());
-                if (rect) {
-                    // Tambahkan event listener untuk setiap rect
-                    rect.addEventListener('click', function() {
-                        // Toggle antara class online dan offline
-                        if (this.classList.contains('online')) {
-                            this.classList.remove('online');
-                            this.classList.add('offline');
-                        } else {
-                            this.classList.remove('offline');
-                            this.classList.add('online');
-                        }
-                    });
+            const equipments = @json($results);
+
+            equipments.forEach(eq => {
+                const svgElement = document.getElementById(eq.id);
+                if (svgElement) {
+                    // Hapus class 'online' dan 'offline' dulu
+                    svgElement.classList.remove('online', 'offline');
+
+                    // Tambah class sesuai status
+                    svgElement.classList.add(eq.status);
                 }
-            }
+            });
         });
     </script>
 @endsection

@@ -156,7 +156,7 @@ class MonitoringEquipmentAFCController extends Controller
                 $parsed = $this->parseCombinedOutput($sshOutput, $checkTemp);
 
                 $results[$ip] = [
-                    'scu_id' => $eq->id,
+                    'id' => $eq->id,
                     'station_code' => $eq->station_code,
                     'equipment_type_code' => $eq->equipment_type_code,
                     'equipment_name' => $eq->equipment_name,
@@ -489,13 +489,30 @@ class MonitoringEquipmentAFCController extends Controller
     public function dashboard(Request $request)
     {
         $request->validate([
-            'station_code' => 'nullable'
+            'station_code' => 'required'
         ]);
 
         $station_code = $request->station_code;
 
-        return view('pages.admin.monitoring-equipment-afc.dashboard', compact([
-            'station_code'
-        ]));
+        $equipments = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_PG)
+            ->where('station_code', $station_code)
+            ->get();
+
+        if(!$equipments)
+        {
+            return redirect()->back()->withNotifyerror('Data PG tidak ditemukan');
+        }
+
+        $results = $this->checkEquipmentStatusParallel(
+            $equipments,
+            env('SSH_PG_USERNAME'),
+            env('SSH_PG_PASSWORD'),
+            true, // Include temperature check
+        );
+
+        return view('pages.admin.monitoring-equipment-afc.dashboard', [
+            'station_code' => $station_code,
+            'results' => $results,
+        ]);
     }
 }
