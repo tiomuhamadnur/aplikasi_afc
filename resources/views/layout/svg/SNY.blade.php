@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1600mm" height="900mm" version="1.1"
     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-    viewBox="0 0 160000 90000" xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+    viewBox="0 0 160000 90000" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
         <style type="text/css">
             .str0 {
