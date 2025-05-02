@@ -193,7 +193,7 @@
         </g>
 
         <!-- BHI PG-105 -->
-        <rect id="243" class="standby str0" x="117310" y="28000" width="33000" height="6000" rx="917"
+        <rect id="243" class="offline str0" x="117310" y="28000" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683220845856">
             <rect class="fil3 str0" x="118650" y="29063" width="6094" height="3798" rx="169" ry="358" />
@@ -208,7 +208,7 @@
         <text x="128778" y="32074" class="fil1 fnt1">PG-105</text>
 
         <!-- BHI PG-104 -->
-        <rect id="242" class="standby str0" x="117310" y="35266" width="33000" height="6000" rx="917"
+        <rect id="242" class="offline str0" x="117310" y="35266" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683220844160">
             <rect class="fil3 str0" x="118650" y="36329" width="6094" height="3798" rx="169"
@@ -219,7 +219,7 @@
         <text x="128778" y="39339" class="fil1 fnt1">PG-104</text>
 
         <!-- BHI PG-103 -->
-        <rect id="241" class="standby str0" x="117310" y="42621" width="33000" height="6000" rx="917"
+        <rect id="241" class="offline str0" x="117310" y="42621" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683220844608">
             <rect class="fil3 str0" x="118650" y="43684" width="6094" height="3798" rx="169"
@@ -233,7 +233,7 @@
         <text x="130192" y="63781" class="fil1 fnt2">SFO</text>
 
         <!-- BHI PG-121 -->
-        <rect id="244" class="standby str0" x="117310" y="75199" width="33000" height="6000" rx="917"
+        <rect id="244" class="offline str0" x="117310" y="75199" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683220842560">
             <rect class="fil3 str0" x="118650" y="76262" width="6094" height="3798" rx="169"
@@ -250,7 +250,7 @@
         <text x="128778" y="79273" class="fil1 fnt1">PG-121</text>
 
         <!-- BHI PG-101 -->
-        <rect id="239" class="standby str0" x="117310" y="82465" width="33000" height="6000" rx="917"
+        <rect id="239" class="offline str0" x="117310" y="82465" width="33000" height="6000" rx="917"
             ry="566" />
         <g id="_2683220839744">
             <rect class="fil3 str0" x="142833" y="83528" width="6094" height="3798" rx="169"
@@ -270,7 +270,7 @@
         <rect class="fil6 str0" x="-33" y="48" width="160000" height="90000" />
 
         <!-- BHI PG-125 -->
-        <path id="248" class="standby str0"
+        <path id="248" class="offline str0"
             d="M10066 27145l31868 0c311,0 566,254 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-312 255,-566 566,-566z" />
         <g id="_2683220836032">
             <path class="fil3 str0"
@@ -283,7 +283,7 @@
         </g>
 
         <!-- BHI PG-124 -->
-        <path id="247" class="standby str0"
+        <path id="247" class="offline str0"
             d="M10066 34500l31868 0c311,0 566,255 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-311 255,-566 566,-566z" />
         <g transform="matrix(1 0 0 1 -59031.9 -6426.5)">
             <text x="80000" y="45000" class="fil1 fnt1">PG-124</text>
@@ -296,7 +296,7 @@
         </g>
 
         <!-- BHI PG-123 -->
-        <path id="246" class="standby str0"
+        <path id="246" class="offline str0"
             d="M10066 67078l31868 0c311,0 566,254 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-312 255,-566 566,-566z" />
         <g id="_2683220830624">
             <path class="fil3 str0"
@@ -315,7 +315,7 @@
         </g>
 
         <!-- BHI PG-122 -->
-        <path id="245" class="standby str0"
+        <path id="245" class="offline str0"
             d="M10066 74344l31868 0c311,0 566,254 566,566l0 4868c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4868c0,-312 255,-566 566,-566z" />
         <g id="_2683220830336">
             <path class="fil3 str0"
@@ -334,7 +334,7 @@
         </g>
 
         <!-- BHI PG-102 -->
-        <path id="240" class="standby str0"
+        <path id="240" class="offline str0"
             d="M10066 81637l31868 0c311,0 566,254 566,565l0 4869c0,311 -255,566 -566,566l-31868 0c-311,0 -566,-255 -566,-566l0 -4869c0,-311 255,-565 566,-565z" />
         <g id="_2683220827296">
             <path class="fil3 str0"
