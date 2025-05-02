@@ -66,9 +66,15 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['equipment_type_code'] }}</td>
                                             <td>
-                                                <a class="fw-bolder text-black" href="{{ route('monitoring-equipment-afc.dashboard', ['station_code' => $item['station_code']]) }}" target="_blank">
+                                                @if ($item['equipment_type_code'] == 'PG')
+                                                    <a class="fw-bolder text-black"
+                                                        href="{{ route('monitoring-equipment-afc.dashboard', ['station_code' => $item['station_code']]) }}"
+                                                        target="_blank">
+                                                        {{ $item['station_code'] }}
+                                                    </a>
+                                                @else
                                                     {{ $item['station_code'] }}
-                                                </a>
+                                                @endif
                                             </td>
                                             <td>{{ $item['equipment_name'] }}</td>
                                             <td>
@@ -289,14 +295,14 @@
 @endsection
 
 @section('javascript')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-    function exportExcel() {
-        var table = document.getElementById('myTable');
-        var wb = XLSX.utils.table_to_book(table, {
-            sheet: "Data"
-        });
-        XLSX.writeFile(wb, 'monitoring_equipment_afc.xlsx');
-    }
-</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        function exportExcel() {
+            var table = document.getElementById('myTable');
+            var wb = XLSX.utils.table_to_book(table, {
+                sheet: "Data"
+            });
+            XLSX.writeFile(wb, 'monitoring_equipment_afc.xlsx');
+        }
+    </script>
 @endsection
