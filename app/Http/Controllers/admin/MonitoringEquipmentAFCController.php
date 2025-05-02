@@ -182,7 +182,14 @@ class MonitoringEquipmentAFCController extends Controller
             }
         }
 
-        return array_values($results);
+        // return array_values($results);
+
+        // Sort offline duluan (offline = prioritas tinggi)
+        $sortedResults = collect($results)->sortBy(function ($item) {
+                            return $item['status'] === 'offline' ? 0 : 1;
+                        })->values()->all();
+
+        return $sortedResults;
     }
 
     protected function parseCombinedOutput(string $output, bool $checkTemp): array
@@ -477,5 +484,18 @@ class MonitoringEquipmentAFCController extends Controller
             $enter . $enter . $enter . $enter;
 
         return $message;
+    }
+
+    public function dashboard(Request $request)
+    {
+        $request->validate([
+            'station_code' => 'nullable'
+        ]);
+
+        $station_code = $request->station_code;
+
+        return view('pages.admin.monitoring-equipment-afc.dashboard', compact([
+            'station_code'
+        ]));
     }
 }

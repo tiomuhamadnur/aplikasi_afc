@@ -43,9 +43,9 @@
                                         <th rowspan="2">Type</th>
                                         <th rowspan="2">Station</th>
                                         <th rowspan="2">Equipment</th>
+                                        <th rowspan="2">Status</th>
                                         <th rowspan="2">Corner</th>
                                         <th rowspan="2">IP Address</th>
-                                        <th rowspan="2">Status</th>
                                         <th rowspan="2">Uptime</th>
                                         <th colspan="4">Load Average</th>
                                         <th rowspan="2">RAM</th>
@@ -65,18 +65,20 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['equipment_type_code'] }}</td>
-                                            <td>{{ $item['station_code'] }}</td>
+                                            <td>
+                                                <a class="fw-bolder text-black" href="{{ route('monitoring-equipment-afc.dashboard', ['station_code' => $item['station_code']]) }}" target="_blank">
+                                                    {{ $item['station_code'] }}
+                                                </a>
+                                            </td>
                                             <td>{{ $item['equipment_name'] }}</td>
-                                            <td>{{ $item['corner_id'] }}</td>
-                                            <td class="font-monospace">{{ $item['ip'] }}</td>
-
                                             <td>
                                                 <span
                                                     class="badge bg-{{ $item['status'] === 'online' ? 'success' : 'danger' }}">
                                                     {{ ucfirst($item['status']) }}
                                                 </span>
                                             </td>
-
+                                            <td>{{ $item['corner_id'] }}</td>
+                                            <td class="font-monospace">{{ $item['ip'] }}</td>
                                             <td>{{ $item['uptime'] }}</td>
 
                                             <td>{{ number_format($item['load_average']['1m'], 2) }}</td>
