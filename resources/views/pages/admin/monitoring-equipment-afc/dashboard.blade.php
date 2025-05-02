@@ -103,7 +103,7 @@
                 const svgElement = document.getElementById(eq.id);
                 if (svgElement) {
                     // Update class status
-                    svgElement.classList.remove('online', 'offline');
+                    svgElement.classList.remove('online', 'offline', 'standby');
                     svgElement.classList.add(eq.status);
 
                     // Tooltip events
