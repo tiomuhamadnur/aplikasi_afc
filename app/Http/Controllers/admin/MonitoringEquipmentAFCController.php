@@ -510,8 +510,11 @@ class MonitoringEquipmentAFCController extends Controller
             true,
         );
 
+        $stations = ConfigEquipmentAFC::where('equipment_type_code', self::EQUIPMENT_TYPE_SCU)->get();
+
         return view('pages.admin.monitoring-equipment-afc.dashboard', [
             'station_code' => $station_code,
+            'stations' => $stations,
             'results' => $results,
         ]);
     }

@@ -144,10 +144,6 @@
                 fill: #00E600
             }
 
-            .offline {
-                fill: #ff4040
-            }
-
             .fil5 {
                 fill: #332C2B;
                 fill-rule: nonzero

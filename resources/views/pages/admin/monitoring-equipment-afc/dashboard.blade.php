@@ -8,11 +8,50 @@
             height: auto;
             max-width: 100%;
         }
+
+        /* Warna dasar offline */
+        .offline {
+            fill: #ff4040;
+            animation: blinkOffline 1s infinite;
+        }
+
+        /* Animasi blinking */
+        @keyframes blinkOffline {
+            0%,
+            100% {
+                fill: #ff4040;
+            }
+
+            50% {
+                fill: #ffcccc;
+            }
+        }
     </style>
 @endsection
 
 @section('content')
     <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12 mb-1">
+                <form action="{{ route('monitoring-equipment-afc.dashboard') }}" method="GET">
+                    @method('GET')
+                    @csrf
+                    <div class="d-flex justify-content-end align-items-center gap-2">
+                        <select class="tom-select-class w-auto" name="station_code" id="station_code">
+                            <option value="">- select station -</option>
+                            @foreach ($stations as $item)
+                                <option value="{{ $item->station_code }}" @selected($item->station_code == $station_code)>
+                                    {{ $item->station_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button type="submit" class="btn btn-gradient-primary text-white" title="Submit">
+                            <i class="mdi mdi-magnify"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12 stretch-card grid-margin">
                 <div class="svg-container">
