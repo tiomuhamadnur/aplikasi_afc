@@ -3,41 +3,59 @@
 @section('title-head')
     <title>Dashboard Equipment AFC</title>
     <style>
+        /* --- SVG Container Sizing --- */
         .svg-container svg {
             width: 100%;
             height: auto;
             max-width: 100%;
         }
 
-        /* Status classes */
+        /* --- Equipment Status Colors --- */
         .svg-container svg .online {
             fill: #00E600 !important;
+            /* Green */
         }
 
         .svg-container svg .standby {
             fill: #8e8e8e !important;
+            /* Grey */
         }
 
         .svg-container svg .offline {
+            fill: #ff4040 !important;
+            /* Red */
             animation: blinkOffline 1s infinite;
+            /* Smooth transition (optional) */
+            transition: filter 0.3s;
         }
 
-        /* Offline blinking animation — !important hanya di .offline, bukan di keyframes */
+        /* --- Blinking Animation for Offline (uses brightness filter) --- */
         @keyframes blinkOffline {
 
             0%,
             100% {
-                fill: #ff4040;
+                filter: brightness(100%);
             }
 
             50% {
-                fill: #ffcccc;
+                filter: brightness(150%);
             }
         }
 
-        /* Force first frame of offline to red (biar nggak delay animasi) */
-        .svg-container svg .offline {
-            fill: #ff4040 !important;
+        /* --- Tooltip styling (optional, dari kode kamu tadi sekalian saya rapikan) --- */
+        #equipment-tooltip {
+            position: absolute;
+            display: none;
+            background: rgba(51, 51, 51, 0.95);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 9999;
+            max-width: 250px;
+            white-space: normal;
+            word-break: break-word;
         }
     </style>
 @endsection
@@ -69,16 +87,7 @@
             <div class="col-md-12 stretch-card grid-margin">
                 <div class="svg-container">
                     @include('layout.svg.' . ($station_code ?? 'default'))
-                    <div id="equipment-tooltip"
-                        style="position: absolute;
-                        display: none;
-                        background: rgba(51, 51, 51, 0.95);
-                        color: #fff;
-                        padding: 6px 10px;
-                        border-radius: 6px;
-                        font-size: 13px;
-                        pointer-events: none;
-                        z-index: 9999;">
+                    <div id="equipment-tooltip" class="equipment-tooltip">
                     </div>
                 </div>
             </div>
