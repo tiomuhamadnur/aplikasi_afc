@@ -8,24 +8,6 @@
             height: auto;
             max-width: 100%;
         }
-
-        /* Warna dasar offline */
-        .offline {
-            fill: #ff4040;
-            animation: blinkOffline 1s infinite;
-        }
-
-        /* Animasi blinking */
-        @keyframes blinkOffline {
-            0%,
-            100% {
-                fill: #ff4040;
-            }
-
-            50% {
-                fill: #ffcccc;
-            }
-        }
     </style>
 @endsection
 

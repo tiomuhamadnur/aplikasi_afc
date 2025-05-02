@@ -151,6 +151,23 @@
                 fill: #00E600
             }
 
+            .offline {
+                fill: #ff4040;
+                animation: blinkOffline 1s infinite;
+            }
+
+            @keyframes blinkOffline {
+
+                0%,
+                100% {
+                    fill: #ff4040;
+                }
+
+                50% {
+                    fill: #ffcccc;
+                }
+            }
+
             .fil4 {
                 fill: #332C2B;
                 fill-rule: nonzero
