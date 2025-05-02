@@ -3,44 +3,50 @@
 @section('title-head')
     <title>Dashboard Equipment AFC</title>
     <style>
+        /* Container and SVG Base Styles */
+        .svg-container {
+            position: relative;
+            width: 100%;
+            height: auto;
+        }
+
         .svg-container svg {
             width: 100%;
             height: auto;
             max-width: 100%;
         }
 
-        /* Status classes */
+        /* Status Classes */
         .svg-container svg .online {
             fill: #00E600 !important;
+            pointer-events: all;
         }
 
         .svg-container svg .standby {
             fill: #8e8e8e !important;
+            pointer-events: all;
         }
 
         .svg-container svg .offline {
             fill: #ff4040 !important;
             animation: blinkOffline 1s infinite;
             pointer-events: all;
-            /* Ensure the SVG is still clickable and hoverable */
-            z-index: 10;
-            /* Ensure the SVG stays on top of other content */
         }
 
-        /* Blink animation using FILTER (safe for SVG fill) */
+        /* Safer Animation (No Filter) */
         @keyframes blinkOffline {
 
             0%,
             100% {
-                filter: brightness(1);
+                opacity: 1;
             }
 
             50% {
-                filter: brightness(3.5);
+                opacity: 0.5;
             }
         }
 
-        /* Tooltip styling */
+        /* Tooltip Styling */
         #equipment-tooltip {
             position: absolute;
             display: none;
@@ -53,7 +59,6 @@
             z-index: 9999;
             max-width: 250px;
             white-space: normal;
-            word-break: break-word;
         }
     </style>
 @endsection
@@ -85,14 +90,13 @@
             <div class="col-md-12 stretch-card grid-margin">
                 <div class="svg-container">
                     @include('layout.svg.' . ($station_code ?? 'default'))
-                    <div id="equipment-tooltip" class="equipment-tooltip">
-                    </div>
+                    <div id="equipment-tooltip"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Detail Equipment -->
+    <!-- Modal -->
     <div class="modal fade" id="equipmentModal" tabindex="-1" aria-labelledby="equipmentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
@@ -101,14 +105,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <dl class="row small" id="equipment-details">
-                        <!-- Data injected here -->
-                    </dl>
+                    <dl class="row small" id="equipment-details"></dl>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Modal Detail Equipment -->
 @endsection
 
 @section('javascript')
@@ -122,84 +123,61 @@
             equipments.forEach(eq => {
                 const svgElement = document.getElementById(eq.id);
                 if (svgElement) {
-                    // Update class status
+                    // Set status class
                     svgElement.classList.remove('online', 'offline', 'standby');
                     svgElement.classList.add(eq.status);
 
                     // Tooltip events
-                    svgElement.addEventListener('mouseenter', function(e) {
+                    svgElement.addEventListener('mouseenter', (e) => {
                         tooltip.innerHTML = `
-                        <strong>${eq.equipment_name}</strong><br>
-                        IP: ${eq.ip}<br>
-                        Status: ${eq.status}<br>
-                        Uptime: ${eq.uptime}
-                    `;
+                            <strong>${eq.equipment_name}</strong><br>
+                            IP: ${eq.ip}<br>
+                            Status: ${eq.status}<br>
+                            Uptime: ${eq.uptime}
+                        `;
                         tooltip.style.display = 'block';
                     });
 
-                    svgElement.addEventListener('mousemove', function(e) {
-                        tooltip.style.left = (e.pageX + 15) + 'px';
-                        tooltip.style.top = (e.pageY + 15) + 'px';
+                    svgElement.addEventListener('mousemove', (e) => {
+                        tooltip.style.left = `${e.pageX + 15}px`;
+                        tooltip.style.top = `${e.pageY + 15}px`;
                     });
 
-                    svgElement.addEventListener('mouseleave', function(e) {
+                    svgElement.addEventListener('mouseleave', () => {
                         tooltip.style.display = 'none';
                     });
 
                     // Click event → show modal
-                    svgElement.addEventListener('click', function(e) {
+                    svgElement.addEventListener('click', () => {
                         modalDetails.innerHTML = `
-                        <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
-                        <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
-                        <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
-                        <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
-                        <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
-                        <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
-                        <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
-
-                        <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
-                            ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
-                            <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
-                        </dd>
-
-                        <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
-                        <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
-                        <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
-
-                        <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
-                            ${formatTemperatures(eq.core_temperatures)}
-                        </dd>
-                    `;
+                            <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
+                            <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
+                            <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
+                            <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
+                            <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
+                            <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
+                            <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
+                            <dt class="col-sm-4">Load Average</dt><dd class="col-sm-8">
+                                ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
+                                <span class="badge bg-${eq.load_average.status === 'normal' ? 'success' : (eq.load_average.status === 'busy' ? 'warning' : 'danger')}">
+                                    ${eq.load_average.status}
+                                </span>
+                            </dd>
+                            <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
+                            <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
+                            <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
+                            <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
+                                ${eq.core_temperatures?.map((temp, i) => `
+                                        <span class="badge bg-${temp > 75 ? 'danger' : (temp > 60 ? 'warning' : 'success')}-subtle text-${temp > 75 ? 'danger' : (temp > 60 ? 'warning' : 'success')} me-1 mb-1">
+                                            Core ${i + 1}: ${temp.toFixed(1)}°C
+                                        </span>
+                                    `).join('') || '<span class="text-muted">N/A</span>'}
+                            </dd>
+                        `;
                         modal.show();
                     });
                 }
             });
-
-            function loadStatusColor(status) {
-                switch (status) {
-                    case 'normal':
-                        return 'success';
-                    case 'busy':
-                        return 'warning';
-                    default:
-                        return 'danger';
-                }
-            }
-
-            function formatTemperatures(temps) {
-                if (!temps || temps.length === 0) {
-                    return '<span class="text-muted">N/A</span>';
-                }
-
-                return temps.map((temp, index) => {
-                    const val = parseFloat(temp);
-                    let color = 'success';
-                    if (val > 75) color = 'danger';
-                    else if (val > 60) color = 'warning';
-
-                    return `<span class="badge bg-${color}-subtle text-${color} me-1 mb-1">Core ${index + 1}: ${val.toFixed(1)}°C</span>`;
-                }).join(' ');
-            }
         });
     </script>
 @endsection
