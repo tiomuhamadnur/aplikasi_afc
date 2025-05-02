@@ -33,7 +33,7 @@
             }
 
             50% {
-                filter: brightness(2.5);
+                filter: brightness(4);
             }
         }
 
