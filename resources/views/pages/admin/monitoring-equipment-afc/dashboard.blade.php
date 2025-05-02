@@ -22,27 +22,27 @@
         }
 
         .svg-container svg .offline {
+            animation: blinkOffline 0.7s infinite;
             fill: #ff4040 !important;
-            /* Red */
-            animation: blinkOffline 1s infinite;
-            /* Smooth transition (optional) */
-            transition: filter 0.3s;
+            /* Red base */
         }
 
-        /* --- Blinking Animation for Offline (uses brightness filter) --- */
+        /* --- Blinking Animation for Offline (Red ↔ White hard contrast) --- */
         @keyframes blinkOffline {
 
             0%,
             100% {
-                filter: brightness(100%);
+                fill: #ff4040;
+                /* Red */
             }
 
             50% {
-                filter: brightness(150%);
+                fill: #ffffff;
+                /* White */
             }
         }
 
-        /* --- Tooltip styling (optional, dari kode kamu tadi sekalian saya rapikan) --- */
+        /* --- Tooltip styling (optional, rapi) --- */
         #equipment-tooltip {
             position: absolute;
             display: none;
