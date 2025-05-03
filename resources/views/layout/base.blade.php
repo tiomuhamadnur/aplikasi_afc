@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/loading/corner-indicator.css') }}">
 
     <!-- Build CSS -->
     <link rel="stylesheet" href="{{ asset('build/assets/build-css1.css') }}">
@@ -55,6 +55,7 @@
             justify-content: flex-end !important;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
 </head>
 
 <body>
@@ -77,6 +78,8 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
+
+    @include('layout.components.overlay')
 
 
     {{-- Script --}}
