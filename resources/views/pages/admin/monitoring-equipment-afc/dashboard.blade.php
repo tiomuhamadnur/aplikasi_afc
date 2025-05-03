@@ -166,29 +166,29 @@
                     <form id="powerOffForm" action="#" method="POST" class="forms-sample">
                         @csrf
                         @method('POST')
-                        <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="uuid" id="uuid_off">
                         <input type="hidden" name="control_type" value="off">
                         <div class="form-group">
                             <label for="station_code">Station</label>
-                            <input type="text" class="form-control" id="station_code_edit" name="station_code" disabled>
+                            <input type="text" class="form-control" id="station_code_off" name="station_code" disabled>
                         </div>
                         <div class="form-group">
                             <label for="equipment_type_code">Equipment Type</label>
-                            <input type="text" class="form-control" id="equipment_type_code_edit"
+                            <input type="text" class="form-control" id="equipment_type_code_off"
                                 name="equipment_type_code" disabled>
                         </div>
                         <div class="form-group">
                             <label for="equipment_name">Equipment Name</label>
-                            <input type="text" class="form-control" id="equipment_name_edit" name="equipment_name"
+                            <input type="text" class="form-control" id="equipment_name_off" name="equipment_name"
                                 disabled>
                         </div>
                         <div class="form-group">
                             <label for="corner_id">Corner</label>
-                            <input type="text" class="form-control" id="corner_id_edit" name="corner_id" disabled>
+                            <input type="text" class="form-control" id="corner_id_off" name="corner_id" disabled>
                         </div>
                         <div class="form-group">
                             <label for="direction">Direction</label>
-                            <input type="text" class="form-control" id="direction_edit" name="direction" disabled>
+                            <input type="text" class="form-control" id="direction_off" name="direction" disabled>
                         </div>
                     </form>
                 </div>
@@ -213,29 +213,29 @@
                     <form id="rebootForm" action="#" method="POST" class="forms-sample">
                         @csrf
                         @method('POST')
-                        <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="uuid" id="uuid_reboot">
                         <input type="hidden" name="control_type" value="reboot">
                         <div class="form-group">
                             <label for="station_code">Station</label>
-                            <input type="text" class="form-control" id="station_code_edit" name="station_code" disabled>
+                            <input type="text" class="form-control" id="station_code_reboot" name="station_code" disabled>
                         </div>
                         <div class="form-group">
                             <label for="equipment_type_code">Equipment Type</label>
-                            <input type="text" class="form-control" id="equipment_type_code_edit"
+                            <input type="text" class="form-control" id="equipment_type_code_reboot"
                                 name="equipment_type_code" disabled>
                         </div>
                         <div class="form-group">
                             <label for="equipment_name">Equipment Name</label>
-                            <input type="text" class="form-control" id="equipment_name_edit" name="equipment_name"
+                            <input type="text" class="form-control" id="equipment_name_reboot" name="equipment_name"
                                 disabled>
                         </div>
                         <div class="form-group">
                             <label for="corner_id">Corner</label>
-                            <input type="text" class="form-control" id="corner_id_edit" name="corner_id" disabled>
+                            <input type="text" class="form-control" id="corner_id_reboot" name="corner_id" disabled>
                         </div>
                         <div class="form-group">
                             <label for="direction">Direction</label>
-                            <input type="text" class="form-control" id="direction_edit" name="direction" disabled>
+                            <input type="text" class="form-control" id="direction_reboot" name="direction" disabled>
                         </div>
                     </form>
                 </div>
@@ -392,12 +392,12 @@
                 var corner_id = $(e.relatedTarget).data('corner_id');
                 var direction = $(e.relatedTarget).data('direction');
 
-                $('#uuid_edit').val(uuid);
-                $('#station_code_edit').val(station_code);
-                $('#equipment_type_code_edit').val(equipment_type_code);
-                $('#equipment_name_edit').val(equipment_name);
-                $('#corner_id_edit').val(corner_id);
-                $('#direction_edit').val(direction);
+                $('#uuid_reboot').val(uuid);
+                $('#station_code_reboot').val(station_code);
+                $('#equipment_type_code_reboot').val(equipment_type_code);
+                $('#equipment_name_reboot').val(equipment_name);
+                $('#corner_id_reboot').val(corner_id);
+                $('#direction_reboot').val(direction);
             });
 
             $('#powerOffModal').on('show.bs.modal', function(e) {
@@ -408,12 +408,12 @@
                 var corner_id = $(e.relatedTarget).data('corner_id');
                 var direction = $(e.relatedTarget).data('direction');
 
-                $('#uuid_edit').val(uuid);
-                $('#station_code_edit').val(station_code);
-                $('#equipment_type_code_edit').val(equipment_type_code);
-                $('#equipment_name_edit').val(equipment_name);
-                $('#corner_id_edit').val(corner_id);
-                $('#direction_edit').val(direction);
+                $('#uuid_off').val(uuid);
+                $('#station_code_off').val(station_code);
+                $('#equipment_type_code_off').val(equipment_type_code);
+                $('#equipment_name_off').val(equipment_name);
+                $('#corner_id_off').val(corner_id);
+                $('#direction_off').val(direction);
             });
         });
     </script>
