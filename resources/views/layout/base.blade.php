@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-header.png') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/loading/corner-indicator.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/loading/barber-shop.css') }}">
 
     <!-- Build CSS -->
     <link rel="stylesheet" href="{{ asset('build/assets/build-css1.css') }}">
@@ -77,8 +77,6 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
-
-    @include('layout.components.overlay')
 
 
     {{-- Script --}}
