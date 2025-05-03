@@ -307,7 +307,7 @@
                         <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
                             ${formatTemperatures(eq.core_temperatures)}
                         </dd>
-                        <br class="my-2">
+                        <hr class="my-3">
                         <dt class="col-sm-4">Power On</dt><dd class="col-sm-8">
                             <button type="button" title="Power ON"
                                 class="btn btn-gradient-success btn-rounded btn-icon"
