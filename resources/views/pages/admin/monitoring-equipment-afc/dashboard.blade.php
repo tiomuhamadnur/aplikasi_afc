@@ -116,10 +116,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="controlPGForm" action="#" method="POST" class="forms-sample">
+                    <form id="powerOnForm" action="#" method="POST" class="forms-sample">
                         @csrf
                         @method('POST')
                         <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="control_type" value="on">
                         <div class="form-group">
                             <label for="station_code">Station</label>
                             <input type="text" class="form-control" id="station_code_edit" name="station_code" disabled>
@@ -135,8 +136,51 @@
                                 disabled>
                         </div>
                         <div class="form-group">
-                            <label for="equipment_id">Equipment ID</label>
-                            <input type="text" class="form-control" id="equipment_id_edit" name="equipment_id" disabled>
+                            <label for="corner_id">Corner</label>
+                            <input type="text" class="form-control" id="corner_id_edit" name="corner_id" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="direction">Direction</label>
+                            <input type="text" class="form-control" id="direction_edit" name="direction" disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="powerOnForm" class="btn btn-gradient-success me-2">Power On</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Power ON Modal -->
+
+    <!-- Power OFF Modal -->
+    <div class="modal fade" id="powerOffModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Power Off Confirmation?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="powerOffForm" action="#" method="POST" class="forms-sample">
+                        @csrf
+                        @method('POST')
+                        <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="control_type" value="off">
+                        <div class="form-group">
+                            <label for="station_code">Station</label>
+                            <input type="text" class="form-control" id="station_code_edit" name="station_code" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment_type_code">Equipment Type</label>
+                            <input type="text" class="form-control" id="equipment_type_code_edit"
+                                name="equipment_type_code" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment_name">Equipment Name</label>
+                            <input type="text" class="form-control" id="equipment_name_edit" name="equipment_name"
+                                disabled>
                         </div>
                         <div class="form-group">
                             <label for="corner_id">Corner</label>
@@ -150,12 +194,59 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="controlPGForm" class="btn btn-gradient-success me-2">Power On</button>
+                    <button type="submit" form="powerOffForm" class="btn btn-gradient-danger me-2">Power Off</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Power ON Modal -->
+    <!-- End Power OFF Modal -->
+
+    <!-- Reboot Modal -->
+    <div class="modal fade" id="rebootModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Reboot Confirmation?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="rebootForm" action="#" method="POST" class="forms-sample">
+                        @csrf
+                        @method('POST')
+                        <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="control_type" value="reboot">
+                        <div class="form-group">
+                            <label for="station_code">Station</label>
+                            <input type="text" class="form-control" id="station_code_edit" name="station_code" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment_type_code">Equipment Type</label>
+                            <input type="text" class="form-control" id="equipment_type_code_edit"
+                                name="equipment_type_code" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment_name">Equipment Name</label>
+                            <input type="text" class="form-control" id="equipment_name_edit" name="equipment_name"
+                                disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="corner_id">Corner</label>
+                            <input type="text" class="form-control" id="corner_id_edit" name="corner_id" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="direction">Direction</label>
+                            <input type="text" class="form-control" id="direction_edit" name="direction" disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="rebootForm" class="btn btn-gradient-warning me-2">Reboot</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Reboot Modal -->
 @endsection
 
 @section('javascript')
@@ -221,7 +312,7 @@
                             <button type="button" title="Power ON"
                                 class="btn btn-gradient-success btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#powerOnModal"
-                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-equipment_id="${eq.equipment_id}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
+                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
                                 <i class="mdi mdi-power"></i>
                             </button>
                         </dd>
@@ -229,15 +320,15 @@
                             <button type="button" title="Reboot"
                                 class="btn btn-gradient-warning btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#rebootModal"
-                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-equipment_id="${eq.equipment_id}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
-                                <i class="mdi mdi-power"></i>
+                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
+                                <i class="mdi mdi-reload"></i>
                             </button>
                         </dd>
                         <dt class="col-sm-4">Power Off</dt><dd class="col-sm-8">
                             <button type="button" title="Power Off"
                                 class="btn btn-gradient-danger btn-rounded btn-icon"
                                 data-bs-toggle="modal" data-bs-target="#powerOffModal"
-                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-equipment_id="${eq.equipment_id}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
+                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
                                 <i class="mdi mdi-power"></i>
                             </button>
                         </dd>
@@ -282,7 +373,6 @@
                 var station_code = $(e.relatedTarget).data('station_code');
                 var equipment_type_code = $(e.relatedTarget).data('equipment_type_code');
                 var equipment_name = $(e.relatedTarget).data('equipment_name');
-                var equipment_id = $(e.relatedTarget).data('equipment_id');
                 var corner_id = $(e.relatedTarget).data('corner_id');
                 var direction = $(e.relatedTarget).data('direction');
 
@@ -290,7 +380,38 @@
                 $('#station_code_edit').val(station_code);
                 $('#equipment_type_code_edit').val(equipment_type_code);
                 $('#equipment_name_edit').val(equipment_name);
-                $('#equipment_id_edit').val(equipment_id);
+                $('#corner_id_edit').val(corner_id);
+                $('#direction_edit').val(direction);
+            });
+
+            $('#rebootModal').on('show.bs.modal', function(e) {
+                var uuid = $(e.relatedTarget).data('uuid');
+                var station_code = $(e.relatedTarget).data('station_code');
+                var equipment_type_code = $(e.relatedTarget).data('equipment_type_code');
+                var equipment_name = $(e.relatedTarget).data('equipment_name');
+                var corner_id = $(e.relatedTarget).data('corner_id');
+                var direction = $(e.relatedTarget).data('direction');
+
+                $('#uuid_edit').val(uuid);
+                $('#station_code_edit').val(station_code);
+                $('#equipment_type_code_edit').val(equipment_type_code);
+                $('#equipment_name_edit').val(equipment_name);
+                $('#corner_id_edit').val(corner_id);
+                $('#direction_edit').val(direction);
+            });
+
+            $('#powerOffModal').on('show.bs.modal', function(e) {
+                var uuid = $(e.relatedTarget).data('uuid');
+                var station_code = $(e.relatedTarget).data('station_code');
+                var equipment_type_code = $(e.relatedTarget).data('equipment_type_code');
+                var equipment_name = $(e.relatedTarget).data('equipment_name');
+                var corner_id = $(e.relatedTarget).data('corner_id');
+                var direction = $(e.relatedTarget).data('direction');
+
+                $('#uuid_edit').val(uuid);
+                $('#station_code_edit').val(station_code);
+                $('#equipment_type_code_edit').val(equipment_type_code);
+                $('#equipment_name_edit').val(equipment_name);
                 $('#corner_id_edit').val(corner_id);
                 $('#direction_edit').val(direction);
             });
