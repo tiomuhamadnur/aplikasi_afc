@@ -116,7 +116,7 @@
                         class="forms-sample">
                         @csrf
                         @method('POST')
-                        <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="uuid[]" id="uuid_edit">
                         <div class="form-group">
                             <label for="station_code">Station</label>
                             <input type="text" class="form-control" id="station_code_edit" name="station_code"

@@ -116,10 +116,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="powerOnForm" action="#" method="POST" class="forms-sample">
+                    <form id="powerOnForm" action="{{ route('config-equipment-afc.control-pg') }}" method="POST"
+                        class="forms-sample">
                         @csrf
                         @method('POST')
-                        <input type="hidden" name="uuid" id="uuid_edit">
+                        <input type="hidden" name="uuid[]" id="uuid_edit">
                         <input type="hidden" name="control_type" value="on">
                         <div class="form-group">
                             <label for="station_code">Station</label>
@@ -163,14 +164,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="powerOffForm" action="#" method="POST" class="forms-sample">
+                    <form id="powerOffForm" action="{{ route('config-equipment-afc.control-pg') }}" method="POST"
+                        class="forms-sample">
                         @csrf
                         @method('POST')
-                        <input type="hidden" name="uuid" id="uuid_off">
+                        <input type="hidden" name="uuid[]" id="uuid_off">
                         <input type="hidden" name="control_type" value="off">
                         <div class="form-group">
                             <label for="station_code">Station</label>
-                            <input type="text" class="form-control" id="station_code_off" name="station_code" disabled>
+                            <input type="text" class="form-control" id="station_code_off" name="station_code"
+                                disabled>
                         </div>
                         <div class="form-group">
                             <label for="equipment_type_code">Equipment Type</label>
@@ -210,14 +213,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="rebootForm" action="#" method="POST" class="forms-sample">
+                    <form id="rebootForm" action="{{ route('config-equipment-afc.control-pg') }}" method="POST"
+                        class="forms-sample">
                         @csrf
                         @method('POST')
-                        <input type="hidden" name="uuid" id="uuid_reboot">
+                        <input type="hidden" name="uuid[]" id="uuid_reboot">
                         <input type="hidden" name="control_type" value="reboot">
                         <div class="form-group">
                             <label for="station_code">Station</label>
-                            <input type="text" class="form-control" id="station_code_reboot" name="station_code" disabled>
+                            <input type="text" class="form-control" id="station_code_reboot" name="station_code"
+                                disabled>
                         </div>
                         <div class="form-group">
                             <label for="equipment_type_code">Equipment Type</label>
@@ -287,52 +292,57 @@
                     // Click event → show modal
                     svgElement.addEventListener('click', function(e) {
                         modalDetails.innerHTML = `
-                        <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
-                        <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
-                        <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
-                        <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
-                        <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
-                        <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
-                        <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
+                            <dt class="col-sm-4">Type</dt><dd class="col-sm-8">${eq.equipment_type_code}</dd>
+                            <dt class="col-sm-4">Station</dt><dd class="col-sm-8">${eq.station_code}</dd>
+                            <dt class="col-sm-4">Equipment</dt><dd class="col-sm-8">${eq.equipment_name}</dd>
+                            <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-${eq.status === 'online' ? 'success' : 'danger'}">${eq.status}</span></dd>
+                            <dt class="col-sm-4">Corner</dt><dd class="col-sm-8">${eq.corner_id ?? '-'}</dd>
+                            <dt class="col-sm-4">IP Address</dt><dd class="col-sm-8">${eq.ip}</dd>
+                            <dt class="col-sm-4">Uptime</dt><dd class="col-sm-8">${eq.uptime}</dd>
 
-                        <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
-                            ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
-                            <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
-                        </dd>
+                            <dt class="col-sm-4">Load Average (1m/5m/15m)</dt><dd class="col-sm-8">
+                                ${eq.load_average['1m'].toFixed(2)} / ${eq.load_average['5m'].toFixed(2)} / ${eq.load_average['15m'].toFixed(2)}<br>
+                                <span class="badge bg-${loadStatusColor(eq.load_average.status)}">${eq.load_average.status}</span>
+                            </dd>
 
-                        <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
-                        <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
-                        <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
+                            <dt class="col-sm-4">RAM</dt><dd class="col-sm-8">${eq.ram.used} / ${eq.ram.total}</dd>
+                            <dt class="col-sm-4">Disk</dt><dd class="col-sm-8">${eq.disk_root.used} / ${eq.disk_root.total}</dd>
+                            <dt class="col-sm-4">CPU Cores</dt><dd class="col-sm-8">${eq.cpu_cores}</dd>
 
-                        <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
-                            ${formatTemperatures(eq.core_temperatures)}
-                        </dd>
-                        <hr class="my-3">
-                        <dt class="col-sm-4">Power On</dt><dd class="col-sm-8">
-                            <button type="button" title="Power ON"
-                                class="btn btn-gradient-success btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#powerOnModal"
-                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
-                                <i class="mdi mdi-power"></i>
-                            </button>
-                        </dd>
-                        <dt class="col-sm-4">Reboot</dt><dd class="col-sm-8">
-                            <button type="button" title="Reboot"
-                                class="btn btn-gradient-warning btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#rebootModal"
-                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
-                                <i class="mdi mdi-reload"></i>
-                            </button>
-                        </dd>
-                        <dt class="col-sm-4">Power Off</dt><dd class="col-sm-8">
-                            <button type="button" title="Power Off"
-                                class="btn btn-gradient-danger btn-rounded btn-icon"
-                                data-bs-toggle="modal" data-bs-target="#powerOffModal"
-                                data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
-                                <i class="mdi mdi-power"></i>
-                            </button>
-                        </dd>
-                    `;
+                            <dt class="col-sm-4">Core Temperatures</dt><dd class="col-sm-8">
+                                ${formatTemperatures(eq.core_temperatures)}
+                            </dd>
+
+                            <hr class="my-3">
+
+                            ${eq.status === 'online' ? `
+                                    <dt class="col-sm-4">Reboot</dt><dd class="col-sm-8">
+                                        <button type="button" title="Reboot"
+                                            class="btn btn-gradient-warning btn-rounded btn-icon"
+                                            data-bs-toggle="modal" data-bs-target="#rebootModal"
+                                            data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
+                                            <i class="mdi mdi-reload"></i>
+                                        </button>
+                                    </dd>
+                                    <dt class="col-sm-4">Power Off</dt><dd class="col-sm-8">
+                                        <button type="button" title="Power Off"
+                                            class="btn btn-gradient-danger btn-rounded btn-icon"
+                                            data-bs-toggle="modal" data-bs-target="#powerOffModal"
+                                            data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
+                                            <i class="mdi mdi-power"></i>
+                                        </button>
+                                    </dd>
+                                ` : `
+                                    <dt class="col-sm-4">Power On</dt><dd class="col-sm-8">
+                                        <button type="button" title="Power ON"
+                                            class="btn btn-gradient-success btn-rounded btn-icon"
+                                            data-bs-toggle="modal" data-bs-target="#powerOnModal"
+                                            data-id="${eq.id}" data-uuid="${eq.uuid}" data-station_code="${eq.station_code}" data-equipment_type_code="${eq.equipment_type_code}" data-equipment_name="${eq.equipment_name}" data-corner_id="${eq.corner_id}" data-direction="${eq.direction}">
+                                            <i class="mdi mdi-power"></i>
+                                        </button>
+                                    </dd>
+                                `}
+                        `;
                         modal.show();
                     });
                 }

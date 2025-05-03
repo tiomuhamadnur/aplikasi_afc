@@ -157,6 +157,7 @@ class MonitoringEquipmentAFCController extends Controller
 
                 $results[$ip] = [
                     'id' => $eq->id,
+                    'uuid' => $eq->uuid,
                     'station_code' => $eq->station_code,
                     'equipment_type_code' => $eq->equipment_type_code,
                     'equipment_name' => $eq->equipment_name,
@@ -225,6 +226,7 @@ class MonitoringEquipmentAFCController extends Controller
     {
         return [
             'id' => $eq->id,
+            'uuid' => $eq->uuid,
             'station_code' => $eq->station_code,
             'equipment_type_code' => $eq->equipment_type_code,
             'equipment_name' => $eq->equipment_name,

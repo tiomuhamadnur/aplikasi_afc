@@ -5,6 +5,8 @@ namespace App\Http\Controllers\admin;
 use App\DataTables\ConfigEquipmentAFCDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Process;
 use Spatie\Ssh\Ssh;
@@ -33,67 +35,59 @@ class ConfigEquipmentAFCController extends Controller
             ->render('pages.admin.config-equipment-afc.index', compact(['station_codes', 'equipment_type_codes', 'corner_ids', 'directions', 'station_code', 'equipment_type_code', 'corner_id', 'direction']));
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
     public function control_pg(Request $request)
     {
         $request->validate([
-            'uuid' => 'required|string',
+            'uuid' => 'required|array',
             'control_type' => 'required|string|in:on,off,reboot',
         ]);
 
-        $uuid = $request->uuid;
+        $pgs_uuid = $request->uuid;
         $control_type = $request->control_type;
 
-        $pg = ConfigEquipmentAFC::where('uuid', $uuid)->firstOrFail();
-        $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')
-                            ->where('station_name', $pg->station_name)
-                            ->where('station_code', $pg->station_code)
-                            ->firstOrFail();
+        $notifyMessage = $this->execute_control_pg($pgs_uuid, $control_type);
 
-        $notifyMessage = '';
+        return redirect()->back()->withNotify($notifyMessage);
+    }
 
-        switch ($control_type) {
-            case 'on':
-                $notifyMessage = $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On - (' . $pg->equipment_name . ')';
-                break;
-            case 'off':
-                $notifyMessage = $this->pg_power_off($pg->ip_address) . ' Power Off - (' . $pg->equipment_name . ')';
-                break;
-            case 'reboot':
-                $notifyMessage = $this->pg_reboot($pg->ip_address) . ' Rebooting - (' . $pg->equipment_name . ')';
-                break;
-            default:
-                $notifyMessage = 'Invalid control type';
-                break;
+    private function execute_control_pg(array $pgs_uuid, string $control_type): string
+    {
+        $notifyMessages = [];
+
+        foreach ($pgs_uuid as $pg_uuid) {
+            try {
+                $pg = ConfigEquipmentAFC::where('uuid', $pg_uuid)->firstOrFail();
+                $scu = ConfigEquipmentAFC::where('equipment_type_code', 'SCU')
+                    ->where('station_name', $pg->station_name)
+                    ->where('station_code', $pg->station_code)
+                    ->firstOrFail();
+
+                $message = match ($control_type) {
+                    'on' => $this->pg_power_on($scu->ip_address, $pg->mac_address) . ' Power On - (' . $pg->station_code . ' ' . $pg->equipment_name . ')',
+                    'off' => $this->pg_power_off($pg->ip_address) . ' Power Off - (' . $pg->station_code . ' ' . $pg->equipment_name . ')',
+                    'reboot' => $this->pg_reboot($pg->ip_address) . ' Rebooting - (' . $pg->station_code . ' ' . $pg->equipment_name . ')',
+                    default => 'Invalid control type: ' . $control_type,
+                };
+
+                $notifyMessages[] = $message;
+            } catch (ModelNotFoundException $e) {
+                $notifyMessages[] = "Equipment not found for IP: {$pg->ip_address}";
+            } catch (Exception $e) {
+                $notifyMessages[] = "Error processing IP {$pg->ip_address}: " . $e->getMessage();
+            }
         }
 
-        return redirect()->route('config-equipment-afc.index')->withNotify($notifyMessage);
+        return implode("\n", $notifyMessages);
     }
 
     private function sshExecute(string $ip, string $username, string $password, int $port, string $command)
     {
-        $sshCommand = sprintf(
-            'sshpass -p %s ssh -o StrictHostKeyChecking=no -p %d %s@%s "%s"',
-            escapeshellarg($password),
-            $port,
-            $username,
-            $ip,
-            $command
-        );
+        $sshCommand = sprintf('sshpass -p %s ssh -o StrictHostKeyChecking=no -p %d %s@%s "%s"', escapeshellarg($password), $port, $username, $ip, $command);
 
         $result = Process::run($sshCommand);
 
         if ($result->failed()) {
-            throw new \RuntimeException("SSH command failed: " . $result->errorOutput());
+            throw new \RuntimeException('SSH command failed: ' . $result->errorOutput());
         }
 
         return $result->output();
@@ -103,58 +97,20 @@ class ConfigEquipmentAFCController extends Controller
     {
         $command = sprintf('ether-wake -i em1 %s', $pg_mac_address);
 
-        return $this->sshExecute(
-            $scu_ip_address,
-            env('SSH_SCU_USERNAME'),
-            env('SSH_SCU_PASSWORD'),
-            (int) env('SSH_SCU_PORT'),
-            $command
-        );
+        return $this->sshExecute($scu_ip_address, env('SSH_SCU_USERNAME'), env('SSH_SCU_PASSWORD'), (int) env('SSH_SCU_PORT'), $command);
     }
 
     private function pg_power_off(string $pg_ip_address)
     {
         $command = 'shutdown -h now';
 
-        return $this->sshExecute(
-            $pg_ip_address,
-            env('SSH_PG_USERNAME'),
-            env('SSH_PG_PASSWORD'),
-            (int) env('SSH_PG_PORT'),
-            $command
-        );
+        return $this->sshExecute($pg_ip_address, env('SSH_PG_USERNAME'), env('SSH_PG_PASSWORD'), (int) env('SSH_PG_PORT'), $command);
     }
 
     private function pg_reboot(string $pg_ip_address)
     {
         $command = 'reboot';
 
-        return $this->sshExecute(
-            $pg_ip_address,
-            env('SSH_PG_USERNAME'),
-            env('SSH_PG_PASSWORD'),
-            (int) env('SSH_PG_PORT'),
-            $command
-        );
-    }
-
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
-    }
-
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    public function destroy(string $id)
-    {
-        //
+        return $this->sshExecute($pg_ip_address, env('SSH_PG_USERNAME'), env('SSH_PG_PASSWORD'), (int) env('SSH_PG_PORT'), $command);
     }
 }
