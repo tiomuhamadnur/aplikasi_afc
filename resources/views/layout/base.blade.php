@@ -55,7 +55,6 @@
             justify-content: flex-end !important;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
 </head>
 
 <body>
