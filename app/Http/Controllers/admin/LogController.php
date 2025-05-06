@@ -161,8 +161,8 @@ class LogController extends Controller
                         if (Str::endsWith($file->getFilename(), 'AINO.log')) {
                             $logContent = file_get_contents($file->getPathname());
 
-                            $equipmentName = Str::slug($pg->equipment_name, '_');
-                            $stationCode = Str::slug($pg->station_code, '_');
+                            $equipmentName = str_replace(' ', '_', $pg->equipment_name);
+                            $stationCode = str_replace(' ', '_', $pg->station_code);
                             $timestamp = basename($sub);
 
                             $logFilename = "{$stationCode}_{$equipmentName}_{$timestamp}_AINO.log";
