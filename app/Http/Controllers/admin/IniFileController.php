@@ -344,5 +344,4 @@ class IniFileController extends Controller
             'type' => $validated['type'] ?? null,
         ]);
     }
-
 }

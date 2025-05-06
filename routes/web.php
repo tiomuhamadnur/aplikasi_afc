@@ -570,53 +570,10 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::put('/fun-loc', 'update')->name('fun_loc.update');
         });
 
-        Route::controller(LogAfcController::class)->group(function () {
-            Route::get('/log-afc', 'index')->name('log.index');
-            Route::post('/log-afc/import', 'import')->name('log.import');
-            // Route::post('/log-afc/import-convert', 'import_convert')->name('convert.import');
-            Route::get('/log-afc/export', 'export')->name('log.export');
-        });
-
-        Route::controller(TransaksiTiketController::class)->group(function () {
-            Route::get('/transaksi-tiket/ftp', 'ftp')->name('transaksi.tiket.ftp');
-            Route::get('/transaksi-tiket', 'index')->name('transaksi.tiket.index');
-            Route::post('/transaksi-tiket', 'store')->name('transaksi.tiket.store');
-            Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
-        });
-
-        Route::controller(IniFileController::class)->group(function () {
-            Route::get('/ini-file', 'index')->name('ini-file.index');
-            Route::post('/ini-file', 'store')->name('ini-file.store');
-            Route::put('/ini-file', 'update')->name('ini-file.update');
-        });
-
-        Route::controller(ConfigEquipmentAFCController::class)->group(function () {
-            Route::get('/config-equipment-afc', 'index')->name('config-equipment-afc.index');
-            Route::post('/config-equipment-afc', 'control_pg')->name('config-equipment-afc.control-pg');
-        });
-
-        Route::controller(LogController::class)->group(function () {
-            Route::get('/log', 'index')->name('log.index');
-            Route::post('/log', 'store')->name('log.store');
-        });
-
-        Route::controller(LibraryBankCardController::class)->group(function () {
-            Route::get('/library-bank-card', 'index')->name('library-bank-card.index');
-            Route::post('/library-bank-card', 'store')->name('library-bank-card.store');
-        });
-
         Route::controller(MonitoringEquipmentController::class)->group(function () {
             Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
             Route::get('/monitoring-equipment', 'index')->name('monitoring-equipment.index');
             Route::delete('/monitoring-equipment', 'destroy')->name('monitoring-equipment.delete');
-        });
-
-        Route::controller(MonitoringEquipmentAFCController::class)->group(function () {
-            Route::get('/monitoring-equipment-afc', 'index')->name('monitoring-equipment-afc.index');
-            Route::post('/monitoring-equipment-afc/scu', 'store')->name('monitoring-equipment-afc.store');
-            Route::post('/monitoring-equipment-afc/pg', 'store_pg')->name('monitoring-equipment-afc.store_pg');
-
-            Route::get('/monitoring-equipment-afc/dashboard', 'dashboard')->name('monitoring-equipment-afc.dashboard');
         });
 
         Route::controller(ChecksheetController::class)->group(function () {
@@ -625,6 +582,52 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
             Route::get('/checksheet/history', 'history')->name('checksheet.history');
             Route::get('/checksheet/trend', 'trend')->name('checksheet.trend');
             Route::put('/checksheet/history', 'export_excel')->name('checksheet.history.export.excel');
+        });
+
+        Route::group(['middleware' => ['secretUser'], 'prefix' => 'secrets',], function () {
+            Route::controller(MonitoringEquipmentAFCController::class)->group(function () {
+                Route::get('/monitoring-equipment-afc', 'index')->name('monitoring-equipment-afc.index');
+                Route::post('/monitoring-equipment-afc/scu', 'store')->name('monitoring-equipment-afc.store');
+                Route::post('/monitoring-equipment-afc/pg', 'store_pg')->name('monitoring-equipment-afc.store_pg');
+
+                Route::get('/monitoring-equipment-afc/dashboard', 'dashboard')->name('monitoring-equipment-afc.dashboard');
+            });
+
+            Route::controller(LogAfcController::class)->group(function () {
+                Route::get('/log-afc', 'index')->name('log.index');
+                Route::post('/log-afc/import', 'import')->name('log.import');
+                // Route::post('/log-afc/import-convert', 'import_convert')->name('convert.import');
+                Route::get('/log-afc/export', 'export')->name('log.export');
+            });
+
+            Route::controller(TransaksiTiketController::class)->group(function () {
+                Route::get('/transaksi-tiket/ftp', 'ftp')->name('transaksi.tiket.ftp');
+                Route::get('/transaksi-tiket', 'index')->name('transaksi.tiket.index');
+                Route::post('/transaksi-tiket', 'store')->name('transaksi.tiket.store');
+                Route::post('/transaksi-tiket/import', 'import')->name('transaksi.tiket.import');
+            });
+
+            Route::controller(IniFileController::class)->group(function () {
+                Route::get('/ini-file', 'index')->name('ini-file.index');
+                Route::post('/ini-file', 'store')->name('ini-file.store');
+                Route::put('/ini-file', 'update')->name('ini-file.update');
+            });
+
+            Route::controller(ConfigEquipmentAFCController::class)->group(function () {
+                Route::get('/config-equipment-afc', 'index')->name('config-equipment-afc.index');
+                Route::post('/config-equipment-afc', 'control_pg')->name('config-equipment-afc.control-pg');
+            });
+
+            Route::controller(LogController::class)->group(function () {
+                Route::get('/log', 'index')->name('log.index');
+                Route::post('/log', 'store')->name('log.store');
+                Route::post('/log/aino', 'logAinoDownlaod')->name('log.aino.download');
+            });
+
+            Route::controller(LibraryBankCardController::class)->group(function () {
+                Route::get('/library-bank-card', 'index')->name('library-bank-card.index');
+                Route::post('/library-bank-card', 'store')->name('library-bank-card.store');
+            });
         });
     });
 });

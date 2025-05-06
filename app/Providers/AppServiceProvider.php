@@ -19,5 +19,18 @@ class AppServiceProvider extends ServiceProvider
         Builder::useVite();
 
         Blade::directive('currency', function ( $expression ) { return "Rp. <?php echo number_format($expression,0,',','.'); ?>"; });
+
+        Blade::if('secretUser', function () {
+            $ids = explode(',', env('SECRET_USER_IDS'));
+            return in_array(auth()->id(), $ids);
+        });
+
+        Blade::if('notUser', function () {
+            return auth()->user()->role->id != 3;
+        });
+
+        Blade::if('superAdminAndOrganik', function () {
+            return auth()->user()->role->id == 1 && auth()->user()->tipe_employee->id == 1;
+        });
     }
 }

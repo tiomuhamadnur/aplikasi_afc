@@ -1,19 +1,5 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
-        {{-- <li class="nav-item nav-profile">
-            <a href="{{ route('profile.index') }}" class="nav-link">
-                <div class="nav-profile-image">
-                    <img src="{{ auth()->user()->photo ? asset('storage/' . auth()->user()->photo) : 'https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg' }}"
-                        alt="image">
-                    <span class="login-status online"></span>
-                    <!--change to offline or busy as needed-->
-                </div>
-                <div class="nav-profile-text d-flex flex-column">
-                    <span class="font-weight-bold mb-2">{{ auth()->user()->name ?? '-' }}</span>
-                    <span class="text-secondary text-small">{{ auth()->user()->jabatan->name ?? '-' }}</span>
-                </div>
-            </a>
-        </li> --}}
         <li class="nav-item">
             <a class="nav-link" href="{{ route('dashboard.index') }}">
                 <span class="menu-title">Dashboard</span>
@@ -54,7 +40,7 @@
                 <i class="mdi mdi-repeat menu-icon"></i>
             </a>
         </li>
-        @if (auth()->user()->role->id != 3)
+        @notUser
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('work-order.index') }}">
                     <span class="menu-title">Work Order</span>
@@ -90,24 +76,6 @@
                     <i class="mdi mdi-key-variant menu-icon"></i>
                 </a>
             </li>
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="{{ route('monitoring-equipment.index') }}">
-                    <span class="menu-title">Monitoring Equipment</span>
-                    <i class="mdi mdi-monitor-multiple menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('log.index') }}">
-                    <span class="menu-title">Log Perform. KUE Bank</span>
-                    <i class="mdi mdi-file-find menu-icon"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
-                    <span class="menu-title">Transaksi Tiket</span>
-                    <i class="mdi mdi-cards-outline menu-icon"></i>
-                </a>
-            </li> --}}
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
                     aria-controls="sam-card">
@@ -126,7 +94,7 @@
                     </ul>
                 </div>
             </li>
-            @if (auth()->user()->role->id == 1 && auth()->user()->tipe_employee->id == 1)
+            @superAdminAndOrganik
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
                         aria-controls="ui-basic">
@@ -236,7 +204,7 @@
                         </ul>
                     </div>
                 </li>
-                @if (auth()->user()->id == 1 || auth()->user()->id == 2)
+                @secretUser
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="collapse" href="#secret" aria-expanded="false"
                             aria-controls="secret">
@@ -247,28 +215,48 @@
                         <div class="collapse" id="secret">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
-                                    Transaksi Tiket</a>
+                                        Transaksi Tiket</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('log.index') }}">
-                                    Log PG</a>
+                                        Log PG</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('library-bank-card.index') }}">
-                                    Library Bank Card</a>
+                                        Library Bank Card</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ route('ini-file.index') }}">
-                                    Ini File PG</a>
+                                        Ini File PG</a>
                                 </li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('config-equipment-afc.index') }}">
-                                    Config Equipment AFC</a>
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="{{ route('config-equipment-afc.index') }}">
+                                        Config Equipment AFC</a>
                                 </li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ route('monitoring-equipment-afc.index') }}">
-                                    Monitoring Equip. AFC</a>
+                                <li class="nav-item"> <a class="nav-link"
+                                        href="{{ route('monitoring-equipment-afc.index') }}">
+                                        Monitoring Equip. AFC</a>
                                 </li>
+                                {{-- <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('monitoring-equipment.index') }}">
+                                        <span class="menu-title">Monitoring Equipment</span>
+                                        <i class="mdi mdi-monitor-multiple menu-icon"></i>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('log.index') }}">
+                                        <span class="menu-title">Log Perform. KUE Bank</span>
+                                        <i class="mdi mdi-file-find menu-icon"></i>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('transaksi.tiket.index') }}">
+                                        <span class="menu-title">Transaksi Tiket</span>
+                                        <i class="mdi mdi-cards-outline menu-icon"></i>
+                                    </a>
+                                </li> --}}
                             </ul>
                         </div>
                     </li>
-                @endif
-            @endif
-        @endif
+                @endsecretUser
+            @endsuperAdminAndOrganik
+        @endnotUser
     </ul>
 </nav>

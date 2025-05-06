@@ -5,9 +5,13 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\ConfigEquipmentAFC;
 use App\Models\ConfigPG;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PharData;
+use RecursiveIteratorIterator;
+use ZipArchive;
 
 class LogController extends Controller
 {
@@ -101,5 +105,97 @@ class LogController extends Controller
             'pg_id',
             'results',
         ]));
+    }
+
+
+    public function logAinoDownlaod(Request $request)
+    {
+        $validated = $request->validate([
+            'pg_id' => 'required|string',
+            'date' => 'required|date',
+        ]);
+
+        $tanggal = Carbon::parse($validated['date'])->format('Ymd');
+
+        // Ambil konfigurasi PG
+        $pg = ConfigEquipmentAFC::where('equipment_type_code', 'PG')->findOrFail($validated['pg_id']);
+
+        // SFTP setup
+        $sftpConfig = config('filesystems.disks.sftp');
+        $sftpConfig['host'] = $pg->ip_address;
+        $sftp = Storage::build($sftpConfig);
+
+        $logRoot = '/AG_BackupSys/LogBack';
+        $logDirs = collect($sftp->directories($logRoot))
+            ->filter(fn($dir) => Str::startsWith(basename($dir), 'LogSedai'));
+
+        $filesToZip = [];
+
+        foreach ($logDirs as $dir) {
+            $subDirs = collect($sftp->directories($dir))
+                ->filter(fn($sub) => Str::startsWith(basename($sub), $tanggal)); // YYYYMMDD match
+
+            foreach ($subDirs as $sub) {
+                $tarName = basename($sub) . '.tar.gz';
+                $tarPath = $sub . '/' . $tarName;
+
+                if (!$sftp->exists($tarPath)) continue;
+
+                // Ambil konten .tar.gz dari SFTP
+                $tarContent = $sftp->get($tarPath);
+                if (!$tarContent) continue;
+
+                // Simpan sementara ke memory
+                $tmpTarGz = tempnam(sys_get_temp_dir(), 'log_') . '.tar.gz';
+                file_put_contents($tmpTarGz, $tarContent);
+
+                // Ekstrak AINO.log
+                try {
+                    $phar = new PharData($tmpTarGz);
+                    $phar->decompress(); // .tar
+
+                    $tarFile = str_replace('.gz', '', $tmpTarGz);
+                    $untar = new PharData($tarFile);
+
+                    foreach (new RecursiveIteratorIterator($untar) as $file) {
+                        if (Str::endsWith($file->getFilename(), 'AINO.log')) {
+                            $logContent = file_get_contents($file->getPathname());
+
+                            $equipmentName = Str::slug($pg->equipment_name, '_');
+                            $stationCode = Str::slug($pg->station_code, '_');
+                            $timestamp = basename($sub);
+
+                            $logFilename = "{$stationCode}_{$equipmentName}_{$timestamp}_AINO.log";
+                            $filesToZip[$logFilename] = $logContent;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Gagal ekstrak
+                    continue;
+                } finally {
+                    // Cleanup sementara
+                    @unlink($tmpTarGz);
+                    @unlink($tarFile ?? '');
+                }
+            }
+        }
+
+        if (empty($filesToZip)) {
+            return back()->withNotifyerror('Tidak ada file AINO.log ditemukan untuk tanggal tersebut.');
+        }
+
+        // Buat ZIP in-memory
+        $zipName = "{$pg->station_code}_{$pg->equipment_name}_" . $tanggal . ".zip";
+        $tmpZip = tempnam(sys_get_temp_dir(), 'zip_');
+        $zip = new ZipArchive();
+        $zip->open($tmpZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        foreach ($filesToZip as $filename => $content) {
+            $zip->addFromString($filename, $content);
+        }
+
+        $zip->close();
+
+        return response()->download($tmpZip, $zipName)->deleteFileAfterSend(true);
     }
 }
