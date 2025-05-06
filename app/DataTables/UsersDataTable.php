@@ -91,6 +91,7 @@ class UsersDataTable extends DataTable
                     ->printable(false)
                     ->width(60)
                     ->addClass('text-center'),
+            Column::make('id')->title('ID'),
             Column::make('name')->title('Name'),
             Column::make('email')->title('Email'),
             Column::make('jabatan.name')->title('Jabatan'),
