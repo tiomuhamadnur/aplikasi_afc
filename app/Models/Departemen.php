@@ -23,4 +23,9 @@ class Departemen extends Model
             $model->uuid = Str::uuid();
         });
     }
+
+    public function relasi_struktur()
+    {
+        return $this->hasOne(RelasiStruktur::class, 'departemen_id', 'id');
+    }
 }

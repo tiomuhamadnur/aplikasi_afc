@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\GoogleSpreadsheetController;
 use App\Http\Controllers\admin\MonitoringEquipmentAFCController;
 use App\Http\Controllers\api\GetDataController;
+use App\Http\Controllers\api\LogSensorAPIController;
 use App\Http\Controllers\api\MonitoringPermitController;
 use App\Http\Controllers\api\MonitoringEquipmentController;
 use App\Http\Controllers\mail\ExpiringPermitMailController;
@@ -55,4 +56,10 @@ Route::controller(GetDataController::class)->group(function () {
 Route::controller(GoogleSpreadsheetController::class)->group(function () {
     Route::get('/looker/store-failure', 'store')->name('api.failure.looker.sync');
     Route::get('/looker/store-budgeting', 'store_budgeting')->name('api.budgeting.looker.sync');
+});
+
+Route::controller(LogSensorAPIController::class)->group(function () {
+    Route::get('/log-sensor', 'index')->name('api.log-sensor.index');
+    Route::post('/log-sensor', 'store')->name('api.log-sensor.store');
+    Route::post('/log-sensor/delete', 'deleteData');
 });

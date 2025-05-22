@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Seksi extends Model
+class Dokumen extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'seksi';
+    protected $table = 'dokumen';
 
     protected $guarded = [];
 
@@ -24,8 +24,13 @@ class Seksi extends Model
         });
     }
 
-    public function relasi_struktur()
+    public function tipe_dokumen()
     {
-        return $this->belongsTo(RelasiStruktur::class);
+        return $this->belongsTo(TipeDokumen::class);
+    }
+
+    public function departemen()
+    {
+        return $this->belongsTo(Departemen::class);
     }
 }

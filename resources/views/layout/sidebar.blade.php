@@ -77,6 +77,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('dokumen.index') }}">
+                    <span class="menu-title">Dokumen</span>
+                    <i class="mdi mdi-file menu-icon"></i>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#sam-card" aria-expanded="false"
                     aria-controls="sam-card">
                     <span class="menu-title">SAM Card</span>

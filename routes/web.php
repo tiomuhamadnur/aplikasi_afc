@@ -59,6 +59,7 @@ use App\Http\Controllers\admin\WorkOrderController;
 use App\Http\Controllers\user\BudgetAbsorptionController;
 use App\Http\Controllers\user\ChecksheetController;
 use App\Http\Controllers\user\DashboardBudgetController;
+use App\Http\Controllers\user\DokumenController;
 use App\Http\Controllers\user\GangguanController;
 use App\Http\Controllers\user\GangguanLMController;
 use App\Http\Controllers\user\LCUChecklistController;
@@ -172,6 +173,13 @@ Route::group(['middleware' => ['auth', 'checkBanned', 'CheckPassword']], functio
         Route::post('/lcu-checklist', 'store')->name('lcu-checklist.store');
         Route::put('/lcu-checklist', 'update')->name('lcu-checklist.update');
         Route::delete('/lcu-checklist', 'destroy')->name('lcu-checklist.delete');
+    });
+
+    Route::controller(DokumenController::class)->group(function () {
+        Route::get('/dokumen', 'index')->name('dokumen.index');
+        Route::post('/dokumen', 'store')->name('dokumen.store');
+        Route::put('/dokumen', 'update')->name('dokumen.update');
+        Route::delete('/dokumen', 'destroy')->name('dokumen.delete');
     });
 
     // ADMIN & SUPERADMIN

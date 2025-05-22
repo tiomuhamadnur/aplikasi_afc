@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Seksi extends Model
+class TipeDokumen extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'seksi';
+    protected $table = 'tipe_dokumen';
 
     protected $guarded = [];
 
@@ -22,10 +22,5 @@ class Seksi extends Model
         self::creating(function ($model) {
             $model->uuid = Str::uuid();
         });
-    }
-
-    public function relasi_struktur()
-    {
-        return $this->belongsTo(RelasiStruktur::class);
     }
 }
